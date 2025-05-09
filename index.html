@@ -185,7 +185,6 @@
       margin-bottom: 15px;
       padding-bottom: 15px;
       border-bottom: 2px solid transparent;
-      color: transparent;
     }
 
     .model-title {
@@ -248,36 +247,7 @@
       padding: 4px 8px;
       border-radius: 12px;
       background: var(--background-color);
-    }
-
-    .model-response:nth-child(1) .response-time {
-      background: var(--orange-light);
-      color: var(--orange);
-    }
-
-    .model-response:nth-child(2) .response-time {
-      background: var(--blue-light);
-      color: var(--blue);
-    }
-
-    .model-response:nth-child(3) .response-time {
-      background: var(--magenta-light);
-      color: var(--magenta);
-    }
-
-    .model-response:nth-child(4) .response-time {
-      background: var(--green-light);
-      color: var(--green);
-    }
-
-    .model-response:nth-child(5) .response-time {
-      background: var(--red-light);
-      color: var(--red);
-    }
-
-    .model-response:nth-child(6) .response-time {
-      background: var(--blue-light);
-      color: var(--blue);
+      color: var(--text-color);
     }
 
     .response-content {
@@ -424,36 +394,6 @@
       }
     }
 
-    .model-response:nth-child(1) .model-header {
-      color: var(--orange);
-      border-bottom: 2px solid var(--orange-light);
-    }
-
-    .model-response:nth-child(2) .model-header {
-      color: var(--blue);
-      border-bottom: 2px solid var(--blue-light);
-    }
-
-    .model-response:nth-child(3) .model-header {
-      color: var(--magenta);
-      border-bottom: 2px solid var(--magenta-light);
-    }
-
-    .model-response:nth-child(4) .model-header {
-      color: var(--green);
-      border-bottom: 2px solid var(--green-light);
-    }
-
-    .model-response:nth-child(5) .model-header {
-      color: var(--red);
-      border-bottom: 2px solid var(--red-light);
-    }
-
-    .model-response:nth-child(6) .model-header {
-      color: var(--blue);
-      border-bottom: 2px solid var(--blue-light);
-    }
-
     .refresh-button {
       background: linear-gradient(135deg, var(--blue) 0%, var(--green) 100%);
     }
@@ -510,6 +450,15 @@
     const promptTextarea = document.getElementById('prompt');
     const webSearchCheckbox = document.getElementById('webSearch');
 
+    const modelColors = [
+        { main: 'var(--orange)', light: 'var(--orange-light)' },
+        { main: 'var(--blue)', light: 'var(--blue-light)' },
+        { main: 'var(--magenta)', light: 'var(--magenta-light)' },
+        { main: 'var(--green)', light: 'var(--green-light)' },
+        { main: 'var(--red)', light: 'var(--red-light)' },
+        { main: 'var(--purple, #8B5CF6)', light: 'var(--purple-light, #DDD6FE)' } // Adding a purple as an example
+    ];
+
     function formatTime(ms) {
       if (ms < 1000) {
         return `${ms}ms`;
@@ -544,7 +493,7 @@
       return text;
     }
 
-    function createModelCard(modelId, modelDisplayName) {
+    function createModelCard(modelId, modelDisplayName, colorPair) {
       const modelResponseDiv = document.createElement('div');
       modelResponseDiv.classList.add('model-response');
       modelResponseDiv.dataset.modelId = modelId;
@@ -554,6 +503,9 @@
       else if (modelDisplayName.toLowerCase().includes('vision') || modelDisplayName.toLowerCase().includes('vl')) iconName = 'visibility';
       else if (modelDisplayName.toLowerCase().includes('intelligent') || modelDisplayName.toLowerCase().includes('405b')) iconName = 'psychology';
       else if (modelDisplayName.toLowerCase().includes('reasoning')) iconName = 'school';
+      else if (modelDisplayName.toLowerCase().includes('llama')) iconName = 'support';
+      else if (modelDisplayName.toLowerCase().includes('mistral')) iconName = 'air';
+      else if (modelDisplayName.toLowerCase().includes('qwen')) iconName = 'cloud';
 
       modelResponseDiv.innerHTML = `
         <div class="model-header">
@@ -569,6 +521,20 @@
         <div class="response-content" data-model="${modelId}">Waiting for prompt...</div>
       `;
       
+      const modelHeader = modelResponseDiv.querySelector('.model-header');
+      const modelTitle = modelHeader.querySelector('.model-title');
+      const modelIcon = modelHeader.querySelector('.material-icons');
+      const responseTimeEl = modelHeader.querySelector('.response-time');
+
+      if (colorPair) {
+        modelHeader.style.color = colorPair.main;
+        modelHeader.style.borderBottomColor = colorPair.light;
+        modelTitle.style.color = colorPair.main;
+        modelIcon.style.color = colorPair.main;
+        responseTimeEl.style.backgroundColor = colorPair.light;
+        responseTimeEl.style.color = colorPair.main;
+      }
+
       modelResponseDiv.querySelector('.copy-button').addEventListener('click', () => {
         const responseContent = modelResponseDiv.querySelector('.response-content');
         const textToCopy = responseContent.innerText;
@@ -584,8 +550,9 @@
         responsesGrid.innerHTML = '<p>No models loaded. Try refreshing.</p>';
         return;
       }
-      availableModels.forEach(model => {
-        const card = createModelCard(model.id, model.id); 
+      availableModels.forEach((model, index) => {
+        const colorPair = modelColors[index % modelColors.length];
+        const card = createModelCard(model.id, model.id, colorPair); 
         responsesGrid.appendChild(card);
       });
     }
@@ -603,8 +570,34 @@
         }
         const data = await response.json();
         if (data && data.data && Array.isArray(data.data)) {
-          availableModels = data.data.filter(model => model.id && !model.model_spec?.offline);
-          console.log('Fetched models:', availableModels);
+          const filteredModels = data.data.filter(model => {
+            const isOffline = model.model_spec?.offline;
+            const isCodingModelById = model.id.toLowerCase().includes('code') || model.id.toLowerCase().includes('coder');
+            const isCodingModelBySpec = model.model_spec?.capabilities?.optimizedForCode === true;
+            return model.id && !isOffline && !isCodingModelById && !isCodingModelBySpec;
+          });
+
+          // Sort models: non-reasoning first (by context size), then reasoning models (by context size)
+          const isReasoningModel = (model) => {
+            const traits = model.model_spec?.traits || [];
+            return traits.includes('default_reasoning') || model.id.toLowerCase().includes('reasoning');
+          };
+
+          availableModels = filteredModels.sort((a, b) => {
+            const aIsReasoning = isReasoningModel(a);
+            const bIsReasoning = isReasoningModel(b);
+
+            if (aIsReasoning !== bIsReasoning) {
+              return aIsReasoning ? 1 : -1; // Non-reasoning first
+            }
+            
+            // Then sort by availableContextTokens (smallest first)
+            const contextA = a.model_spec?.availableContextTokens || 0;
+            const contextB = b.model_spec?.availableContextTokens || 0;
+            return contextA - contextB;
+          });
+          
+          console.log('Fetched and sorted models:', availableModels);
         } else {
           throw new Error('Unexpected API response format for models.');
         }
@@ -644,6 +637,13 @@
             console.log(`Model ${model.id} supports vision. Web search: ${webSearch}`);
         }
 
+        const temperature = (model && model.model_spec && model.model_spec.constraints && model.model_spec.constraints.temperature && typeof model.model_spec.constraints.temperature.default !== 'undefined')
+                            ? model.model_spec.constraints.temperature.default
+                            : 0.7;
+        const top_p = (model && model.model_spec && model.model_spec.constraints && model.model_spec.constraints.top_p && typeof model.model_spec.constraints.top_p.default !== 'undefined')
+                            ? model.model_spec.constraints.top_p.default
+                            : 0.9;
+
         const response = await fetch(`${BASE_URL}/chat/completions`, {
           method: 'POST',
           headers: {
@@ -655,8 +655,8 @@
             messages: [{ role: 'user', content: prompt }],
             venice_parameters: veniceParams,
             max_tokens: 2000,
-            temperature: model.model_spec?.constraints?.temperature?.default || 0.7,
-            top_p: model.model_spec?.constraints?.top_p?.default || 0.9
+            temperature: temperature,
+            top_p: top_p
           })
         });
 
