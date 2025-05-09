@@ -570,11 +570,23 @@
         }
         const data = await response.json();
         if (data && data.data && Array.isArray(data.data)) {
+          
           const filteredModels = data.data.filter(model => {
             const isOffline = model.model_spec?.offline;
+            if (!model.id || isOffline) {
+              return false; // Always exclude if no ID or offline
+            }
+
+            // Specifically include deepseek-r1-671b if it's not offline
+            if (model.id === 'deepseek-r1-671b') {
+              return true; 
+            }
+
+            // For other models, apply the coding model exclusion rules
             const isCodingModelById = model.id.toLowerCase().includes('code') || model.id.toLowerCase().includes('coder');
             const isCodingModelBySpec = model.model_spec?.capabilities?.optimizedForCode === true;
-            return model.id && !isOffline && !isCodingModelById && !isCodingModelBySpec;
+            
+            return !isCodingModelById && !isCodingModelBySpec;
           });
 
           // Sort models: non-reasoning first (by context size), then reasoning models (by context size)
