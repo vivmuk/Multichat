@@ -581,6 +581,11 @@
             if (model.id === 'deepseek-r1-671b') {
               return true; 
             }
+            
+            // Specifically include qwen-2.5-qwq-32b if it's not offline
+            if (model.id === 'qwen-2.5-qwq-32b') {
+              return true;
+            }
 
             // For other models, apply the coding model exclusion rules
             const isCodingModelById = model.id.toLowerCase().includes('code') || model.id.toLowerCase().includes('coder');
