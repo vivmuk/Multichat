@@ -8,22 +8,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --orange: #ff7849;
-      --orange-light: #ffe4d6;
-      --blue: #3b82f6;
-      --blue-light: #dbeafe;
-      --magenta: #e879f9;
-      --magenta-light: #fae8ff;
-      --green: #22c55e;
-      --green-light: #dcfce7;
-      --red: #ef4444;
-      --red-light: #fee2e2;
-      --background-color: #f8fafc;
-      --surface-color: #ffffff;
-      --text-color: #1e293b;
-      --border-radius: 12px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
-      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+      --orange: #FF5722;
+      --orange-light: #FFE0B2;
+      --blue: #2196F3;
+      --blue-light: #BBDEFB;
+      --magenta: #E91E63;
+      --magenta-light: #F8BBD0;
+      --green: #4CAF50;
+      --green-light: #C8E6C9;
+      --red: #F44336;
+      --red-light: #FFCDD2;
+      --purple: #9C27B0;
+      --purple-light: #E1BEE7;
+      --background-color: #FAFAFA;
+      --surface-color: #FFFFFF;
+      --text-color: #212121;
+      --text-secondary: #757575;
+      --border-color: #E0E0E0;
+      --border-radius: 8px;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
     }
 
     * {
@@ -47,75 +51,108 @@
 
     /* Left Sidebar */
     .sidebar {
-      width: 300px;
+      width: 320px;
       background: var(--surface-color);
-      border-right: 1px solid #e2e8f0;
+      border-right: 2px solid var(--border-color);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
     .sidebar-header {
-      padding: 20px;
-      border-bottom: 1px solid #e2e8f0;
+      padding: 16px 20px;
+      border-bottom: 2px solid var(--border-color);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+    }
+
+    .sidebar-header .material-icons {
+      font-size: 24px;
+      color: var(--orange);
     }
 
     .sidebar-header h2 {
       margin: 0;
-      font-size: 20px;
-      color: var(--orange);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-color);
     }
 
     .models-list {
       flex: 1;
       overflow-y: auto;
-      padding: 10px;
+      padding: 8px;
     }
 
     .model-item {
-      padding: 12px 16px;
-      margin-bottom: 8px;
+      padding: 12px 14px;
+      margin-bottom: 4px;
       border-radius: var(--border-radius);
       cursor: pointer;
-      transition: all 0.2s;
-      border: 2px solid transparent;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      position: relative;
     }
 
     .model-item:hover {
       background: var(--background-color);
-      border-color: var(--orange-light);
     }
 
     .model-item.active {
       background: var(--orange-light);
-      border-color: var(--orange);
+      border-left-color: var(--orange);
       font-weight: 600;
     }
 
+    .model-item-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .model-item-name {
+      font-size: 14px;
+      color: var(--text-color);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .model-item-time {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
     .model-item-status {
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      background: #94a3b8;
+      background: #BDBDBD;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 2px var(--surface-color);
     }
 
     .model-item-status.loading {
       background: var(--orange);
       animation: pulse 1.5s ease-in-out infinite;
+      box-shadow: 0 0 0 2px var(--surface-color), 0 0 8px var(--orange);
     }
 
     .model-item-status.complete {
       background: var(--green);
+      box-shadow: 0 0 0 2px var(--surface-color), 0 0 8px var(--green);
     }
 
     .model-item-status.error {
       background: var(--red);
+      box-shadow: 0 0 0 2px var(--surface-color), 0 0 8px var(--red);
     }
 
     @keyframes pulse {
@@ -135,9 +172,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px;
+      padding: 16px 24px;
       background: var(--surface-color);
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 2px solid var(--border-color);
     }
 
     .header-left {
@@ -147,39 +184,40 @@
     }
 
     .header h1 {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 600;
-      color: var(--orange);
+      color: var(--text-color);
       margin: 0;
     }
 
     .header .material-icons {
-      font-size: 28px;
+      font-size: 26px;
       color: var(--orange);
     }
 
     .prompt-section {
       background: var(--surface-color);
-      padding: 20px;
-      border-bottom: 1px solid #e2e8f0;
+      padding: 16px 24px;
+      border-bottom: 2px solid var(--border-color);
     }
 
     textarea {
       width: 100%;
       height: 100px;
-      padding: 15px;
-      border: 2px solid #e2e8f0;
+      padding: 14px;
+      border: 2px solid var(--border-color);
       border-radius: var(--border-radius);
       font-family: inherit;
-      font-size: 16px;
+      font-size: 15px;
       resize: vertical;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
+      background: var(--surface-color);
     }
 
     textarea:focus {
       outline: none;
       border-color: var(--orange);
-      box-shadow: 0 0 0 3px var(--orange-light);
+      box-shadow: 0 0 0 4px var(--orange-light);
     }
 
     .controls {
@@ -233,27 +271,34 @@
       background: linear-gradient(135deg, var(--orange) 0%, var(--magenta) 100%);
       color: white;
       border: none;
-      padding: 12px 24px;
+      padding: 10px 20px;
       border-radius: var(--border-radius);
-      font-size: 16px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.2s;
       text-decoration: none;
+      box-shadow: var(--shadow-sm);
     }
 
     button:hover, .button:hover {
       background: linear-gradient(135deg, var(--magenta) 0%, var(--orange) 100%);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
       box-shadow: var(--shadow-md);
     }
 
+    button:active, .button:active {
+      transform: translateY(0);
+    }
+
     button:disabled, .button:disabled {
-      background-color: #94a3b8;
+      background: #BDBDBD;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     .refresh-button {
@@ -262,6 +307,16 @@
 
     .refresh-button:hover {
       background: linear-gradient(135deg, var(--green) 0%, var(--blue) 100%);
+    }
+
+    .button .material-icons {
+      font-size: 18px;
+    }
+
+    #dashboardButton .material-icons {
+      font-size: 20px;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+      opacity: 1;
     }
 
     .response-container {
@@ -557,23 +612,24 @@
     }
 
     .model-card-section {
-      margin-bottom: 15px;
+      margin-bottom: 16px;
     }
 
     .model-card-section h3 {
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 12px;
+      font-weight: 700;
       color: var(--text-color);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
     }
 
     .model-card-section p,
     .model-card-section ul {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-color);
       margin: 0;
+      line-height: 1.6;
     }
 
     .model-card-section ul {
@@ -805,7 +861,10 @@
       
       item.innerHTML = `
         <div class="model-item-status" data-status="idle"></div>
-        <span style="flex: 1; overflow: hidden; text-overflow: ellipsis;">${model.id}</span>
+        <div class="model-item-content">
+          <div class="model-item-name">${model.id}</div>
+          <div class="model-item-time" data-time="">—</div>
+        </div>
       `;
       
       item.addEventListener('click', () => selectModel(model.id));
@@ -850,6 +909,25 @@
       }
     }
 
+    function updateSidebarModelInfo(modelId, time, tokensPerSecond) {
+      const item = document.querySelector(`[data-model-id="${modelId}"]`);
+      if (item) {
+        const timeEl = item.querySelector('.model-item-time');
+        if (timeEl) {
+          if (time && tokensPerSecond) {
+            // Extract just the tokens/s number from tokensPerSecond (format: " • 31.3 tokens/s")
+            const tokensMatch = tokensPerSecond.match(/([\d.]+)\s*tokens\/s/);
+            const tokensValue = tokensMatch ? tokensMatch[1] : '';
+            timeEl.textContent = `${time} • ${tokensValue} tok/s`;
+          } else if (time) {
+            timeEl.textContent = time;
+          } else {
+            timeEl.textContent = '—';
+          }
+        }
+      }
+    }
+
     function renderModelList() {
       modelsList.innerHTML = '';
       if (availableModels.length === 0) {
@@ -885,6 +963,9 @@
       
       // Update status
       updateModelStatus(model.id, 'loading');
+      
+      // Reset sidebar time display when starting
+      updateSidebarModelInfo(model.id, '', '');
       
       // Update response view if this is the selected model
       if (selectedModelId === model.id) {
@@ -981,6 +1062,9 @@
         modelResponses[model.id].time = formatTime(duration);
         modelResponses[model.id].tokensPerSecond = tokensPerSecond;
         
+        // Update sidebar with time and tokens/s
+        updateSidebarModelInfo(model.id, formatTime(duration), tokensPerSecond);
+        
         // Update view if this is the selected model
         if (selectedModelId === model.id) {
           updateResponseView(model.id);
@@ -995,6 +1079,9 @@
         const errorMsg = error.message;
         modelResponses[model.id].content = `Error: ${errorMsg}`;
         modelResponses[model.id].time = 'Error';
+        
+        // Update sidebar with error
+        updateSidebarModelInfo(model.id, 'Error', '');
         
         if (selectedModelId === model.id) {
           const contentEl = selectedResponse.querySelector('.response-content');
@@ -1109,7 +1196,7 @@
           </div>
           
           <div class="model-card-section">
-            <h3>Pricing</h3>
+            <h3>Pricing (per 1M tokens)</h3>
             <p>Input: $${pricing.input?.usd || 'N/A'} / ${pricing.input?.vcu || 'N/A'} VCU</p>
             <p>Output: $${pricing.output?.usd || 'N/A'} / ${pricing.output?.vcu || 'N/A'} VCU</p>
           </div>
