@@ -687,7 +687,19 @@
         const duration = endTime - startTime;
         
         responseEl.innerHTML = formatResponse(data.choices[0].message.content);
-        timeEl.textContent = formatTime(duration);
+        
+        // Extract token usage and calculate tokens per second
+        let tokensPerSecond = '';
+        if (data.usage) {
+          const completionTokens = data.usage.completion_tokens || data.usage.total_tokens || 0;
+          if (completionTokens > 0 && duration > 0) {
+            const durationInSeconds = duration / 1000;
+            const tokensPerSec = (completionTokens / durationInSeconds).toFixed(1);
+            tokensPerSecond = ` • ${tokensPerSec} tokens/s`;
+          }
+        }
+        
+        timeEl.textContent = formatTime(duration) + tokensPerSecond;
       } catch (error) {
         responseEl.innerHTML = `<div class="error"><span class="material-icons">error</span>${error.message}</div>`;
         timeEl.textContent = 'Error';
