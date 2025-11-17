@@ -26,44 +26,142 @@
       --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       background-color: var(--background-color);
       color: var(--text-color);
+      height: 100vh;
+      overflow: hidden;
     }
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
+    .app-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      width: 300px;
+      background: var(--surface-color);
+      border-right: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-header h2 {
+      margin: 0;
+      font-size: 20px;
+      color: var(--orange);
+    }
+
+    .models-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .model-item {
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .model-item:hover {
+      background: var(--background-color);
+      border-color: var(--orange-light);
+    }
+
+    .model-item.active {
+      background: var(--orange-light);
+      border-color: var(--orange);
+      font-weight: 600;
+    }
+
+    .model-item-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #94a3b8;
+    }
+
+    .model-item-status.loading {
+      background: var(--orange);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .model-item-status.complete {
+      background: var(--green);
+    }
+
+    .model-item-status.error {
+      background: var(--red);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     .header {
       display: flex;
       align-items: center;
-      margin-bottom: 30px;
+      justify-content: space-between;
+      padding: 20px;
+      background: var(--surface-color);
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .header h1 {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 600;
       color: var(--orange);
       margin: 0;
     }
 
     .header .material-icons {
-      font-size: 32px;
-      margin-right: 12px;
+      font-size: 28px;
       color: var(--orange);
     }
 
     .prompt-section {
       background: var(--surface-color);
       padding: 20px;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 30px;
+      border-bottom: 1px solid #e2e8f0;
     }
 
     textarea {
@@ -158,10 +256,18 @@
       cursor: not-allowed;
     }
 
-    .responses-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 20px;
+    .refresh-button {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--green) 100%);
+    }
+
+    .refresh-button:hover {
+      background: linear-gradient(135deg, var(--green) 0%, var(--blue) 100%);
+    }
+
+    .response-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
     }
 
     .model-response {
@@ -169,26 +275,29 @@
       padding: 20px;
       border-radius: var(--border-radius);
       box-shadow: var(--shadow-sm);
-      transition: border-color 0.2s, box-shadow 0.2s;
-      border: 1px solid transparent;
-    }
-
-    .model-response:hover {
-      border-color: var(--orange-light);
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
     .model-header {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-weight: 600;
+      justify-content: space-between;
       margin-bottom: 15px;
       padding-bottom: 15px;
-      border-bottom: 2px solid transparent;
+      border-bottom: 2px solid var(--orange-light);
+    }
+
+    .model-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .model-title {
-      flex: 1;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--orange);
     }
 
     .header-actions {
@@ -207,13 +316,6 @@
       justify-content: center;
       border-radius: 4px;
       transition: background-color 0.2s;
-    }
-
-    .copy-button .material-icons {
-      font-size: 18px;
-    }
-
-    .model-response .copy-button {
       color: var(--orange);
     }
 
@@ -221,39 +323,20 @@
       background-color: var(--background-color);
     }
 
-    .copy-feedback {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--text-color);
-      color: white;
-      padding: 8px 16px;
-      border-radius: var(--border-radius);
-      font-size: 14px;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.3s, transform 0.3s;
-      z-index: 1000;
-    }
-
-    .copy-feedback.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
     .response-time {
       font-size: 12px;
       font-weight: normal;
       padding: 4px 8px;
       border-radius: 12px;
-      background: var(--background-color);
-      color: var(--text-color);
+      background: var(--orange-light);
+      color: var(--orange);
     }
 
     .response-content {
       white-space: pre-wrap;
       font-size: 14px;
       line-height: 1.6;
+      min-height: 100px;
     }
 
     .response-content h1, 
@@ -330,24 +413,6 @@
       font-style: italic;
     }
 
-    .response-content table {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 1em 0;
-    }
-
-    .response-content th,
-    .response-content td {
-      border: 1px solid var(--background-color);
-      padding: 0.5em;
-      text-align: left;
-    }
-
-    .response-content th {
-      background: var(--background-color);
-      font-weight: 600;
-    }
-
     .error {
       color: var(--red);
       display: flex;
@@ -378,65 +443,293 @@
       100% { transform: rotate(360deg); }
     }
 
+    .copy-feedback {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--text-color);
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 1000;
+    }
+
+    .copy-feedback.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Dashboard Modal */
+    .dashboard-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .dashboard-modal.show {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .dashboard-content {
+      background: var(--surface-color);
+      border-radius: var(--border-radius);
+      padding: 30px;
+      max-width: 1200px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-md);
+      margin-top: 20px;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--background-color);
+    }
+
+    .dashboard-header h2 {
+      margin: 0;
+      color: var(--orange);
+      font-size: 28px;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 32px;
+      cursor: pointer;
+      color: var(--text-color);
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+
+    .close-button:hover {
+      background-color: var(--background-color);
+    }
+
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+    }
+
+    .model-card {
+      background: var(--background-color);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      border: 1px solid #e2e8f0;
+    }
+
+    .model-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .model-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--orange);
+    }
+
+    .model-card-section {
+      margin-bottom: 15px;
+    }
+
+    .model-card-section h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .model-card-section p,
+    .model-card-section ul {
+      font-size: 14px;
+      color: var(--text-color);
+      margin: 0;
+    }
+
+    .model-card-section ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .model-card-section li {
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .capability-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      margin: 4px 4px 4px 0;
+    }
+
+    .capability-badge.true {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .capability-badge.false {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #94a3b8;
+    }
+
+    .empty-state .material-icons {
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
     @media (max-width: 768px) {
-      .responses-grid {
-        grid-template-columns: 1fr;
+      .app-container {
+        flex-direction: column;
       }
-      
+
+      .sidebar {
+        width: 100%;
+        height: 200px;
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
       .controls {
         flex-direction: column;
         gap: 15px;
       }
-      
+
       button {
         width: 100%;
         justify-content: center;
       }
     }
-
-    .refresh-button {
-      background: linear-gradient(135deg, var(--blue) 0%, var(--green) 100%);
-    }
-
-    .refresh-button:hover {
-      background: linear-gradient(135deg, var(--green) 0%, var(--blue) 100%);
-    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <span class="material-icons">smart_toy</span>
-      <h1>Venice AI Multi-Chat</h1>
-    </div>
-    
-    <div class="prompt-section">
-      <textarea id="prompt" placeholder="Enter your prompt here..."></textarea>
-      <div class="controls">
-        <label for="webSearch" class="web-search-toggle">
-          <input type="checkbox" id="webSearch">
-          <span class="toggle-slider"></span>
-          <span>Enable Web Search</span>
-        </label>
-        <div style="display: flex; gap: 10px;">
-          <button id="refreshModelsButton" class="button refresh-button" title="Refresh model list">
-            <span class="material-icons">refresh</span>
-            Refresh Models
-          </button>
-          <button id="sendButton" title="Send prompt to all models">
-            <span class="material-icons">send</span>
-            Send
-          </button>
+  <div class="app-container">
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <span class="material-icons">smart_toy</span>
+        <h2>Models</h2>
+      </div>
+      <div class="models-list" id="modelsList">
+        <div class="empty-state">
+          <span class="material-icons">refresh</span>
+          <p>Click "Refresh Models" to load models</p>
         </div>
       </div>
     </div>
-    
-    <div class="responses-grid" id="responsesGrid">
-      <!-- Model responses will be dynamically inserted here -->
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <div class="header-left">
+          <span class="material-icons">smart_toy</span>
+          <h1>Venice AI Multi-Chat</h1>
+        </div>
+        <button id="dashboardButton" class="button" title="View Model Dashboard">
+          <span class="material-icons">dashboard</span>
+          Dashboard
+        </button>
+      </div>
+      
+      <div class="prompt-section">
+        <textarea id="prompt" placeholder="Enter your prompt here..."></textarea>
+        <div class="controls">
+          <label for="webSearch" class="web-search-toggle">
+            <input type="checkbox" id="webSearch">
+            <span class="toggle-slider"></span>
+            <span>Enable Web Search</span>
+          </label>
+          <div style="display: flex; gap: 10px;">
+            <button id="refreshModelsButton" class="button refresh-button" title="Refresh model list">
+              <span class="material-icons">refresh</span>
+              Refresh Models
+            </button>
+            <button id="sendButton" title="Send prompt to all models">
+              <span class="material-icons">send</span>
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="response-container">
+        <div class="model-response" id="selectedResponse">
+          <div class="model-header">
+            <div class="model-header-left">
+              <span class="material-icons">info</span>
+              <div class="model-title">Select a model from the sidebar</div>
+            </div>
+            <div class="header-actions">
+              <span class="response-time"></span>
+            </div>
+          </div>
+          <div class="response-content">
+            <p style="color: #94a3b8; text-align: center; padding: 40px;">
+              Choose a model from the left panel to view its response
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Add feedback toast -->
+  <!-- Dashboard Modal -->
+  <div class="dashboard-modal" id="dashboardModal">
+    <div class="dashboard-content">
+      <div class="dashboard-header">
+        <h2>Model Dashboard</h2>
+        <button class="close-button" id="closeDashboard">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="models-grid" id="dashboardGrid">
+        <!-- Model cards will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback toast -->
   <div class="copy-feedback">Copied to clipboard!</div>
 
   <script>
@@ -444,11 +737,20 @@
     const BASE_URL = 'https://api.venice.ai/api/v1';
 
     let availableModels = [];
-    const responsesGrid = document.getElementById('responsesGrid');
+    let selectedModelId = null;
+    let modelResponses = {}; // Store responses for all models
+    let streamingControllers = {}; // Store AbortControllers for streaming
+
+    const modelsList = document.getElementById('modelsList');
+    const selectedResponse = document.getElementById('selectedResponse');
     const sendButton = document.getElementById('sendButton');
     const refreshModelsButton = document.getElementById('refreshModelsButton');
     const promptTextarea = document.getElementById('prompt');
     const webSearchCheckbox = document.getElementById('webSearch');
+    const dashboardButton = document.getElementById('dashboardButton');
+    const dashboardModal = document.getElementById('dashboardModal');
+    const dashboardGrid = document.getElementById('dashboardGrid');
+    const closeDashboard = document.getElementById('closeDashboard');
 
     const modelColors = [
         { main: 'var(--orange)', light: 'var(--orange-light)' },
@@ -456,7 +758,7 @@
         { main: 'var(--magenta)', light: 'var(--magenta-light)' },
         { main: 'var(--green)', light: 'var(--green-light)' },
         { main: 'var(--red)', light: 'var(--red-light)' },
-        { main: 'var(--purple, #8B5CF6)', light: 'var(--purple-light, #DDD6FE)' } // Adding a purple as an example
+        { main: 'var(--purple, #8B5CF6)', light: 'var(--purple-light, #DDD6FE)' }
     ];
 
     function formatTime(ms) {
@@ -487,179 +789,117 @@
       
       text = text.replace(/^\s*>\s*(.*)$/gm, '<blockquote>$1</blockquote>');
       
-      text = text.replace(/\\n\\n([^<].*)\\n\\n/g, '<p>$1</p>');
-      text = text.replace(/\\n(?!\\n)/g, '<br>');
+      text = text.replace(/\n\n([^<].*)\n\n/g, '<p>$1</p>');
+      text = text.replace(/\n(?!\n)/g, '<br>');
       
       return text;
     }
 
-    function createModelCard(modelId, modelDisplayName, colorPair) {
-      const modelResponseDiv = document.createElement('div');
-      modelResponseDiv.classList.add('model-response');
-      modelResponseDiv.dataset.modelId = modelId;
-
-      let iconName = 'memory';
-      if (modelDisplayName.toLowerCase().includes('code') || modelDisplayName.toLowerCase().includes('coder')) iconName = 'code';
-      else if (modelDisplayName.toLowerCase().includes('vision') || modelDisplayName.toLowerCase().includes('vl')) iconName = 'visibility';
-      else if (modelDisplayName.toLowerCase().includes('intelligent') || modelDisplayName.toLowerCase().includes('405b')) iconName = 'psychology';
-      else if (modelDisplayName.toLowerCase().includes('reasoning')) iconName = 'school';
-      else if (modelDisplayName.toLowerCase().includes('llama')) iconName = 'support';
-      else if (modelDisplayName.toLowerCase().includes('mistral')) iconName = 'air';
-      else if (modelDisplayName.toLowerCase().includes('qwen')) iconName = 'cloud';
-
-      modelResponseDiv.innerHTML = `
-        <div class="model-header">
-          <span class="material-icons">${iconName}</span>
-          <div class="model-title">${modelDisplayName}</div>
-          <div class="header-actions">
-            <button class="copy-button" title="Copy response">
-              <span class="material-icons">content_copy</span>
-            </button>
-            <span class="response-time"></span>
-          </div>
-        </div>
-        <div class="response-content" data-model="${modelId}">Waiting for prompt...</div>
+    function createModelListItem(model, index) {
+      const item = document.createElement('div');
+      item.classList.add('model-item');
+      item.dataset.modelId = model.id;
+      
+      const colorPair = modelColors[index % modelColors.length];
+      item.style.borderLeftColor = colorPair.main;
+      
+      item.innerHTML = `
+        <div class="model-item-status" data-status="idle"></div>
+        <span style="flex: 1; overflow: hidden; text-overflow: ellipsis;">${model.id}</span>
       `;
       
-      const modelHeader = modelResponseDiv.querySelector('.model-header');
-      const modelTitle = modelHeader.querySelector('.model-title');
-      const modelIcon = modelHeader.querySelector('.material-icons');
-      const responseTimeEl = modelHeader.querySelector('.response-time');
-
-      if (colorPair) {
-        modelHeader.style.color = colorPair.main;
-        modelHeader.style.borderBottomColor = colorPair.light;
-        modelTitle.style.color = colorPair.main;
-        modelIcon.style.color = colorPair.main;
-        responseTimeEl.style.backgroundColor = colorPair.light;
-        responseTimeEl.style.color = colorPair.main;
-      }
-
-      modelResponseDiv.querySelector('.copy-button').addEventListener('click', () => {
-        const responseContent = modelResponseDiv.querySelector('.response-content');
-        const textToCopy = responseContent.innerText;
-        copyToClipboard(textToCopy);
-      });
-
-      return modelResponseDiv;
-    }
-
-    function renderModelPlaceholders() {
-      responsesGrid.innerHTML = '';
-      if (availableModels.length === 0) {
-        responsesGrid.innerHTML = '<p>No models loaded. Try refreshing.</p>';
-        return;
-      }
-      availableModels.forEach((model, index) => {
-        const colorPair = modelColors[index % modelColors.length];
-        const card = createModelCard(model.id, model.id, colorPair); 
-        responsesGrid.appendChild(card);
-      });
-    }
-
-    async function fetchVeniceModels() {
-      refreshModelsButton.disabled = true;
-      refreshModelsButton.querySelector('.material-icons').classList.add('spin');
-      responsesGrid.innerHTML = '<p>Loading models...</p>';
-      try {
-        const response = await fetch(`${BASE_URL}/models?type=text`, {
-          headers: { 'Authorization': `Bearer ${API_KEY}` }
-        });
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        if (data && data.data && Array.isArray(data.data)) {
-          
-          const filteredModels = data.data.filter(model => {
-            const isOffline = model.model_spec?.offline;
-            if (!model.id || isOffline) {
-              return false; // Always exclude if no ID or offline
-            }
-
-            // Specifically include deepseek-r1-671b if it's not offline
-            if (model.id === 'deepseek-r1-671b') {
-              return true; 
-            }
-            
-            // Specifically include qwen-2.5-qwq-32b if it's not offline
-            if (model.id === 'qwen-2.5-qwq-32b') {
-              return true;
-            }
-
-            // For other models, apply the coding model exclusion rules
-            const isCodingModelById = model.id.toLowerCase().includes('code') || model.id.toLowerCase().includes('coder');
-            const isCodingModelBySpec = model.model_spec?.capabilities?.optimizedForCode === true;
-            
-            return !isCodingModelById && !isCodingModelBySpec;
-          });
-
-          // Sort models: non-reasoning first (by context size), then reasoning models (by context size)
-          const isReasoningModel = (model) => {
-            const traits = model.model_spec?.traits || [];
-            return traits.includes('default_reasoning') || model.id.toLowerCase().includes('reasoning');
-          };
-
-          availableModels = filteredModels.sort((a, b) => {
-            const aIsReasoning = isReasoningModel(a);
-            const bIsReasoning = isReasoningModel(b);
-
-            if (aIsReasoning !== bIsReasoning) {
-              return aIsReasoning ? 1 : -1; // Non-reasoning first
-            }
-            
-            // Then sort by availableContextTokens (smallest first)
-            const contextA = a.model_spec?.availableContextTokens || 0;
-            const contextB = b.model_spec?.availableContextTokens || 0;
-            return contextA - contextB;
-          });
-          
-          console.log('Fetched and sorted models:', availableModels);
-        } else {
-          throw new Error('Unexpected API response format for models.');
-        }
-        renderModelPlaceholders();
-      } catch (error) {
-        console.error('Failed to fetch models:', error);
-        responsesGrid.innerHTML = `<div class="error"><span class="material-icons">error</span>Failed to load models: ${error.message}. Check console for details.</div>`;
-        availableModels = [];
-      } finally {
-        refreshModelsButton.disabled = false;
-        if (refreshModelsButton.querySelector('.material-icons.spin')) {
-            refreshModelsButton.querySelector('.material-icons').classList.remove('spin');
-        }
-      }
-    }
-
-    async function queryModel(model, prompt, webSearch) {
-      const responseEl = responsesGrid.querySelector(`[data-model="${model.id}"]`);
-      const modelCard = responseEl.closest('.model-response');
-      const timeEl = modelCard.querySelector('.response-time');
+      item.addEventListener('click', () => selectModel(model.id));
       
-      if (!responseEl) {
-        console.error(`Response element for model ${model.id} not found.`);
+      return item;
+    }
+
+    function selectModel(modelId) {
+      selectedModelId = modelId;
+      
+      // Update active state in sidebar
+      document.querySelectorAll('.model-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.modelId === modelId);
+      });
+      
+      // Update main response view
+      updateResponseView(modelId);
+    }
+
+    function updateResponseView(modelId) {
+      const model = availableModels.find(m => m.id === modelId);
+      if (!model) return;
+      
+      const responseData = modelResponses[modelId] || { content: 'Waiting for prompt...', time: '', tokensPerSecond: '' };
+      
+      const header = selectedResponse.querySelector('.model-header');
+      const title = header.querySelector('.model-title');
+      const timeEl = header.querySelector('.response-time');
+      const contentEl = selectedResponse.querySelector('.response-content');
+      
+      title.textContent = model.id;
+      timeEl.textContent = responseData.time + (responseData.tokensPerSecond || '');
+      contentEl.innerHTML = responseData.content ? formatResponse(responseData.content) : 'Waiting for prompt...';
+    }
+
+    function updateModelStatus(modelId, status) {
+      const item = document.querySelector(`[data-model-id="${modelId}"]`);
+      if (item) {
+        const statusEl = item.querySelector('.model-item-status');
+        statusEl.dataset.status = status;
+        statusEl.className = `model-item-status ${status}`;
+      }
+    }
+
+    function renderModelList() {
+      modelsList.innerHTML = '';
+      if (availableModels.length === 0) {
+        modelsList.innerHTML = `
+          <div class="empty-state">
+            <span class="material-icons">refresh</span>
+            <p>Click "Refresh Models" to load models</p>
+          </div>
+        `;
         return;
       }
+      
+      availableModels.forEach((model, index) => {
+        const item = createModelListItem(model, index);
+        modelsList.appendChild(item);
+      });
+      
+      // Select first model by default
+      if (availableModels.length > 0 && !selectedModelId) {
+        selectModel(availableModels[0].id);
+      }
+    }
 
-      responseEl.textContent = 'Loading...';
-      responseEl.classList.add('loading');
-      timeEl.textContent = '';
-
+    async function queryModelStreaming(model, prompt, webSearch) {
       const startTime = Date.now();
-
+      let fullContent = '';
+      let completionTokens = 0;
+      
+      // Initialize response storage
+      if (!modelResponses[model.id]) {
+        modelResponses[model.id] = { content: '', time: '', tokensPerSecond: '' };
+      }
+      
+      // Update status
+      updateModelStatus(model.id, 'loading');
+      
+      // Update response view if this is the selected model
+      if (selectedModelId === model.id) {
+        const contentEl = selectedResponse.querySelector('.response-content');
+        contentEl.innerHTML = '<div class="loading">Loading...</div>';
+      }
+      
+      // Create AbortController for this stream
+      const controller = new AbortController();
+      streamingControllers[model.id] = controller;
+      
       try {
         const veniceParams = { enable_web_search: webSearch ? 'on' : 'off' };
-
-        if (model.model_spec?.capabilities?.supportsVision) {
-            console.log(`Model ${model.id} supports vision. Web search: ${webSearch}`);
-        }
-
-        const temperature = (model && model.model_spec && model.model_spec.constraints && model.model_spec.constraints.temperature && typeof model.model_spec.constraints.temperature.default !== 'undefined')
-                            ? model.model_spec.constraints.temperature.default
-                            : 0.7;
-        const top_p = (model && model.model_spec && model.model_spec.constraints && model.model_spec.constraints.top_p && typeof model.model_spec.constraints.top_p.default !== 'undefined')
-                            ? model.model_spec.constraints.top_p.default
-                            : 0.9;
+        const temperature = model.model_spec?.constraints?.temperature?.default || 0.7;
+        const top_p = model.model_spec?.constraints?.top_p?.default || 0.9;
 
         const response = await fetch(`${BASE_URL}/chat/completions`, {
           method: 'POST',
@@ -673,39 +913,243 @@
             venice_parameters: veniceParams,
             max_tokens: 2000,
             temperature: temperature,
-            top_p: top_p
-          })
+            top_p: top_p,
+            stream: true
+          }),
+          signal: controller.signal
         });
 
         if (!response.ok) {
-          const errorData = await response.text();
-          throw new Error(`API error: ${response.status} - ${errorData}`);
+          throw new Error(`API error: ${response.status}`);
         }
 
-        const data = await response.json();
-        const endTime = Date.now();
-        const duration = endTime - startTime;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
         
-        responseEl.innerHTML = formatResponse(data.choices[0].message.content);
-        
-        // Extract token usage and calculate tokens per second
-        let tokensPerSecond = '';
-        if (data.usage) {
-          const completionTokens = data.usage.completion_tokens || data.usage.total_tokens || 0;
-          if (completionTokens > 0 && duration > 0) {
-            const durationInSeconds = duration / 1000;
-            const tokensPerSec = (completionTokens / durationInSeconds).toFixed(1);
-            tokensPerSecond = ` • ${tokensPerSec} tokens/s`;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop(); // Keep incomplete line in buffer
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              if (data === '[DONE]') continue;
+              
+              try {
+                const json = JSON.parse(data);
+                const delta = json.choices?.[0]?.delta?.content;
+                if (delta) {
+                  fullContent += delta;
+                  
+                  // Update response in real-time if this is the selected model
+                  if (selectedModelId === model.id) {
+                    const contentEl = selectedResponse.querySelector('.response-content');
+                    contentEl.innerHTML = formatResponse(fullContent);
+                    contentEl.scrollTop = contentEl.scrollHeight;
+                  }
+                  
+                  // Store updated content
+                  modelResponses[model.id].content = fullContent;
+                }
+                
+                // Track token usage
+                if (json.usage) {
+                  completionTokens = json.usage.completion_tokens || json.usage.total_tokens || 0;
+                }
+              } catch (e) {
+                // Skip invalid JSON
+              }
+            }
           }
         }
         
-        timeEl.textContent = formatTime(duration) + tokensPerSecond;
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+        const durationInSeconds = duration / 1000;
+        
+        let tokensPerSecond = '';
+        if (completionTokens > 0 && duration > 0) {
+          const tokensPerSec = (completionTokens / durationInSeconds).toFixed(1);
+          tokensPerSecond = ` • ${tokensPerSec} tokens/s`;
+        }
+        
+        modelResponses[model.id].time = formatTime(duration);
+        modelResponses[model.id].tokensPerSecond = tokensPerSecond;
+        
+        // Update view if this is the selected model
+        if (selectedModelId === model.id) {
+          updateResponseView(model.id);
+        }
+        
+        updateModelStatus(model.id, 'complete');
       } catch (error) {
-        responseEl.innerHTML = `<div class="error"><span class="material-icons">error</span>${error.message}</div>`;
-        timeEl.textContent = 'Error';
+        if (error.name === 'AbortError') {
+          return; // Stream was cancelled
+        }
+        
+        const errorMsg = error.message;
+        modelResponses[model.id].content = `Error: ${errorMsg}`;
+        modelResponses[model.id].time = 'Error';
+        
+        if (selectedModelId === model.id) {
+          const contentEl = selectedResponse.querySelector('.response-content');
+          contentEl.innerHTML = `<div class="error"><span class="material-icons">error</span>${errorMsg}</div>`;
+        }
+        
+        updateModelStatus(model.id, 'error');
       } finally {
-        responseEl.classList.remove('loading');
+        delete streamingControllers[model.id];
       }
+    }
+
+    async function fetchVeniceModels() {
+      refreshModelsButton.disabled = true;
+      refreshModelsButton.querySelector('.material-icons').classList.add('spin');
+      modelsList.innerHTML = '<div class="empty-state"><div class="loading">Loading models...</div></div>';
+      
+      try {
+        const response = await fetch(`${BASE_URL}/models?type=text`, {
+          headers: { 'Authorization': `Bearer ${API_KEY}` }
+        });
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        if (data && data.data && Array.isArray(data.data)) {
+          
+          const filteredModels = data.data.filter(model => {
+            const isOffline = model.model_spec?.offline;
+            if (!model.id || isOffline) {
+              return false;
+            }
+
+            if (model.id === 'deepseek-r1-671b') {
+              return true; 
+            }
+            
+            if (model.id === 'qwen-2.5-qwq-32b') {
+              return true;
+            }
+
+            const isCodingModelById = model.id.toLowerCase().includes('code') || model.id.toLowerCase().includes('coder');
+            const isCodingModelBySpec = model.model_spec?.capabilities?.optimizedForCode === true;
+            
+            return !isCodingModelById && !isCodingModelBySpec;
+          });
+
+          const isReasoningModel = (model) => {
+            const traits = model.model_spec?.traits || [];
+            return traits.includes('default_reasoning') || model.id.toLowerCase().includes('reasoning');
+          };
+
+          availableModels = filteredModels.sort((a, b) => {
+            const aIsReasoning = isReasoningModel(a);
+            const bIsReasoning = isReasoningModel(b);
+
+            if (aIsReasoning !== bIsReasoning) {
+              return aIsReasoning ? 1 : -1;
+            }
+            
+            const contextA = a.model_spec?.availableContextTokens || 0;
+            const contextB = b.model_spec?.availableContextTokens || 0;
+            return contextA - contextB;
+          });
+          
+          console.log('Fetched and sorted models:', availableModels);
+          
+          // Render dashboard
+          renderDashboard();
+        } else {
+          throw new Error('Unexpected API response format for models.');
+        }
+        renderModelList();
+      } catch (error) {
+        console.error('Failed to fetch models:', error);
+        modelsList.innerHTML = `<div class="error"><span class="material-icons">error</span>Failed to load models: ${error.message}</div>`;
+        availableModels = [];
+      } finally {
+        refreshModelsButton.disabled = false;
+        if (refreshModelsButton.querySelector('.material-icons.spin')) {
+            refreshModelsButton.querySelector('.material-icons').classList.remove('spin');
+        }
+      }
+    }
+
+    function renderDashboard() {
+      dashboardGrid.innerHTML = '';
+      
+      if (availableModels.length === 0) {
+        dashboardGrid.innerHTML = '<p>No models available</p>';
+        return;
+      }
+      
+      availableModels.forEach((model, index) => {
+        const card = document.createElement('div');
+        card.classList.add('model-card');
+        
+        const spec = model.model_spec || {};
+        const capabilities = spec.capabilities || {};
+        const constraints = spec.constraints || {};
+        const pricing = spec.pricing || {};
+        const traits = spec.traits || [];
+        
+        card.innerHTML = `
+          <div class="model-card-header">
+            <div class="model-card-title">${model.id}</div>
+          </div>
+          
+          <div class="model-card-section">
+            <h3>Context</h3>
+            <p>${spec.availableContextTokens?.toLocaleString() || 'N/A'} tokens</p>
+          </div>
+          
+          <div class="model-card-section">
+            <h3>Pricing</h3>
+            <p>Input: $${pricing.input?.usd || 'N/A'} / ${pricing.input?.vcu || 'N/A'} VCU</p>
+            <p>Output: $${pricing.output?.usd || 'N/A'} / ${pricing.output?.vcu || 'N/A'} VCU</p>
+          </div>
+          
+          <div class="model-card-section">
+            <h3>Capabilities</h3>
+            <div>
+              <span class="capability-badge ${capabilities.supportsFunctionCalling ? 'true' : 'false'}">Function Calling</span>
+              <span class="capability-badge ${capabilities.supportsReasoning ? 'true' : 'false'}">Reasoning</span>
+              <span class="capability-badge ${capabilities.supportsVision ? 'true' : 'false'}">Vision</span>
+              <span class="capability-badge ${capabilities.supportsWebSearch ? 'true' : 'false'}">Web Search</span>
+              <span class="capability-badge ${capabilities.supportsResponseSchema ? 'true' : 'false'}">Response Schema</span>
+              <span class="capability-badge ${capabilities.supportsLogProbs ? 'true' : 'false'}">Log Probs</span>
+              <span class="capability-badge ${capabilities.optimizedForCode ? 'true' : 'false'}">Code Optimized</span>
+            </div>
+          </div>
+          
+          <div class="model-card-section">
+            <h3>Constraints</h3>
+            <p>Temperature: ${constraints.temperature?.default || 'N/A'}</p>
+            <p>Top P: ${constraints.top_p?.default || 'N/A'}</p>
+          </div>
+          
+          ${traits.length > 0 ? `
+          <div class="model-card-section">
+            <h3>Traits</h3>
+            <ul>
+              ${traits.map(trait => `<li>• ${trait}</li>`).join('')}
+            </ul>
+          </div>
+          ` : ''}
+          
+          <div class="model-card-section">
+            <h3>Quantization</h3>
+            <p>${capabilities.quantization || 'N/A'}</p>
+          </div>
+        `;
+        
+        dashboardGrid.appendChild(card);
+      });
     }
 
     async function sendPrompt() {
@@ -719,21 +1163,22 @@
         return;
       }
 
+      // Cancel any existing streams
+      Object.values(streamingControllers).forEach(controller => controller.abort());
+      streamingControllers = {};
+      modelResponses = {};
+
       sendButton.disabled = true;
       sendButton.querySelector('.material-icons').classList.add('spin');
       
+      // Reset all model statuses
       availableModels.forEach(model => {
-        const responseEl = responsesGrid.querySelector(`[data-model="${model.id}"]`);
-        const modelCard = responseEl.closest('.model-response');
-        const timeEl = modelCard.querySelector('.response-time');
-        if (responseEl) {
-            responseEl.textContent = 'Preparing...';
-            responseEl.classList.add('loading');
-        }
-        if (timeEl) timeEl.textContent = '';
+        updateModelStatus(model.id, 'loading');
       });
       
-      const promises = availableModels.map(model => queryModel(model, prompt, webSearch));
+      // Start streaming for all models simultaneously
+      const promises = availableModels.map(model => queryModelStreaming(model, prompt, webSearch));
+      
       try {
         await Promise.all(promises);
       } catch (error) {
@@ -746,8 +1191,23 @@
       }
     }
 
+    // Event listeners
     sendButton.addEventListener('click', sendPrompt);
     refreshModelsButton.addEventListener('click', fetchVeniceModels);
+    dashboardButton.addEventListener('click', () => {
+      dashboardModal.classList.add('show');
+      renderDashboard();
+    });
+    closeDashboard.addEventListener('click', () => {
+      dashboardModal.classList.remove('show');
+    });
+    
+    // Close modal when clicking outside
+    dashboardModal.addEventListener('click', (e) => {
+      if (e.target === dashboardModal) {
+        dashboardModal.classList.remove('show');
+      }
+    });
 
     promptTextarea.addEventListener('keypress', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
@@ -773,6 +1233,18 @@
       }
     }
 
+    // Add copy button to response header
+    selectedResponse.querySelector('.header-actions').insertAdjacentHTML('afterbegin', 
+      '<button class="copy-button" title="Copy response"><span class="material-icons">content_copy</span></button>'
+    );
+    
+    selectedResponse.querySelector('.copy-button').addEventListener('click', () => {
+      const responseContent = selectedResponse.querySelector('.response-content');
+      const textToCopy = responseContent.innerText;
+      copyToClipboard(textToCopy);
+    });
+
+    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
         fetchVeniceModels();
 
@@ -790,4 +1262,4 @@
     });
   </script>
 </body>
-</html> 
+</html>
