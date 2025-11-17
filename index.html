@@ -125,9 +125,10 @@
     }
 
     .model-item-time {
-      font-size: 11px;
-      color: var(--text-secondary);
-      font-weight: 400;
+      font-size: 13px;
+      color: var(--orange);
+      font-weight: 600;
+      letter-spacing: 0.3px;
     }
 
     .model-item-status {
@@ -731,11 +732,18 @@
       <div class="prompt-section">
         <textarea id="prompt" placeholder="Enter your prompt here..."></textarea>
         <div class="controls">
-          <label for="webSearch" class="web-search-toggle">
-            <input type="checkbox" id="webSearch">
-            <span class="toggle-slider"></span>
-            <span>Enable Web Search</span>
-          </label>
+          <div style="display: flex; gap: 20px; align-items: center;">
+            <label for="webSearch" class="web-search-toggle">
+              <input type="checkbox" id="webSearch">
+              <span class="toggle-slider"></span>
+              <span>Enable Web Search</span>
+            </label>
+            <label for="disableReasoning" class="web-search-toggle">
+              <input type="checkbox" id="disableReasoning">
+              <span class="toggle-slider"></span>
+              <span>Disable Reasoning</span>
+            </label>
+          </div>
           <div style="display: flex; gap: 10px;">
             <button id="refreshModelsButton" class="button refresh-button" title="Refresh model list">
               <span class="material-icons">refresh</span>
@@ -803,6 +811,7 @@
     const refreshModelsButton = document.getElementById('refreshModelsButton');
     const promptTextarea = document.getElementById('prompt');
     const webSearchCheckbox = document.getElementById('webSearch');
+    const disableReasoningCheckbox = document.getElementById('disableReasoning');
     const dashboardButton = document.getElementById('dashboardButton');
     const dashboardModal = document.getElementById('dashboardModal');
     const dashboardGrid = document.getElementById('dashboardGrid');
@@ -951,7 +960,7 @@
       }
     }
 
-    async function queryModelStreaming(model, prompt, webSearch) {
+    async function queryModelStreaming(model, prompt, webSearch, disableReasoning) {
       const startTime = Date.now();
       let fullContent = '';
       let completionTokens = 0;
@@ -978,7 +987,10 @@
       streamingControllers[model.id] = controller;
       
       try {
-        const veniceParams = { enable_web_search: webSearch ? 'on' : 'off' };
+        const veniceParams = { 
+          enable_web_search: webSearch ? 'on' : 'off',
+          disable_thinking: disableReasoning ? true : false
+        };
         const temperature = model.model_spec?.constraints?.temperature?.default || 0.7;
         const top_p = model.model_spec?.constraints?.top_p?.default || 0.9;
 
@@ -1196,9 +1208,9 @@
           </div>
           
           <div class="model-card-section">
-            <h3>Pricing (per 1M tokens)</h3>
-            <p>Input: $${pricing.input?.usd || 'N/A'} / ${pricing.input?.vcu || 'N/A'} VCU</p>
-            <p>Output: $${pricing.output?.usd || 'N/A'} / ${pricing.output?.vcu || 'N/A'} VCU</p>
+            <h3>Pricing</h3>
+            <p>Input: $${pricing.input?.usd || 'N/A'} per 1M tokens${pricing.input?.vcu ? ` / ${pricing.input.vcu} VCU` : ''}</p>
+            <p>Output: $${pricing.output?.usd || 'N/A'} per 1M tokens${pricing.output?.vcu ? ` / ${pricing.output.vcu} VCU` : ''}</p>
           </div>
           
           <div class="model-card-section">
@@ -1264,7 +1276,8 @@
       });
       
       // Start streaming for all models simultaneously
-      const promises = availableModels.map(model => queryModelStreaming(model, prompt, webSearch));
+      const disableReasoning = disableReasoningCheckbox.checked;
+      const promises = availableModels.map(model => queryModelStreaming(model, prompt, webSearch, disableReasoning));
       
       try {
         await Promise.all(promises);
