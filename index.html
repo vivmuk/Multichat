@@ -676,6 +676,157 @@
       opacity: 0.5;
     }
 
+    /* Pricing Overview Section */
+    .pricing-overview {
+      background: linear-gradient(135deg, var(--orange-light) 0%, var(--blue-light) 100%);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      border: 2px solid var(--border-color);
+    }
+
+    .pricing-overview h3 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-color);
+      margin: 0 0 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pricing-overview h3 .material-icons {
+      font-size: 28px;
+      color: var(--orange);
+    }
+
+    .pricing-intro {
+      background: var(--surface-color);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      margin-bottom: 25px;
+      border-left: 4px solid var(--orange);
+    }
+
+    .pricing-intro p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-color);
+    }
+
+    .pricing-intro strong {
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    .pricing-section {
+      margin-bottom: 25px;
+    }
+
+    .pricing-section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pricing-section-title .material-icons {
+      font-size: 20px;
+      color: var(--orange);
+    }
+
+    .pricing-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface-color);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 15px;
+    }
+
+    .pricing-table thead {
+      background: var(--orange);
+      color: white;
+    }
+
+    .pricing-table th {
+      padding: 12px 15px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pricing-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 13px;
+      color: var(--text-color);
+    }
+
+    .pricing-table tbody tr:hover {
+      background: var(--background-color);
+    }
+
+    .pricing-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .pricing-table .model-name {
+      font-weight: 600;
+      color: var(--orange);
+    }
+
+    .pricing-table .max-tokens {
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .pricing-summary {
+      background: var(--surface-color);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      border: 2px solid var(--green);
+    }
+
+    .pricing-summary h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--green);
+      margin: 0 0 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pricing-summary ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .pricing-summary li {
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text-color);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .pricing-summary li:before {
+      content: "✓";
+      color: var(--green);
+      font-weight: bold;
+      font-size: 16px;
+    }
+
     @media (max-width: 768px) {
       .app-container {
         flex-direction: column;
@@ -790,6 +941,9 @@
         <button class="close-button" id="closeDashboard">
           <span class="material-icons">close</span>
         </button>
+      </div>
+      <div class="pricing-overview" id="pricingOverview">
+        <!-- Pricing overview will be inserted here -->
       </div>
       <div class="models-grid" id="dashboardGrid">
         <!-- Model cards will be inserted here -->
@@ -1185,6 +1339,261 @@
     }
 
     function renderDashboard() {
+      // Render pricing overview
+      const pricingOverview = document.getElementById('pricingOverview');
+      pricingOverview.innerHTML = `
+        <h3>
+          <span class="material-icons">attach_money</span>
+          Venice API – 31 Diem Compute Budget Overview
+        </h3>
+        
+        <div class="pricing-intro">
+          <p>With <strong>31 Diem = $31 of compute</strong>, here's how many tokens, generations, or characters you can produce across all model types.</p>
+        </div>
+
+        <div class="pricing-section">
+          <div class="pricing-section-title">
+            <span class="material-icons">text_fields</span>
+            Text Models (per 1M tokens)
+          </div>
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Input Price ($/1M)</th>
+                <th>Output Price ($/1M)</th>
+                <th>Max Input Tokens</th>
+                <th>Max Output Tokens</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="model-name">Venice Small (qwen3-4b)</td>
+                <td>$0.05</td>
+                <td>$0.15</td>
+                <td class="max-tokens">620M</td>
+                <td class="max-tokens">206M</td>
+              </tr>
+              <tr>
+                <td class="model-name">Qwen 3 235B A22B Instruct</td>
+                <td>$0.15</td>
+                <td>$0.75</td>
+                <td class="max-tokens">206M</td>
+                <td class="max-tokens">41M</td>
+              </tr>
+              <tr>
+                <td class="model-name">Llama 3.2 3B</td>
+                <td>$0.15</td>
+                <td>$0.60</td>
+                <td class="max-tokens">206M</td>
+                <td class="max-tokens">51M</td>
+              </tr>
+              <tr>
+                <td class="model-name">Venice Uncensored</td>
+                <td>$0.20</td>
+                <td>$0.90</td>
+                <td class="max-tokens">155M</td>
+                <td class="max-tokens">34M</td>
+              </tr>
+              <tr>
+                <td class="model-name">Venice Large (D) qwen3-235b</td>
+                <td>$0.45</td>
+                <td>$3.50</td>
+                <td class="max-tokens">68M</td>
+                <td class="max-tokens">8.8M</td>
+              </tr>
+              <tr>
+                <td class="model-name">Qwen 3 235B A22B Thinking</td>
+                <td>$0.45</td>
+                <td>$3.50</td>
+                <td class="max-tokens">68M</td>
+                <td class="max-tokens">8.8M</td>
+              </tr>
+              <tr>
+                <td class="model-name">Venice Medium (3.1) mistral-31-24b</td>
+                <td>$0.50</td>
+                <td>$2.00</td>
+                <td class="max-tokens">62M</td>
+                <td class="max-tokens">15.5M</td>
+              </tr>
+              <tr>
+                <td class="model-name">Llama 3.3 70B</td>
+                <td>$0.70</td>
+                <td>$2.80</td>
+                <td class="max-tokens">44M</td>
+                <td class="max-tokens">11M</td>
+              </tr>
+              <tr>
+                <td class="model-name">Qwen 3 Coder 480B</td>
+                <td>$0.75</td>
+                <td>$3.00</td>
+                <td class="max-tokens">41M</td>
+                <td class="max-tokens">10.3M</td>
+              </tr>
+              <tr>
+                <td class="model-name">GLM 4.6</td>
+                <td>$0.85</td>
+                <td>$2.75</td>
+                <td class="max-tokens">36M</td>
+                <td class="max-tokens">11.3M</td>
+              </tr>
+              <tr>
+                <td class="model-name">OpenAI GPT OSS 120B (beta)</td>
+                <td>$0.07</td>
+                <td>$0.30</td>
+                <td class="max-tokens">443M</td>
+                <td class="max-tokens">103M</td>
+              </tr>
+              <tr>
+                <td class="model-name">Google Gemma 3 27B (beta)</td>
+                <td>$0.12</td>
+                <td>$0.20</td>
+                <td class="max-tokens">258M</td>
+                <td class="max-tokens">155M</td>
+              </tr>
+              <tr>
+                <td class="model-name">Qwen 3 Next 80B (beta)</td>
+                <td>$0.35</td>
+                <td>$1.90</td>
+                <td class="max-tokens">88M</td>
+                <td class="max-tokens">16.3M</td>
+              </tr>
+              <tr>
+                <td class="model-name">DeepSeek R1 (beta)</td>
+                <td>$0.85</td>
+                <td>$2.75</td>
+                <td class="max-tokens">36M</td>
+                <td class="max-tokens">11.3M</td>
+              </tr>
+              <tr>
+                <td class="model-name">Hermes 3 Llama 3.1 405B (beta)</td>
+                <td>$1.10</td>
+                <td>$3.00</td>
+                <td class="max-tokens">28M</td>
+                <td class="max-tokens">10.3M</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pricing-section">
+          <div class="pricing-section-title">
+            <span class="material-icons">image</span>
+            Image Models
+          </div>
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Price per Generation</th>
+                <th>Max Generations (31 Diem)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="model-name">Nano Banana Pro</td>
+                <td>$0.18</td>
+                <td class="max-tokens">172</td>
+              </tr>
+              <tr>
+                <td class="model-name">Venice SD35</td>
+                <td>$0.01</td>
+                <td class="max-tokens">3,100</td>
+              </tr>
+              <tr>
+                <td class="model-name">HiDream</td>
+                <td>$0.01</td>
+                <td class="max-tokens">3,100</td>
+              </tr>
+              <tr>
+                <td class="model-name">Qwen Image</td>
+                <td>$0.01</td>
+                <td class="max-tokens">3,100</td>
+              </tr>
+              <tr>
+                <td class="model-name">Lustify (SDXL & v7)</td>
+                <td>$0.01</td>
+                <td class="max-tokens">3,100</td>
+              </tr>
+              <tr>
+                <td class="model-name">Anime (WAI)</td>
+                <td>$0.01</td>
+                <td class="max-tokens">3,100</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pricing-section">
+          <div class="pricing-section-title">
+            <span class="material-icons">edit</span>
+            Image Editing / Upscaling
+          </div>
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Price</th>
+                <th>Max with 31 Diem</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="model-name">Upscale / Enhance (2x)</td>
+                <td>$0.02</td>
+                <td class="max-tokens">1,550</td>
+              </tr>
+              <tr>
+                <td class="model-name">Upscale / Enhance (4x)</td>
+                <td>$0.08</td>
+                <td class="max-tokens">387</td>
+              </tr>
+              <tr>
+                <td class="model-name">Image Editing (Inpaint, Qwen Image)</td>
+                <td>$0.04</td>
+                <td class="max-tokens">775</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pricing-section">
+          <div class="pricing-section-title">
+            <span class="material-icons">volume_up</span>
+            Audio Models
+          </div>
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Price per 1M characters</th>
+                <th>Max Characters (31 Diem)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="model-name">Kokoro TTS (tts-kokoro)</td>
+                <td>$3.50</td>
+                <td class="max-tokens">8.86M characters</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pricing-summary">
+          <h4>
+            <span class="material-icons">check_circle</span>
+            Summary
+          </h4>
+          <ul>
+            <li><strong>Text Models:</strong> Up to <strong>620M input tokens</strong> or <strong>8.8M output tokens</strong> depending on model.</li>
+            <li><strong>Image Models:</strong> Between <strong>172 (Nano Banana Pro)</strong> and <strong>3,100 generations</strong> (SD35, HiDream, Qwen Image, Lustify, Anime).</li>
+            <li><strong>Image Editing/Upscaling:</strong> Up to <strong>1,550 2x upscales</strong> or <strong>775 edits</strong>.</li>
+            <li><strong>Audio Models:</strong> Nearly <strong>9 million characters</strong> of speech synthesis with Kokoro TTS.</li>
+          </ul>
+        </div>
+      `;
+
       dashboardGrid.innerHTML = '';
       
       if (availableModels.length === 0) {
