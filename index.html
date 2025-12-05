@@ -761,6 +761,36 @@
       font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      position: relative;
+    }
+
+    .pricing-table th.sortable {
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s;
+    }
+
+    .pricing-table th.sortable:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .pricing-table th.sortable::after {
+      content: ' ↕';
+      opacity: 0.5;
+      font-size: 12px;
+      margin-left: 5px;
+    }
+
+    .pricing-table th.sortable.sort-asc::after {
+      content: ' ↑';
+      opacity: 1;
+      color: white;
+    }
+
+    .pricing-table th.sortable.sort-desc::after {
+      content: ' ↓';
+      opacity: 1;
+      color: white;
     }
 
     .pricing-table td {
@@ -962,6 +992,7 @@
     let selectedModelId = null;
     let modelResponses = {}; // Store responses for all models
     let streamingControllers = {}; // Store AbortControllers for streaming
+    let pricingTableSort = { column: null, direction: 'asc' }; // Track sorting state
 
     const modelsList = document.getElementById('modelsList');
     const selectedResponse = document.getElementById('selectedResponse');
@@ -1332,6 +1363,39 @@
       }
     }
 
+    // Make sortPricingTable accessible globally for onclick handlers
+    window.sortPricingTable = function(column) {
+      // If column is null, clear the sort
+      if (column === null) {
+        pricingTableSort.column = null;
+        pricingTableSort.direction = 'asc';
+      } else {
+        // Toggle direction if clicking the same column, otherwise set to ascending
+        if (pricingTableSort.column === column) {
+          pricingTableSort.direction = pricingTableSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+          pricingTableSort.column = column;
+          pricingTableSort.direction = 'asc';
+        }
+      }
+      renderDashboard();
+    };
+
+    // Sort model cards
+    window.sortModelCards = function(sortColumn) {
+      localStorage.setItem('cardSortColumn', sortColumn);
+      localStorage.setItem('cardSortDirection', 'asc');
+      renderDashboard();
+    };
+
+    // Toggle sort direction for model cards
+    window.toggleCardSortDirection = function() {
+      const currentDirection = localStorage.getItem('cardSortDirection') || 'asc';
+      const newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+      localStorage.setItem('cardSortDirection', newDirection);
+      renderDashboard();
+    };
+
     function renderDashboard() {
       // Render pricing overview
       const pricingOverview = document.getElementById('pricingOverview');
@@ -1347,18 +1411,71 @@
         return tokens.toLocaleString();
       };
       
-      // Generate text models table from available models
-      const textModelsRows = availableModels.map(model => {
+      // Prepare models with calculated values for sorting
+      let modelsWithData = availableModels.map(model => {
         const pricing = model.model_spec?.pricing || {};
         const inputPrice = pricing.input?.usd || 0;
         const outputPrice = pricing.output?.usd || 0;
         
         // Calculate max tokens: 31 Diem = $31
-        // Max input tokens = $31 / (input price per 1M tokens) * 1M
-        // Max output tokens = $31 / (output price per 1M tokens) * 1M
         const maxInputTokens = inputPrice > 0 ? (DIEM_BUDGET / inputPrice) * 1000000 : 0;
         const maxOutputTokens = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1000000 : 0;
         
+        return {
+          model: model,
+          inputPrice: inputPrice,
+          outputPrice: outputPrice,
+          maxInputTokens: maxInputTokens,
+          maxOutputTokens: maxOutputTokens
+        };
+      });
+      
+      // Sort models if a sort column is selected
+      if (pricingTableSort.column) {
+        modelsWithData.sort((a, b) => {
+          let aVal, bVal;
+          
+          switch(pricingTableSort.column) {
+            case 'model':
+              aVal = a.model.id.toLowerCase();
+              bVal = b.model.id.toLowerCase();
+              break;
+            case 'inputPrice':
+              aVal = a.inputPrice;
+              bVal = b.inputPrice;
+              break;
+            case 'outputPrice':
+              aVal = a.outputPrice;
+              bVal = b.outputPrice;
+              break;
+            case 'maxInputTokens':
+              aVal = a.maxInputTokens;
+              bVal = b.maxInputTokens;
+              break;
+            case 'maxOutputTokens':
+              aVal = a.maxOutputTokens;
+              bVal = b.maxOutputTokens;
+              break;
+            default:
+              return 0;
+          }
+          
+          // Handle string comparison for model names
+          if (typeof aVal === 'string') {
+            return pricingTableSort.direction === 'asc' 
+              ? aVal.localeCompare(bVal)
+              : bVal.localeCompare(aVal);
+          }
+          
+          // Handle numeric comparison
+          return pricingTableSort.direction === 'asc' 
+            ? aVal - bVal
+            : bVal - aVal;
+        });
+      }
+      
+      // Generate table rows from sorted data
+      const textModelsRows = modelsWithData.map(({ model, inputPrice, outputPrice, maxInputTokens, maxOutputTokens }) => {
         return `
               <tr>
                 <td class="model-name">${model.id}</td>
@@ -1369,6 +1486,14 @@
               </tr>
             `;
       }).join('');
+      
+      // Determine sort classes for headers
+      const getSortClass = (column) => {
+        if (pricingTableSort.column === column) {
+          return `sortable sort-${pricingTableSort.direction}`;
+        }
+        return 'sortable';
+      };
       
       pricingOverview.innerHTML = `
         <h3>
@@ -1381,18 +1506,25 @@
         </div>
 
         <div class="pricing-section">
-          <div class="pricing-section-title">
-            <span class="material-icons">text_fields</span>
-            Text Models (per 1M tokens) - ${availableModels.length} Available
+          <div class="pricing-section-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="material-icons">text_fields</span>
+              Text Models (per 1M tokens) - ${availableModels.length} Available
+            </div>
+            ${pricingTableSort.column ? `
+              <button onclick="sortPricingTable(null)" style="background: var(--orange); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
+                Clear Sort
+              </button>
+            ` : ''}
           </div>
           <table class="pricing-table">
             <thead>
               <tr>
-                <th>Model</th>
-                <th>Input Price ($/1M)</th>
-                <th>Output Price ($/1M)</th>
-                <th>Max Input Tokens</th>
-                <th>Max Output Tokens</th>
+                <th class="${getSortClass('model')}" onclick="sortPricingTable('model')">Model</th>
+                <th class="${getSortClass('inputPrice')}" onclick="sortPricingTable('inputPrice')">Input Price ($/1M)</th>
+                <th class="${getSortClass('outputPrice')}" onclick="sortPricingTable('outputPrice')">Output Price ($/1M)</th>
+                <th class="${getSortClass('maxInputTokens')}" onclick="sortPricingTable('maxInputTokens')">Max Input Tokens</th>
+                <th class="${getSortClass('maxOutputTokens')}" onclick="sortPricingTable('maxOutputTokens')">Max Output Tokens</th>
               </tr>
             </thead>
             <tbody>
@@ -1552,14 +1684,99 @@
         </div>
       `;
 
+      // Add sorting controls for model cards
+      let modelsToRender = [...availableModels];
+      let cardSortColumn = localStorage.getItem('cardSortColumn') || 'default';
+      let cardSortDirection = localStorage.getItem('cardSortDirection') || 'asc';
+      
+      // Sort models for cards
+      if (cardSortColumn !== 'default') {
+        modelsToRender.sort((a, b) => {
+          let aVal, bVal;
+          const specA = a.model_spec || {};
+          const specB = b.model_spec || {};
+          const pricingA = specA.pricing || {};
+          const pricingB = specB.pricing || {};
+          const capabilitiesA = specA.capabilities || {};
+          const capabilitiesB = specB.capabilities || {};
+          
+          switch(cardSortColumn) {
+            case 'name':
+              aVal = a.id.toLowerCase();
+              bVal = b.id.toLowerCase();
+              break;
+            case 'context':
+              aVal = specA.availableContextTokens || 0;
+              bVal = specB.availableContextTokens || 0;
+              break;
+            case 'inputPrice':
+              aVal = pricingA.input?.usd || 0;
+              bVal = pricingB.input?.usd || 0;
+              break;
+            case 'outputPrice':
+              aVal = pricingA.output?.usd || 0;
+              bVal = pricingB.output?.usd || 0;
+              break;
+            case 'reasoning':
+              aVal = capabilitiesA.supportsReasoning ? 1 : 0;
+              bVal = capabilitiesB.supportsReasoning ? 1 : 0;
+              break;
+            case 'vision':
+              aVal = capabilitiesA.supportsVision ? 1 : 0;
+              bVal = capabilitiesB.supportsVision ? 1 : 0;
+              break;
+            default:
+              return 0;
+          }
+          
+          if (typeof aVal === 'string') {
+            return cardSortDirection === 'asc' 
+              ? aVal.localeCompare(bVal)
+              : bVal.localeCompare(aVal);
+          }
+          
+          return cardSortDirection === 'asc' 
+            ? aVal - bVal
+            : bVal - aVal;
+        });
+      }
+      
+      // Create sort controls container
+      const sortControlsContainer = document.createElement('div');
+      sortControlsContainer.style.cssText = 'margin-bottom: 20px; display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--background-color); border-radius: var(--border-radius);';
+      sortControlsContainer.innerHTML = `
+        <label style="font-weight: 600; color: var(--text-color); display: flex; align-items: center; gap: 8px;">
+          <span class="material-icons" style="font-size: 20px; color: var(--orange);">sort</span>
+          Sort Models:
+        </label>
+        <select id="cardSortSelect" onchange="sortModelCards(this.value)" style="padding: 8px 12px; border: 2px solid var(--border-color); border-radius: var(--border-radius); font-size: 14px; background: var(--surface-color); color: var(--text-color); cursor: pointer; min-width: 200px;">
+          <option value="default" ${cardSortColumn === 'default' ? 'selected' : ''}>Default (Reasoning first, then Context)</option>
+          <option value="name" ${cardSortColumn === 'name' ? 'selected' : ''}>Name (A-Z)</option>
+          <option value="context" ${cardSortColumn === 'context' ? 'selected' : ''}>Context Tokens</option>
+          <option value="inputPrice" ${cardSortColumn === 'inputPrice' ? 'selected' : ''}>Input Price (Low to High)</option>
+          <option value="outputPrice" ${cardSortColumn === 'outputPrice' ? 'selected' : ''}>Output Price (Low to High)</option>
+          <option value="reasoning" ${cardSortColumn === 'reasoning' ? 'selected' : ''}>Reasoning Capability</option>
+          <option value="vision" ${cardSortColumn === 'vision' ? 'selected' : ''}>Vision Capability</option>
+        </select>
+        ${cardSortColumn !== 'default' ? `
+          <button onclick="toggleCardSortDirection()" style="background: var(--orange); color: white; border: none; padding: 8px 15px; border-radius: var(--border-radius); cursor: pointer; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+            <span class="material-icons" style="font-size: 18px;">${cardSortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}</span>
+            ${cardSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+          </button>
+        ` : ''}
+      `;
+      
       dashboardGrid.innerHTML = '';
+      dashboardGrid.appendChild(sortControlsContainer);
       
       if (availableModels.length === 0) {
-        dashboardGrid.innerHTML = '<p>No models available</p>';
+        const noModelsMsg = document.createElement('p');
+        noModelsMsg.textContent = 'No models available';
+        dashboardGrid.appendChild(noModelsMsg);
         return;
       }
       
-      availableModels.forEach((model, index) => {
+      modelsToRender.forEach((model, index) => {
         const card = document.createElement('div');
         card.classList.add('model-card');
         
