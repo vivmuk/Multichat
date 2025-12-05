@@ -1335,6 +1335,41 @@
     function renderDashboard() {
       // Render pricing overview
       const pricingOverview = document.getElementById('pricingOverview');
+      
+      // Calculate max tokens for 31 Diem ($31)
+      const DIEM_BUDGET = 31;
+      const formatMaxTokens = (tokens) => {
+        if (tokens >= 1000000) {
+          return (tokens / 1000000).toFixed(1) + 'M';
+        } else if (tokens >= 1000) {
+          return (tokens / 1000).toFixed(1) + 'K';
+        }
+        return tokens.toLocaleString();
+      };
+      
+      // Generate text models table from available models
+      const textModelsRows = availableModels.map(model => {
+        const pricing = model.model_spec?.pricing || {};
+        const inputPrice = pricing.input?.usd || 0;
+        const outputPrice = pricing.output?.usd || 0;
+        
+        // Calculate max tokens: 31 Diem = $31
+        // Max input tokens = $31 / (input price per 1M tokens) * 1M
+        // Max output tokens = $31 / (output price per 1M tokens) * 1M
+        const maxInputTokens = inputPrice > 0 ? (DIEM_BUDGET / inputPrice) * 1000000 : 0;
+        const maxOutputTokens = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1000000 : 0;
+        
+        return `
+              <tr>
+                <td class="model-name">${model.id}</td>
+                <td>$${inputPrice.toFixed(2)}</td>
+                <td>$${outputPrice.toFixed(2)}</td>
+                <td class="max-tokens">${formatMaxTokens(maxInputTokens)}</td>
+                <td class="max-tokens">${formatMaxTokens(maxOutputTokens)}</td>
+              </tr>
+            `;
+      }).join('');
+      
       pricingOverview.innerHTML = `
         <h3>
           <span class="material-icons">attach_money</span>
@@ -1348,7 +1383,7 @@
         <div class="pricing-section">
           <div class="pricing-section-title">
             <span class="material-icons">text_fields</span>
-            Text Models (per 1M tokens)
+            Text Models (per 1M tokens) - ${availableModels.length} Available
           </div>
           <table class="pricing-table">
             <thead>
@@ -1361,111 +1396,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="model-name">Venice Small (qwen3-4b)</td>
-                <td>$0.05</td>
-                <td>$0.15</td>
-                <td class="max-tokens">620M</td>
-                <td class="max-tokens">206M</td>
-              </tr>
-              <tr>
-                <td class="model-name">Qwen 3 235B A22B Instruct</td>
-                <td>$0.15</td>
-                <td>$0.75</td>
-                <td class="max-tokens">206M</td>
-                <td class="max-tokens">41M</td>
-              </tr>
-              <tr>
-                <td class="model-name">Llama 3.2 3B</td>
-                <td>$0.15</td>
-                <td>$0.60</td>
-                <td class="max-tokens">206M</td>
-                <td class="max-tokens">51M</td>
-              </tr>
-              <tr>
-                <td class="model-name">Venice Uncensored</td>
-                <td>$0.20</td>
-                <td>$0.90</td>
-                <td class="max-tokens">155M</td>
-                <td class="max-tokens">34M</td>
-              </tr>
-              <tr>
-                <td class="model-name">Venice Large (D) qwen3-235b</td>
-                <td>$0.45</td>
-                <td>$3.50</td>
-                <td class="max-tokens">68M</td>
-                <td class="max-tokens">8.8M</td>
-              </tr>
-              <tr>
-                <td class="model-name">Qwen 3 235B A22B Thinking</td>
-                <td>$0.45</td>
-                <td>$3.50</td>
-                <td class="max-tokens">68M</td>
-                <td class="max-tokens">8.8M</td>
-              </tr>
-              <tr>
-                <td class="model-name">Venice Medium (3.1) mistral-31-24b</td>
-                <td>$0.50</td>
-                <td>$2.00</td>
-                <td class="max-tokens">62M</td>
-                <td class="max-tokens">15.5M</td>
-              </tr>
-              <tr>
-                <td class="model-name">Llama 3.3 70B</td>
-                <td>$0.70</td>
-                <td>$2.80</td>
-                <td class="max-tokens">44M</td>
-                <td class="max-tokens">11M</td>
-              </tr>
-              <tr>
-                <td class="model-name">Qwen 3 Coder 480B</td>
-                <td>$0.75</td>
-                <td>$3.00</td>
-                <td class="max-tokens">41M</td>
-                <td class="max-tokens">10.3M</td>
-              </tr>
-              <tr>
-                <td class="model-name">GLM 4.6</td>
-                <td>$0.85</td>
-                <td>$2.75</td>
-                <td class="max-tokens">36M</td>
-                <td class="max-tokens">11.3M</td>
-              </tr>
-              <tr>
-                <td class="model-name">OpenAI GPT OSS 120B (beta)</td>
-                <td>$0.07</td>
-                <td>$0.30</td>
-                <td class="max-tokens">443M</td>
-                <td class="max-tokens">103M</td>
-              </tr>
-              <tr>
-                <td class="model-name">Google Gemma 3 27B (beta)</td>
-                <td>$0.12</td>
-                <td>$0.20</td>
-                <td class="max-tokens">258M</td>
-                <td class="max-tokens">155M</td>
-              </tr>
-              <tr>
-                <td class="model-name">Qwen 3 Next 80B (beta)</td>
-                <td>$0.35</td>
-                <td>$1.90</td>
-                <td class="max-tokens">88M</td>
-                <td class="max-tokens">16.3M</td>
-              </tr>
-              <tr>
-                <td class="model-name">DeepSeek R1 (beta)</td>
-                <td>$0.85</td>
-                <td>$2.75</td>
-                <td class="max-tokens">36M</td>
-                <td class="max-tokens">11.3M</td>
-              </tr>
-              <tr>
-                <td class="model-name">Hermes 3 Llama 3.1 405B (beta)</td>
-                <td>$1.10</td>
-                <td>$3.00</td>
-                <td class="max-tokens">28M</td>
-                <td class="max-tokens">10.3M</td>
-              </tr>
+              ${textModelsRows}
             </tbody>
           </table>
         </div>
@@ -1580,10 +1511,43 @@
             Summary
           </h4>
           <ul>
-            <li><strong>Text Models:</strong> Up to <strong>620M input tokens</strong> or <strong>8.8M output tokens</strong> depending on model.</li>
-            <li><strong>Image Models:</strong> Between <strong>172 (Nano Banana Pro)</strong> and <strong>3,100 generations</strong> (SD35, HiDream, Qwen Image, Lustify, Anime).</li>
-            <li><strong>Image Editing/Upscaling:</strong> Up to <strong>1,550 2x upscales</strong> or <strong>775 edits</strong>.</li>
-            <li><strong>Audio Models:</strong> Nearly <strong>9 million characters</strong> of speech synthesis with Kokoro TTS.</li>
+            ${(() => {
+              // Calculate max tokens from available models
+              const DIEM_BUDGET = 31;
+              let maxInputTokens = 0;
+              let maxOutputTokens = 0;
+              
+              availableModels.forEach(model => {
+                const pricing = model.model_spec?.pricing || {};
+                const inputPrice = pricing.input?.usd || 0;
+                const outputPrice = pricing.output?.usd || 0;
+                
+                if (inputPrice > 0) {
+                  const tokens = (DIEM_BUDGET / inputPrice) * 1000000;
+                  if (tokens > maxInputTokens) maxInputTokens = tokens;
+                }
+                if (outputPrice > 0) {
+                  const tokens = (DIEM_BUDGET / outputPrice) * 1000000;
+                  if (tokens > maxOutputTokens) maxOutputTokens = tokens;
+                }
+              });
+              
+              const formatMax = (tokens) => {
+                if (tokens >= 1000000) {
+                  return (tokens / 1000000).toFixed(1) + 'M';
+                } else if (tokens >= 1000) {
+                  return (tokens / 1000).toFixed(1) + 'K';
+                }
+                return tokens.toLocaleString();
+              };
+              
+              return `
+                <li><strong>Text Models:</strong> Up to <strong>${formatMax(maxInputTokens)} input tokens</strong> or <strong>${formatMax(maxOutputTokens)} output tokens</strong> depending on model (${availableModels.length} models available).</li>
+                <li><strong>Image Models:</strong> Between <strong>172 (Nano Banana Pro)</strong> and <strong>3,100 generations</strong> (SD35, HiDream, Qwen Image, Lustify, Anime).</li>
+                <li><strong>Image Editing/Upscaling:</strong> Up to <strong>1,550 2x upscales</strong> or <strong>775 edits</strong>.</li>
+                <li><strong>Audio Models:</strong> Nearly <strong>9 million characters</strong> of speech synthesis with Kokoro TTS.</li>
+              `;
+            })()}
           </ul>
         </div>
       `;
