@@ -857,6 +857,197 @@
       font-size: 16px;
     }
 
+    /* --- 2025 Refresh Overrides --- */
+    :root {
+      --primary: #7c5cfc;
+      --primary-2: #4f8bff;
+      --accent: #1dd1a1;
+      --surface: rgba(255, 255, 255, 0.82);
+      --surface-strong: rgba(255, 255, 255, 0.94);
+      --glass-border: rgba(255, 255, 255, 0.35);
+      --backdrop: linear-gradient(135deg, #0f172a, #1f2937, #0b1324);
+      --text-strong: #0f172a;
+      --text-mid: #475569;
+      --radius-lg: 18px;
+      --shadow-glow: 0 20px 60px rgba(12, 18, 38, 0.35);
+      --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.18);
+    }
+
+    body {
+      background: var(--backdrop);
+      color: var(--text-strong);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .app-container {
+      background: radial-gradient(circle at 20% 20%, rgba(124, 92, 252, 0.12), transparent 30%),
+                  radial-gradient(circle at 80% 0%, rgba(79, 139, 255, 0.14), transparent 25%),
+                  radial-gradient(circle at 50% 80%, rgba(29, 209, 161, 0.12), transparent 30%);
+    }
+
+    .sidebar, .prompt-section, .model-response, .dashboard-content, .pricing-overview {
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--glass-border);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .sidebar-header h2,
+    .header h1,
+    .pricing-overview h3,
+    .pricing-section-title,
+    .model-card-title {
+      letter-spacing: 0.01em;
+    }
+
+    .header {
+      background: var(--surface-strong);
+      border-bottom: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(18px);
+    }
+
+    textarea {
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    button, .button {
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 50%, var(--accent) 100%);
+      box-shadow: 0 10px 30px rgba(124, 92, 252, 0.3);
+    }
+
+    .refresh-button {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--primary-2) 100%);
+    }
+
+    .pricing-section-title {
+      color: var(--text-strong);
+    }
+
+    .pricing-table {
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .pricing-table thead {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+    }
+
+    .pricing-table td, .pricing-table th {
+      color: var(--text-strong);
+    }
+
+    .model-card {
+      background: var(--surface);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-soft);
+      border-radius: var(--radius-lg);
+    }
+
+    .model-card-header {
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .models-grid .sort-controls {
+      grid-column: 1 / -1;
+    }
+
+    .capability-badge.true {
+      background: rgba(29, 209, 161, 0.16);
+      color: #0f9f77;
+    }
+
+    .capability-badge.false {
+      background: rgba(148, 163, 184, 0.18);
+      color: #475569;
+    }
+
+    /* Sidebar responsive */
+    .sidebar {
+      position: relative;
+      z-index: 5;
+    }
+
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 4;
+    }
+
+    .sidebar.mobile-closed {
+      transform: translateX(-110%);
+    }
+
+    .sidebar.mobile-open {
+      transform: translateX(0);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .header .menu-toggle {
+      display: none;
+      background: rgba(124, 92, 252, 0.12);
+      color: var(--primary);
+      border: 1px solid var(--glass-border);
+      padding: 10px 12px;
+      border-radius: 12px;
+    }
+
+    @media (max-width: 960px) {
+      body {
+        overflow: auto;
+      }
+      .app-container {
+        flex-direction: column;
+      }
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 300px;
+        max-width: 80vw;
+        background: var(--surface-strong);
+      }
+      .sidebar-backdrop.active {
+        display: block;
+      }
+      .header .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .prompt-section {
+        border-bottom: 1px solid var(--glass-border);
+      }
+      .response-container {
+        padding: 16px;
+      }
+      textarea {
+        min-height: 120px;
+      }
+      button, .button {
+        width: auto;
+        min-height: 44px;
+      }
+    }
+
     @media (max-width: 768px) {
       .app-container {
         flex-direction: column;
@@ -896,11 +1087,16 @@
         </div>
       </div>
     </div>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
     <!-- Main Content -->
     <div class="main-content">
       <div class="header">
         <div class="header-left">
+          <button id="sidebarToggle" class="menu-toggle" title="Toggle models panel">
+            <span class="material-icons">menu</span>
+            Menu
+          </button>
           <span class="material-icons">smart_toy</span>
           <h1>Venice AI Multi-Chat</h1>
         </div>
@@ -1006,6 +1202,9 @@
     const dashboardModal = document.getElementById('dashboardModal');
     const dashboardGrid = document.getElementById('dashboardGrid');
     const closeDashboard = document.getElementById('closeDashboard');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarBackdrop = document.getElementById('sidebarBackdrop');
 
     const modelColors = [
         { main: 'var(--orange)', light: 'var(--orange-light)' },
@@ -1124,6 +1323,24 @@
             timeEl.textContent = '—';
           }
         }
+      }
+    }
+
+    function openSidebarMobile() {
+      if (!sidebar) return;
+      sidebar.classList.remove('mobile-closed');
+      sidebar.classList.add('mobile-open');
+      if (sidebarBackdrop) {
+        sidebarBackdrop.classList.add('active');
+      }
+    }
+
+    function closeSidebarMobile() {
+      if (!sidebar) return;
+      sidebar.classList.remove('mobile-open');
+      sidebar.classList.add('mobile-closed');
+      if (sidebarBackdrop) {
+        sidebarBackdrop.classList.remove('active');
       }
     }
 
@@ -1743,7 +1960,8 @@
       
       // Create sort controls container
       const sortControlsContainer = document.createElement('div');
-      sortControlsContainer.style.cssText = 'margin-bottom: 20px; display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--background-color); border-radius: var(--border-radius);';
+      sortControlsContainer.className = 'sort-controls';
+      sortControlsContainer.style.cssText = 'margin-bottom: 20px; display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--surface); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft);';
       sortControlsContainer.innerHTML = `
         <label style="font-weight: 600; color: var(--text-color); display: flex; align-items: center; gap: 8px;">
           <span class="material-icons" style="font-size: 20px; color: var(--orange);">sort</span>
@@ -2147,6 +2365,35 @@
         }
         `;
         document.head.appendChild(style);
+
+        // Sidebar mobile behavior
+        const syncSidebarState = () => {
+          if (window.innerWidth <= 960) {
+            if (!sidebar.classList.contains('mobile-open') && !sidebar.classList.contains('mobile-closed')) {
+              sidebar.classList.add('mobile-closed');
+            }
+          } else {
+            sidebar.classList.remove('mobile-open', 'mobile-closed');
+            if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+          }
+        };
+
+        if (sidebarToggle) {
+          sidebarToggle.addEventListener('click', () => {
+            if (sidebar.classList.contains('mobile-open')) {
+              closeSidebarMobile();
+            } else {
+              openSidebarMobile();
+            }
+          });
+        }
+
+        if (sidebarBackdrop) {
+          sidebarBackdrop.addEventListener('click', closeSidebarMobile);
+        }
+
+        window.addEventListener('resize', syncSidebarState);
+        syncSidebarState();
     });
   </script>
 </body>
