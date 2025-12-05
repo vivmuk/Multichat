@@ -1281,23 +1281,17 @@
         if (data && data.data && Array.isArray(data.data)) {
           
           const filteredModels = data.data.filter(model => {
+            // Only exclude offline models or models without an ID
             const isOffline = model.model_spec?.offline;
             if (!model.id || isOffline) {
               return false;
             }
 
-            if (model.id === 'deepseek-r1-671b') {
-              return true; 
-            }
+            // Only filter out models that explicitly have "coder" in their ID
+            // Allow all other models including those with optimizedForCode capability
+            const isCoderModel = model.id.toLowerCase().includes('coder');
             
-            if (model.id === 'qwen-2.5-qwq-32b') {
-              return true;
-            }
-
-            const isCodingModelById = model.id.toLowerCase().includes('code') || model.id.toLowerCase().includes('coder');
-            const isCodingModelBySpec = model.model_spec?.capabilities?.optimizedForCode === true;
-            
-            return !isCodingModelById && !isCodingModelBySpec;
+            return !isCoderModel;
           });
 
           const isReasoningModel = (model) => {
