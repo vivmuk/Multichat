@@ -6,6 +6,7 @@
   <title>Venice AI Multi-Chat</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     :root {
       --orange: #e63946;
@@ -1248,29 +1249,26 @@
     }
 
     function formatResponse(text) {
+      if (window.marked && typeof window.marked.parse === 'function') {
+        return window.marked.parse(text, { mangle: false, headerIds: false });
+      }
+      // Fallback minimal formatting
       text = text.replace(/^### (.*$)/gm, '<h3>$1</h3>');
       text = text.replace(/^## (.*$)/gm, '<h2>$1</h2>');
       text = text.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-      
       text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
       text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');
       text = text.replace(/_(.*?)_/g, '<em>$1</em>');
-      
       text = text.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>');
       text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-      
       text = text.replace(/^\s*[-+*]\s+(.*)$/gm, '<li>$1</li>');
       text = text.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-      
       text = text.replace(/^\s*\d+\.\s+(.*)$/gm, '<li>$1</li>');
       text = text.replace(/(<li>.*<\/li>)/s, '<ol>$1</ol>');
-      
       text = text.replace(/^\s*>\s*(.*)$/gm, '<blockquote>$1</blockquote>');
-      
       text = text.replace(/\n\n([^<].*)\n\n/g, '<p>$1</p>');
       text = text.replace(/\n(?!\n)/g, '<br>');
-      
       return text;
     }
 
@@ -1319,7 +1317,12 @@
       const contentEl = selectedResponse.querySelector('.response-content');
       
       title.textContent = model.id;
-      timeEl.textContent = responseData.time + (responseData.tokensPerSecond || '');
+      const metaParts = [];
+      if (responseData.time) metaParts.push(responseData.time);
+      if (responseData.tokensPerSecond) metaParts.push(responseData.tokensPerSecond.trim());
+      if (responseData.tokenSummary) metaParts.push(responseData.tokenSummary);
+      if (responseData.costSummary) metaParts.push(responseData.costSummary);
+      timeEl.textContent = metaParts.filter(Boolean).join(' • ');
       contentEl.innerHTML = responseData.content ? formatResponse(responseData.content) : 'Waiting for prompt...';
     }
 
@@ -1396,6 +1399,7 @@
       const startTime = Date.now();
       let fullContent = '';
       let completionTokens = 0;
+      let promptTokens = 0;
       
       // Initialize response storage
       if (!modelResponses[model.id]) {
@@ -1485,6 +1489,7 @@
                 // Track token usage
                 if (json.usage) {
                   completionTokens = json.usage.completion_tokens || json.usage.total_tokens || 0;
+                  promptTokens = json.usage.prompt_tokens || json.usage.input_tokens || promptTokens;
                 }
               } catch (e) {
                 // Skip invalid JSON
@@ -1503,8 +1508,21 @@
           tokensPerSecond = ` • ${tokensPerSec} tokens/s`;
         }
         
+        const pricing = model.model_spec?.pricing || {};
+        const inputPrice = pricing.input?.usd || 0;
+        const outputPrice = pricing.output?.usd || 0;
+        const inputCost = inputPrice > 0 ? (promptTokens / 1000000) * inputPrice : 0;
+        const outputCost = outputPrice > 0 ? (completionTokens / 1000000) * outputPrice : 0;
+        const totalCost = inputCost + outputCost;
+        const tokenSummary = (promptTokens || completionTokens) ? `${promptTokens.toLocaleString()} in / ${completionTokens.toLocaleString()} out` : '';
+        const costSummary = totalCost > 0 ? `$${totalCost.toFixed(4)} (in $${inputCost.toFixed(4)} / out $${outputCost.toFixed(4)})` : '';
+
         modelResponses[model.id].time = formatTime(duration);
         modelResponses[model.id].tokensPerSecond = tokensPerSecond;
+        modelResponses[model.id].promptTokens = promptTokens;
+        modelResponses[model.id].completionTokens = completionTokens;
+        modelResponses[model.id].tokenSummary = tokenSummary;
+        modelResponses[model.id].costSummary = costSummary;
         
         // Update sidebar with time and tokens/s
         updateSidebarModelInfo(model.id, formatTime(duration), tokensPerSecond);
@@ -2279,8 +2297,13 @@
       
       modelsWithResponses.forEach((model, index) => {
         const response = modelResponses[model.id];
-        const formattedContent = formatResponse(response.content);
-        const timeDisplay = response.time ? `${response.time}${response.tokensPerSecond || ''}` : 'N/A';
+      const formattedContent = formatResponse(response.content);
+      const metaParts = [];
+      if (response.time) metaParts.push(response.time);
+      if (response.tokensPerSecond) metaParts.push(response.tokensPerSecond.trim());
+      if (response.tokenSummary) metaParts.push(response.tokenSummary);
+      if (response.costSummary) metaParts.push(response.costSummary);
+      const timeDisplay = metaParts.length ? metaParts.join(' • ') : 'N/A';
         
         htmlContent += `
   <div class="page">
