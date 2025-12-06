@@ -6,7 +6,6 @@
   <title>Venice AI Multi-Chat</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     :root {
       --orange: #e63946;
@@ -1473,10 +1472,7 @@
     }
 
     function formatResponse(text) {
-      if (window.marked && typeof window.marked.parse === 'function') {
-        return window.marked.parse(text, { mangle: false, headerIds: false });
-      }
-      // Fallback minimal formatting
+      // Lightweight markdown-ish formatting without external deps
       text = text.replace(/^### (.*$)/gm, '<h3>$1</h3>');
       text = text.replace(/^## (.*$)/gm, '<h2>$1</h2>');
       text = text.replace(/^# (.*$)/gm, '<h1>$1</h1>');
