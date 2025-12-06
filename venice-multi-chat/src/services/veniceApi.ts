@@ -1,11 +1,13 @@
 import { ModelInfo } from '../types';
 
-const API_KEY = 'qSXSNUAsIEo-CKXzRwgAka80w7RjW6QkiU2RlBdn_Z';
+// Updated API key aligned with latest working configuration
+const API_KEY = 'lnWNeSg0pA_rQUooNpbfpPDBaj2vJnWol5WqKWrIEF';
 const BASE_URL = 'https://api.venice.ai/api/v1';
 
 export const fetchModels = async (): Promise<ModelInfo[]> => {
   try {
-    const response = await fetch(`${BASE_URL}/models/traits?type=text`, {
+    // Use the standard models endpoint; traits info is included in model_spec
+    const response = await fetch(`${BASE_URL}/models?type=text`, {
       headers: {
         'Authorization': `Bearer ${API_KEY}`
       }
@@ -25,7 +27,7 @@ export const fetchModels = async (): Promise<ModelInfo[]> => {
 
 export const getDefaultModels = async (): Promise<Record<string, string>> => {
   try {
-    const response = await fetch(`${BASE_URL}/models`, {
+    const response = await fetch(`${BASE_URL}/models?type=text`, {
       headers: {
         'Authorization': `Bearer ${API_KEY}`
       }
@@ -41,4 +43,4 @@ export const getDefaultModels = async (): Promise<Record<string, string>> => {
     console.error('Error fetching default models:', error);
     return {};
   }
-}; 
+};
