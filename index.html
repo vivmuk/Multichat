@@ -130,73 +130,205 @@
       border-radius: 999px;
     }
 
-    .model-tab {
-      display: inline-flex;
+    /* Rail + Drawer layout */
+    .rail-shell {
+      display: grid;
+      grid-template-columns: 64px 280px 1fr;
+      width: 100%;
+      height: 100%;
+    }
+
+    .model-rail {
+      background: var(--surface);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
+      gap: 8px;
+      padding: 12px 0;
+    }
+
+    .rail-item {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       border: 1px solid var(--border-color);
-      border-radius: 999px;
       background: var(--surface-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       cursor: pointer;
+      position: relative;
       transition: background 0.15s, border-color 0.15s;
-      white-space: nowrap;
       box-shadow: var(--shadow-sm);
     }
 
-    .model-tab:hover {
+    .rail-item:hover {
       background: #f2f3f5;
       border-color: #d9dbe0;
     }
 
-    .model-tab.active {
-      border-color: var(--accent);
+    .rail-item.active {
       background: #0f1419;
       color: #fff;
-      box-shadow: var(--shadow-sm);
+      border-color: #0f1419;
     }
 
-    .model-tab .model-name {
-      font-weight: 600;
+    .rail-initials {
+      font-weight: 700;
       font-size: 14px;
+      letter-spacing: -0.01em;
     }
 
-    .model-tab .price-badge {
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: #f2f3f5;
-      color: var(--text-mid);
-    }
-
-    .model-tab.active .price-badge {
-      background: rgba(255,255,255,0.14);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.18);
-    }
-
-    .model-tab-status {
+    .model-status-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
       background: #d1d5db;
-      flex-shrink: 0;
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      box-shadow: 0 0 0 2px var(--surface-color);
     }
 
-    .model-tab-status.loading {
+    .model-status-dot.loading {
       background: var(--orange);
       animation: pulse 1.5s ease-in-out infinite;
       box-shadow: 0 0 0 2px var(--surface-color), 0 0 8px var(--orange);
     }
 
-    .model-tab-status.complete {
+    .model-status-dot.complete {
       background: var(--green);
       box-shadow: 0 0 0 2px var(--surface-color), 0 0 8px var(--green);
     }
 
-    .model-tab-status.error {
+    .model-status-dot.error {
       background: var(--red);
       box-shadow: 0 0 0 2px var(--surface-color), 0 0 8px var(--red);
+    }
+
+    .model-drawer {
+      background: var(--surface);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 14px 14px 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .drawer-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 10px 12px;
+      background: var(--surface-color);
+    }
+
+    .drawer-search input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 14px;
+      background: transparent;
+      color: var(--text-color);
+    }
+
+    .drawer-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .drawer-item {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 10px 12px;
+      background: var(--surface-color);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .drawer-item:hover {
+      background: #f2f3f5;
+      border-color: #d9dbe0;
+    }
+
+    .drawer-item.active {
+      border-color: var(--accent);
+      background: #0f1419;
+      color: #fff;
+    }
+
+    .drawer-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .drawer-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .price-badge {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f2f3f5;
+      color: var(--text-mid);
+      border: 1px solid var(--border-color);
+    }
+
+    .drawer-item.active .price-badge {
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .drawer-name {
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .drawer-time {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .drawer-item.active .drawer-time {
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* Mobile select */
+    .model-mobile-select {
+      display: none;
+      padding: 10px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border-color);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .model-mobile-select select {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      background: var(--surface-color);
+      font-size: 14px;
     }
 
     .model-item {
@@ -1148,35 +1280,26 @@
       border-radius: 12px;
     }
 
-    @media (max-width: 960px) {
-      body {
-        overflow: auto;
+    @media (max-width: 1024px) {
+      .rail-shell {
+        grid-template-columns: 1fr;
       }
-      .app-container {
-        flex-direction: column;
+      .model-rail,
+      .model-drawer {
+        display: none;
       }
-      .sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 300px;
-        max-width: 80vw;
-        background: var(--surface-strong);
+      .model-mobile-select {
+        display: flex;
       }
-      .sidebar-backdrop.active {
-        display: block;
-      }
-      .header .menu-toggle {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+      .header {
+        padding: 12px 16px;
       }
       .prompt-section {
+        padding: 12px 16px;
         border-bottom: 1px solid var(--border-color);
       }
       .response-container {
-        padding: 16px;
+        padding: 12px;
       }
       textarea {
         min-height: 120px;
@@ -1191,19 +1314,15 @@
       .app-container {
         flex-direction: column;
       }
-
-      .sidebar {
-        width: 100%;
-        height: 200px;
-        border-right: none;
-        border-bottom: 1px solid #e2e8f0;
-      }
-
       .controls {
         flex-direction: column;
         gap: 15px;
       }
-
+      .controls > div:last-child {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
       button {
         width: 100%;
         justify-content: center;
@@ -1212,22 +1331,23 @@
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <!-- Left Sidebar -->
-    <!-- Legacy sidebar (hidden) -->
-    <div class="sidebar">
-      <div class="sidebar-header">
-        <span class="material-icons">smart_toy</span>
-        <h2>Models</h2>
+  <div class="app-container rail-shell">
+    <!-- Left rail + drawer -->
+    <div class="model-rail" id="modelRail">
+      <!-- rail pills -->
+    </div>
+    <div class="model-drawer" id="modelDrawer">
+      <div class="drawer-search">
+        <span class="material-icons">search</span>
+        <input id="modelSearchDesktop" type="text" placeholder="Search models..." />
       </div>
-      <div class="models-list" id="modelsListSidebar">
+      <div class="drawer-list" id="modelDrawerList">
         <div class="empty-state">
           <span class="material-icons">refresh</span>
           <p>Click "Refresh Models" to load models</p>
         </div>
       </div>
     </div>
-    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -1246,15 +1366,10 @@
         </button>
       </div>
 
-      <!-- Top model tabs -->
-      <div class="models-topbar">
-        <div class="model-search">
-          <span class="material-icons">search</span>
-          <input id="modelSearch" type="text" placeholder="Search models..." />
-        </div>
-        <div class="tabs-scroll" id="modelsList">
-          <!-- Model tabs will be inserted here -->
-        </div>
+      <!-- Mobile model select -->
+      <div class="model-mobile-select">
+        <span class="material-icons" style="color: var(--text-dim);">smart_toy</span>
+        <select id="modelSelectMobile"></select>
       </div>
       
       <div class="prompt-section">
@@ -1341,8 +1456,10 @@
     let streamingControllers = {}; // Store AbortControllers for streaming
     let pricingTableSort = { column: null, direction: 'asc' }; // Track sorting state
 
-    const modelsList = document.getElementById('modelsList');
-    const modelSearchInput = document.getElementById('modelSearch');
+    const modelRail = document.getElementById('modelRail');
+    const modelDrawerList = document.getElementById('modelDrawerList');
+    const modelSearchDesktop = document.getElementById('modelSearchDesktop');
+    const modelSelectMobile = document.getElementById('modelSelectMobile');
     const selectedResponse = document.getElementById('selectedResponse');
     const sendButton = document.getElementById('sendButton');
     const refreshModelsButton = document.getElementById('refreshModelsButton');
@@ -1398,27 +1515,53 @@
       return text;
     }
 
-    function createModelListItem(model, index) {
-      const item = document.createElement('div');
-      item.classList.add('model-tab');
-      item.dataset.modelId = model.id;
-      
+    function initialsFromId(id) {
+      const clean = id.replace(/[^a-zA-Z0-9]+/g, ' ').trim();
+      const parts = clean.split(' ').filter(Boolean);
+      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+      return clean.slice(0, 2).toUpperCase();
+    }
+
+    function formatPriceBadge(model) {
       const pricing = model.model_spec?.pricing || {};
       const inputPrice = pricing.input?.usd;
       const outputPrice = pricing.output?.usd;
-      const priceText = (inputPrice !== undefined && outputPrice !== undefined)
-        ? `$${inputPrice}/$${outputPrice}`
-        : '—';
-      
+      if (inputPrice !== undefined && outputPrice !== undefined) {
+        return `$${inputPrice}/$${outputPrice}`;
+      }
+      return '—';
+    }
+
+    function createRailItem(model, index) {
+      const item = document.createElement('div');
+      item.classList.add('rail-item');
+      item.dataset.modelId = model.id;
       item.innerHTML = `
-        <div class="model-tab-status" data-status="idle"></div>
-        <div class="model-name">${model.id}</div>
-        <div class="price-badge">${priceText}</div>
-        <div class="model-item-time" data-time="" style="font-size:12px; color: var(--text-dim);"></div>
+        <div class="rail-initials">${initialsFromId(model.id)}</div>
+        <div class="model-status-dot" data-status="idle"></div>
       `;
-      
       item.addEventListener('click', () => selectModel(model.id));
-      
+      return item;
+    }
+
+    function createDrawerItem(model, index) {
+      const item = document.createElement('div');
+      item.classList.add('drawer-item');
+      item.dataset.modelId = model.id;
+      const priceText = formatPriceBadge(model);
+      item.innerHTML = `
+        <div class="drawer-top">
+          <div class="drawer-name">
+            <div class="model-status-dot" data-status="idle"></div>
+            ${model.id}
+          </div>
+          <div class="drawer-meta">
+            <div class="price-badge">${priceText}</div>
+            <div class="drawer-time model-item-time" data-time="">—</div>
+          </div>
+        </div>
+      `;
+      item.addEventListener('click', () => selectModel(model.id));
       return item;
     }
 
@@ -1426,9 +1569,12 @@
       selectedModelId = modelId;
       
       // Update active state in sidebar
-      document.querySelectorAll('.model-tab').forEach(item => {
+      document.querySelectorAll('.rail-item, .drawer-item').forEach(item => {
         item.classList.toggle('active', item.dataset.modelId === modelId);
       });
+      if (modelSelectMobile && modelSelectMobile.value !== modelId) {
+        modelSelectMobile.value = modelId;
+      }
       
       // Update main response view
       updateResponseView(modelId);
@@ -1456,31 +1602,27 @@
     }
 
     function updateModelStatus(modelId, status) {
-      const item = document.querySelector(`[data-model-id="${modelId}"]`);
-      if (item) {
-        const statusEl = item.querySelector('.model-tab-status');
-        statusEl.dataset.status = status;
-        statusEl.className = `model-tab-status ${status}`;
-      }
+      document.querySelectorAll(`[data-model-id="${modelId}"]`).forEach(item => {
+        const statusEl = item.querySelector('.model-status-dot');
+        if (statusEl) {
+          statusEl.dataset.status = status;
+          statusEl.className = `model-status-dot ${status}`;
+        }
+      });
     }
 
     function updateSidebarModelInfo(modelId, time, tokensPerSecond) {
-      const item = document.querySelector(`[data-model-id="${modelId}"]`);
-      if (item) {
-        const timeEl = item.querySelector('.model-item-time');
-        if (timeEl) {
-          if (time && tokensPerSecond) {
-            // Extract just the tokens/s number from tokensPerSecond (format: " • 31.3 tokens/s")
-            const tokensMatch = tokensPerSecond.match(/([\d.]+)\s*tokens\/s/);
-            const tokensValue = tokensMatch ? tokensMatch[1] : '';
-            timeEl.textContent = `${time} • ${tokensValue} tok/s`;
-          } else if (time) {
-            timeEl.textContent = time;
-          } else {
-            timeEl.textContent = '—';
-          }
+      document.querySelectorAll(`[data-model-id="${modelId}"] .model-item-time`).forEach(timeEl => {
+        if (time && tokensPerSecond) {
+          const tokensMatch = tokensPerSecond.match(/([\d.]+)\s*tokens\/s/);
+          const tokensValue = tokensMatch ? tokensMatch[1] : '';
+          timeEl.textContent = `${time} • ${tokensValue} tok/s`;
+        } else if (time) {
+          timeEl.textContent = time;
+        } else {
+          timeEl.textContent = '—';
         }
-      }
+      });
     }
 
     function openSidebarMobile() {
@@ -1502,32 +1644,54 @@
     }
 
     function renderModelList() {
-      modelsList.innerHTML = '';
-      const search = (modelSearchInput?.value || '').trim().toLowerCase();
-
+      const search = (modelSearchDesktop?.value || '').trim().toLowerCase();
       const visibleModels = availableModels.filter(model => {
         if (!search) return true;
         return model.id.toLowerCase().includes(search);
       });
 
+      // Rail and drawer
+      if (modelRail) modelRail.innerHTML = '';
+      if (modelDrawerList) modelDrawerList.innerHTML = '';
+
       if (visibleModels.length === 0) {
-        modelsList.innerHTML = `
-          <div class="empty-state" style="padding: 12px; text-align: left;">
-            <span class="material-icons" style="font-size: 18px;">search_off</span>
-            <p style="margin: 4px 0 0 0;">No models match that search.</p>
-          </div>
-        `;
-        return;
+        if (modelDrawerList) {
+          modelDrawerList.innerHTML = `
+            <div class="empty-state" style="padding: 12px; text-align: left;">
+              <span class="material-icons" style="font-size: 18px;">search_off</span>
+              <p style="margin: 4px 0 0 0;">No models match that search.</p>
+            </div>
+          `;
+        }
+      }
+
+      visibleModels.forEach((model, index) => {
+        const railItem = createRailItem(model, index);
+        const drawerItem = createDrawerItem(model, index);
+        modelRail?.appendChild(railItem);
+        modelDrawerList?.appendChild(drawerItem);
+      });
+
+      // Mobile select
+      if (modelSelectMobile) {
+        modelSelectMobile.innerHTML = '';
+        visibleModels.forEach((model) => {
+          const opt = document.createElement('option');
+          opt.value = model.id;
+          opt.textContent = model.id;
+          modelSelectMobile.appendChild(opt);
+        });
+        const desired = selectedModelId && visibleModels.find(m => m.id === selectedModelId)
+          ? selectedModelId
+          : (visibleModels[0]?.id || '');
+        if (desired) {
+          modelSelectMobile.value = desired;
+        }
       }
       
-      visibleModels.forEach((model, index) => {
-        const item = createModelListItem(model, index);
-        modelsList.appendChild(item);
-      });
-      
       // Select first model by default
-      if (availableModels.length > 0 && !selectedModelId) {
-        selectModel(availableModels[0].id);
+      if (availableModels.length > 0 && !selectedModelId && visibleModels.length > 0) {
+        selectModel(visibleModels[0].id);
       }
     }
 
@@ -1695,7 +1859,9 @@
     async function fetchVeniceModels() {
       refreshModelsButton.disabled = true;
       refreshModelsButton.querySelector('.material-icons').classList.add('spin');
-      modelsList.innerHTML = '<div class="empty-state"><div class="loading">Loading models...</div></div>';
+      if (modelRail) modelRail.innerHTML = '';
+      if (modelDrawerList) modelDrawerList.innerHTML = '<div class="empty-state"><div class="loading">Loading models...</div></div>';
+      if (modelSelectMobile) modelSelectMobile.innerHTML = '';
       
       try {
         const response = await fetch(`${BASE_URL}/models?type=text`, {
@@ -1749,7 +1915,9 @@
         renderModelList();
       } catch (error) {
         console.error('Failed to fetch models:', error);
-        modelsList.innerHTML = `<div class="error"><span class="material-icons">error</span>Failed to load models: ${error.message}</div>`;
+        if (modelDrawerList) {
+          modelDrawerList.innerHTML = `<div class="error"><span class="material-icons">error</span>Failed to load models: ${error.message}</div>`;
+        }
         availableModels = [];
       } finally {
         refreshModelsButton.disabled = false;
@@ -2584,9 +2752,16 @@
         window.addEventListener('resize', syncSidebarState);
         syncSidebarState();
 
-        if (modelSearchInput) {
-          modelSearchInput.addEventListener('input', () => {
+        if (modelSearchDesktop) {
+          modelSearchDesktop.addEventListener('input', () => {
             renderModelList();
+          });
+        }
+
+        if (modelSelectMobile) {
+          modelSelectMobile.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (val) selectModel(val);
           });
         }
     });
