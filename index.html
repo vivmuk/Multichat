@@ -146,6 +146,7 @@
       align-items: center;
       gap: 8px;
       padding: 12px 0;
+      overflow-y: auto;
     }
 
     .rail-item {
@@ -181,32 +182,7 @@
       letter-spacing: -0.01em;
     }
 
-    .model-status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #d1d5db;
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      box-shadow: 0 0 0 2px var(--surface-color);
-    }
-
-    .model-status-dot.loading {
-      background: var(--orange);
-      animation: pulse 1.5s ease-in-out infinite;
-      box-shadow: 0 0 0 2px var(--surface-color), 0 0 8px var(--orange);
-    }
-
-    .model-status-dot.complete {
-      background: var(--green);
-      box-shadow: 0 0 0 2px var(--surface-color), 0 0 8px var(--green);
-    }
-
-    .model-status-dot.error {
-      background: var(--red);
-      box-shadow: 0 0 0 2px var(--surface-color), 0 0 8px var(--red);
-    }
+    /* status dots removed per request */
 
     .model-drawer {
       background: var(--surface);
@@ -216,6 +192,7 @@
       gap: 10px;
       padding: 14px 14px 14px 14px;
       box-shadow: var(--shadow-sm);
+      overflow-y: auto;
     }
 
     .drawer-search {
@@ -1212,7 +1189,11 @@
       color: #ffffff;
     }
 
-    .pricing-table td, .pricing-table th {
+    .pricing-table th {
+      color: #ffffff;
+    }
+
+    .pricing-table td {
       color: var(--text-strong);
     }
 
@@ -1538,7 +1519,6 @@
       item.dataset.modelId = model.id;
       item.innerHTML = `
         <div class="rail-initials">${initialsFromId(model.id)}</div>
-        <div class="model-status-dot" data-status="idle"></div>
       `;
       item.addEventListener('click', () => selectModel(model.id));
       return item;
@@ -1552,7 +1532,6 @@
       item.innerHTML = `
         <div class="drawer-top">
           <div class="drawer-name">
-            <div class="model-status-dot" data-status="idle"></div>
             ${model.id}
           </div>
           <div class="drawer-meta">
@@ -1602,13 +1581,7 @@
     }
 
     function updateModelStatus(modelId, status) {
-      document.querySelectorAll(`[data-model-id="${modelId}"]`).forEach(item => {
-        const statusEl = item.querySelector('.model-status-dot');
-        if (statusEl) {
-          statusEl.dataset.status = status;
-          statusEl.className = `model-status-dot ${status}`;
-        }
-      });
+      // status dots removed; keep function no-op
     }
 
     function updateSidebarModelInfo(modelId, time, tokensPerSecond) {
@@ -2723,8 +2696,9 @@
         `;
         document.head.appendChild(style);
 
-        // Sidebar mobile behavior
+        // Sidebar mobile behavior (guard for null)
         const syncSidebarState = () => {
+          if (!sidebar) return;
           if (window.innerWidth <= 960) {
             if (!sidebar.classList.contains('mobile-open') && !sidebar.classList.contains('mobile-closed')) {
               sidebar.classList.add('mobile-closed');
@@ -2735,7 +2709,7 @@
           }
         };
 
-        if (sidebarToggle) {
+        if (sidebarToggle && sidebar) {
           sidebarToggle.addEventListener('click', () => {
             if (sidebar.classList.contains('mobile-open')) {
               closeSidebarMobile();
