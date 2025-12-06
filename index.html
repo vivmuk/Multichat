@@ -1111,7 +1111,7 @@
       letter-spacing: 0.005em;
     }
 
-    .app-container {
+      .app-container {
       background: linear-gradient(180deg, #f9fafb 0%, #f7f7f5 50%, #f4f4f2 100%);
     }
 
@@ -1120,9 +1120,9 @@
       border: 1px solid var(--border-color);
       box-shadow: var(--shadow-soft);
       backdrop-filter: none;
-    }
+      }
 
-    .sidebar {
+      .sidebar {
       border-right: 1px solid var(--border-color);
       transition: transform 0.25s ease;
     }
@@ -1316,7 +1316,7 @@
     <!-- Left rail + drawer -->
     <div class="model-rail" id="modelRail">
       <!-- rail pills -->
-    </div>
+      </div>
     <div class="model-drawer" id="modelDrawer">
       <div class="drawer-search">
         <span class="material-icons">search</span>
@@ -1586,15 +1586,15 @@
 
     function updateSidebarModelInfo(modelId, time, tokensPerSecond) {
       document.querySelectorAll(`[data-model-id="${modelId}"] .model-item-time`).forEach(timeEl => {
-        if (time && tokensPerSecond) {
-          const tokensMatch = tokensPerSecond.match(/([\d.]+)\s*tokens\/s/);
-          const tokensValue = tokensMatch ? tokensMatch[1] : '';
-          timeEl.textContent = `${time} • ${tokensValue} tok/s`;
-        } else if (time) {
-          timeEl.textContent = time;
-        } else {
-          timeEl.textContent = '—';
-        }
+          if (time && tokensPerSecond) {
+            const tokensMatch = tokensPerSecond.match(/([\d.]+)\s*tokens\/s/);
+            const tokensValue = tokensMatch ? tokensMatch[1] : '';
+            timeEl.textContent = `${time} • ${tokensValue} tok/s`;
+          } else if (time) {
+            timeEl.textContent = time;
+          } else {
+            timeEl.textContent = '—';
+          }
       });
     }
 
@@ -1633,11 +1633,11 @@
             <div class="empty-state" style="padding: 12px; text-align: left;">
               <span class="material-icons" style="font-size: 18px;">search_off</span>
               <p style="margin: 4px 0 0 0;">No models match that search.</p>
-            </div>
-          `;
+          </div>
+        `;
         }
       }
-
+      
       visibleModels.forEach((model, index) => {
         const railItem = createRailItem(model, index);
         const drawerItem = createDrawerItem(model, index);
@@ -1653,7 +1653,7 @@
           opt.value = model.id;
           opt.textContent = model.id;
           modelSelectMobile.appendChild(opt);
-        });
+      });
         const desired = selectedModelId && visibleModels.find(m => m.id === selectedModelId)
           ? selectedModelId
           : (visibleModels[0]?.id || '');
@@ -1789,7 +1789,7 @@
         const totalCost = inputCost + outputCost;
         const tokenSummary = (promptTokens || completionTokens) ? `${promptTokens.toLocaleString()} in / ${completionTokens.toLocaleString()} out` : '';
         const costSummary = totalCost > 0 ? `$${totalCost.toFixed(4)} (in $${inputCost.toFixed(4)} / out $${outputCost.toFixed(4)})` : '';
-
+        
         modelResponses[model.id].time = formatTime(duration);
         modelResponses[model.id].tokensPerSecond = tokensPerSecond;
         modelResponses[model.id].promptTokens = promptTokens;
@@ -2677,7 +2677,7 @@
     }
     .home-btn:hover {
       background: #161c23;
-    }
+      }
     @media (max-width: 700px) {
       .prompt-card, .summary, .model-section {
         margin: 12px;
@@ -2698,7 +2698,7 @@
   <div class="prompt-card">
     <h2>Prompt</h2>
     <p>${promptSafe}</p>
-  </div>
+    </div>
   <div class="summary">
     <h3>Summary</h3>
     <table class="summary-table">
@@ -2714,7 +2714,7 @@
         ${summaryBody}
       </tbody>
     </table>
-  </div>
+    </div>
   ${detailSections}
   <a class="home-btn" href="#top" title="Back to summary">⌂ Home</a>
   <script>
