@@ -1431,8 +1431,19 @@
   <!-- Feedback toast -->
   <div class="copy-feedback">Copied to clipboard!</div>
 
+  <!-- API key will be injected by build script from Netlify environment variable -->
+  <script src="config.js" onerror="console.warn('config.js not found. Using build-injected API key if available.')"></script>
   <script>
-    const API_KEY = 'GeD9cKbx1c54CWCTcGUold361VXLgFkMrDwu5iV6qJ';
+    // API key loaded from build-injected variable, config.js, or meta tag
+    const API_KEY = window.VENICE_API_KEY || (() => {
+      const meta = document.querySelector('meta[name="venice-api-key"]');
+      return meta ? meta.getAttribute('content') : '';
+    })();
+    
+    if (!API_KEY) {
+      console.error('VENICE_API_KEY is not set. Please set it in Netlify environment variables or create config.js');
+    }
+    
     const BASE_URL = 'https://api.venice.ai/api/v1';
 
     let availableModels = [];

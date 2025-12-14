@@ -1,0 +1,17 @@
+# Netlify configuration
+
+[build]
+  # Build command for static HTML app
+  command = "node build.js"
+  # Publish directory (where the built files go)
+  publish = "."
+
+# Environment variables
+# Set VENICE_API_KEY in Netlify dashboard: Site settings > Environment variables
+# For React app, also set REACT_APP_VENICE_API_KEY
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+

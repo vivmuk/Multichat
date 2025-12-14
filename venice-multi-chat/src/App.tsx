@@ -84,8 +84,7 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Use the updated key consistent with model fetches
-          'Authorization': 'Bearer lnWNeSg0pA_rQUooNpbfpPDBaj2vJnWol5WqKWrIEF'
+          'Authorization': `Bearer ${process.env.REACT_APP_VENICE_API_KEY || ''}`
         },
         body: JSON.stringify({
           model: model.id,

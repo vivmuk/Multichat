@@ -1,8 +1,12 @@
 import { ModelInfo } from '../types';
 
-// Updated API key aligned with latest working configuration
-const API_KEY = 'lnWNeSg0pA_rQUooNpbfpPDBaj2vJnWol5WqKWrIEF';
+// API key from environment variable
+const API_KEY = process.env.REACT_APP_VENICE_API_KEY || '';
 const BASE_URL = 'https://api.venice.ai/api/v1';
+
+if (!API_KEY) {
+  console.error('REACT_APP_VENICE_API_KEY is not set. Please create a .env file with REACT_APP_VENICE_API_KEY=your-key-here');
+}
 
 export const fetchModels = async (): Promise<ModelInfo[]> => {
   try {

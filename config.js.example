@@ -1,0 +1,5 @@
+// Copy this file to config.js and add your API key
+// This file should be added to .gitignore to keep your API key secret
+
+window.VENICE_API_KEY = 'your-venice-api-key-here';
+
