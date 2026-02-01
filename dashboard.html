@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Venice AI - Cost Analytics Dashboard</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --primary: #1a1a2e;
@@ -23,10 +26,10 @@
       --text-muted: #9ca3af;
       --border: #e5e7eb;
       --border-light: #f3f4f6;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-      --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 16px;
@@ -92,7 +95,7 @@
 
     .nav-brand span {
       font-size: 13px;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255, 255, 255, 0.6);
       font-weight: 400;
     }
 
@@ -127,13 +130,13 @@
     }
 
     .nav-btn.secondary {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.1);
       color: white;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .nav-btn.secondary:hover {
-      background: rgba(255,255,255,0.15);
+      background: rgba(255, 255, 255, 0.15);
     }
 
     /* Main Container */
@@ -206,10 +209,21 @@
       height: 4px;
     }
 
-    .kpi-card.accent::before { background: var(--accent); }
-    .kpi-card.success::before { background: var(--success); }
-    .kpi-card.info::before { background: var(--info); }
-    .kpi-card.warning::before { background: var(--warning); }
+    .kpi-card.accent::before {
+      background: var(--accent);
+    }
+
+    .kpi-card.success::before {
+      background: var(--success);
+    }
+
+    .kpi-card.info::before {
+      background: var(--info);
+    }
+
+    .kpi-card.warning::before {
+      background: var(--warning);
+    }
 
     .kpi-card:hover {
       transform: translateY(-4px);
@@ -232,10 +246,25 @@
       justify-content: center;
     }
 
-    .kpi-card.accent .kpi-icon { background: rgba(233, 69, 96, 0.1); color: var(--accent); }
-    .kpi-card.success .kpi-icon { background: rgba(0, 217, 165, 0.1); color: var(--success); }
-    .kpi-card.info .kpi-icon { background: rgba(15, 52, 96, 0.1); color: var(--info); }
-    .kpi-card.warning .kpi-icon { background: rgba(255, 193, 7, 0.1); color: var(--warning); }
+    .kpi-card.accent .kpi-icon {
+      background: rgba(233, 69, 96, 0.1);
+      color: var(--accent);
+    }
+
+    .kpi-card.success .kpi-icon {
+      background: rgba(0, 217, 165, 0.1);
+      color: var(--success);
+    }
+
+    .kpi-card.info .kpi-icon {
+      background: rgba(15, 52, 96, 0.1);
+      color: var(--info);
+    }
+
+    .kpi-card.warning .kpi-icon {
+      background: rgba(255, 193, 7, 0.1);
+      color: var(--warning);
+    }
 
     .kpi-icon .material-icons {
       font-size: 24px;
@@ -315,9 +344,17 @@
       background: linear-gradient(90deg, var(--success) 0%, var(--accent) 100%);
     }
 
-    .value-model-card.rank-1::before { background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%); }
-    .value-model-card.rank-2::before { background: linear-gradient(90deg, #9ca3af 0%, #6b7280 100%); }
-    .value-model-card.rank-3::before { background: linear-gradient(90deg, #d97706 0%, #b45309 100%); }
+    .value-model-card.rank-1::before {
+      background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
+    }
+
+    .value-model-card.rank-2::before {
+      background: linear-gradient(90deg, #9ca3af 0%, #6b7280 100%);
+    }
+
+    .value-model-card.rank-3::before {
+      background: linear-gradient(90deg, #d97706 0%, #b45309 100%);
+    }
 
     .value-model-rank {
       position: absolute;
@@ -335,9 +372,18 @@
       font-weight: 700;
     }
 
-    .value-model-card.rank-1 .value-model-rank { background: #fbbf24; color: #1a1a2e; }
-    .value-model-card.rank-2 .value-model-rank { background: #9ca3af; }
-    .value-model-card.rank-3 .value-model-rank { background: #d97706; }
+    .value-model-card.rank-1 .value-model-rank {
+      background: #fbbf24;
+      color: #1a1a2e;
+    }
+
+    .value-model-card.rank-2 .value-model-rank {
+      background: #9ca3af;
+    }
+
+    .value-model-card.rank-3 .value-model-rank {
+      background: #d97706;
+    }
 
     .value-model-name {
       font-size: 14px;
@@ -439,6 +485,7 @@
     }
 
     @media (max-width: 1200px) {
+
       .value-models-grid,
       .rate-limits-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -446,6 +493,7 @@
     }
 
     @media (max-width: 768px) {
+
       .value-models-grid,
       .rate-limits-grid {
         grid-template-columns: 1fr;
@@ -499,7 +547,8 @@
       color: var(--text-secondary);
     }
 
-    .filter-tab:hover, .filter-tab.active {
+    .filter-tab:hover,
+    .filter-tab.active {
       background: var(--primary);
       color: white;
       border-color: var(--primary);
@@ -882,7 +931,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(255,255,255,0.95);
+      background: rgba(255, 255, 255, 0.95);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -906,7 +955,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     /* Responsive */
@@ -914,6 +965,7 @@
       .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
       }
+
       .models-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -923,12 +975,15 @@
       .dashboard-container {
         padding: 24px 20px;
       }
+
       .charts-grid {
         grid-template-columns: 1fr;
       }
+
       .pricing-tables-grid {
         grid-template-columns: 1fr;
       }
+
       .summary-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -938,21 +993,26 @@
       .top-nav {
         padding: 0 20px;
       }
+
       .kpi-grid {
         grid-template-columns: 1fr;
       }
+
       .models-grid {
         grid-template-columns: 1fr;
       }
+
       .summary-grid {
         grid-template-columns: 1fr;
       }
+
       .nav-btn span:not(.material-icons) {
         display: none;
       }
     }
   </style>
 </head>
+
 <body>
   <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
@@ -1172,32 +1232,80 @@
             </thead>
             <tbody>
               <tr>
-                <td><div class="model-name-cell"><div class="model-avatar">NB</div><div class="model-info"><div class="model-id">Nano Banana Pro</div><div class="model-type">Premium Quality</div></div></div></td>
+                <td>
+                  <div class="model-name-cell">
+                    <div class="model-avatar">NB</div>
+                    <div class="model-info">
+                      <div class="model-id">Nano Banana Pro</div>
+                      <div class="model-type">Premium Quality</div>
+                    </div>
+                  </div>
+                </td>
                 <td class="price-cell high">$0.18</td>
                 <td class="tokens-cell">266</td>
               </tr>
               <tr>
-                <td><div class="model-name-cell"><div class="model-avatar">SD</div><div class="model-info"><div class="model-id">Venice SD35</div><div class="model-type">Standard</div></div></div></td>
+                <td>
+                  <div class="model-name-cell">
+                    <div class="model-avatar">SD</div>
+                    <div class="model-info">
+                      <div class="model-id">Venice SD35</div>
+                      <div class="model-type">Standard</div>
+                    </div>
+                  </div>
+                </td>
                 <td class="price-cell low">$0.01</td>
                 <td class="tokens-cell">4,800</td>
               </tr>
               <tr>
-                <td><div class="model-name-cell"><div class="model-avatar">HD</div><div class="model-info"><div class="model-id">HiDream</div><div class="model-type">Standard</div></div></div></td>
+                <td>
+                  <div class="model-name-cell">
+                    <div class="model-avatar">HD</div>
+                    <div class="model-info">
+                      <div class="model-id">HiDream</div>
+                      <div class="model-type">Standard</div>
+                    </div>
+                  </div>
+                </td>
                 <td class="price-cell low">$0.01</td>
                 <td class="tokens-cell">4,800</td>
               </tr>
               <tr>
-                <td><div class="model-name-cell"><div class="model-avatar">QI</div><div class="model-info"><div class="model-id">Qwen Image</div><div class="model-type">Standard</div></div></div></td>
+                <td>
+                  <div class="model-name-cell">
+                    <div class="model-avatar">QI</div>
+                    <div class="model-info">
+                      <div class="model-id">Qwen Image</div>
+                      <div class="model-type">Standard</div>
+                    </div>
+                  </div>
+                </td>
                 <td class="price-cell low">$0.01</td>
                 <td class="tokens-cell">4,800</td>
               </tr>
               <tr>
-                <td><div class="model-name-cell"><div class="model-avatar">LF</div><div class="model-info"><div class="model-id">Lustify</div><div class="model-type">SDXL & v7</div></div></div></td>
+                <td>
+                  <div class="model-name-cell">
+                    <div class="model-avatar">LF</div>
+                    <div class="model-info">
+                      <div class="model-id">Lustify</div>
+                      <div class="model-type">SDXL & v7</div>
+                    </div>
+                  </div>
+                </td>
                 <td class="price-cell low">$0.01</td>
                 <td class="tokens-cell">4,800</td>
               </tr>
               <tr>
-                <td><div class="model-name-cell"><div class="model-avatar">AN</div><div class="model-info"><div class="model-id">Anime (WAI)</div><div class="model-type">Stylized</div></div></div></td>
+                <td>
+                  <div class="model-name-cell">
+                    <div class="model-avatar">AN</div>
+                    <div class="model-info">
+                      <div class="model-id">Anime (WAI)</div>
+                      <div class="model-type">Stylized</div>
+                    </div>
+                  </div>
+                </td>
                 <td class="price-cell low">$0.01</td>
                 <td class="tokens-cell">4,800</td>
               </tr>
@@ -1221,17 +1329,41 @@
             </thead>
             <tbody>
               <tr>
-                <td><div class="model-name-cell"><div class="model-avatar">2X</div><div class="model-info"><div class="model-id">Upscale / Enhance (2x)</div><div class="model-type">Resolution boost</div></div></div></td>
+                <td>
+                  <div class="model-name-cell">
+                    <div class="model-avatar">2X</div>
+                    <div class="model-info">
+                      <div class="model-id">Upscale / Enhance (2x)</div>
+                      <div class="model-type">Resolution boost</div>
+                    </div>
+                  </div>
+                </td>
                 <td class="price-cell low">$0.02</td>
                 <td class="tokens-cell">2,400</td>
               </tr>
               <tr>
-                <td><div class="model-name-cell"><div class="model-avatar">4X</div><div class="model-info"><div class="model-id">Upscale / Enhance (4x)</div><div class="model-type">High-res boost</div></div></div></td>
+                <td>
+                  <div class="model-name-cell">
+                    <div class="model-avatar">4X</div>
+                    <div class="model-info">
+                      <div class="model-id">Upscale / Enhance (4x)</div>
+                      <div class="model-type">High-res boost</div>
+                    </div>
+                  </div>
+                </td>
                 <td class="price-cell medium">$0.08</td>
                 <td class="tokens-cell">600</td>
               </tr>
               <tr>
-                <td><div class="model-name-cell"><div class="model-avatar">ED</div><div class="model-info"><div class="model-id">Image Editing</div><div class="model-type">Inpaint, Qwen</div></div></div></td>
+                <td>
+                  <div class="model-name-cell">
+                    <div class="model-avatar">ED</div>
+                    <div class="model-info">
+                      <div class="model-id">Image Editing</div>
+                      <div class="model-type">Inpaint, Qwen</div>
+                    </div>
+                  </div>
+                </td>
                 <td class="price-cell medium">$0.04</td>
                 <td class="tokens-cell">1,200</td>
               </tr>
@@ -1255,7 +1387,15 @@
             </thead>
             <tbody>
               <tr>
-                <td><div class="model-name-cell"><div class="model-avatar">KK</div><div class="model-info"><div class="model-id">Kokoro TTS</div><div class="model-type">tts-kokoro</div></div></div></td>
+                <td>
+                  <div class="model-name-cell">
+                    <div class="model-avatar">KK</div>
+                    <div class="model-info">
+                      <div class="model-id">Kokoro TTS</div>
+                      <div class="model-type">tts-kokoro</div>
+                    </div>
+                  </div>
+                </td>
                 <td class="price-cell low">$3.50</td>
                 <td class="tokens-cell">13.7M</td>
               </tr>
@@ -1292,7 +1432,8 @@
   </div>
 
   <!-- API key will be injected by build script from Netlify environment variable -->
-  <script src="config.js" onerror="console.warn('config.js not found. Using build-injected API key if available.')"></script>
+  <script src="config.js"
+    onerror="console.warn('config.js not found. Using build-injected API key if available.')"></script>
   <script>
     // Constants
     const DIEM_BUDGET = 48;
@@ -1622,7 +1763,7 @@
       if (!apiKey) return;
 
       try {
-        const response = await fetch(`${BASE_URL}/api_keys/rate_limits/log`, {
+        const response = await fetch(`${BASE_URL}/api_keys/rate_limits`, {
           headers: { 'Authorization': `Bearer ${apiKey}` }
         });
 
@@ -1675,4 +1816,5 @@
     document.addEventListener('DOMContentLoaded', fetchModels);
   </script>
 </body>
+
 </html>
