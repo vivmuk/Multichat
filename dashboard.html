@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venice AI - Cost Analytics Dashboard</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #1a1a2e;
+      --primary-light: #16213e;
+      --accent: #e94560;
+      --accent-light: #ff6b6b;
+      --success: #00d9a5;
+      --success-light: #e6fff7;
+      --warning: #ffc107;
+      --info: #0f3460;
+      --background: #f8f9fc;
+      --surface: #ffffff;
+      --text-primary: #1a1a2e;
+      --text-secondary: #6b7280;
+      --text-muted: #9ca3af;
+      --border: #e5e7eb;
+      --border-light: #f3f4f6;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    .top-nav {
+      background: var(--primary);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+    }
+
+    .nav-brand .logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-brand .logo .material-icons {
+      font-size: 24px;
+      color: white;
+    }
+
+    .nav-brand h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-brand span {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 400;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      border: none;
+    }
+
+    .nav-btn.primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .nav-btn.primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+
+    .nav-btn.secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .nav-btn.secondary:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    /* Main Container */
+    .dashboard-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 32px 40px;
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    .budget-highlight {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
+      color: white;
+      padding: 8px 20px;
+      border-radius: var(--radius-xl);
+      font-weight: 600;
+      margin-top: 16px;
+    }
+
+    .budget-highlight .material-icons {
+      font-size: 20px;
+      color: var(--success);
+    }
+
+    /* KPI Cards Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .kpi-card.accent::before { background: var(--accent); }
+    .kpi-card.success::before { background: var(--success); }
+    .kpi-card.info::before { background: var(--info); }
+    .kpi-card.warning::before { background: var(--warning); }
+
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .kpi-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .kpi-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .kpi-card.accent .kpi-icon { background: rgba(233, 69, 96, 0.1); color: var(--accent); }
+    .kpi-card.success .kpi-icon { background: rgba(0, 217, 165, 0.1); color: var(--success); }
+    .kpi-card.info .kpi-icon { background: rgba(15, 52, 96, 0.1); color: var(--info); }
+    .kpi-card.warning .kpi-icon { background: rgba(255, 193, 7, 0.1); color: var(--warning); }
+
+    .kpi-icon .material-icons {
+      font-size: 24px;
+    }
+
+    .kpi-trend {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .kpi-trend.up {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .kpi-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .kpi-label {
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Charts Section */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .chart-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .chart-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chart-title h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .chart-title .material-icons {
+      color: var(--accent);
+      font-size: 22px;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 16px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+
+    /* Pricing Tables Section */
+    .tables-section {
+      margin-bottom: 32px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .section-title .material-icons {
+      font-size: 28px;
+      color: var(--accent);
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-tab {
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+    }
+
+    .filter-tab:hover, .filter-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Pricing Tables */
+    .pricing-tables-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .pricing-table-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+    }
+
+    .pricing-table-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
+      padding: 20px 24px;
+      color: white;
+    }
+
+    .pricing-table-header h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pricing-table-header p {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .pricing-table-header .material-icons {
+      font-size: 20px;
+    }
+
+    .pricing-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .pricing-table thead {
+      background: var(--background);
+    }
+
+    .pricing-table th {
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .pricing-table th:hover {
+      background: var(--border-light);
+      color: var(--text-primary);
+    }
+
+    .pricing-table th.sortable::after {
+      content: ' \2195';
+      opacity: 0.4;
+    }
+
+    .pricing-table th.sort-asc::after {
+      content: ' \2191';
+      opacity: 1;
+      color: var(--accent);
+    }
+
+    .pricing-table th.sort-desc::after {
+      content: ' \2193';
+      opacity: 1;
+      color: var(--accent);
+    }
+
+    .pricing-table td {
+      padding: 14px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-primary);
+    }
+
+    .pricing-table tbody tr {
+      transition: all 0.2s;
+    }
+
+    .pricing-table tbody tr:hover {
+      background: var(--background);
+    }
+
+    .pricing-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .model-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .model-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .model-info .model-id {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .model-info .model-type {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .price-cell {
+      font-weight: 600;
+      font-family: 'Space Grotesk', monospace;
+    }
+
+    .price-cell.low {
+      color: var(--success);
+    }
+
+    .price-cell.medium {
+      color: var(--warning);
+    }
+
+    .price-cell.high {
+      color: var(--accent);
+    }
+
+    .tokens-cell {
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 600;
+      color: var(--info);
+    }
+
+    /* Capability Badges */
+    .capability-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .cap-badge {
+      padding: 4px 10px;
+      border-radius: var(--radius-xl);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .cap-badge.active {
+      background: rgba(0, 217, 165, 0.15);
+      color: var(--success);
+    }
+
+    .cap-badge.inactive {
+      background: var(--border-light);
+      color: var(--text-muted);
+    }
+
+    /* Model Cards Grid */
+    .models-section {
+      margin-bottom: 32px;
+    }
+
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .model-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .model-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .model-card-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
+      padding: 20px;
+      color: white;
+    }
+
+    .model-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .model-card-meta {
+      display: flex;
+      gap: 12px;
+    }
+
+    .model-card-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .model-card-meta .material-icons {
+      font-size: 14px;
+    }
+
+    .model-card-body {
+      padding: 20px;
+    }
+
+    .model-stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .model-stat-row:last-child {
+      border-bottom: none;
+    }
+
+    .model-stat-label {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .model-stat-value {
+      font-weight: 600;
+      font-family: 'Space Grotesk', monospace;
+      color: var(--text-primary);
+    }
+
+    .model-capabilities {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .model-capabilities h5 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    /* Summary Section */
+    .summary-section {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      color: white;
+      margin-bottom: 32px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+    }
+
+    .summary-item h4 {
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0.8;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .summary-item h4 .material-icons {
+      font-size: 18px;
+    }
+
+    .summary-item .value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .summary-item .desc {
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    /* Footer */
+    .dashboard-footer {
+      text-align: center;
+      padding: 32px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .dashboard-footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Loading State */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      margin-top: 16px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 1400px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .models-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .dashboard-container {
+        padding: 24px 20px;
+      }
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      .pricing-tables-grid {
+        grid-template-columns: 1fr;
+      }
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-nav {
+        padding: 0 20px;
+      }
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .models-grid {
+        grid-template-columns: 1fr;
+      }
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-btn span:not(.material-icons) {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading Venice AI Models...</div>
+  </div>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <div class="logo">
+        <span class="material-icons">analytics</span>
+      </div>
+      <div>
+        <h1>Venice AI</h1>
+        <span>Cost Analytics Dashboard</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn secondary" onclick="refreshData()">
+        <span class="material-icons">refresh</span>
+        <span>Refresh</span>
+      </button>
+      <a href="index.html" class="nav-btn primary">
+        <span class="material-icons">chat</span>
+        <span>Back to Chat</span>
+      </a>
+      <button class="nav-btn secondary" onclick="logout()" title="Sign out">
+        <span class="material-icons">logout</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Dashboard Container -->
+  <div class="dashboard-container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h2>Inference Cost Analytics</h2>
+      <p>Comprehensive pricing analysis and compute budget optimization for Venice AI models</p>
+      <div class="budget-highlight">
+        <span class="material-icons">account_balance_wallet</span>
+        <span id="diemBudget">48 Diem = $48 Compute Budget</span>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid" id="kpiGrid">
+      <div class="kpi-card accent">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <span class="material-icons">smart_toy</span>
+          </div>
+          <div class="kpi-trend up">
+            <span class="material-icons" style="font-size: 14px;">trending_up</span>
+            Live
+          </div>
+        </div>
+        <div class="kpi-value" id="totalModels">--</div>
+        <div class="kpi-label">Available Text Models</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <span class="material-icons">speed</span>
+          </div>
+        </div>
+        <div class="kpi-value" id="maxInputTokens">--</div>
+        <div class="kpi-label">Max Input Tokens (48 Diem)</div>
+      </div>
+      <div class="kpi-card info">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <span class="material-icons">output</span>
+          </div>
+        </div>
+        <div class="kpi-value" id="maxOutputTokens">--</div>
+        <div class="kpi-label">Max Output Tokens (48 Diem)</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <span class="material-icons">savings</span>
+          </div>
+        </div>
+        <div class="kpi-value" id="avgCost">--</div>
+        <div class="kpi-label">Avg Cost per 1M Tokens</div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">
+            <span class="material-icons">bar_chart</span>
+            <h3>Model Pricing Comparison</h3>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background: #e94560;"></div>
+              <span>Input Price</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: #00d9a5;"></div>
+              <span>Output Price</span>
+            </div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="pricingChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">
+            <span class="material-icons">donut_large</span>
+            <h3>Capability Distribution</h3>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="capabilityChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Banner -->
+    <div class="summary-section">
+      <div class="summary-grid">
+        <div class="summary-item">
+          <h4><span class="material-icons">text_fields</span> Text Models</h4>
+          <div class="value" id="summaryTextTokens">--</div>
+          <div class="desc">Max tokens available</div>
+        </div>
+        <div class="summary-item">
+          <h4><span class="material-icons">image</span> Image Generation</h4>
+          <div class="value">4,800</div>
+          <div class="desc">Max generations (SD35/HiDream)</div>
+        </div>
+        <div class="summary-item">
+          <h4><span class="material-icons">auto_fix_high</span> Image Upscaling</h4>
+          <div class="value">2,400</div>
+          <div class="desc">Max 2x upscales</div>
+        </div>
+        <div class="summary-item">
+          <h4><span class="material-icons">record_voice_over</span> Audio TTS</h4>
+          <div class="value">13.7M</div>
+          <div class="desc">Characters (Kokoro TTS)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Tables Section -->
+    <div class="tables-section">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="material-icons">table_chart</span>
+          <h3>Detailed Pricing</h3>
+        </div>
+      </div>
+
+      <div class="pricing-tables-grid">
+        <!-- Text Models Table -->
+        <div class="pricing-table-card" id="textModelsCard">
+          <div class="pricing-table-header">
+            <h4><span class="material-icons">text_fields</span> Text Models</h4>
+            <p>Per 1 million tokens pricing</p>
+          </div>
+          <div style="max-height: 400px; overflow-y: auto;">
+            <table class="pricing-table" id="textModelsTable">
+              <thead>
+                <tr>
+                  <th class="sortable" onclick="sortTable('text', 'model')">Model</th>
+                  <th class="sortable" onclick="sortTable('text', 'input')">Input $/1M</th>
+                  <th class="sortable" onclick="sortTable('text', 'output')">Output $/1M</th>
+                  <th class="sortable" onclick="sortTable('text', 'maxInput')">Max Input</th>
+                  <th class="sortable" onclick="sortTable('text', 'maxOutput')">Max Output</th>
+                </tr>
+              </thead>
+              <tbody id="textModelsBody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Image Models Table -->
+        <div class="pricing-table-card">
+          <div class="pricing-table-header">
+            <h4><span class="material-icons">image</span> Image Models</h4>
+            <p>Per generation pricing</p>
+          </div>
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Price/Gen</th>
+                <th>Max Gens (48 Diem)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="model-name-cell"><div class="model-avatar">NB</div><div class="model-info"><div class="model-id">Nano Banana Pro</div><div class="model-type">Premium Quality</div></div></div></td>
+                <td class="price-cell high">$0.18</td>
+                <td class="tokens-cell">266</td>
+              </tr>
+              <tr>
+                <td><div class="model-name-cell"><div class="model-avatar">SD</div><div class="model-info"><div class="model-id">Venice SD35</div><div class="model-type">Standard</div></div></div></td>
+                <td class="price-cell low">$0.01</td>
+                <td class="tokens-cell">4,800</td>
+              </tr>
+              <tr>
+                <td><div class="model-name-cell"><div class="model-avatar">HD</div><div class="model-info"><div class="model-id">HiDream</div><div class="model-type">Standard</div></div></div></td>
+                <td class="price-cell low">$0.01</td>
+                <td class="tokens-cell">4,800</td>
+              </tr>
+              <tr>
+                <td><div class="model-name-cell"><div class="model-avatar">QI</div><div class="model-info"><div class="model-id">Qwen Image</div><div class="model-type">Standard</div></div></div></td>
+                <td class="price-cell low">$0.01</td>
+                <td class="tokens-cell">4,800</td>
+              </tr>
+              <tr>
+                <td><div class="model-name-cell"><div class="model-avatar">LF</div><div class="model-info"><div class="model-id">Lustify</div><div class="model-type">SDXL & v7</div></div></div></td>
+                <td class="price-cell low">$0.01</td>
+                <td class="tokens-cell">4,800</td>
+              </tr>
+              <tr>
+                <td><div class="model-name-cell"><div class="model-avatar">AN</div><div class="model-info"><div class="model-id">Anime (WAI)</div><div class="model-type">Stylized</div></div></div></td>
+                <td class="price-cell low">$0.01</td>
+                <td class="tokens-cell">4,800</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Image Editing Table -->
+        <div class="pricing-table-card">
+          <div class="pricing-table-header">
+            <h4><span class="material-icons">auto_fix_high</span> Image Editing / Upscaling</h4>
+            <p>Enhancement and editing pricing</p>
+          </div>
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Price</th>
+                <th>Max (48 Diem)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="model-name-cell"><div class="model-avatar">2X</div><div class="model-info"><div class="model-id">Upscale / Enhance (2x)</div><div class="model-type">Resolution boost</div></div></div></td>
+                <td class="price-cell low">$0.02</td>
+                <td class="tokens-cell">2,400</td>
+              </tr>
+              <tr>
+                <td><div class="model-name-cell"><div class="model-avatar">4X</div><div class="model-info"><div class="model-id">Upscale / Enhance (4x)</div><div class="model-type">High-res boost</div></div></div></td>
+                <td class="price-cell medium">$0.08</td>
+                <td class="tokens-cell">600</td>
+              </tr>
+              <tr>
+                <td><div class="model-name-cell"><div class="model-avatar">ED</div><div class="model-info"><div class="model-id">Image Editing</div><div class="model-type">Inpaint, Qwen</div></div></div></td>
+                <td class="price-cell medium">$0.04</td>
+                <td class="tokens-cell">1,200</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Audio Models Table -->
+        <div class="pricing-table-card">
+          <div class="pricing-table-header">
+            <h4><span class="material-icons">record_voice_over</span> Audio Models</h4>
+            <p>Text-to-speech pricing</p>
+          </div>
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Price/1M Chars</th>
+                <th>Max Chars (48 Diem)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="model-name-cell"><div class="model-avatar">KK</div><div class="model-info"><div class="model-id">Kokoro TTS</div><div class="model-type">tts-kokoro</div></div></div></td>
+                <td class="price-cell low">$3.50</td>
+                <td class="tokens-cell">13.7M</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model Cards Section -->
+    <div class="models-section">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="material-icons">view_module</span>
+          <h3>Model Specifications</h3>
+        </div>
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="filterModels('all')">All Models</button>
+          <button class="filter-tab" onclick="filterModels('reasoning')">Reasoning</button>
+          <button class="filter-tab" onclick="filterModels('vision')">Vision</button>
+          <button class="filter-tab" onclick="filterModels('code')">Code</button>
+        </div>
+      </div>
+      <div class="models-grid" id="modelsGrid">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="dashboard-footer">
+      <p>Data sourced from Venice AI API in real-time. Prices updated as of latest API response.</p>
+      <p><a href="https://venice.ai" target="_blank">Venice AI</a> | Built with real-time API integration</p>
+    </div>
+  </div>
+
+  <!-- API key will be injected by build script from Netlify environment variable -->
+  <script src="config.js" onerror="console.warn('config.js not found. Using build-injected API key if available.')"></script>
+  <script>
+    // Constants
+    const DIEM_BUDGET = 48;
+    const BASE_URL = 'https://api.venice.ai/api/v1';
+
+    // Get API key - check password first
+    function getApiKey() {
+      const savedPassword = localStorage.getItem('venice_password');
+      if (savedPassword === 'surat') {
+        return window.VENICE_API_KEY || '';
+      }
+      // Fallback to user-provided API key
+      return localStorage.getItem('venice_user_api_key') || '';
+    }
+
+    let API_KEY = getApiKey();
+    let availableModels = [];
+    let sortState = { table: null, column: null, direction: 'asc' };
+    let pricingChart = null;
+    let capabilityChart = null;
+
+    // Utility Functions
+    function formatTokens(tokens) {
+      if (tokens >= 1000000) return (tokens / 1000000).toFixed(1) + 'M';
+      if (tokens >= 1000) return (tokens / 1000).toFixed(1) + 'K';
+      return tokens.toLocaleString();
+    }
+
+    function getInitials(id) {
+      const clean = id.replace(/[^a-zA-Z0-9]+/g, ' ').trim();
+      const parts = clean.split(' ').filter(Boolean);
+      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+      return clean.slice(0, 2).toUpperCase();
+    }
+
+    function getPriceClass(price) {
+      if (price <= 0.5) return 'low';
+      if (price <= 2) return 'medium';
+      return 'high';
+    }
+
+    // Fetch Models from Venice API
+    async function fetchModels() {
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        document.getElementById('loadingOverlay').innerHTML = `
+          <div style="text-align: center; padding: 40px;">
+            <span class="material-icons" style="font-size: 64px; color: var(--accent);">lock</span>
+            <h2 style="margin: 20px 0;">Authentication Required</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Please go to the chat page to enter your password or API key.</p>
+            <a href="index.html" class="nav-btn primary" style="display: inline-flex;">
+              <span class="material-icons">arrow_back</span>
+              <span>Go to Chat</span>
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const response = await fetch(`${BASE_URL}/models?type=text`, {
+          headers: { 'Authorization': `Bearer ${apiKey}` }
+        });
+
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        availableModels = (data.data || [])
+          .filter(m => m.type === 'text' && m.model_spec?.offline !== true)
+          .filter(m => !m.id.toLowerCase().includes('coder') || m.id.toLowerCase().includes('qwen'))
+          .sort((a, b) => {
+            const aReason = a.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
+            const bReason = b.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
+            if (aReason !== bReason) return bReason - aReason;
+            const aCtx = a.model_spec?.availableContextTokens || 0;
+            const bCtx = b.model_spec?.availableContextTokens || 0;
+            return bCtx - aCtx;
+          });
+
+        renderDashboard();
+        document.getElementById('loadingOverlay').style.display = 'none';
+      } catch (error) {
+        console.error('Failed to fetch models:', error);
+        document.getElementById('loadingOverlay').innerHTML = `
+          <div style="text-align: center; padding: 40px;">
+            <span class="material-icons" style="font-size: 64px; color: var(--accent);">error</span>
+            <h2 style="margin: 20px 0;">Failed to Load Models</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">${error.message}</p>
+            <button onclick="location.reload()" class="nav-btn primary" style="display: inline-flex;">
+              <span class="material-icons">refresh</span>
+              <span>Retry</span>
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    // Render Dashboard
+    function renderDashboard() {
+      updateKPIs();
+      renderTextModelsTable();
+      renderModelsGrid();
+      renderCharts();
+    }
+
+    // Update KPI Cards
+    function updateKPIs() {
+      document.getElementById('totalModels').textContent = availableModels.length;
+
+      let maxInput = 0, maxOutput = 0, totalInput = 0, totalOutput = 0, count = 0;
+
+      availableModels.forEach(model => {
+        const pricing = model.model_spec?.pricing || {};
+        const inputPrice = pricing.input?.usd || 0;
+        const outputPrice = pricing.output?.usd || 0;
+
+        if (inputPrice > 0) {
+          const tokens = (DIEM_BUDGET / inputPrice) * 1000000;
+          if (tokens > maxInput) maxInput = tokens;
+          totalInput += inputPrice;
+          count++;
+        }
+        if (outputPrice > 0) {
+          const tokens = (DIEM_BUDGET / outputPrice) * 1000000;
+          if (tokens > maxOutput) maxOutput = tokens;
+          totalOutput += outputPrice;
+        }
+      });
+
+      document.getElementById('maxInputTokens').textContent = formatTokens(maxInput);
+      document.getElementById('maxOutputTokens').textContent = formatTokens(maxOutput);
+      document.getElementById('summaryTextTokens').textContent = formatTokens(maxOutput);
+
+      const avgCost = count > 0 ? ((totalInput + totalOutput) / (count * 2)).toFixed(2) : '--';
+      document.getElementById('avgCost').textContent = '$' + avgCost;
+    }
+
+    // Render Text Models Table
+    function renderTextModelsTable() {
+      const tbody = document.getElementById('textModelsBody');
+
+      let modelsData = availableModels.map(model => {
+        const pricing = model.model_spec?.pricing || {};
+        const inputPrice = pricing.input?.usd || 0;
+        const outputPrice = pricing.output?.usd || 0;
+        const maxInput = inputPrice > 0 ? (DIEM_BUDGET / inputPrice) * 1000000 : 0;
+        const maxOutput = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1000000 : 0;
+
+        return { model, inputPrice, outputPrice, maxInput, maxOutput };
+      });
+
+      // Apply sorting if active
+      if (sortState.table === 'text' && sortState.column) {
+        modelsData.sort((a, b) => {
+          let aVal, bVal;
+          switch (sortState.column) {
+            case 'model': aVal = a.model.id.toLowerCase(); bVal = b.model.id.toLowerCase(); break;
+            case 'input': aVal = a.inputPrice; bVal = b.inputPrice; break;
+            case 'output': aVal = a.outputPrice; bVal = b.outputPrice; break;
+            case 'maxInput': aVal = a.maxInput; bVal = b.maxInput; break;
+            case 'maxOutput': aVal = a.maxOutput; bVal = b.maxOutput; break;
+          }
+          if (typeof aVal === 'string') {
+            return sortState.direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+          }
+          return sortState.direction === 'asc' ? aVal - bVal : bVal - aVal;
+        });
+      }
+
+      tbody.innerHTML = modelsData.map(({ model, inputPrice, outputPrice, maxInput, maxOutput }) => `
+        <tr>
+          <td>
+            <div class="model-name-cell">
+              <div class="model-avatar">${getInitials(model.id)}</div>
+              <div class="model-info">
+                <div class="model-id">${model.id}</div>
+                <div class="model-type">${(model.model_spec?.availableContextTokens || 0).toLocaleString()} ctx</div>
+              </div>
+            </div>
+          </td>
+          <td class="price-cell ${getPriceClass(inputPrice)}">$${inputPrice.toFixed(2)}</td>
+          <td class="price-cell ${getPriceClass(outputPrice)}">$${outputPrice.toFixed(2)}</td>
+          <td class="tokens-cell">${formatTokens(maxInput)}</td>
+          <td class="tokens-cell">${formatTokens(maxOutput)}</td>
+        </tr>
+      `).join('');
+
+      // Update header sort indicators
+      document.querySelectorAll('#textModelsCard th.sortable').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+      });
+      if (sortState.table === 'text' && sortState.column) {
+        const colMap = { model: 0, input: 1, output: 2, maxInput: 3, maxOutput: 4 };
+        const th = document.querySelectorAll('#textModelsCard th.sortable')[colMap[sortState.column]];
+        if (th) th.classList.add(sortState.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+      }
+    }
+
+    // Sort Table
+    function sortTable(table, column) {
+      if (sortState.table === table && sortState.column === column) {
+        sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortState = { table, column, direction: 'asc' };
+      }
+      renderTextModelsTable();
+    }
+
+    // Render Models Grid
+    function renderModelsGrid(filter = 'all') {
+      const grid = document.getElementById('modelsGrid');
+
+      let filtered = availableModels;
+      if (filter === 'reasoning') {
+        filtered = availableModels.filter(m => m.model_spec?.capabilities?.supportsReasoning);
+      } else if (filter === 'vision') {
+        filtered = availableModels.filter(m => m.model_spec?.capabilities?.supportsVision);
+      } else if (filter === 'code') {
+        filtered = availableModels.filter(m => m.model_spec?.capabilities?.optimizedForCode);
+      }
+
+      grid.innerHTML = filtered.map(model => {
+        const spec = model.model_spec || {};
+        const capabilities = spec.capabilities || {};
+        const pricing = spec.pricing || {};
+
+        return `
+          <div class="model-card">
+            <div class="model-card-header">
+              <div class="model-card-title">${model.id}</div>
+              <div class="model-card-meta">
+                <span><span class="material-icons">memory</span> ${(spec.availableContextTokens || 0).toLocaleString()} tokens</span>
+              </div>
+            </div>
+            <div class="model-card-body">
+              <div class="model-stat-row">
+                <span class="model-stat-label">Input Price</span>
+                <span class="model-stat-value">$${pricing.input?.usd || 0}/1M</span>
+              </div>
+              <div class="model-stat-row">
+                <span class="model-stat-label">Output Price</span>
+                <span class="model-stat-value">$${pricing.output?.usd || 0}/1M</span>
+              </div>
+              <div class="model-stat-row">
+                <span class="model-stat-label">Max Output (48 Diem)</span>
+                <span class="model-stat-value">${pricing.output?.usd > 0 ? formatTokens((DIEM_BUDGET / pricing.output.usd) * 1000000) : 'N/A'}</span>
+              </div>
+              <div class="model-capabilities">
+                <h5>Capabilities</h5>
+                <div class="capability-badges">
+                  <span class="cap-badge ${capabilities.supportsReasoning ? 'active' : 'inactive'}">Reasoning</span>
+                  <span class="cap-badge ${capabilities.supportsVision ? 'active' : 'inactive'}">Vision</span>
+                  <span class="cap-badge ${capabilities.supportsWebSearch ? 'active' : 'inactive'}">Web Search</span>
+                  <span class="cap-badge ${capabilities.supportsFunctionCalling ? 'active' : 'inactive'}">Functions</span>
+                  <span class="cap-badge ${capabilities.optimizedForCode ? 'active' : 'inactive'}">Code</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Filter Models
+    function filterModels(filter) {
+      document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+      renderModelsGrid(filter);
+    }
+
+    // Render Charts
+    function renderCharts() {
+      // Pricing Chart
+      const top10 = availableModels.slice(0, 10);
+      const labels = top10.map(m => m.id.length > 15 ? m.id.substring(0, 15) + '...' : m.id);
+      const inputPrices = top10.map(m => m.model_spec?.pricing?.input?.usd || 0);
+      const outputPrices = top10.map(m => m.model_spec?.pricing?.output?.usd || 0);
+
+      const pricingCtx = document.getElementById('pricingChart').getContext('2d');
+
+      if (pricingChart) pricingChart.destroy();
+
+      pricingChart = new Chart(pricingCtx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Input Price ($/1M)',
+              data: inputPrices,
+              backgroundColor: 'rgba(233, 69, 96, 0.8)',
+              borderColor: '#e94560',
+              borderWidth: 1,
+              borderRadius: 4
+            },
+            {
+              label: 'Output Price ($/1M)',
+              data: outputPrices,
+              backgroundColor: 'rgba(0, 217, 165, 0.8)',
+              borderColor: '#00d9a5',
+              borderWidth: 1,
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 11 } }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(0,0,0,0.05)' },
+              ticks: { callback: value => '$' + value }
+            }
+          }
+        }
+      });
+
+      // Capability Distribution Chart
+      const capCounts = {
+        reasoning: availableModels.filter(m => m.model_spec?.capabilities?.supportsReasoning).length,
+        vision: availableModels.filter(m => m.model_spec?.capabilities?.supportsVision).length,
+        webSearch: availableModels.filter(m => m.model_spec?.capabilities?.supportsWebSearch).length,
+        functions: availableModels.filter(m => m.model_spec?.capabilities?.supportsFunctionCalling).length,
+        code: availableModels.filter(m => m.model_spec?.capabilities?.optimizedForCode).length
+      };
+
+      const capCtx = document.getElementById('capabilityChart').getContext('2d');
+
+      if (capabilityChart) capabilityChart.destroy();
+
+      capabilityChart = new Chart(capCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Reasoning', 'Vision', 'Web Search', 'Functions', 'Code'],
+          datasets: [{
+            data: [capCounts.reasoning, capCounts.vision, capCounts.webSearch, capCounts.functions, capCounts.code],
+            backgroundColor: [
+              '#e94560',
+              '#00d9a5',
+              '#ffc107',
+              '#0f3460',
+              '#6366f1'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '60%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 16,
+                usePointStyle: true,
+                font: { size: 12 }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Refresh Data
+    function refreshData() {
+      document.getElementById('loadingOverlay').style.display = 'flex';
+      document.getElementById('loadingOverlay').innerHTML = `
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Refreshing data...</div>
+      `;
+      fetchModels();
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to sign out?')) {
+        localStorage.removeItem('venice_password');
+        localStorage.removeItem('venice_user_api_key');
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', fetchModels);
+  </script>
+</body>
+</html>

@@ -741,6 +741,187 @@
       transform: translateY(0);
     }
 
+    /* Authentication Modal */
+    .auth-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-modal.show {
+      display: flex;
+    }
+
+    .auth-content {
+      background: var(--surface-color);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .auth-header h2 {
+      margin: 16px 0 8px 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .auth-header p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      background: var(--background-color);
+      padding: 4px;
+      border-radius: 12px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .auth-tab:hover {
+      color: var(--text-color);
+    }
+
+    .auth-tab.active {
+      background: var(--surface-color);
+      color: var(--orange);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .auth-input-group {
+      margin-bottom: 16px;
+    }
+
+    .auth-input-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 8px;
+    }
+
+    .auth-input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 15px;
+      transition: all 0.2s;
+      background: var(--surface-color);
+    }
+
+    .auth-input-group input:focus {
+      outline: none;
+      border-color: var(--orange);
+      box-shadow: 0 0 0 4px var(--orange-light);
+    }
+
+    .auth-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .auth-checkbox input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--orange);
+    }
+
+    .auth-submit {
+      width: 100%;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, var(--orange) 0%, #d63440 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .auth-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(230, 57, 70, 0.4);
+    }
+
+    .auth-submit:active {
+      transform: translateY(0);
+    }
+
+    .auth-hint {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .auth-hint a {
+      color: var(--orange);
+      text-decoration: none;
+    }
+
+    .auth-hint a:hover {
+      text-decoration: underline;
+    }
+
+    .auth-error {
+      background: var(--red-light);
+      color: var(--red);
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .auth-error .material-icons {
+      font-size: 20px;
+    }
+
     /* Dashboard Modal */
     .dashboard-modal {
       display: none;
@@ -1345,10 +1526,15 @@
           <span class="material-icons">smart_toy</span>
           <h1>Venice AI Multi-Chat</h1>
         </div>
-        <button id="dashboardButton" class="button" title="View Model Dashboard">
-          <span class="material-icons">dashboard</span>
-          Dashboard
-        </button>
+        <div style="display: flex; gap: 10px;">
+          <button id="dashboardButton" class="button" title="View Cost Analytics Dashboard">
+            <span class="material-icons">analytics</span>
+            Analytics
+          </button>
+          <button id="logoutButton" class="button" title="Sign out" style="background: #6b7280;">
+            <span class="material-icons">logout</span>
+          </button>
+        </div>
       </div>
 
       <!-- Mobile model select -->
@@ -1410,20 +1596,57 @@
     </div>
   </div>
 
-  <!-- Dashboard Modal -->
-  <div class="dashboard-modal" id="dashboardModal">
-    <div class="dashboard-content">
-      <div class="dashboard-header">
-        <h2>Model Dashboard</h2>
-        <button class="close-button" id="closeDashboard">
-          <span class="material-icons">close</span>
-        </button>
+  <!-- Dashboard Modal - Redirect to dashboard.html -->
+  <div class="dashboard-modal" id="dashboardModal" style="display:none;">
+    <!-- Legacy modal - now using separate dashboard.html -->
+  </div>
+
+  <!-- Authentication Modal -->
+  <div class="auth-modal" id="authModal">
+    <div class="auth-content">
+      <div class="auth-header">
+        <span class="material-icons" style="font-size: 48px; color: #e63946;">smart_toy</span>
+        <h2>Venice AI Multi-Chat</h2>
+        <p>Enter your password or API key to continue</p>
       </div>
-      <div class="pricing-overview" id="pricingOverview">
-        <!-- Pricing overview will be inserted here -->
-      </div>
-      <div class="models-grid" id="dashboardGrid">
-        <!-- Model cards will be inserted here -->
+      <div class="auth-form">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="password">Password</button>
+          <button class="auth-tab" data-tab="apikey">API Key</button>
+        </div>
+        <div class="auth-tab-content" id="passwordTab">
+          <div class="auth-input-group">
+            <label for="passwordInput">Enter Password</label>
+            <input type="password" id="passwordInput" placeholder="Enter password..." autocomplete="current-password">
+          </div>
+          <label class="auth-checkbox">
+            <input type="checkbox" id="rememberPassword" checked>
+            <span>Remember me on this device</span>
+          </label>
+          <button class="auth-submit" id="passwordSubmit">
+            <span class="material-icons">lock_open</span>
+            Unlock
+          </button>
+        </div>
+        <div class="auth-tab-content" id="apikeyTab" style="display: none;">
+          <div class="auth-input-group">
+            <label for="apiKeyInput">Venice API Key</label>
+            <input type="password" id="apiKeyInput" placeholder="Enter your Venice API key..." autocomplete="off">
+          </div>
+          <label class="auth-checkbox">
+            <input type="checkbox" id="rememberApiKey" checked>
+            <span>Save API key locally</span>
+          </label>
+          <button class="auth-submit" id="apiKeySubmit">
+            <span class="material-icons">vpn_key</span>
+            Connect
+          </button>
+          <p class="auth-hint">Get your API key from <a href="https://venice.ai" target="_blank">venice.ai</a></p>
+        </div>
+        <div class="auth-error" id="authError" style="display: none;">
+          <span class="material-icons">error</span>
+          <span id="authErrorText">Invalid password</span>
+        </div>
       </div>
     </div>
   </div>
@@ -1434,17 +1657,152 @@
   <!-- API key will be injected by build script from Netlify environment variable -->
   <script src="config.js" onerror="console.warn('config.js not found. Using build-injected API key if available.')"></script>
   <script>
-    // API key loaded from build-injected variable, config.js, or meta tag
-    const API_KEY = window.VENICE_API_KEY || (() => {
-      const meta = document.querySelector('meta[name="venice-api-key"]');
-      return meta ? meta.getAttribute('content') : '';
-    })();
-    
-    if (!API_KEY) {
-      console.error('VENICE_API_KEY is not set. Please set it in Netlify environment variables or create config.js');
-    }
-    
+    // Authentication System
+    const CORRECT_PASSWORD = 'surat';
     const BASE_URL = 'https://api.venice.ai/api/v1';
+
+    // Check if user is authenticated
+    function checkAuthentication() {
+      const savedPassword = localStorage.getItem('venice_password');
+      const savedApiKey = localStorage.getItem('venice_user_api_key');
+
+      if (savedPassword === CORRECT_PASSWORD) {
+        return { authenticated: true, useBackendKey: true };
+      }
+      if (savedApiKey) {
+        return { authenticated: true, useBackendKey: false, apiKey: savedApiKey };
+      }
+      return { authenticated: false };
+    }
+
+    // Get API key based on authentication
+    function getApiKey() {
+      const auth = checkAuthentication();
+      if (auth.authenticated) {
+        if (auth.useBackendKey) {
+          // Use backend key
+          return window.VENICE_API_KEY || (() => {
+            const meta = document.querySelector('meta[name="venice-api-key"]');
+            return meta ? meta.getAttribute('content') : '';
+          })();
+        } else {
+          // Use user-provided key
+          return auth.apiKey;
+        }
+      }
+      return '';
+    }
+
+    let API_KEY = getApiKey();
+
+    // Authentication Modal Logic
+    function initAuthModal() {
+      const authModal = document.getElementById('authModal');
+      const passwordTab = document.getElementById('passwordTab');
+      const apikeyTab = document.getElementById('apikeyTab');
+      const authTabs = document.querySelectorAll('.auth-tab');
+      const passwordInput = document.getElementById('passwordInput');
+      const apiKeyInput = document.getElementById('apiKeyInput');
+      const passwordSubmit = document.getElementById('passwordSubmit');
+      const apiKeySubmit = document.getElementById('apiKeySubmit');
+      const rememberPassword = document.getElementById('rememberPassword');
+      const rememberApiKey = document.getElementById('rememberApiKey');
+      const authError = document.getElementById('authError');
+      const authErrorText = document.getElementById('authErrorText');
+
+      // Tab switching
+      authTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          authTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          if (tab.dataset.tab === 'password') {
+            passwordTab.style.display = 'block';
+            apikeyTab.style.display = 'none';
+          } else {
+            passwordTab.style.display = 'none';
+            apikeyTab.style.display = 'block';
+          }
+          authError.style.display = 'none';
+        });
+      });
+
+      // Password submit
+      passwordSubmit.addEventListener('click', () => {
+        const password = passwordInput.value.trim();
+        if (password === CORRECT_PASSWORD) {
+          if (rememberPassword.checked) {
+            localStorage.setItem('venice_password', password);
+          }
+          API_KEY = getApiKey();
+          authModal.classList.remove('show');
+          fetchVeniceModels();
+        } else {
+          authError.style.display = 'flex';
+          authErrorText.textContent = 'Invalid password. Please try again.';
+          passwordInput.value = '';
+          passwordInput.focus();
+        }
+      });
+
+      // API Key submit
+      apiKeySubmit.addEventListener('click', async () => {
+        const apiKey = apiKeyInput.value.trim();
+        if (!apiKey) {
+          authError.style.display = 'flex';
+          authErrorText.textContent = 'Please enter an API key.';
+          return;
+        }
+
+        // Validate API key by making a test request
+        try {
+          apiKeySubmit.disabled = true;
+          apiKeySubmit.innerHTML = '<span class="material-icons spin">refresh</span> Validating...';
+
+          const response = await fetch(`${BASE_URL}/models?type=text`, {
+            headers: { 'Authorization': `Bearer ${apiKey}` }
+          });
+
+          if (response.ok) {
+            if (rememberApiKey.checked) {
+              localStorage.setItem('venice_user_api_key', apiKey);
+            }
+            API_KEY = apiKey;
+            authModal.classList.remove('show');
+            fetchVeniceModels();
+          } else {
+            authError.style.display = 'flex';
+            authErrorText.textContent = 'Invalid API key. Please check and try again.';
+          }
+        } catch (error) {
+          authError.style.display = 'flex';
+          authErrorText.textContent = 'Connection error. Please try again.';
+        } finally {
+          apiKeySubmit.disabled = false;
+          apiKeySubmit.innerHTML = '<span class="material-icons">vpn_key</span> Connect';
+        }
+      });
+
+      // Enter key support
+      passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') passwordSubmit.click();
+      });
+      apiKeyInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') apiKeySubmit.click();
+      });
+    }
+
+    function showAuthModal() {
+      const authModal = document.getElementById('authModal');
+      authModal.classList.add('show');
+      document.getElementById('passwordInput').focus();
+    }
+
+    // Logout function (can be called from console or added to UI later)
+    window.veniceLogout = function() {
+      localStorage.removeItem('venice_password');
+      localStorage.removeItem('venice_user_api_key');
+      location.reload();
+    };
 
     let availableModels = [];
     let selectedModelId = null;
@@ -1949,8 +2307,8 @@
       // Render pricing overview
       const pricingOverview = document.getElementById('pricingOverview');
       
-      // Calculate max tokens for 31 Diem ($31)
-      const DIEM_BUDGET = 31;
+      // Calculate max tokens for 48 Diem ($48)
+      const DIEM_BUDGET = 48;
       const formatMaxTokens = (tokens) => {
         if (tokens >= 1000000) {
           return (tokens / 1000000).toFixed(1) + 'M';
@@ -1962,7 +2320,7 @@
       
       // Prepare summary bullets for pricing overview
       const summaryBullets = (() => {
-        const DIEM_BUDGET = 31;
+        const DIEM_BUDGET = 48;
         let maxInputTokens = 0;
         let maxOutputTokens = 0;
         availableModels.forEach(model => {
@@ -1985,9 +2343,9 @@
         };
         return `
           <li><strong>Text Models:</strong> Up to <strong>${formatMax(maxInputTokens)} input tokens</strong> or <strong>${formatMax(maxOutputTokens)} output tokens</strong> depending on model (${availableModels.length} models available).</li>
-          <li><strong>Image Models:</strong> Between <strong>172 (Nano Banana Pro)</strong> and <strong>3,100 generations</strong> (SD35, HiDream, Qwen Image, Lustify, Anime).</li>
-          <li><strong>Image Editing/Upscaling:</strong> Up to <strong>1,550 2x upscales</strong> or <strong>775 edits</strong>.</li>
-          <li><strong>Audio Models:</strong> Nearly <strong>9 million characters</strong> of speech synthesis with Kokoro TTS.</li>
+          <li><strong>Image Models:</strong> Between <strong>266 (Nano Banana Pro)</strong> and <strong>4,800 generations</strong> (SD35, HiDream, Qwen Image, Lustify, Anime).</li>
+          <li><strong>Image Editing/Upscaling:</strong> Up to <strong>2,400 2x upscales</strong> or <strong>1,200 edits</strong>.</li>
+          <li><strong>Audio Models:</strong> Nearly <strong>13.7 million characters</strong> of speech synthesis with Kokoro TTS.</li>
         `;
       })();
 
@@ -1997,7 +2355,7 @@
         const inputPrice = pricing.input?.usd || 0;
         const outputPrice = pricing.output?.usd || 0;
         
-        // Calculate max tokens: 31 Diem = $31
+        // Calculate max tokens: 48 Diem = $48
         const maxInputTokens = inputPrice > 0 ? (DIEM_BUDGET / inputPrice) * 1000000 : 0;
         const maxOutputTokens = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1000000 : 0;
         
@@ -2078,11 +2436,11 @@
       pricingOverview.innerHTML = `
         <h3>
           <span class="material-icons">attach_money</span>
-          Venice API – 31 Diem Compute Budget Overview
+          Venice API – 48 Diem Compute Budget Overview
         </h3>
         
         <div class="pricing-intro">
-          <p>With <strong>31 Diem = $31 of compute</strong>, here's how many tokens, generations, or characters you can produce across all model types.</p>
+          <p>With <strong>48 Diem = $48 of compute</strong>, here's how many tokens, generations, or characters you can produce across all model types.</p>
         </div>
 
         <div class="pricing-section">
@@ -2123,39 +2481,39 @@
               <tr>
                 <th>Model</th>
                 <th>Price per Generation</th>
-                <th>Max Generations (31 Diem)</th>
+                <th>Max Generations (48 Diem)</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td class="model-name">Nano Banana Pro</td>
                 <td>$0.18</td>
-                <td class="max-tokens">172</td>
+                <td class="max-tokens">266</td>
               </tr>
               <tr>
                 <td class="model-name">Venice SD35</td>
                 <td>$0.01</td>
-                <td class="max-tokens">3,100</td>
+                <td class="max-tokens">4,800</td>
               </tr>
               <tr>
                 <td class="model-name">HiDream</td>
                 <td>$0.01</td>
-                <td class="max-tokens">3,100</td>
+                <td class="max-tokens">4,800</td>
               </tr>
               <tr>
                 <td class="model-name">Qwen Image</td>
                 <td>$0.01</td>
-                <td class="max-tokens">3,100</td>
+                <td class="max-tokens">4,800</td>
               </tr>
               <tr>
                 <td class="model-name">Lustify (SDXL & v7)</td>
                 <td>$0.01</td>
-                <td class="max-tokens">3,100</td>
+                <td class="max-tokens">4,800</td>
               </tr>
               <tr>
                 <td class="model-name">Anime (WAI)</td>
                 <td>$0.01</td>
-                <td class="max-tokens">3,100</td>
+                <td class="max-tokens">4,800</td>
               </tr>
             </tbody>
           </table>
@@ -2171,24 +2529,24 @@
               <tr>
                 <th>Task</th>
                 <th>Price</th>
-                <th>Max with 31 Diem</th>
+                <th>Max with 48 Diem</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td class="model-name">Upscale / Enhance (2x)</td>
                 <td>$0.02</td>
-                <td class="max-tokens">1,550</td>
+                <td class="max-tokens">2,400</td>
               </tr>
               <tr>
                 <td class="model-name">Upscale / Enhance (4x)</td>
                 <td>$0.08</td>
-                <td class="max-tokens">387</td>
+                <td class="max-tokens">600</td>
               </tr>
               <tr>
                 <td class="model-name">Image Editing (Inpaint, Qwen Image)</td>
                 <td>$0.04</td>
-                <td class="max-tokens">775</td>
+                <td class="max-tokens">1,200</td>
               </tr>
             </tbody>
           </table>
@@ -2204,14 +2562,14 @@
               <tr>
                 <th>Model</th>
                 <th>Price per 1M characters</th>
-                <th>Max Characters (31 Diem)</th>
+                <th>Max Characters (48 Diem)</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td class="model-name">Kokoro TTS (tts-kokoro)</td>
                 <td>$3.50</td>
-                <td class="max-tokens">8.86M characters</td>
+                <td class="max-tokens">13.7M characters</td>
               </tr>
             </tbody>
           </table>
@@ -2758,18 +3116,16 @@
     sendButton.addEventListener('click', sendPrompt);
     refreshModelsButton.addEventListener('click', fetchVeniceModels);
     downloadButton.addEventListener('click', downloadAllResponses);
+
+    // Dashboard button now opens separate page
     dashboardButton.addEventListener('click', () => {
-      dashboardModal.classList.add('show');
-      renderDashboard();
+      window.location.href = 'dashboard.html';
     });
-    closeDashboard.addEventListener('click', () => {
-      dashboardModal.classList.remove('show');
-    });
-    
-    // Close modal when clicking outside
-    dashboardModal.addEventListener('click', (e) => {
-      if (e.target === dashboardModal) {
-        dashboardModal.classList.remove('show');
+
+    // Logout button
+    document.getElementById('logoutButton').addEventListener('click', () => {
+      if (confirm('Are you sure you want to sign out?')) {
+        veniceLogout();
       }
     });
 
@@ -2810,7 +3166,16 @@
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
-        fetchVeniceModels();
+        // Initialize authentication modal
+        initAuthModal();
+
+        // Check if user is authenticated
+        const auth = checkAuthentication();
+        if (!auth.authenticated) {
+          showAuthModal();
+        } else {
+          fetchVeniceModels();
+        }
 
         const style = document.createElement('style');
         style.innerHTML = `
