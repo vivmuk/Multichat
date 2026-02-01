@@ -2249,9 +2249,6 @@
           });
           
           console.log('Fetched and sorted models:', availableModels);
-          
-          // Render dashboard
-          renderDashboard();
         } else {
           throw new Error('Unexpected API response format for models.');
         }
@@ -2304,8 +2301,12 @@
     };
 
     function renderDashboard() {
-      // Render pricing overview
+      // Dashboard is now on a separate page - guard against missing elements
       const pricingOverview = document.getElementById('pricingOverview');
+      const dashboardGrid = document.getElementById('dashboardGrid');
+      if (!pricingOverview || !dashboardGrid) {
+        return; // Elements don't exist on this page
+      }
       
       // Calculate max tokens for 48 Diem ($48)
       const DIEM_BUDGET = 48;
