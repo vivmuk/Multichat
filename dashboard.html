@@ -6,7 +6,6 @@
   <title>Venice AI - Cost Analytics Dashboard</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       --primary: #1a1a2e;
@@ -279,60 +278,178 @@
       margin-bottom: 32px;
     }
 
-    .chart-card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border-light);
+    /* Value Models Section */
+    .value-models-section {
+      margin-bottom: 32px;
     }
 
-    .chart-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 400;
     }
 
-    .chart-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .chart-title h3 {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .chart-title .material-icons {
-      color: var(--accent);
-      font-size: 22px;
-    }
-
-    .chart-legend {
-      display: flex;
+    .value-models-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 16px;
     }
 
-    .legend-item {
+    .value-model-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .value-model-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--success) 0%, var(--accent) 100%);
+    }
+
+    .value-model-card.rank-1::before { background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%); }
+    .value-model-card.rank-2::before { background: linear-gradient(90deg, #9ca3af 0%, #6b7280 100%); }
+    .value-model-card.rank-3::before { background: linear-gradient(90deg, #d97706 0%, #b45309 100%); }
+
+    .value-model-rank {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
       font-size: 13px;
+      font-weight: 700;
+    }
+
+    .value-model-card.rank-1 .value-model-rank { background: #fbbf24; color: #1a1a2e; }
+    .value-model-card.rank-2 .value-model-rank { background: #9ca3af; }
+    .value-model-card.rank-3 .value-model-rank { background: #d97706; }
+
+    .value-model-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      padding-right: 36px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .value-model-context {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .value-model-tokens {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--success);
+      margin-bottom: 2px;
+    }
+
+    .value-model-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .value-model-price {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-light);
+      font-size: 12px;
       color: var(--text-secondary);
     }
 
-    .legend-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
+    .value-model-price strong {
+      color: var(--text-primary);
     }
 
-    .chart-container {
-      position: relative;
-      height: 300px;
+    /* Rate Limits Section */
+    .rate-limits-section {
+      margin-bottom: 32px;
+    }
+
+    .rate-limits-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .rate-limit-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .rate-limit-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .rate-limit-icon .material-icons {
+      color: white;
+      font-size: 24px;
+    }
+
+    .rate-limit-info {
+      flex: 1;
+    }
+
+    .rate-limit-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .rate-limit-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 1200px) {
+      .value-models-grid,
+      .rate-limits-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .value-models-grid,
+      .rate-limits-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* Pricing Tables Section */
@@ -551,12 +668,19 @@
     }
 
     .cap-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       padding: 4px 10px;
       border-radius: var(--radius-xl);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.3px;
+    }
+
+    .cap-badge .material-icons {
+      font-size: 12px;
     }
 
     .cap-badge.active {
@@ -567,6 +691,7 @@
     .cap-badge.inactive {
       background: var(--border-light);
       color: var(--text-muted);
+      display: none;
     }
 
     /* Model Cards Grid */
@@ -627,25 +752,62 @@
       padding: 20px;
     }
 
-    .model-stat-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-light);
+    .model-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
 
-    .model-stat-row:last-child {
-      border-bottom: none;
+    .model-stat-box {
+      background: var(--background);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .model-stat-box.highlight {
+      background: linear-gradient(135deg, rgba(0, 217, 165, 0.1) 0%, rgba(0, 217, 165, 0.05) 100%);
+      border: 1px solid rgba(0, 217, 165, 0.2);
+    }
+
+    .model-stat-box.highlight .model-stat-value {
+      color: var(--success);
+    }
+
+    .model-stat-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .model-stat-icon .material-icons {
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    .model-stat-data {
+      display: flex;
+      flex-direction: column;
     }
 
     .model-stat-label {
-      color: var(--text-secondary);
-      font-size: 13px;
+      color: var(--text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
     .model-stat-value {
       font-weight: 600;
       font-family: 'Space Grotesk', monospace;
+      font-size: 14px;
       color: var(--text-primary);
     }
 
@@ -655,13 +817,8 @@
       border-top: 1px solid var(--border-light);
     }
 
-    .model-capabilities h5 {
+    .capability-badges .cap-badge .material-icons {
       font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 12px;
     }
 
     /* Summary Section */
@@ -885,38 +1042,56 @@
       </div>
     </div>
 
-    <!-- Charts Section -->
-    <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-header">
-          <div class="chart-title">
-            <span class="material-icons">bar_chart</span>
-            <h3>Model Pricing Comparison</h3>
-          </div>
-          <div class="chart-legend">
-            <div class="legend-item">
-              <div class="legend-dot" style="background: #e94560;"></div>
-              <span>Input Price</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-dot" style="background: #00d9a5;"></div>
-              <span>Output Price</span>
-            </div>
-          </div>
+    <!-- Top Value Models Section -->
+    <div class="value-models-section">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="material-icons">trending_up</span>
+          <h3>Best Value Models</h3>
         </div>
-        <div class="chart-container">
-          <canvas id="pricingChart"></canvas>
+        <span class="section-subtitle">Most tokens per $48 budget</span>
+      </div>
+      <div class="value-models-grid" id="valueModelsGrid">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Rate Limits Section -->
+    <div class="rate-limits-section">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="material-icons">speed</span>
+          <h3>Current Rate Limits</h3>
         </div>
       </div>
-      <div class="chart-card">
-        <div class="chart-header">
-          <div class="chart-title">
-            <span class="material-icons">donut_large</span>
-            <h3>Capability Distribution</h3>
+      <div class="rate-limits-grid" id="rateLimitsGrid">
+        <div class="rate-limit-card">
+          <div class="rate-limit-icon"><span class="material-icons">bolt</span></div>
+          <div class="rate-limit-info">
+            <div class="rate-limit-value" id="rpmLimit">--</div>
+            <div class="rate-limit-label">Requests/Min</div>
           </div>
         </div>
-        <div class="chart-container">
-          <canvas id="capabilityChart"></canvas>
+        <div class="rate-limit-card">
+          <div class="rate-limit-icon"><span class="material-icons">data_usage</span></div>
+          <div class="rate-limit-info">
+            <div class="rate-limit-value" id="tpmLimit">--</div>
+            <div class="rate-limit-label">Tokens/Min</div>
+          </div>
+        </div>
+        <div class="rate-limit-card">
+          <div class="rate-limit-icon"><span class="material-icons">today</span></div>
+          <div class="rate-limit-info">
+            <div class="rate-limit-value" id="rpdLimit">--</div>
+            <div class="rate-limit-label">Requests/Day</div>
+          </div>
+        </div>
+        <div class="rate-limit-card">
+          <div class="rate-limit-icon"><span class="material-icons">calendar_month</span></div>
+          <div class="rate-limit-info">
+            <div class="rate-limit-value" id="tpdLimit">--</div>
+            <div class="rate-limit-label">Tokens/Day</div>
+          </div>
         </div>
       </div>
     </div>
@@ -1136,8 +1311,6 @@
     let API_KEY = getApiKey();
     let availableModels = [];
     let sortState = { table: null, column: null, direction: 'asc' };
-    let pricingChart = null;
-    let capabilityChart = null;
 
     // Utility Functions
     function formatTokens(tokens) {
@@ -1222,7 +1395,8 @@
       updateKPIs();
       renderTextModelsTable();
       renderModelsGrid();
-      renderCharts();
+      renderValueModels();
+      fetchRateLimits();
     }
 
     // Update KPI Cards
@@ -1345,36 +1519,58 @@
         const spec = model.model_spec || {};
         const capabilities = spec.capabilities || {};
         const pricing = spec.pricing || {};
+        const contextTokens = spec.availableContextTokens || 0;
+        const maxOutputTokens = spec.maxCompletionTokens || Math.floor(contextTokens * 0.25);
+        const outputPrice = pricing.output?.usd || 0;
+        const inputPrice = pricing.input?.usd || 0;
+        const maxBudgetTokens = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1000000 : 0;
 
         return `
           <div class="model-card">
             <div class="model-card-header">
               <div class="model-card-title">${model.id}</div>
               <div class="model-card-meta">
-                <span><span class="material-icons">memory</span> ${(spec.availableContextTokens || 0).toLocaleString()} tokens</span>
+                <span><span class="material-icons">memory</span> ${contextTokens.toLocaleString()} context</span>
               </div>
             </div>
             <div class="model-card-body">
-              <div class="model-stat-row">
-                <span class="model-stat-label">Input Price</span>
-                <span class="model-stat-value">$${pricing.input?.usd || 0}/1M</span>
-              </div>
-              <div class="model-stat-row">
-                <span class="model-stat-label">Output Price</span>
-                <span class="model-stat-value">$${pricing.output?.usd || 0}/1M</span>
-              </div>
-              <div class="model-stat-row">
-                <span class="model-stat-label">Max Output (48 Diem)</span>
-                <span class="model-stat-value">${pricing.output?.usd > 0 ? formatTokens((DIEM_BUDGET / pricing.output.usd) * 1000000) : 'N/A'}</span>
+              <div class="model-stats-grid">
+                <div class="model-stat-box">
+                  <div class="model-stat-icon"><span class="material-icons">input</span></div>
+                  <div class="model-stat-data">
+                    <span class="model-stat-value">$${inputPrice.toFixed(2)}</span>
+                    <span class="model-stat-label">Input/1M</span>
+                  </div>
+                </div>
+                <div class="model-stat-box">
+                  <div class="model-stat-icon"><span class="material-icons">output</span></div>
+                  <div class="model-stat-data">
+                    <span class="model-stat-value">$${outputPrice.toFixed(2)}</span>
+                    <span class="model-stat-label">Output/1M</span>
+                  </div>
+                </div>
+                <div class="model-stat-box highlight">
+                  <div class="model-stat-icon"><span class="material-icons">token</span></div>
+                  <div class="model-stat-data">
+                    <span class="model-stat-value">${formatTokens(maxBudgetTokens)}</span>
+                    <span class="model-stat-label">@ $48 Budget</span>
+                  </div>
+                </div>
+                <div class="model-stat-box">
+                  <div class="model-stat-icon"><span class="material-icons">edit_note</span></div>
+                  <div class="model-stat-data">
+                    <span class="model-stat-value">${formatTokens(maxOutputTokens)}</span>
+                    <span class="model-stat-label">Max Output</span>
+                  </div>
+                </div>
               </div>
               <div class="model-capabilities">
-                <h5>Capabilities</h5>
                 <div class="capability-badges">
-                  <span class="cap-badge ${capabilities.supportsReasoning ? 'active' : 'inactive'}">Reasoning</span>
-                  <span class="cap-badge ${capabilities.supportsVision ? 'active' : 'inactive'}">Vision</span>
-                  <span class="cap-badge ${capabilities.supportsWebSearch ? 'active' : 'inactive'}">Web Search</span>
-                  <span class="cap-badge ${capabilities.supportsFunctionCalling ? 'active' : 'inactive'}">Functions</span>
-                  <span class="cap-badge ${capabilities.optimizedForCode ? 'active' : 'inactive'}">Code</span>
+                  ${capabilities.supportsReasoning ? '<span class="cap-badge active"><span class="material-icons">psychology</span>Reasoning</span>' : ''}
+                  ${capabilities.supportsVision ? '<span class="cap-badge active"><span class="material-icons">visibility</span>Vision</span>' : ''}
+                  ${capabilities.supportsWebSearch ? '<span class="cap-badge active"><span class="material-icons">travel_explore</span>Web</span>' : ''}
+                  ${capabilities.supportsFunctionCalling ? '<span class="cap-badge active"><span class="material-icons">functions</span>Functions</span>' : ''}
+                  ${capabilities.optimizedForCode ? '<span class="cap-badge active"><span class="material-icons">code</span>Code</span>' : ''}
                 </div>
               </div>
             </div>
@@ -1390,106 +1586,69 @@
       renderModelsGrid(filter);
     }
 
-    // Render Charts
-    function renderCharts() {
-      // Pricing Chart
-      const top10 = availableModels.slice(0, 10);
-      const labels = top10.map(m => m.id.length > 15 ? m.id.substring(0, 15) + '...' : m.id);
-      const inputPrices = top10.map(m => m.model_spec?.pricing?.input?.usd || 0);
-      const outputPrices = top10.map(m => m.model_spec?.pricing?.output?.usd || 0);
+    // Render Value Models (Top 4 best value)
+    function renderValueModels() {
+      const grid = document.getElementById('valueModelsGrid');
 
-      const pricingCtx = document.getElementById('pricingChart').getContext('2d');
+      // Calculate value score (tokens per dollar) and sort by best value
+      const modelsWithValue = availableModels
+        .filter(m => m.model_spec?.pricing?.output?.usd > 0)
+        .map(model => {
+          const pricing = model.model_spec?.pricing || {};
+          const outputPrice = pricing.output?.usd || 0;
+          const maxTokens = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1000000 : 0;
+          return { model, maxTokens, outputPrice };
+        })
+        .sort((a, b) => b.maxTokens - a.maxTokens)
+        .slice(0, 4);
 
-      if (pricingChart) pricingChart.destroy();
+      grid.innerHTML = modelsWithValue.map((item, index) => `
+        <div class="value-model-card rank-${index + 1}">
+          <div class="value-model-rank">${index + 1}</div>
+          <div class="value-model-name">${item.model.id}</div>
+          <div class="value-model-context">${(item.model.model_spec?.availableContextTokens || 0).toLocaleString()} context</div>
+          <div class="value-model-tokens">${formatTokens(item.maxTokens)}</div>
+          <div class="value-model-label">Output Tokens</div>
+          <div class="value-model-price">
+            <strong>$${item.outputPrice.toFixed(2)}</strong> per 1M tokens
+          </div>
+        </div>
+      `).join('');
+    }
 
-      pricingChart = new Chart(pricingCtx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Input Price ($/1M)',
-              data: inputPrices,
-              backgroundColor: 'rgba(233, 69, 96, 0.8)',
-              borderColor: '#e94560',
-              borderWidth: 1,
-              borderRadius: 4
-            },
-            {
-              label: 'Output Price ($/1M)',
-              data: outputPrices,
-              backgroundColor: 'rgba(0, 217, 165, 0.8)',
-              borderColor: '#00d9a5',
-              borderWidth: 1,
-              borderRadius: 4
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false }
-          },
-          scales: {
-            x: {
-              grid: { display: false },
-              ticks: { font: { size: 11 } }
-            },
-            y: {
-              beginAtZero: true,
-              grid: { color: 'rgba(0,0,0,0.05)' },
-              ticks: { callback: value => '$' + value }
-            }
-          }
+    // Fetch and display rate limits
+    async function fetchRateLimits() {
+      const apiKey = getApiKey();
+      if (!apiKey) return;
+
+      try {
+        const response = await fetch(`${BASE_URL}/api_keys/rate_limits/log`, {
+          headers: { 'Authorization': `Bearer ${apiKey}` }
+        });
+
+        if (!response.ok) {
+          console.warn('Could not fetch rate limits:', response.status);
+          return;
         }
-      });
 
-      // Capability Distribution Chart
-      const capCounts = {
-        reasoning: availableModels.filter(m => m.model_spec?.capabilities?.supportsReasoning).length,
-        vision: availableModels.filter(m => m.model_spec?.capabilities?.supportsVision).length,
-        webSearch: availableModels.filter(m => m.model_spec?.capabilities?.supportsWebSearch).length,
-        functions: availableModels.filter(m => m.model_spec?.capabilities?.supportsFunctionCalling).length,
-        code: availableModels.filter(m => m.model_spec?.capabilities?.optimizedForCode).length
-      };
+        const data = await response.json();
 
-      const capCtx = document.getElementById('capabilityChart').getContext('2d');
+        // Display rate limits if available
+        if (data) {
+          // Try to extract rate limit info from response
+          const rpm = data.requests_per_minute || data.rpm || '--';
+          const tpm = data.tokens_per_minute || data.tpm || '--';
+          const rpd = data.requests_per_day || data.rpd || '--';
+          const tpd = data.tokens_per_day || data.tpd || '--';
 
-      if (capabilityChart) capabilityChart.destroy();
-
-      capabilityChart = new Chart(capCtx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Reasoning', 'Vision', 'Web Search', 'Functions', 'Code'],
-          datasets: [{
-            data: [capCounts.reasoning, capCounts.vision, capCounts.webSearch, capCounts.functions, capCounts.code],
-            backgroundColor: [
-              '#e94560',
-              '#00d9a5',
-              '#ffc107',
-              '#0f3460',
-              '#6366f1'
-            ],
-            borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '60%',
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                padding: 16,
-                usePointStyle: true,
-                font: { size: 12 }
-              }
-            }
-          }
+          document.getElementById('rpmLimit').textContent = typeof rpm === 'number' ? rpm.toLocaleString() : rpm;
+          document.getElementById('tpmLimit').textContent = typeof tpm === 'number' ? formatTokens(tpm) : tpm;
+          document.getElementById('rpdLimit').textContent = typeof rpd === 'number' ? rpd.toLocaleString() : rpd;
+          document.getElementById('tpdLimit').textContent = typeof tpd === 'number' ? formatTokens(tpd) : tpd;
         }
-      });
+      } catch (error) {
+        console.warn('Error fetching rate limits:', error);
+      }
     }
 
     // Refresh Data
