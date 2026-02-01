@@ -1123,14 +1123,28 @@
     const DIEM_BUDGET = 48;
     const BASE_URL = 'https://api.venice.ai/api/v1';
 
-    // Get API key - check password first
+    // Get backend API key (Netlify-injected or localStorage)
+    function getBackendApiKey() {
+      // First try Netlify-injected key
+      if (window.VENICE_API_KEY && window.VENICE_API_KEY !== 'your-venice-api-key-here') {
+        return window.VENICE_API_KEY;
+      }
+      // Fall back to localStorage (for local development)
+      return localStorage.getItem('venice_backend_api_key') || '';
+    }
+
+    // Get API key - check password first, then user key
     function getApiKey() {
       const savedPassword = localStorage.getItem('venice_password');
-      if (savedPassword === 'surat') {
-        return window.VENICE_API_KEY || '';
+      const savedUserKey = localStorage.getItem('venice_user_api_key');
+      const backendKey = getBackendApiKey();
+
+      // Password users get the backend key (Netlify or localStorage)
+      if (savedPassword === 'surat' && backendKey) {
+        return backendKey;
       }
       // Fallback to user-provided API key
-      return localStorage.getItem('venice_user_api_key') || '';
+      return savedUserKey || '';
     }
 
     let API_KEY = getApiKey();
@@ -1507,6 +1521,7 @@
       if (confirm('Are you sure you want to sign out?')) {
         localStorage.removeItem('venice_password');
         localStorage.removeItem('venice_user_api_key');
+        localStorage.removeItem('venice_backend_api_key');
         window.location.href = 'index.html';
       }
     }

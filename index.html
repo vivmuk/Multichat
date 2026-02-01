@@ -922,6 +922,303 @@
       font-size: 20px;
     }
 
+    /* Analysis Modal */
+    .analysis-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .analysis-modal.show {
+      display: flex;
+    }
+
+    .analysis-content {
+      background: var(--surface-color);
+      border-radius: 20px;
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .analysis-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 28px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+    }
+
+    .analysis-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .analysis-title h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .analysis-title .material-icons {
+      font-size: 28px;
+    }
+
+    .analysis-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+    }
+
+    .analysis-loading {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .analysis-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--border-color);
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    .analysis-loading p {
+      color: var(--text-color);
+      font-size: 16px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .analysis-hint {
+      color: var(--text-secondary) !important;
+      font-size: 14px !important;
+      margin-top: 8px !important;
+    }
+
+    .analysis-footer {
+      padding: 20px 28px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* Analysis Results Styles */
+    .analysis-section {
+      margin-bottom: 28px;
+    }
+
+    .analysis-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .analysis-section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .analysis-section-title .material-icons {
+      color: #6366f1;
+      font-size: 22px;
+    }
+
+    .ranking-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .ranking-card {
+      background: linear-gradient(135deg, #f8f9fc 0%, #ffffff 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ranking-card.gold {
+      border-color: #fbbf24;
+      background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
+    }
+
+    .ranking-card.silver {
+      border-color: #9ca3af;
+      background: linear-gradient(135deg, #f3f4f6 0%, #ffffff 100%);
+    }
+
+    .ranking-card.bronze {
+      border-color: #d97706;
+      background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
+    }
+
+    .ranking-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .ranking-card.gold .ranking-badge { background: #fbbf24; }
+    .ranking-card.silver .ranking-badge { background: #9ca3af; }
+    .ranking-card.bronze .ranking-badge { background: #d97706; }
+
+    .ranking-model-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-color);
+      margin-bottom: 8px;
+      padding-right: 36px;
+    }
+
+    .ranking-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .common-themes, .unique-insights {
+      background: var(--background-color);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .theme-item, .insight-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .theme-item:last-child, .insight-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .theme-item:first-child, .insight-item:first-child {
+      padding-top: 0;
+    }
+
+    .theme-icon, .insight-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .theme-icon {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+    }
+
+    .insight-icon {
+      background: rgba(99, 102, 241, 0.15);
+      color: #6366f1;
+    }
+
+    .theme-icon .material-icons, .insight-icon .material-icons {
+      font-size: 18px;
+    }
+
+    .theme-content, .insight-content {
+      flex: 1;
+    }
+
+    .theme-title, .insight-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-color);
+      margin-bottom: 4px;
+    }
+
+    .theme-models, .insight-model {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .theme-models span, .insight-model span {
+      background: rgba(99, 102, 241, 0.1);
+      color: #6366f1;
+      padding: 2px 8px;
+      border-radius: 12px;
+      margin-right: 6px;
+      font-weight: 500;
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--background-color);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #6366f1;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 768px) {
+      .ranking-cards {
+        grid-template-columns: 1fr;
+      }
+      .summary-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     /* Dashboard Modal */
     .dashboard-modal {
       display: none;
@@ -1571,6 +1868,10 @@
               <span class="material-icons">download</span>
               Download Responses
             </button>
+            <button id="analyzeButton" class="button" title="Analyze and compare all responses" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); display: none;">
+              <span class="material-icons">insights</span>
+              Analyze
+            </button>
           </div>
         </div>
       </div>
@@ -1607,17 +1908,18 @@
       <div class="auth-header">
         <span class="material-icons" style="font-size: 48px; color: #e63946;">smart_toy</span>
         <h2>Venice AI Multi-Chat</h2>
-        <p>Enter your password or API key to continue</p>
+        <p>Choose how you want to connect</p>
       </div>
       <div class="auth-form">
         <div class="auth-tabs">
-          <button class="auth-tab active" data-tab="password">Password</button>
-          <button class="auth-tab" data-tab="apikey">API Key</button>
+          <button class="auth-tab active" data-tab="password">Member Access</button>
+          <button class="auth-tab" data-tab="apikey">Use Your API Key</button>
         </div>
         <div class="auth-tab-content" id="passwordTab">
+          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">For authorized members with shared access</p>
           <div class="auth-input-group">
             <label for="passwordInput">Enter Password</label>
-            <input type="password" id="passwordInput" placeholder="Enter password..." autocomplete="current-password">
+            <input type="password" id="passwordInput" placeholder="Enter member password..." autocomplete="current-password">
           </div>
           <label class="auth-checkbox">
             <input type="checkbox" id="rememberPassword" checked>
@@ -1629,24 +1931,53 @@
           </button>
         </div>
         <div class="auth-tab-content" id="apikeyTab" style="display: none;">
+          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Connect with your own Venice AI API key</p>
           <div class="auth-input-group">
-            <label for="apiKeyInput">Venice API Key</label>
-            <input type="password" id="apiKeyInput" placeholder="Enter your Venice API key..." autocomplete="off">
+            <label for="apiKeyInput">Your Venice API Key</label>
+            <input type="password" id="apiKeyInput" placeholder="Paste your API key here..." autocomplete="off">
           </div>
           <label class="auth-checkbox">
             <input type="checkbox" id="rememberApiKey" checked>
-            <span>Save API key locally</span>
+            <span>Save API key for future visits</span>
           </label>
           <button class="auth-submit" id="apiKeySubmit">
             <span class="material-icons">vpn_key</span>
             Connect
           </button>
-          <p class="auth-hint">Get your API key from <a href="https://venice.ai" target="_blank">venice.ai</a></p>
+          <p class="auth-hint">Don't have a key? Get one from <a href="https://venice.ai" target="_blank">venice.ai</a></p>
         </div>
         <div class="auth-error" id="authError" style="display: none;">
           <span class="material-icons">error</span>
           <span id="authErrorText">Invalid password</span>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analysis Modal -->
+  <div class="analysis-modal" id="analysisModal">
+    <div class="analysis-content">
+      <div class="analysis-header">
+        <div class="analysis-title">
+          <span class="material-icons">insights</span>
+          <h2>Response Analysis</h2>
+        </div>
+        <button class="close-button" id="closeAnalysis">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="analysis-body" id="analysisBody">
+        <div class="analysis-loading">
+          <div class="analysis-spinner"></div>
+          <p>Analyzing responses with AI...</p>
+          <p class="analysis-hint">Comparing answers across all models</p>
+        </div>
+      </div>
+      <div class="analysis-footer" id="analysisFooter" style="display: none;">
+        <button id="downloadAnalysisReport" class="button" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+          <span class="material-icons">download</span>
+          Download Report
+        </button>
       </div>
     </div>
   </div>
@@ -1661,16 +1992,29 @@
     const CORRECT_PASSWORD = 'surat';
     const BASE_URL = 'https://api.venice.ai/api/v1';
 
+    // Get the backend API key (from Netlify build injection or localStorage)
+    function getBackendApiKey() {
+      // First try Netlify-injected key (from build.js)
+      if (window.VENICE_API_KEY && window.VENICE_API_KEY !== 'your-venice-api-key-here') {
+        return window.VENICE_API_KEY;
+      }
+      // Fall back to localStorage (for local development)
+      return localStorage.getItem('venice_backend_api_key') || '';
+    }
+
     // Check if user is authenticated
     function checkAuthentication() {
       const savedPassword = localStorage.getItem('venice_password');
-      const savedApiKey = localStorage.getItem('venice_user_api_key');
+      const savedUserKey = localStorage.getItem('venice_user_api_key');
+      const backendKey = getBackendApiKey();
 
-      if (savedPassword === CORRECT_PASSWORD) {
-        return { authenticated: true, useBackendKey: true };
+      // Password users get the backend key (Netlify-injected or localStorage)
+      if (savedPassword === CORRECT_PASSWORD && backendKey) {
+        return { authenticated: true, useBackendKey: true, apiKey: backendKey };
       }
-      if (savedApiKey) {
-        return { authenticated: true, useBackendKey: false, apiKey: savedApiKey };
+      // Direct API key users
+      if (savedUserKey) {
+        return { authenticated: true, useBackendKey: false, apiKey: savedUserKey };
       }
       return { authenticated: false };
     }
@@ -1678,17 +2022,8 @@
     // Get API key based on authentication
     function getApiKey() {
       const auth = checkAuthentication();
-      if (auth.authenticated) {
-        if (auth.useBackendKey) {
-          // Use backend key
-          return window.VENICE_API_KEY || (() => {
-            const meta = document.querySelector('meta[name="venice-api-key"]');
-            return meta ? meta.getAttribute('content') : '';
-          })();
-        } else {
-          // Use user-provided key
-          return auth.apiKey;
-        }
+      if (auth.authenticated && auth.apiKey) {
+        return auth.apiKey;
       }
       return '';
     }
@@ -1727,14 +2062,57 @@
       });
 
       // Password submit
-      passwordSubmit.addEventListener('click', () => {
+      passwordSubmit.addEventListener('click', async () => {
         const password = passwordInput.value.trim();
         if (password === CORRECT_PASSWORD) {
+          // Get backend API key (Netlify-injected first, then localStorage)
+          let backendKey = getBackendApiKey();
+
+          // If no backend key available (local development without config)
+          if (!backendKey) {
+            const inputKey = prompt('Password correct! Enter your Venice API key (one-time setup for local dev):');
+            if (!inputKey || !inputKey.trim()) {
+              authError.style.display = 'flex';
+              authErrorText.textContent = 'API key is required for first-time setup.';
+              return;
+            }
+
+            // Validate the API key
+            try {
+              passwordSubmit.disabled = true;
+              passwordSubmit.innerHTML = '<span class="material-icons spin">refresh</span> Validating...';
+
+              const response = await fetch(`${BASE_URL}/models?type=text`, {
+                headers: { 'Authorization': `Bearer ${inputKey.trim()}` }
+              });
+
+              if (!response.ok) {
+                authError.style.display = 'flex';
+                authErrorText.textContent = 'Invalid API key. Please try again.';
+                passwordSubmit.disabled = false;
+                passwordSubmit.innerHTML = '<span class="material-icons">lock_open</span> Unlock';
+                return;
+              }
+
+              backendKey = inputKey.trim();
+              localStorage.setItem('venice_backend_api_key', backendKey);
+            } catch (error) {
+              authError.style.display = 'flex';
+              authErrorText.textContent = 'Connection error. Please try again.';
+              passwordSubmit.disabled = false;
+              passwordSubmit.innerHTML = '<span class="material-icons">lock_open</span> Unlock';
+              return;
+            }
+          }
+
           if (rememberPassword.checked) {
             localStorage.setItem('venice_password', password);
           }
-          API_KEY = getApiKey();
+
+          API_KEY = backendKey;
           authModal.classList.remove('show');
+          passwordSubmit.disabled = false;
+          passwordSubmit.innerHTML = '<span class="material-icons">lock_open</span> Unlock';
           fetchVeniceModels();
         } else {
           authError.style.display = 'flex';
@@ -1797,10 +2175,11 @@
       document.getElementById('passwordInput').focus();
     }
 
-    // Logout function (can be called from console or added to UI later)
+    // Logout function
     window.veniceLogout = function() {
       localStorage.removeItem('venice_password');
       localStorage.removeItem('venice_user_api_key');
+      localStorage.removeItem('venice_backend_api_key');
       location.reload();
     };
 
@@ -2176,6 +2555,7 @@
         }
         
         updateModelStatus(model.id, 'complete');
+        checkAnalyzeButtonVisibility();
       } catch (error) {
         if (error.name === 'AbortError') {
           return; // Stream was cancelled
@@ -2758,6 +3138,9 @@
       streamingControllers = {};
       modelResponses = {};
 
+      // Hide analyze button until responses complete
+      analyzeButton.style.display = 'none';
+
       sendButton.disabled = true;
       sendButton.querySelector('.material-icons').classList.add('spin');
       
@@ -3129,6 +3512,652 @@
         veniceLogout();
       }
     });
+
+    // Analysis button and modal
+    const analyzeButton = document.getElementById('analyzeButton');
+    const analysisModal = document.getElementById('analysisModal');
+    const closeAnalysis = document.getElementById('closeAnalysis');
+    const analysisBody = document.getElementById('analysisBody');
+    const analysisFooter = document.getElementById('analysisFooter');
+    const downloadAnalysisReport = document.getElementById('downloadAnalysisReport');
+    let lastAnalysisResult = null;
+
+    analyzeButton.addEventListener('click', () => {
+      analysisModal.classList.add('show');
+      analyzeResponses();
+    });
+
+    closeAnalysis.addEventListener('click', () => {
+      analysisModal.classList.remove('show');
+    });
+
+    analysisModal.addEventListener('click', (e) => {
+      if (e.target === analysisModal) {
+        analysisModal.classList.remove('show');
+      }
+    });
+
+    downloadAnalysisReport.addEventListener('click', () => {
+      if (lastAnalysisResult) {
+        downloadAnalysisAsReport(lastAnalysisResult);
+      }
+    });
+
+    async function analyzeResponses() {
+      // Reset modal state
+      analysisBody.innerHTML = `
+        <div class="analysis-loading">
+          <div class="analysis-spinner"></div>
+          <p>Analyzing responses with AI...</p>
+          <p class="analysis-hint">Comparing answers across all models</p>
+        </div>
+      `;
+      analysisFooter.style.display = 'none';
+
+      // Collect all responses
+      const responses = [];
+      const prompt = promptTextarea.value.trim();
+
+      for (const [modelId, data] of Object.entries(modelResponses)) {
+        if (data.content && data.content !== 'Waiting for prompt...' && !data.content.includes('Loading...')) {
+          responses.push({
+            model: modelId,
+            content: data.content.substring(0, 3000) // Limit content length
+          });
+        }
+      }
+
+      if (responses.length < 2) {
+        analysisBody.innerHTML = `
+          <div class="analysis-loading">
+            <span class="material-icons" style="font-size: 48px; color: var(--orange); margin-bottom: 16px;">warning</span>
+            <p>Need at least 2 model responses to analyze</p>
+            <p class="analysis-hint">Send a prompt to multiple models first</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Build the analysis prompt
+      const analysisPrompt = `You are an expert analyst comparing AI model responses. Analyze these ${responses.length} model responses to the same prompt and provide a structured analysis.
+
+ORIGINAL PROMPT: "${prompt}"
+
+MODEL RESPONSES:
+${responses.map(r => `--- ${r.model} ---\n${r.content}\n`).join('\n')}
+
+Provide your analysis in the following JSON format (respond ONLY with valid JSON, no markdown):
+{
+  "summary": {
+    "totalModels": ${responses.length},
+    "consensusLevel": "high/medium/low",
+    "diversityScore": 1-10
+  },
+  "commonThemes": [
+    {
+      "theme": "Description of common point",
+      "models": ["model1", "model2"]
+    }
+  ],
+  "uniqueInsights": [
+    {
+      "insight": "Description of unique point",
+      "model": "model name",
+      "significance": "Why this is notable"
+    }
+  ],
+  "mostUnique": [
+    {
+      "rank": 1,
+      "model": "model name",
+      "reason": "Why this model was most unique"
+    },
+    {
+      "rank": 2,
+      "model": "model name",
+      "reason": "Why this model was second most unique"
+    },
+    {
+      "rank": 3,
+      "model": "model name",
+      "reason": "Why this model was third most unique"
+    }
+  ],
+  "mostSimilar": [
+    {
+      "rank": 1,
+      "model": "model name",
+      "reason": "Why this model had most common answers"
+    },
+    {
+      "rank": 2,
+      "model": "model name",
+      "reason": "Why this model had second most common answers"
+    },
+    {
+      "rank": 3,
+      "model": "model name",
+      "reason": "Why this model had third most common answers"
+    }
+  ],
+  "overallAnalysis": "A 2-3 sentence summary of the comparison"
+}`;
+
+      try {
+        const response = await fetch(`${BASE_URL}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({
+            model: 'gemini-3-flash-preview',
+            messages: [{ role: 'user', content: analysisPrompt }],
+            max_tokens: 4000,
+            temperature: 0.3
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const analysisText = data.choices[0]?.message?.content || '';
+
+        // Parse JSON from response
+        let analysis;
+        try {
+          // Try to extract JSON from the response
+          const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            analysis = JSON.parse(jsonMatch[0]);
+          } else {
+            throw new Error('No JSON found in response');
+          }
+        } catch (parseError) {
+          console.error('Failed to parse analysis:', parseError);
+          throw new Error('Failed to parse analysis results');
+        }
+
+        lastAnalysisResult = { analysis, prompt, responses };
+        displayAnalysisResults(analysis);
+        analysisFooter.style.display = 'flex';
+
+      } catch (error) {
+        console.error('Analysis failed:', error);
+        analysisBody.innerHTML = `
+          <div class="analysis-loading">
+            <span class="material-icons" style="font-size: 48px; color: var(--red); margin-bottom: 16px;">error</span>
+            <p>Analysis failed</p>
+            <p class="analysis-hint">${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function displayAnalysisResults(analysis) {
+      const { summary, commonThemes, uniqueInsights, mostUnique, mostSimilar, overallAnalysis } = analysis;
+
+      analysisBody.innerHTML = `
+        <!-- Summary Stats -->
+        <div class="summary-stats">
+          <div class="stat-card">
+            <div class="stat-value">${summary.totalModels}</div>
+            <div class="stat-label">Models Analyzed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color: ${summary.consensusLevel === 'high' ? '#22c55e' : summary.consensusLevel === 'medium' ? '#f59e0b' : '#ef4444'};">${summary.consensusLevel}</div>
+            <div class="stat-label">Consensus Level</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${summary.diversityScore}/10</div>
+            <div class="stat-label">Diversity Score</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${commonThemes?.length || 0}</div>
+            <div class="stat-label">Common Themes</div>
+          </div>
+        </div>
+
+        <!-- Overall Analysis -->
+        <div class="analysis-section">
+          <div class="analysis-section-title">
+            <span class="material-icons">summarize</span>
+            Overall Analysis
+          </div>
+          <div class="common-themes">
+            <p style="color: var(--text-color); line-height: 1.7; margin: 0;">${overallAnalysis}</p>
+          </div>
+        </div>
+
+        <!-- Most Unique Models -->
+        <div class="analysis-section">
+          <div class="analysis-section-title">
+            <span class="material-icons">star</span>
+            Top 3 Most Unique Responses
+          </div>
+          <div class="ranking-cards">
+            ${mostUnique?.slice(0, 3).map((item, i) => `
+              <div class="ranking-card ${i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}">
+                <div class="ranking-badge">${i + 1}</div>
+                <div class="ranking-model-name">${item.model}</div>
+                <div class="ranking-description">${item.reason}</div>
+              </div>
+            `).join('') || '<p>No data available</p>'}
+          </div>
+        </div>
+
+        <!-- Most Similar Models -->
+        <div class="analysis-section">
+          <div class="analysis-section-title">
+            <span class="material-icons">groups</span>
+            Top 3 Most Consensus-Aligned
+          </div>
+          <div class="ranking-cards">
+            ${mostSimilar?.slice(0, 3).map((item, i) => `
+              <div class="ranking-card ${i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}">
+                <div class="ranking-badge">${i + 1}</div>
+                <div class="ranking-model-name">${item.model}</div>
+                <div class="ranking-description">${item.reason}</div>
+              </div>
+            `).join('') || '<p>No data available</p>'}
+          </div>
+        </div>
+
+        <!-- Common Themes -->
+        ${commonThemes && commonThemes.length > 0 ? `
+        <div class="analysis-section">
+          <div class="analysis-section-title">
+            <span class="material-icons">hub</span>
+            Common Themes Across Models
+          </div>
+          <div class="common-themes">
+            ${commonThemes.map(theme => `
+              <div class="theme-item">
+                <div class="theme-icon">
+                  <span class="material-icons">check_circle</span>
+                </div>
+                <div class="theme-content">
+                  <div class="theme-title">${theme.theme}</div>
+                  <div class="theme-models">
+                    ${theme.models?.map(m => `<span>${m}</span>`).join('') || ''}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        ` : ''}
+
+        <!-- Unique Insights -->
+        ${uniqueInsights && uniqueInsights.length > 0 ? `
+        <div class="analysis-section">
+          <div class="analysis-section-title">
+            <span class="material-icons">lightbulb</span>
+            Unique Insights
+          </div>
+          <div class="unique-insights">
+            ${uniqueInsights.slice(0, 5).map(insight => `
+              <div class="insight-item">
+                <div class="insight-icon">
+                  <span class="material-icons">auto_awesome</span>
+                </div>
+                <div class="insight-content">
+                  <div class="insight-title">${insight.insight}</div>
+                  <div class="insight-model">
+                    <span>${insight.model}</span> ${insight.significance || ''}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        ` : ''}
+      `;
+    }
+
+    function downloadAnalysisAsReport(data) {
+      const { analysis, prompt, responses } = data;
+      const timestamp = new Date().toLocaleString();
+      const { summary, commonThemes, uniqueInsights, mostUnique, mostSimilar, overallAnalysis } = analysis;
+
+      const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venice AI - Response Analysis Report</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a1a2e;
+      --primary-light: #16213e;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --background: #f8f9fc;
+      --surface: #ffffff;
+      --text-primary: #1a1a2e;
+      --text-secondary: #6b7280;
+      --border: #e5e7eb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    .report-container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+    .report-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #0f3460 100%);
+      color: white;
+      padding: 48px 40px;
+      border-radius: 20px;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    .report-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    .report-header p { opacity: 0.8; font-size: 14px; }
+    .report-header .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      padding: 8px 16px;
+      border-radius: 20px;
+      margin-top: 16px;
+      font-size: 13px;
+    }
+    .section {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+    .section-title .material-icons { color: var(--accent); font-size: 24px; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--background);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+    .ranking-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .ranking-card {
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+    }
+    .ranking-card.gold { border-color: #fbbf24; background: linear-gradient(to bottom, #fef3c7, white); }
+    .ranking-card.silver { border-color: #9ca3af; background: linear-gradient(to bottom, #f3f4f6, white); }
+    .ranking-card.bronze { border-color: #d97706; background: linear-gradient(to bottom, #fef3c7, white); }
+    .ranking-badge {
+      position: absolute;
+      top: -12px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+    }
+    .ranking-card.gold .ranking-badge { background: #fbbf24; }
+    .ranking-card.silver .ranking-badge { background: #9ca3af; }
+    .ranking-card.bronze .ranking-badge { background: #d97706; }
+    .ranking-model { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+    .ranking-reason { font-size: 13px; color: var(--text-secondary); }
+    .theme-list { background: var(--background); border-radius: 12px; padding: 16px; }
+    .theme-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .theme-item:last-child { border-bottom: none; }
+    .theme-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .theme-title { font-weight: 600; margin-bottom: 4px; }
+    .theme-models { font-size: 12px; color: var(--text-secondary); }
+    .theme-models span {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--accent);
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-right: 6px;
+      font-weight: 500;
+    }
+    .prompt-box {
+      background: var(--background);
+      border-left: 4px solid var(--accent);
+      padding: 16px 20px;
+      border-radius: 0 12px 12px 0;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+    .footer {
+      text-align: center;
+      padding: 32px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+    @media (max-width: 768px) {
+      .stats-grid, .ranking-grid { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body { background: white; }
+      .section { box-shadow: none; border: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+  <div class="report-container">
+    <div class="report-header">
+      <h1>Response Analysis Report</h1>
+      <p>Venice AI Multi-Model Comparison</p>
+      <div class="badge">
+        <span class="material-icons" style="font-size: 16px;">schedule</span>
+        Generated: ${timestamp}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <span class="material-icons">chat</span>
+        Original Prompt
+      </div>
+      <div class="prompt-box">${prompt}</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">${summary.totalModels}</div>
+        <div class="stat-label">Models Analyzed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color: ${summary.consensusLevel === 'high' ? 'var(--success)' : summary.consensusLevel === 'medium' ? 'var(--warning)' : 'var(--danger)'};">${summary.consensusLevel}</div>
+        <div class="stat-label">Consensus Level</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${summary.diversityScore}/10</div>
+        <div class="stat-label">Diversity Score</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${commonThemes?.length || 0}</div>
+        <div class="stat-label">Common Themes</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <span class="material-icons">summarize</span>
+        Executive Summary
+      </div>
+      <p style="line-height: 1.8;">${overallAnalysis}</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <span class="material-icons">star</span>
+        Top 3 Most Unique Responses
+      </div>
+      <div class="ranking-grid">
+        ${mostUnique?.slice(0, 3).map((item, i) => `
+          <div class="ranking-card ${i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}">
+            <div class="ranking-badge">${i + 1}</div>
+            <div class="ranking-model">${item.model}</div>
+            <div class="ranking-reason">${item.reason}</div>
+          </div>
+        `).join('') || ''}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <span class="material-icons">groups</span>
+        Top 3 Consensus-Aligned Responses
+      </div>
+      <div class="ranking-grid">
+        ${mostSimilar?.slice(0, 3).map((item, i) => `
+          <div class="ranking-card ${i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}">
+            <div class="ranking-badge">${i + 1}</div>
+            <div class="ranking-model">${item.model}</div>
+            <div class="ranking-reason">${item.reason}</div>
+          </div>
+        `).join('') || ''}
+      </div>
+    </div>
+
+    ${commonThemes && commonThemes.length > 0 ? `
+    <div class="section">
+      <div class="section-title">
+        <span class="material-icons">hub</span>
+        Common Themes Identified
+      </div>
+      <div class="theme-list">
+        ${commonThemes.map(theme => `
+          <div class="theme-item">
+            <div class="theme-icon">
+              <span class="material-icons">check_circle</span>
+            </div>
+            <div>
+              <div class="theme-title">${theme.theme}</div>
+              <div class="theme-models">
+                ${theme.models?.map(m => `<span>${m}</span>`).join('') || ''}
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
+
+    ${uniqueInsights && uniqueInsights.length > 0 ? `
+    <div class="section">
+      <div class="section-title">
+        <span class="material-icons">lightbulb</span>
+        Unique Insights by Model
+      </div>
+      <div class="theme-list">
+        ${uniqueInsights.map(insight => `
+          <div class="theme-item">
+            <div class="theme-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--accent);">
+              <span class="material-icons">auto_awesome</span>
+            </div>
+            <div>
+              <div class="theme-title">${insight.insight}</div>
+              <div class="theme-models">
+                <span>${insight.model}</span> ${insight.significance || ''}
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
+
+    <div class="footer">
+      <p>Generated by <a href="https://venice.ai" target="_blank">Venice AI</a> Multi-Chat Analysis</p>
+      <p style="margin-top: 8px;">Analysis powered by Gemini 3 Flash Preview</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `venice-analysis-report-${new Date().toISOString().split('T')[0]}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Show analyze button when responses are complete
+    function checkAnalyzeButtonVisibility() {
+      const completedResponses = Object.values(modelResponses).filter(
+        r => r.content && r.content !== 'Waiting for prompt...' && !r.content.includes('Loading...')
+      ).length;
+
+      if (completedResponses >= 2) {
+        analyzeButton.style.display = 'inline-flex';
+      } else {
+        analyzeButton.style.display = 'none';
+      }
+    }
 
     promptTextarea.addEventListener('keypress', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
