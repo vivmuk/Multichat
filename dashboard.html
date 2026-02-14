@@ -349,7 +349,21 @@
     .cell-model-name {
       font-weight: 600; color: var(--text-primary); font-size: 13px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px;
+      display: flex; align-items: center; gap: 4px;
     }
+    .copy-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: var(--radius-sm);
+      border: none; background: transparent; cursor: pointer;
+      color: var(--text-muted); transition: all 0.15s; flex-shrink: 0;
+      padding: 0; opacity: 0;
+    }
+    .cell-model:hover .copy-btn { opacity: 1; }
+    .copy-btn:hover { background: var(--accent-bg); color: var(--accent); }
+    .copy-btn .material-icons { font-size: 14px; }
+    .copy-btn.copied { color: var(--green); }
+    .copy-btn.copied .material-icons::after { content: 'check'; }
+    
     .cell-model-sub {
       font-size: 11px; color: var(--text-muted);
       display: flex; align-items: center; gap: 6px;
@@ -1179,7 +1193,7 @@
               <div class="cell-model">
                 <div class="model-avatar ${getAvatarClass(model)}">${getInitials(d.id)}</div>
                 <div class="cell-model-info">
-                  <div class="cell-model-name">${d.name}${bestTag}</div>
+                  <div class="cell-model-name"><span>${d.name}</span>${bestTag}<button class="copy-btn" onclick="copyModelId(event,'${d.id}')" title="Copy model ID"><span class="material-icons">content_copy</span></button></div>
                   <div class="cell-model-sub">${betaTag}</div>
                 </div>
               </div>
@@ -1339,6 +1353,21 @@
       } catch (error) {
         console.warn('Error fetching rate limits:', error);
       }
+    }
+
+    // ===== COPY MODEL ID =====
+    function copyModelId(e, id) {
+      e.stopPropagation();
+      navigator.clipboard.writeText(id).then(() => {
+        const btn = e.currentTarget;
+        const icon = btn.querySelector('.material-icons');
+        icon.textContent = 'check';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          icon.textContent = 'content_copy';
+          btn.classList.remove('copied');
+        }, 1500);
+      });
     }
 
     // ===== EXPORT CSV =====
