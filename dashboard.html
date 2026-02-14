@@ -4,1012 +4,590 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Venice AI - Cost Analytics Dashboard</title>
+  <title>Venice AI - Model Explorer Dashboard</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
     rel="stylesheet">
   <style>
     :root {
-      --primary: #1a1a2e;
-      --primary-light: #16213e;
-      --accent: #e94560;
-      --accent-light: #ff6b6b;
-      --success: #00d9a5;
-      --success-light: #e6fff7;
-      --warning: #ffc107;
-      --info: #0f3460;
-      --background: #f8f9fc;
+      --primary: #0f172a;
+      --primary-light: #1e293b;
+      --primary-mid: #334155;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --accent-bg: rgba(99, 102, 241, 0.08);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.1);
+      --orange: #f97316;
+      --orange-bg: rgba(249, 115, 22, 0.1);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.1);
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.1);
+      --teal: #14b8a6;
+      --teal-bg: rgba(20, 184, 166, 0.1);
+      --cyan: #06b6d4;
+      --cyan-bg: rgba(6, 182, 212, 0.1);
+      --blue: #3b82f6;
+      --blue-bg: rgba(59, 130, 246, 0.1);
+      --indigo: #6366f1;
+      --indigo-bg: rgba(99, 102, 241, 0.1);
+      --violet: #8b5cf6;
+      --violet-bg: rgba(139, 92, 246, 0.1);
+      --purple: #a855f7;
+      --purple-bg: rgba(168, 85, 247, 0.1);
+      --pink: #ec4899;
+      --pink-bg: rgba(236, 72, 153, 0.1);
+      --rose: #f43f5e;
+      --rose-bg: rgba(244, 63, 94, 0.1);
+      --background: #f8fafc;
       --surface: #ffffff;
-      --text-primary: #1a1a2e;
-      --text-secondary: #6b7280;
-      --text-muted: #9ca3af;
-      --border: #e5e7eb;
-      --border-light: #f3f4f6;
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --surface-hover: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --border-light: #f1f5f9;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
       --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 16px;
-      --radius-xl: 24px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--background);
       color: var(--text-primary);
       min-height: 100vh;
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
-    /* Navigation */
+    /* ===== TOP NAV ===== */
     .top-nav {
       background: var(--primary);
-      padding: 0 40px;
-      height: 70px;
+      padding: 0 32px;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: var(--shadow-lg);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-
     .nav-brand {
       display: flex;
       align-items: center;
       gap: 12px;
       color: white;
     }
-
     .nav-brand .logo {
-      width: 42px;
-      height: 42px;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--violet) 100%);
       border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
-
-    .nav-brand .logo .material-icons {
-      font-size: 24px;
-      color: white;
-    }
-
+    .nav-brand .logo .material-icons { font-size: 20px; color: white; }
     .nav-brand h1 {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-size: 18px; font-weight: 700; letter-spacing: -0.3px;
     }
-
-    .nav-brand span {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.6);
-      font-weight: 400;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
+    .nav-brand span { font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 400; }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
     .nav-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      border: none;
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: var(--radius-md);
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: all 0.15s; text-decoration: none; border: none;
     }
-
-    .nav-btn.primary {
-      background: var(--accent);
-      color: white;
-    }
-
-    .nav-btn.primary:hover {
-      background: var(--accent-light);
-      transform: translateY(-1px);
-    }
-
+    .nav-btn .material-icons { font-size: 18px; }
+    .nav-btn.primary { background: var(--accent); color: white; }
+    .nav-btn.primary:hover { background: var(--accent-light); }
     .nav-btn.secondary {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.8);
+      border: 1px solid rgba(255,255,255,0.1);
     }
+    .nav-btn.secondary:hover { background: rgba(255,255,255,0.12); }
 
-    .nav-btn.secondary:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
+    /* ===== MAIN CONTAINER ===== */
+    .dashboard-container { max-width: 1800px; margin: 0 auto; padding: 24px 32px; }
 
-    /* Main Container */
-    .dashboard-container {
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 32px 40px;
-    }
-
-    /* Page Header */
-    .page-header {
-      margin-bottom: 32px;
-    }
-
-    .page-header h2 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 8px;
-    }
-
-    .page-header p {
-      color: var(--text-secondary);
-      font-size: 16px;
-    }
-
-    .budget-highlight {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
-      color: white;
-      padding: 8px 20px;
-      border-radius: var(--radius-xl);
-      font-weight: 600;
-      margin-top: 16px;
-    }
-
-    .budget-highlight .material-icons {
-      font-size: 20px;
-      color: var(--success);
-    }
-
-    /* KPI Cards Grid */
-    .kpi-grid {
+    /* ===== KPI ROW ===== */
+    .kpi-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-      margin-bottom: 32px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
     }
-
     .kpi-card {
       background: var(--surface);
       border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border-light);
-      transition: all 0.3s;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
       position: relative;
       overflow: hidden;
+      transition: all 0.2s;
     }
-
+    .kpi-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
     .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
     }
-
-    .kpi-card.accent::before {
-      background: var(--accent);
-    }
-
-    .kpi-card.success::before {
-      background: var(--success);
-    }
-
-    .kpi-card.info::before {
-      background: var(--info);
-    }
-
-    .kpi-card.warning::before {
-      background: var(--warning);
-    }
-
-    .kpi-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-xl);
-    }
-
-    .kpi-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
+    .kpi-card.c-indigo::before { background: var(--indigo); }
+    .kpi-card.c-green::before { background: var(--green); }
+    .kpi-card.c-blue::before { background: var(--blue); }
+    .kpi-card.c-amber::before { background: var(--amber); }
+    .kpi-card.c-cyan::before { background: var(--cyan); }
+    .kpi-card.c-rose::before { background: var(--rose); }
+    .kpi-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
     .kpi-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 34px; height: 34px; border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
     }
-
-    .kpi-card.accent .kpi-icon {
-      background: rgba(233, 69, 96, 0.1);
-      color: var(--accent);
-    }
-
-    .kpi-card.success .kpi-icon {
-      background: rgba(0, 217, 165, 0.1);
-      color: var(--success);
-    }
-
-    .kpi-card.info .kpi-icon {
-      background: rgba(15, 52, 96, 0.1);
-      color: var(--info);
-    }
-
-    .kpi-card.warning .kpi-icon {
-      background: rgba(255, 193, 7, 0.1);
-      color: var(--warning);
-    }
-
-    .kpi-icon .material-icons {
-      font-size: 24px;
-    }
-
-    .kpi-trend {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 4px 8px;
-      border-radius: var(--radius-sm);
-    }
-
-    .kpi-trend.up {
-      background: var(--success-light);
-      color: var(--success);
-    }
-
+    .kpi-icon .material-icons { font-size: 18px; }
+    .c-indigo .kpi-icon { background: var(--indigo-bg); color: var(--indigo); }
+    .c-green .kpi-icon { background: var(--green-bg); color: var(--green); }
+    .c-blue .kpi-icon { background: var(--blue-bg); color: var(--blue); }
+    .c-amber .kpi-icon { background: var(--amber-bg); color: var(--amber); }
+    .c-cyan .kpi-icon { background: var(--cyan-bg); color: var(--cyan); }
+    .c-rose .kpi-icon { background: var(--rose-bg); color: var(--rose); }
     .kpi-value {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 36px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 4px;
+      font-size: 22px; font-weight: 700; color: var(--text-primary); line-height: 1.2;
     }
+    .kpi-label { color: var(--text-muted); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; }
 
-    .kpi-label {
-      color: var(--text-secondary);
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    /* Charts Section */
-    .charts-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 24px;
-      margin-bottom: 32px;
-    }
-
-    /* Value Models Section */
-    .value-models-section {
-      margin-bottom: 32px;
-    }
-
-    .section-subtitle {
-      font-size: 14px;
-      color: var(--text-muted);
-      font-weight: 400;
-    }
-
-    .value-models-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-
-    .value-model-card {
+    /* ===== SEARCH & FILTER TOOLBAR ===== */
+    .toolbar {
       background: var(--surface);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border-light);
-      position: relative;
-      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
     }
-
-    .value-model-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--success) 0%, var(--accent) 100%);
+    .toolbar-top {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
     }
-
-    .value-model-card.rank-1::before {
-      background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
-    }
-
-    .value-model-card.rank-2::before {
-      background: linear-gradient(90deg, #9ca3af 0%, #6b7280 100%);
-    }
-
-    .value-model-card.rank-3::before {
-      background: linear-gradient(90deg, #d97706 0%, #b45309 100%);
-    }
-
-    .value-model-rank {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--primary);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .value-model-card.rank-1 .value-model-rank {
-      background: #fbbf24;
-      color: #1a1a2e;
-    }
-
-    .value-model-card.rank-2 .value-model-rank {
-      background: #9ca3af;
-    }
-
-    .value-model-card.rank-3 .value-model-rank {
-      background: #d97706;
-    }
-
-    .value-model-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-      padding-right: 36px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .value-model-context {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-    }
-
-    .value-model-tokens {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--success);
-      margin-bottom: 2px;
-    }
-
-    .value-model-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .value-model-price {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border-light);
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    .value-model-price strong {
-      color: var(--text-primary);
-    }
-
-    /* Rate Limits Section */
-    .rate-limits-section {
-      margin-bottom: 32px;
-    }
-
-    .rate-limits-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-
-    .rate-limit-card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border-light);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .rate-limit-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--radius-md);
-      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .rate-limit-icon .material-icons {
-      color: white;
-      font-size: 24px;
-    }
-
-    .rate-limit-info {
+    .search-box {
       flex: 1;
+      display: flex; align-items: center; gap: 10px;
+      background: var(--background);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 10px 16px;
+      transition: all 0.2s;
     }
-
-    .rate-limit-value {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.2;
+    .search-box:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-bg);
+      background: white;
     }
-
-    .rate-limit-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .search-box .material-icons { font-size: 20px; color: var(--text-muted); }
+    .search-box input {
+      flex: 1; border: none; outline: none; background: transparent;
+      font-size: 14px; font-family: inherit; color: var(--text-primary);
     }
-
-    @media (max-width: 1200px) {
-
-      .value-models-grid,
-      .rate-limits-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+    .search-box input::placeholder { color: var(--text-muted); }
+    .search-count {
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      white-space: nowrap; padding: 8px 16px;
+      background: var(--background); border-radius: var(--radius-md);
+      border: 1px solid var(--border);
     }
-
-    @media (max-width: 768px) {
-
-      .value-models-grid,
-      .rate-limits-grid {
-        grid-template-columns: 1fr;
-      }
+    .search-count strong { color: var(--accent); }
+    .toolbar-actions { display: flex; gap: 8px; }
+    .toolbar-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: var(--radius-md);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text-secondary); transition: all 0.15s;
     }
+    .toolbar-btn:hover { background: var(--background); border-color: var(--accent); color: var(--accent); }
+    .toolbar-btn .material-icons { font-size: 16px; }
 
-    /* Pricing Tables Section */
-    .tables-section {
-      margin-bottom: 32px;
+    /* Filter chips */
+    .filter-section { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .filter-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.6px; color: var(--text-muted); margin-right: 2px;
+      white-space: nowrap;
     }
+    .filter-divider {
+      width: 1px; height: 24px; background: var(--border); margin: 0 4px;
+    }
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: var(--radius-full);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .filter-chip .material-icons { font-size: 14px; }
+    .filter-chip .check-icon { display: none; font-size: 13px; margin-right: -2px; }
+    .filter-chip.active .check-icon { display: inline-flex; }
 
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    /* Chip color variants */
+    .chip-reasoning { background: var(--violet-bg); color: var(--violet); border-color: transparent; }
+    .chip-reasoning.active { background: var(--violet); color: white; border-color: var(--violet); box-shadow: 0 2px 8px rgba(139,92,246,0.3); }
+    .chip-reasoning:hover:not(.active) { border-color: var(--violet); }
+
+    .chip-vision { background: var(--blue-bg); color: var(--blue); border-color: transparent; }
+    .chip-vision.active { background: var(--blue); color: white; border-color: var(--blue); box-shadow: 0 2px 8px rgba(59,130,246,0.3); }
+    .chip-vision:hover:not(.active) { border-color: var(--blue); }
+
+    .chip-code { background: var(--green-bg); color: var(--green); border-color: transparent; }
+    .chip-code.active { background: var(--green); color: white; border-color: var(--green); box-shadow: 0 2px 8px rgba(16,185,129,0.3); }
+    .chip-code:hover:not(.active) { border-color: var(--green); }
+
+    .chip-websearch { background: var(--cyan-bg); color: var(--cyan); border-color: transparent; }
+    .chip-websearch.active { background: var(--cyan); color: white; border-color: var(--cyan); box-shadow: 0 2px 8px rgba(6,182,212,0.3); }
+    .chip-websearch:hover:not(.active) { border-color: var(--cyan); }
+
+    .chip-functions { background: var(--orange-bg); color: var(--orange); border-color: transparent; }
+    .chip-functions.active { background: var(--orange); color: white; border-color: var(--orange); box-shadow: 0 2px 8px rgba(249,115,22,0.3); }
+    .chip-functions:hover:not(.active) { border-color: var(--orange); }
+
+    .chip-schema { background: var(--pink-bg); color: var(--pink); border-color: transparent; }
+    .chip-schema.active { background: var(--pink); color: white; border-color: var(--pink); box-shadow: 0 2px 8px rgba(236,72,153,0.3); }
+    .chip-schema:hover:not(.active) { border-color: var(--pink); }
+
+    .chip-beta { background: var(--amber-bg); color: var(--amber); border-color: transparent; }
+    .chip-beta.active { background: var(--amber); color: white; border-color: var(--amber); box-shadow: 0 2px 8px rgba(245,158,11,0.3); }
+    .chip-beta:hover:not(.active) { border-color: var(--amber); }
+
+    .clear-filters {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 10px; border-radius: var(--radius-full);
+      font-size: 11px; font-weight: 600; cursor: pointer;
+      border: 1px dashed var(--border); background: transparent;
+      color: var(--text-muted); transition: all 0.15s;
+    }
+    .clear-filters:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
+    .clear-filters .material-icons { font-size: 14px; }
+
+    /* ===== MODEL TABLE ===== */
+    .table-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
       margin-bottom: 24px;
     }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .table-scroll {
+      overflow-x: auto;
+      max-height: calc(100vh - 360px);
+      overflow-y: auto;
     }
-
-    .section-title h3 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 24px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .section-title .material-icons {
-      font-size: 28px;
-      color: var(--accent);
-    }
-
-    .filter-tabs {
-      display: flex;
-      gap: 8px;
-    }
-
-    .filter-tab {
-      padding: 8px 16px;
-      border-radius: var(--radius-md);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text-secondary);
-    }
-
-    .filter-tab:hover,
-    .filter-tab.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    /* Pricing Tables */
-    .pricing-tables-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-    }
-
-    .pricing-table-card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border-light);
-      overflow: hidden;
-    }
-
-    .pricing-table-header {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
-      padding: 20px 24px;
-      color: white;
-    }
-
-    .pricing-table-header h4 {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .pricing-table-header p {
-      font-size: 13px;
-      opacity: 0.8;
-    }
-
-    .pricing-table-header .material-icons {
-      font-size: 20px;
-    }
-
-    .pricing-table {
+    .model-table {
       width: 100%;
       border-collapse: collapse;
+      font-size: 13px;
     }
-
-    .pricing-table thead {
-      background: var(--background);
-    }
-
-    .pricing-table th {
-      padding: 14px 16px;
+    .model-table thead { position: sticky; top: 0; z-index: 10; }
+    .model-table thead tr { background: var(--primary); }
+    .model-table th {
+      padding: 12px 14px;
       text-align: left;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: all 0.2s;
       white-space: nowrap;
-    }
-
-    .pricing-table th:hover {
-      background: var(--border-light);
-      color: var(--text-primary);
-    }
-
-    .pricing-table th.sortable::after {
-      content: ' \2195';
-      opacity: 0.4;
-    }
-
-    .pricing-table th.sort-asc::after {
-      content: ' \2191';
-      opacity: 1;
-      color: var(--accent);
-    }
-
-    .pricing-table th.sort-desc::after {
-      content: ' \2193';
-      opacity: 1;
-      color: var(--accent);
-    }
-
-    .pricing-table td {
-      padding: 14px 16px;
-      font-size: 14px;
-      border-bottom: 1px solid var(--border-light);
-      color: var(--text-primary);
-    }
-
-    .pricing-table tbody tr {
-      transition: all 0.2s;
-    }
-
-    .pricing-table tbody tr:hover {
-      background: var(--background);
-    }
-
-    .pricing-table tbody tr:last-child td {
+      cursor: pointer;
+      transition: all 0.15s;
       border-bottom: none;
+      user-select: none;
+      position: relative;
     }
-
-    .model-name-cell {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .model-table th:hover { color: white; background: rgba(255,255,255,0.05); }
+    .model-table th .sort-arrow {
+      display: inline-block; margin-left: 4px; font-size: 12px; opacity: 0.3;
+      vertical-align: middle;
     }
+    .model-table th.sort-active .sort-arrow { opacity: 1; color: var(--accent-light); }
+    .model-table th.sort-active { color: white; }
+    .model-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: middle;
+      color: var(--text-primary);
+    }
+    .model-table tbody tr {
+      transition: background 0.1s;
+    }
+    .model-table tbody tr:hover {
+      background: var(--accent-bg);
+    }
+    .model-table tbody tr:last-child td { border-bottom: none; }
 
+    /* Table cells */
+    .cell-model {
+      display: flex; align-items: center; gap: 10px; min-width: 220px;
+    }
     .model-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-sm);
-      background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: white;
+      width: 32px; height: 32px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: white; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-mid) 100%);
     }
-
-    .model-info .model-id {
-      font-weight: 600;
-      color: var(--text-primary);
+    .model-avatar.reasoning { background: linear-gradient(135deg, var(--violet) 0%, var(--purple) 100%); }
+    .model-avatar.vision { background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%); }
+    .model-avatar.code { background: linear-gradient(135deg, var(--green) 0%, var(--teal) 100%); }
+    .cell-model-info { min-width: 0; }
+    .cell-model-name {
+      font-weight: 600; color: var(--text-primary); font-size: 13px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px;
     }
-
-    .model-info .model-type {
-      font-size: 12px;
-      color: var(--text-muted);
+    .cell-model-sub {
+      font-size: 11px; color: var(--text-muted);
+      display: flex; align-items: center; gap: 6px;
     }
-
-    .price-cell {
-      font-weight: 600;
-      font-family: 'Space Grotesk', monospace;
+    .cell-model-sub .beta-tag {
+      display: inline-flex; padding: 1px 6px; border-radius: var(--radius-full);
+      background: var(--amber-bg); color: var(--amber); font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.3px;
     }
-
-    .price-cell.low {
-      color: var(--success);
+    .cell-number {
+      font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
+      font-size: 12px; font-weight: 500; white-space: nowrap; text-align: right;
     }
+    .cell-price { font-weight: 600; }
+    .price-free { color: var(--green); }
+    .price-low { color: var(--teal); }
+    .price-mid { color: var(--amber); }
+    .price-high { color: var(--orange); }
+    .price-premium { color: var(--red); }
 
-    .price-cell.medium {
-      color: var(--warning);
+    .cell-tokens { color: var(--text-primary); }
+    .cell-context { color: var(--indigo); font-weight: 600; }
+
+    /* Capability dots in table */
+    .cap-dots { display: flex; gap: 4px; flex-wrap: wrap; }
+    .cap-dot {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 7px; border-radius: var(--radius-full);
+      font-size: 10px; font-weight: 600; white-space: nowrap;
     }
+    .cap-dot .material-icons { font-size: 11px; }
+    .dot-reasoning { background: var(--violet-bg); color: var(--violet); }
+    .dot-vision { background: var(--blue-bg); color: var(--blue); }
+    .dot-code { background: var(--green-bg); color: var(--green); }
+    .dot-websearch { background: var(--cyan-bg); color: var(--cyan); }
+    .dot-functions { background: var(--orange-bg); color: var(--orange); }
+    .dot-schema { background: var(--pink-bg); color: var(--pink); }
 
-    .price-cell.high {
-      color: var(--accent);
-    }
-
-    .tokens-cell {
-      font-family: 'Space Grotesk', monospace;
-      font-weight: 600;
-      color: var(--info);
-    }
-
-    /* Capability Badges */
-    .capability-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .cap-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 10px;
-      border-radius: var(--radius-xl);
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .cap-badge .material-icons {
-      font-size: 12px;
-    }
-
-    .cap-badge.active {
-      background: rgba(0, 217, 165, 0.15);
-      color: var(--success);
-    }
-
-    .cap-badge.inactive {
-      background: var(--border-light);
-      color: var(--text-muted);
-      display: none;
-    }
-
-    /* Model Cards Grid */
-    .models-section {
-      margin-bottom: 32px;
-    }
-
-    .models-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    .model-card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border-light);
-      overflow: hidden;
-      transition: all 0.3s;
-    }
-
-    .model-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-xl);
-    }
-
-    .model-card-header {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
-      padding: 20px;
-      color: white;
-    }
-
-    .model-card-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .model-card-meta {
-      display: flex;
-      gap: 12px;
-    }
-
-    .model-card-meta span {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 12px;
-      opacity: 0.9;
-    }
-
-    .model-card-meta .material-icons {
-      font-size: 14px;
-    }
-
-    .model-card-body {
-      padding: 20px;
-    }
-
-    .model-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .model-stat-box {
-      background: var(--background);
-      border-radius: var(--radius-md);
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .model-stat-box.highlight {
-      background: linear-gradient(135deg, rgba(0, 217, 165, 0.1) 0%, rgba(0, 217, 165, 0.05) 100%);
-      border: 1px solid rgba(0, 217, 165, 0.2);
-    }
-
-    .model-stat-box.highlight .model-stat-value {
-      color: var(--success);
-    }
-
-    .model-stat-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: var(--radius-sm);
-      background: var(--surface);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .model-stat-icon .material-icons {
-      font-size: 16px;
-      color: var(--text-muted);
-    }
-
-    .model-stat-data {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .model-stat-label {
-      color: var(--text-muted);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .model-stat-value {
-      font-weight: 600;
-      font-family: 'Space Grotesk', monospace;
-      font-size: 14px;
-      color: var(--text-primary);
-    }
-
-    .model-capabilities {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border-light);
-    }
-
-    .capability-badges .cap-badge .material-icons {
-      font-size: 12px;
-    }
-
-    /* Summary Section */
-    .summary-section {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
-      border-radius: var(--radius-xl);
-      padding: 40px;
-      color: white;
-      margin-bottom: 32px;
-    }
-
-    .summary-grid {
+    /* ===== RATE LIMITS (compact) ===== */
+    .rate-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 32px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
-
-    .summary-item h4 {
-      font-size: 14px;
-      font-weight: 500;
-      opacity: 0.8;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .rate-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
     }
-
-    .summary-item h4 .material-icons {
-      font-size: 18px;
+    .rate-icon {
+      width: 36px; height: 36px; border-radius: var(--radius-md);
+      background: var(--primary);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-
-    .summary-item .value {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 4px;
+    .rate-icon .material-icons { color: rgba(255,255,255,0.8); font-size: 18px; }
+    .rate-info {}
+    .rate-value {
+      font-family: 'Space Grotesk'; font-size: 18px; font-weight: 700;
+      color: var(--text-primary); line-height: 1.2;
     }
+    .rate-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; }
 
-    .summary-item .desc {
-      font-size: 13px;
-      opacity: 0.7;
+    /* ===== COLLAPSIBLE SECTIONS ===== */
+    .collapsible-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      margin-bottom: 16px;
+      overflow: hidden;
     }
-
-    /* Footer */
-    .dashboard-footer {
-      text-align: center;
-      padding: 32px;
-      color: var(--text-muted);
-      font-size: 13px;
+    .collapsible-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; cursor: pointer; transition: background 0.15s;
+      user-select: none;
     }
-
-    .dashboard-footer a {
-      color: var(--accent);
-      text-decoration: none;
+    .collapsible-header:hover { background: var(--surface-hover); }
+    .collapsible-header h3 {
+      font-family: 'Space Grotesk';
+      font-size: 16px; font-weight: 600; color: var(--text-primary);
+      display: flex; align-items: center; gap: 10px;
     }
+    .collapsible-header h3 .material-icons { font-size: 22px; color: var(--accent); }
+    .collapsible-header .toggle-icon {
+      transition: transform 0.25s; color: var(--text-muted); font-size: 24px;
+    }
+    .collapsible-header.open .toggle-icon { transform: rotate(180deg); }
+    .collapsible-body { display: none; padding: 0 20px 20px 20px; }
+    .collapsible-body.open { display: block; }
 
-    /* Loading State */
+    /* Static pricing tables */
+    .static-tables-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .static-table-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .static-table-head {
+      padding: 14px 16px;
+      font-size: 14px; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .static-table-head .material-icons { font-size: 18px; }
+    .head-image { background: var(--blue-bg); color: var(--blue); }
+    .head-edit { background: var(--purple-bg); color: var(--purple); }
+    .head-audio { background: var(--green-bg); color: var(--green); }
+    .static-table {
+      width: 100%; border-collapse: collapse; font-size: 12px;
+    }
+    .static-table th {
+      padding: 8px 12px; text-align: left;
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.4px; color: var(--text-muted);
+      background: var(--background); border-top: 1px solid var(--border-light);
+    }
+    .static-table td {
+      padding: 9px 12px; border-top: 1px solid var(--border-light);
+      font-size: 12px;
+    }
+    .static-table .s-name { font-weight: 600; }
+    .static-table .s-price { font-family: 'JetBrains Mono'; font-weight: 600; }
+    .static-table .s-price.low { color: var(--green); }
+    .static-table .s-price.mid { color: var(--amber); }
+    .static-table .s-price.high { color: var(--orange); }
+
+    /* ===== DETAIL PANEL (row expand) ===== */
+    .detail-row td { padding: 0 !important; background: var(--background) !important; }
+    .detail-panel {
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .detail-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+    }
+    .detail-card h5 {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px;
+    }
+    .detail-stat {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 3px 0; font-size: 12px;
+    }
+    .detail-stat-label { color: var(--text-secondary); }
+    .detail-stat-value { font-family: 'JetBrains Mono'; font-weight: 600; font-size: 12px; }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: var(--text-muted);
+    }
+    .empty-state .material-icons { font-size: 48px; color: var(--border); margin-bottom: 12px; }
+    .empty-state h3 { font-size: 16px; color: var(--text-secondary); margin-bottom: 4px; }
+    .empty-state p { font-size: 13px; }
+
+    /* ===== LOADING ===== */
     .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255, 255, 255, 0.95);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(248,250,252,0.97);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       z-index: 1000;
     }
-
     .loading-spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid var(--border);
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
       border-top-color: var(--accent);
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
+    .loading-text { margin-top: 12px; color: var(--text-secondary); font-weight: 500; font-size: 14px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .loading-text {
-      margin-top: 16px;
-      color: var(--text-secondary);
-      font-weight: 500;
+    /* ===== FOOTER ===== */
+    .dashboard-footer {
+      text-align: center; padding: 24px; color: var(--text-muted); font-size: 12px;
     }
+    .dashboard-footer a { color: var(--accent); text-decoration: none; }
+    .dashboard-footer a:hover { text-decoration: underline; }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Responsive */
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 1400px) {
-      .kpi-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .models-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .kpi-row { grid-template-columns: repeat(3, 1fr); }
+      .static-tables-grid { grid-template-columns: 1fr 1fr; }
+      .detail-panel { grid-template-columns: repeat(2, 1fr); }
     }
-
     @media (max-width: 1000px) {
-      .dashboard-container {
-        padding: 24px 20px;
-      }
-
-      .charts-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .pricing-tables-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .summary-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .dashboard-container { padding: 16px; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .rate-row { grid-template-columns: repeat(2, 1fr); }
+      .static-tables-grid { grid-template-columns: 1fr; }
+      .detail-panel { grid-template-columns: 1fr 1fr; }
     }
-
     @media (max-width: 768px) {
-      .top-nav {
-        padding: 0 20px;
-      }
-
-      .kpi-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .models-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .summary-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .nav-btn span:not(.material-icons) {
-        display: none;
-      }
+      .top-nav { padding: 0 16px; }
+      .kpi-row { grid-template-columns: 1fr; }
+      .rate-row { grid-template-columns: 1fr; }
+      .detail-panel { grid-template-columns: 1fr; }
+      .nav-btn span:not(.material-icons) { display: none; }
+      .toolbar-top { flex-wrap: wrap; }
+      .filter-section { flex-wrap: wrap; }
+      .table-scroll { max-height: none; }
     }
+
+    /* ===== SCROLLBAR ===== */
+    .table-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .table-scroll::-webkit-scrollbar-track { background: var(--background); }
+    .table-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .table-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* Tooltip */
+    [data-tooltip] { position: relative; }
+    [data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+      background: var(--primary); color: white; font-size: 11px; font-weight: 500;
+      padding: 4px 10px; border-radius: var(--radius-sm); white-space: nowrap;
+      z-index: 20; pointer-events: none;
+    }
+
+    /* Row highlight for best value */
+    .row-best-value { background: rgba(16, 185, 129, 0.04); }
+    .row-best-value:hover { background: rgba(16, 185, 129, 0.08) !important; }
+    .best-value-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 1px 6px; border-radius: var(--radius-full);
+      background: var(--green-bg); color: var(--green);
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+    }
+    .best-value-badge .material-icons { font-size: 10px; }
   </style>
 </head>
 
@@ -1024,14 +602,18 @@
   <nav class="top-nav">
     <div class="nav-brand">
       <div class="logo">
-        <span class="material-icons">analytics</span>
+        <span class="material-icons">hub</span>
       </div>
       <div>
         <h1>Venice AI</h1>
-        <span>Cost Analytics Dashboard</span>
+        <span>Model Explorer</span>
       </div>
     </div>
     <div class="nav-actions">
+      <button class="nav-btn secondary" onclick="exportCSV()" title="Export as CSV">
+        <span class="material-icons">download</span>
+        <span>Export</span>
+      </button>
       <button class="nav-btn secondary" onclick="refreshData()">
         <span class="material-icons">refresh</span>
         <span>Refresh</span>
@@ -1046,388 +628,228 @@
     </div>
   </nav>
 
-  <!-- Main Dashboard Container -->
+  <!-- Main Container -->
   <div class="dashboard-container">
-    <!-- Page Header -->
-    <div class="page-header">
-      <h2>Inference Cost Analytics</h2>
-      <p>Comprehensive pricing analysis and compute budget optimization for Venice AI models</p>
-      <div class="budget-highlight">
-        <span class="material-icons">account_balance_wallet</span>
-        <span id="diemBudget">48 Diem = $48 Compute Budget</span>
-      </div>
-    </div>
 
-    <!-- KPI Cards -->
-    <div class="kpi-grid" id="kpiGrid">
-      <div class="kpi-card accent">
-        <div class="kpi-header">
-          <div class="kpi-icon">
-            <span class="material-icons">smart_toy</span>
-          </div>
-          <div class="kpi-trend up">
-            <span class="material-icons" style="font-size: 14px;">trending_up</span>
-            Live
-          </div>
+    <!-- KPI Row -->
+    <div class="kpi-row">
+      <div class="kpi-card c-indigo">
+        <div class="kpi-top">
+          <div class="kpi-icon"><span class="material-icons">smart_toy</span></div>
         </div>
         <div class="kpi-value" id="totalModels">--</div>
-        <div class="kpi-label">Available Text Models</div>
+        <div class="kpi-label">Total Models</div>
       </div>
-      <div class="kpi-card success">
-        <div class="kpi-header">
-          <div class="kpi-icon">
-            <span class="material-icons">speed</span>
-          </div>
+      <div class="kpi-card c-green">
+        <div class="kpi-top">
+          <div class="kpi-icon"><span class="material-icons">speed</span></div>
         </div>
         <div class="kpi-value" id="maxInputTokens">--</div>
-        <div class="kpi-label">Max Input Tokens (48 Diem)</div>
+        <div class="kpi-label">Max Input Tokens @ $48</div>
       </div>
-      <div class="kpi-card info">
-        <div class="kpi-header">
-          <div class="kpi-icon">
-            <span class="material-icons">output</span>
-          </div>
+      <div class="kpi-card c-blue">
+        <div class="kpi-top">
+          <div class="kpi-icon"><span class="material-icons">output</span></div>
         </div>
         <div class="kpi-value" id="maxOutputTokens">--</div>
-        <div class="kpi-label">Max Output Tokens (48 Diem)</div>
+        <div class="kpi-label">Max Output Tokens @ $48</div>
       </div>
-      <div class="kpi-card warning">
-        <div class="kpi-header">
-          <div class="kpi-icon">
-            <span class="material-icons">savings</span>
-          </div>
+      <div class="kpi-card c-amber">
+        <div class="kpi-top">
+          <div class="kpi-icon"><span class="material-icons">savings</span></div>
         </div>
         <div class="kpi-value" id="avgCost">--</div>
-        <div class="kpi-label">Avg Cost per 1M Tokens</div>
+        <div class="kpi-label">Avg Cost / 1M Tokens</div>
+      </div>
+      <div class="kpi-card c-cyan">
+        <div class="kpi-top">
+          <div class="kpi-icon"><span class="material-icons">token</span></div>
+        </div>
+        <div class="kpi-value" id="maxContext">--</div>
+        <div class="kpi-label">Largest Context Window</div>
+      </div>
+      <div class="kpi-card c-rose">
+        <div class="kpi-top">
+          <div class="kpi-icon"><span class="material-icons">workspace_premium</span></div>
+        </div>
+        <div class="kpi-value" id="bestValue">--</div>
+        <div class="kpi-label">Best Value Model</div>
       </div>
     </div>
 
-    <!-- Top Value Models Section -->
-    <div class="value-models-section">
-      <div class="section-header">
-        <div class="section-title">
-          <span class="material-icons">trending_up</span>
-          <h3>Best Value Models</h3>
-        </div>
-        <span class="section-subtitle">Most tokens per $48 budget</span>
-      </div>
-      <div class="value-models-grid" id="valueModelsGrid">
-        <!-- Populated dynamically -->
-      </div>
-    </div>
-
-    <!-- Rate Limits Section -->
-    <div class="rate-limits-section">
-      <div class="section-header">
-        <div class="section-title">
-          <span class="material-icons">speed</span>
-          <h3>Current Rate Limits</h3>
+    <!-- Rate Limits -->
+    <div class="rate-row" id="rateLimitsRow">
+      <div class="rate-card">
+        <div class="rate-icon"><span class="material-icons">bolt</span></div>
+        <div class="rate-info">
+          <div class="rate-value" id="rpmLimit">--</div>
+          <div class="rate-label">Requests / Min</div>
         </div>
       </div>
-      <div class="rate-limits-grid" id="rateLimitsGrid">
-        <div class="rate-limit-card">
-          <div class="rate-limit-icon"><span class="material-icons">bolt</span></div>
-          <div class="rate-limit-info">
-            <div class="rate-limit-value" id="rpmLimit">--</div>
-            <div class="rate-limit-label">Requests/Min</div>
-          </div>
+      <div class="rate-card">
+        <div class="rate-icon"><span class="material-icons">data_usage</span></div>
+        <div class="rate-info">
+          <div class="rate-value" id="tpmLimit">--</div>
+          <div class="rate-label">Tokens / Min</div>
         </div>
-        <div class="rate-limit-card">
-          <div class="rate-limit-icon"><span class="material-icons">data_usage</span></div>
-          <div class="rate-limit-info">
-            <div class="rate-limit-value" id="tpmLimit">--</div>
-            <div class="rate-limit-label">Tokens/Min</div>
-          </div>
+      </div>
+      <div class="rate-card">
+        <div class="rate-icon"><span class="material-icons">today</span></div>
+        <div class="rate-info">
+          <div class="rate-value" id="rpdLimit">--</div>
+          <div class="rate-label">Requests / Day</div>
         </div>
-        <div class="rate-limit-card">
-          <div class="rate-limit-icon"><span class="material-icons">today</span></div>
-          <div class="rate-limit-info">
-            <div class="rate-limit-value" id="rpdLimit">--</div>
-            <div class="rate-limit-label">Requests/Day</div>
-          </div>
-        </div>
-        <div class="rate-limit-card">
-          <div class="rate-limit-icon"><span class="material-icons">calendar_month</span></div>
-          <div class="rate-limit-info">
-            <div class="rate-limit-value" id="tpdLimit">--</div>
-            <div class="rate-limit-label">Tokens/Day</div>
-          </div>
+      </div>
+      <div class="rate-card">
+        <div class="rate-icon"><span class="material-icons">calendar_month</span></div>
+        <div class="rate-info">
+          <div class="rate-value" id="tpdLimit">--</div>
+          <div class="rate-label">Tokens / Day</div>
         </div>
       </div>
     </div>
 
-    <!-- Summary Banner -->
-    <div class="summary-section">
-      <div class="summary-grid">
-        <div class="summary-item">
-          <h4><span class="material-icons">text_fields</span> Text Models</h4>
-          <div class="value" id="summaryTextTokens">--</div>
-          <div class="desc">Max tokens available</div>
+    <!-- Search & Filter Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-top">
+        <div class="search-box">
+          <span class="material-icons">search</span>
+          <input type="text" id="searchInput" placeholder="Search models by name (e.g. qwen, llama, deepseek, gemma...)" oninput="applyFilters()">
         </div>
-        <div class="summary-item">
-          <h4><span class="material-icons">image</span> Image Generation</h4>
-          <div class="value">4,800</div>
-          <div class="desc">Max generations (SD35/HiDream)</div>
+        <div class="search-count" id="searchCount">
+          Showing <strong>0</strong> of <strong>0</strong> models
         </div>
-        <div class="summary-item">
-          <h4><span class="material-icons">auto_fix_high</span> Image Upscaling</h4>
-          <div class="value">2,400</div>
-          <div class="desc">Max 2x upscales</div>
-        </div>
-        <div class="summary-item">
-          <h4><span class="material-icons">record_voice_over</span> Audio TTS</h4>
-          <div class="value">13.7M</div>
-          <div class="desc">Characters (Kokoro TTS)</div>
-        </div>
+      </div>
+      <div class="filter-section">
+        <span class="filter-label">Capabilities:</span>
+        <button class="filter-chip chip-reasoning" data-filter="reasoning" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span>
+          <span class="material-icons">psychology</span> Reasoning
+        </button>
+        <button class="filter-chip chip-vision" data-filter="vision" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span>
+          <span class="material-icons">visibility</span> Vision
+        </button>
+        <button class="filter-chip chip-code" data-filter="code" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span>
+          <span class="material-icons">code</span> Code
+        </button>
+        <button class="filter-chip chip-websearch" data-filter="websearch" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span>
+          <span class="material-icons">travel_explore</span> Web Search
+        </button>
+        <button class="filter-chip chip-functions" data-filter="functions" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span>
+          <span class="material-icons">functions</span> Functions
+        </button>
+        <button class="filter-chip chip-schema" data-filter="schema" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span>
+          <span class="material-icons">schema</span> JSON Schema
+        </button>
+        <div class="filter-divider"></div>
+        <button class="filter-chip chip-beta" data-filter="beta" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span>
+          <span class="material-icons">science</span> Beta Only
+        </button>
+        <button class="clear-filters" onclick="clearFilters()" id="clearFiltersBtn" style="display:none;">
+          <span class="material-icons">close</span> Clear All
+        </button>
       </div>
     </div>
 
-    <!-- Pricing Tables Section -->
-    <div class="tables-section">
-      <div class="section-header">
-        <div class="section-title">
-          <span class="material-icons">table_chart</span>
-          <h3>Detailed Pricing</h3>
-        </div>
+    <!-- Main Model Table -->
+    <div class="table-container">
+      <div class="table-scroll">
+        <table class="model-table" id="modelTable">
+          <thead>
+            <tr>
+              <th onclick="sortBy('name')" style="min-width:240px;">
+                Model <span class="sort-arrow" id="sort-name">&#8597;</span>
+              </th>
+              <th onclick="sortBy('context')" style="text-align:right;">
+                Context <span class="sort-arrow" id="sort-context">&#8597;</span>
+              </th>
+              <th onclick="sortBy('maxOutput')" style="text-align:right;">
+                Max Output <span class="sort-arrow" id="sort-maxOutput">&#8597;</span>
+              </th>
+              <th onclick="sortBy('inputPrice')" style="text-align:right;">
+                Input $/1M <span class="sort-arrow" id="sort-inputPrice">&#8597;</span>
+              </th>
+              <th onclick="sortBy('outputPrice')" style="text-align:right;">
+                Output $/1M <span class="sort-arrow" id="sort-outputPrice">&#8597;</span>
+              </th>
+              <th onclick="sortBy('budgetTokens')" style="text-align:right;">
+                Tokens @ $48 <span class="sort-arrow" id="sort-budgetTokens">&#8597;</span>
+              </th>
+              <th style="min-width:200px;">
+                Capabilities
+              </th>
+            </tr>
+          </thead>
+          <tbody id="modelTableBody">
+          </tbody>
+        </table>
       </div>
+    </div>
 
-      <div class="pricing-tables-grid">
-        <!-- Text Models Table -->
-        <div class="pricing-table-card" id="textModelsCard">
-          <div class="pricing-table-header">
-            <h4><span class="material-icons">text_fields</span> Text Models</h4>
-            <p>Per 1 million tokens pricing</p>
+    <!-- Static Pricing (collapsible) -->
+    <div class="collapsible-section">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <h3><span class="material-icons">palette</span> Image, Editing & Audio Pricing</h3>
+        <span class="material-icons toggle-icon">expand_more</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="static-tables-grid">
+          <!-- Image Models -->
+          <div class="static-table-card">
+            <div class="static-table-head head-image">
+              <span class="material-icons">image</span> Image Generation
+            </div>
+            <table class="static-table">
+              <thead><tr><th>Model</th><th>Price/Gen</th><th>Max @ $48</th></tr></thead>
+              <tbody>
+                <tr><td class="s-name">Nano Banana Pro</td><td class="s-price high">$0.18</td><td>266</td></tr>
+                <tr><td class="s-name">Venice SD35</td><td class="s-price low">$0.01</td><td>4,800</td></tr>
+                <tr><td class="s-name">HiDream</td><td class="s-price low">$0.01</td><td>4,800</td></tr>
+                <tr><td class="s-name">Qwen Image</td><td class="s-price low">$0.01</td><td>4,800</td></tr>
+                <tr><td class="s-name">Lustify (SDXL/v7)</td><td class="s-price low">$0.01</td><td>4,800</td></tr>
+                <tr><td class="s-name">Anime (WAI)</td><td class="s-price low">$0.01</td><td>4,800</td></tr>
+              </tbody>
+            </table>
           </div>
-          <div style="max-height: 400px; overflow-y: auto;">
-            <table class="pricing-table" id="textModelsTable">
-              <thead>
-                <tr>
-                  <th class="sortable" onclick="sortTable('text', 'model')">Model</th>
-                  <th class="sortable" onclick="sortTable('text', 'input')">Input $/1M</th>
-                  <th class="sortable" onclick="sortTable('text', 'output')">Output $/1M</th>
-                  <th class="sortable" onclick="sortTable('text', 'maxInput')">Max Input</th>
-                  <th class="sortable" onclick="sortTable('text', 'maxOutput')">Max Output</th>
-                </tr>
-              </thead>
-              <tbody id="textModelsBody">
-                <!-- Populated dynamically -->
+          <!-- Image Editing -->
+          <div class="static-table-card">
+            <div class="static-table-head head-edit">
+              <span class="material-icons">auto_fix_high</span> Image Editing / Upscaling
+            </div>
+            <table class="static-table">
+              <thead><tr><th>Task</th><th>Price</th><th>Max @ $48</th></tr></thead>
+              <tbody>
+                <tr><td class="s-name">Upscale 2x</td><td class="s-price low">$0.02</td><td>2,400</td></tr>
+                <tr><td class="s-name">Upscale 4x</td><td class="s-price mid">$0.08</td><td>600</td></tr>
+                <tr><td class="s-name">Image Editing</td><td class="s-price mid">$0.04</td><td>1,200</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Audio Models -->
+          <div class="static-table-card">
+            <div class="static-table-head head-audio">
+              <span class="material-icons">record_voice_over</span> Audio Models
+            </div>
+            <table class="static-table">
+              <thead><tr><th>Model</th><th>Price/1M Chars</th><th>Max @ $48</th></tr></thead>
+              <tbody>
+                <tr><td class="s-name">Kokoro TTS</td><td class="s-price low">$3.50</td><td>13.7M chars</td></tr>
               </tbody>
             </table>
           </div>
         </div>
-
-        <!-- Image Models Table -->
-        <div class="pricing-table-card">
-          <div class="pricing-table-header">
-            <h4><span class="material-icons">image</span> Image Models</h4>
-            <p>Per generation pricing</p>
-          </div>
-          <table class="pricing-table">
-            <thead>
-              <tr>
-                <th>Model</th>
-                <th>Price/Gen</th>
-                <th>Max Gens (48 Diem)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <div class="model-name-cell">
-                    <div class="model-avatar">NB</div>
-                    <div class="model-info">
-                      <div class="model-id">Nano Banana Pro</div>
-                      <div class="model-type">Premium Quality</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="price-cell high">$0.18</td>
-                <td class="tokens-cell">266</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="model-name-cell">
-                    <div class="model-avatar">SD</div>
-                    <div class="model-info">
-                      <div class="model-id">Venice SD35</div>
-                      <div class="model-type">Standard</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="price-cell low">$0.01</td>
-                <td class="tokens-cell">4,800</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="model-name-cell">
-                    <div class="model-avatar">HD</div>
-                    <div class="model-info">
-                      <div class="model-id">HiDream</div>
-                      <div class="model-type">Standard</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="price-cell low">$0.01</td>
-                <td class="tokens-cell">4,800</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="model-name-cell">
-                    <div class="model-avatar">QI</div>
-                    <div class="model-info">
-                      <div class="model-id">Qwen Image</div>
-                      <div class="model-type">Standard</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="price-cell low">$0.01</td>
-                <td class="tokens-cell">4,800</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="model-name-cell">
-                    <div class="model-avatar">LF</div>
-                    <div class="model-info">
-                      <div class="model-id">Lustify</div>
-                      <div class="model-type">SDXL & v7</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="price-cell low">$0.01</td>
-                <td class="tokens-cell">4,800</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="model-name-cell">
-                    <div class="model-avatar">AN</div>
-                    <div class="model-info">
-                      <div class="model-id">Anime (WAI)</div>
-                      <div class="model-type">Stylized</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="price-cell low">$0.01</td>
-                <td class="tokens-cell">4,800</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Image Editing Table -->
-        <div class="pricing-table-card">
-          <div class="pricing-table-header">
-            <h4><span class="material-icons">auto_fix_high</span> Image Editing / Upscaling</h4>
-            <p>Enhancement and editing pricing</p>
-          </div>
-          <table class="pricing-table">
-            <thead>
-              <tr>
-                <th>Task</th>
-                <th>Price</th>
-                <th>Max (48 Diem)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <div class="model-name-cell">
-                    <div class="model-avatar">2X</div>
-                    <div class="model-info">
-                      <div class="model-id">Upscale / Enhance (2x)</div>
-                      <div class="model-type">Resolution boost</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="price-cell low">$0.02</td>
-                <td class="tokens-cell">2,400</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="model-name-cell">
-                    <div class="model-avatar">4X</div>
-                    <div class="model-info">
-                      <div class="model-id">Upscale / Enhance (4x)</div>
-                      <div class="model-type">High-res boost</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="price-cell medium">$0.08</td>
-                <td class="tokens-cell">600</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="model-name-cell">
-                    <div class="model-avatar">ED</div>
-                    <div class="model-info">
-                      <div class="model-id">Image Editing</div>
-                      <div class="model-type">Inpaint, Qwen</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="price-cell medium">$0.04</td>
-                <td class="tokens-cell">1,200</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Audio Models Table -->
-        <div class="pricing-table-card">
-          <div class="pricing-table-header">
-            <h4><span class="material-icons">record_voice_over</span> Audio Models</h4>
-            <p>Text-to-speech pricing</p>
-          </div>
-          <table class="pricing-table">
-            <thead>
-              <tr>
-                <th>Model</th>
-                <th>Price/1M Chars</th>
-                <th>Max Chars (48 Diem)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <div class="model-name-cell">
-                    <div class="model-avatar">KK</div>
-                    <div class="model-info">
-                      <div class="model-id">Kokoro TTS</div>
-                      <div class="model-type">tts-kokoro</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="price-cell low">$3.50</td>
-                <td class="tokens-cell">13.7M</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Model Cards Section -->
-    <div class="models-section">
-      <div class="section-header">
-        <div class="section-title">
-          <span class="material-icons">view_module</span>
-          <h3>Model Specifications</h3>
-        </div>
-        <div class="filter-tabs">
-          <button class="filter-tab active" onclick="filterModels('all')">All Models</button>
-          <button class="filter-tab" onclick="filterModels('reasoning')">Reasoning</button>
-          <button class="filter-tab" onclick="filterModels('vision')">Vision</button>
-          <button class="filter-tab" onclick="filterModels('code')">Code</button>
-        </div>
-      </div>
-      <div class="models-grid" id="modelsGrid">
-        <!-- Populated dynamically -->
       </div>
     </div>
 
     <!-- Footer -->
     <div class="dashboard-footer">
-      <p>Data sourced from Venice AI API in real-time. Prices updated as of latest API response.</p>
-      <p><a href="https://venice.ai" target="_blank">Venice AI</a> | Built with real-time API integration</p>
+      <p>Real-time data from <a href="https://venice.ai" target="_blank">Venice AI</a> API &middot; Prices reflect latest API response &middot; 48 Diem = $48 Compute Budget</p>
     </div>
   </div>
 
@@ -1435,28 +857,33 @@
   <script src="config.js"
     onerror="console.warn('config.js not found. Using build-injected API key if available.')"></script>
   <script>
-    // Constants
+    // ===== CONSTANTS =====
     const DIEM_BUDGET = 48;
     const BASE_URL = 'https://api.venice.ai/api/v1';
 
-    // Get backend API key (Netlify-injected) - dashboard is public, uses backend key only
+    // ===== STATE =====
+    let availableModels = [];
+    let filteredModels = [];
+    let activeFilters = new Set();
+    let currentSort = { column: 'name', direction: 'asc' };
+    let expandedRow = null;
+
+    // Best value model IDs (top 3, computed after load)
+    let bestValueIds = new Set();
+
+    // ===== API KEY =====
     function getApiKey() {
-      // Use Netlify-injected key for dashboard (public access)
       if (window.VENICE_API_KEY && window.VENICE_API_KEY !== 'your-venice-api-key-here') {
         return window.VENICE_API_KEY;
       }
-      // Fall back to localStorage for local development
       return localStorage.getItem('venice_backend_api_key') || '';
     }
 
-    let API_KEY = getApiKey();
-    let availableModels = [];
-    let sortState = { table: null, column: null, direction: 'asc' };
-
-    // Utility Functions
+    // ===== UTILITIES =====
     function formatTokens(tokens) {
+      if (tokens >= 1000000000) return (tokens / 1000000000).toFixed(1) + 'B';
       if (tokens >= 1000000) return (tokens / 1000000).toFixed(1) + 'M';
-      if (tokens >= 1000) return (tokens / 1000).toFixed(1) + 'K';
+      if (tokens >= 1000) return (tokens / 1000).toFixed(0) + 'K';
       return tokens.toLocaleString();
     }
 
@@ -1468,26 +895,64 @@
     }
 
     function getPriceClass(price) {
-      if (price <= 0.5) return 'low';
-      if (price <= 2) return 'medium';
-      return 'high';
+      if (price <= 0) return 'price-free';
+      if (price <= 0.3) return 'price-low';
+      if (price <= 1.5) return 'price-mid';
+      if (price <= 5) return 'price-high';
+      return 'price-premium';
     }
 
-    // Fetch Models from Venice API
+    function getAvatarClass(model) {
+      const caps = model.model_spec?.capabilities || {};
+      if (caps.supportsReasoning) return 'reasoning';
+      if (caps.supportsVision) return 'vision';
+      if (caps.optimizedForCode) return 'code';
+      return '';
+    }
+
+    function getModelData(model) {
+      const spec = model.model_spec || {};
+      const pricing = spec.pricing || {};
+      const caps = spec.capabilities || {};
+      const inputPrice = pricing.input?.usd || 0;
+      const outputPrice = pricing.output?.usd || 0;
+      const contextTokens = spec.availableContextTokens || 0;
+      const maxOutputTokens = spec.maxCompletionTokens || Math.floor(contextTokens * 0.25);
+      const budgetTokens = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1000000 : 0;
+
+      return {
+        id: model.id,
+        name: model.id,
+        contextTokens,
+        maxOutputTokens,
+        inputPrice,
+        outputPrice,
+        budgetTokens,
+        reasoning: !!caps.supportsReasoning,
+        vision: !!caps.supportsVision,
+        code: !!caps.optimizedForCode,
+        websearch: !!caps.supportsWebSearch,
+        functions: !!caps.supportsFunctionCalling,
+        schema: !!caps.supportsResponseSchema,
+        beta: !!spec.beta,
+        traits: spec.traits || [],
+        model: model
+      };
+    }
+
+    // ===== FETCH MODELS =====
     async function fetchModels() {
       const apiKey = getApiKey();
       if (!apiKey) {
         document.getElementById('loadingOverlay').innerHTML = `
-          <div style="text-align: center; padding: 40px;">
-            <span class="material-icons" style="font-size: 64px; color: var(--accent);">settings</span>
-            <h2 style="margin: 20px 0;">API Key Not Configured</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 20px;">The backend API key is not configured. Please check your deployment settings.</p>
-            <a href="index.html" class="nav-btn primary" style="display: inline-flex;">
-              <span class="material-icons">arrow_back</span>
-              <span>Go to Chat</span>
+          <div style="text-align:center;padding:40px;">
+            <span class="material-icons" style="font-size:56px;color:var(--accent);">vpn_key</span>
+            <h2 style="margin:16px 0 8px;">API Key Not Configured</h2>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">Please check your deployment or config settings.</p>
+            <a href="index.html" class="nav-btn primary" style="display:inline-flex;">
+              <span class="material-icons">arrow_back</span> <span>Go to Chat</span>
             </a>
-          </div>
-        `;
+          </div>`;
         return;
       }
 
@@ -1495,269 +960,360 @@
         const response = await fetch(`${BASE_URL}/models?type=text`, {
           headers: { 'Authorization': `Bearer ${apiKey}` }
         });
-
-        if (!response.ok) {
-          throw new Error(`API Error: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`API Error: ${response.status}`);
 
         const data = await response.json();
         availableModels = (data.data || [])
           .filter(m => m.type === 'text' && m.model_spec?.offline !== true)
           .filter(m => !m.id.toLowerCase().includes('coder') || m.id.toLowerCase().includes('qwen'))
           .sort((a, b) => {
-            const aReason = a.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
-            const bReason = b.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
-            if (aReason !== bReason) return bReason - aReason;
-            const aCtx = a.model_spec?.availableContextTokens || 0;
-            const bCtx = b.model_spec?.availableContextTokens || 0;
-            return bCtx - aCtx;
+            const aR = a.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
+            const bR = b.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
+            if (aR !== bR) return bR - aR;
+            return (b.model_spec?.availableContextTokens || 0) - (a.model_spec?.availableContextTokens || 0);
           });
 
-        renderDashboard();
+        // Compute best value models (top 3 by budget tokens)
+        const sorted = availableModels
+          .map(m => ({ id: m.id, bt: getModelData(m).budgetTokens }))
+          .filter(x => x.bt > 0)
+          .sort((a, b) => b.bt - a.bt);
+        bestValueIds = new Set(sorted.slice(0, 3).map(x => x.id));
+
+        renderAll();
         document.getElementById('loadingOverlay').style.display = 'none';
       } catch (error) {
         console.error('Failed to fetch models:', error);
         document.getElementById('loadingOverlay').innerHTML = `
-          <div style="text-align: center; padding: 40px;">
-            <span class="material-icons" style="font-size: 64px; color: var(--accent);">error</span>
-            <h2 style="margin: 20px 0;">Failed to Load Models</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 20px;">${error.message}</p>
-            <button onclick="location.reload()" class="nav-btn primary" style="display: inline-flex;">
-              <span class="material-icons">refresh</span>
-              <span>Retry</span>
+          <div style="text-align:center;padding:40px;">
+            <span class="material-icons" style="font-size:56px;color:var(--red);">error</span>
+            <h2 style="margin:16px 0 8px;">Failed to Load Models</h2>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">${error.message}</p>
+            <button onclick="location.reload()" class="nav-btn primary" style="display:inline-flex;">
+              <span class="material-icons">refresh</span> <span>Retry</span>
             </button>
-          </div>
-        `;
+          </div>`;
       }
     }
 
-    // Render Dashboard
-    function renderDashboard() {
+    // ===== RENDER ALL =====
+    function renderAll() {
       updateKPIs();
-      renderTextModelsTable();
-      renderModelsGrid();
-      renderValueModels();
+      applyFilters();
       fetchRateLimits();
     }
 
-    // Update KPI Cards
+    // ===== KPIs =====
     function updateKPIs() {
       document.getElementById('totalModels').textContent = availableModels.length;
 
-      let maxInput = 0, maxOutput = 0, totalInput = 0, totalOutput = 0, count = 0;
+      let maxInput = 0, maxOutput = 0, totalCost = 0, costCount = 0, maxCtx = 0;
+      let bestModel = '--';
+      let bestBudget = 0;
 
       availableModels.forEach(model => {
-        const pricing = model.model_spec?.pricing || {};
-        const inputPrice = pricing.input?.usd || 0;
-        const outputPrice = pricing.output?.usd || 0;
-
-        if (inputPrice > 0) {
-          const tokens = (DIEM_BUDGET / inputPrice) * 1000000;
-          if (tokens > maxInput) maxInput = tokens;
-          totalInput += inputPrice;
-          count++;
+        const d = getModelData(model);
+        if (d.inputPrice > 0) {
+          const it = (DIEM_BUDGET / d.inputPrice) * 1000000;
+          if (it > maxInput) maxInput = it;
+          totalCost += d.inputPrice;
+          costCount++;
         }
-        if (outputPrice > 0) {
-          const tokens = (DIEM_BUDGET / outputPrice) * 1000000;
-          if (tokens > maxOutput) maxOutput = tokens;
-          totalOutput += outputPrice;
+        if (d.outputPrice > 0) {
+          const ot = (DIEM_BUDGET / d.outputPrice) * 1000000;
+          if (ot > maxOutput) maxOutput = ot;
+          totalCost += d.outputPrice;
+        }
+        if (d.contextTokens > maxCtx) maxCtx = d.contextTokens;
+        if (d.budgetTokens > bestBudget) {
+          bestBudget = d.budgetTokens;
+          bestModel = d.name.split('-').slice(0, 2).join('-');
         }
       });
 
       document.getElementById('maxInputTokens').textContent = formatTokens(maxInput);
       document.getElementById('maxOutputTokens').textContent = formatTokens(maxOutput);
-      document.getElementById('summaryTextTokens').textContent = formatTokens(maxOutput);
+      document.getElementById('maxContext').textContent = formatTokens(maxCtx);
+      document.getElementById('bestValue').textContent = bestModel;
 
-      const avgCost = count > 0 ? ((totalInput + totalOutput) / (count * 2)).toFixed(2) : '--';
-      document.getElementById('avgCost').textContent = '$' + avgCost;
+      const avg = costCount > 0 ? (totalCost / (costCount * 2)).toFixed(2) : '--';
+      document.getElementById('avgCost').textContent = '$' + avg;
     }
 
-    // Render Text Models Table
-    function renderTextModelsTable() {
-      const tbody = document.getElementById('textModelsBody');
-
-      let modelsData = availableModels.map(model => {
-        const pricing = model.model_spec?.pricing || {};
-        const inputPrice = pricing.input?.usd || 0;
-        const outputPrice = pricing.output?.usd || 0;
-        const maxInput = inputPrice > 0 ? (DIEM_BUDGET / inputPrice) * 1000000 : 0;
-        const maxOutput = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1000000 : 0;
-
-        return { model, inputPrice, outputPrice, maxInput, maxOutput };
-      });
-
-      // Apply sorting if active
-      if (sortState.table === 'text' && sortState.column) {
-        modelsData.sort((a, b) => {
-          let aVal, bVal;
-          switch (sortState.column) {
-            case 'model': aVal = a.model.id.toLowerCase(); bVal = b.model.id.toLowerCase(); break;
-            case 'input': aVal = a.inputPrice; bVal = b.inputPrice; break;
-            case 'output': aVal = a.outputPrice; bVal = b.outputPrice; break;
-            case 'maxInput': aVal = a.maxInput; bVal = b.maxInput; break;
-            case 'maxOutput': aVal = a.maxOutput; bVal = b.maxOutput; break;
-          }
-          if (typeof aVal === 'string') {
-            return sortState.direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-          }
-          return sortState.direction === 'asc' ? aVal - bVal : bVal - aVal;
-        });
-      }
-
-      tbody.innerHTML = modelsData.map(({ model, inputPrice, outputPrice, maxInput, maxOutput }) => `
-        <tr>
-          <td>
-            <div class="model-name-cell">
-              <div class="model-avatar">${getInitials(model.id)}</div>
-              <div class="model-info">
-                <div class="model-id">${model.id}</div>
-                <div class="model-type">${(model.model_spec?.availableContextTokens || 0).toLocaleString()} ctx</div>
-              </div>
-            </div>
-          </td>
-          <td class="price-cell ${getPriceClass(inputPrice)}">$${inputPrice.toFixed(2)}</td>
-          <td class="price-cell ${getPriceClass(outputPrice)}">$${outputPrice.toFixed(2)}</td>
-          <td class="tokens-cell">${formatTokens(maxInput)}</td>
-          <td class="tokens-cell">${formatTokens(maxOutput)}</td>
-        </tr>
-      `).join('');
-
-      // Update header sort indicators
-      document.querySelectorAll('#textModelsCard th.sortable').forEach(th => {
-        th.classList.remove('sort-asc', 'sort-desc');
-      });
-      if (sortState.table === 'text' && sortState.column) {
-        const colMap = { model: 0, input: 1, output: 2, maxInput: 3, maxOutput: 4 };
-        const th = document.querySelectorAll('#textModelsCard th.sortable')[colMap[sortState.column]];
-        if (th) th.classList.add(sortState.direction === 'asc' ? 'sort-asc' : 'sort-desc');
-      }
-    }
-
-    // Sort Table
-    function sortTable(table, column) {
-      if (sortState.table === table && sortState.column === column) {
-        sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+    // ===== FILTERS =====
+    function toggleFilter(btn) {
+      const filter = btn.dataset.filter;
+      if (activeFilters.has(filter)) {
+        activeFilters.delete(filter);
+        btn.classList.remove('active');
       } else {
-        sortState = { table, column, direction: 'asc' };
+        activeFilters.add(filter);
+        btn.classList.add('active');
       }
-      renderTextModelsTable();
+      document.getElementById('clearFiltersBtn').style.display = activeFilters.size > 0 ? 'inline-flex' : 'none';
+      applyFilters();
     }
 
-    // Render Models Grid
-    function renderModelsGrid(filter = 'all') {
-      const grid = document.getElementById('modelsGrid');
+    function clearFilters() {
+      activeFilters.clear();
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      document.getElementById('clearFiltersBtn').style.display = 'none';
+      document.getElementById('searchInput').value = '';
+      applyFilters();
+    }
 
-      let filtered = availableModels;
-      if (filter === 'reasoning') {
-        filtered = availableModels.filter(m => m.model_spec?.capabilities?.supportsReasoning);
-      } else if (filter === 'vision') {
-        filtered = availableModels.filter(m => m.model_spec?.capabilities?.supportsVision);
-      } else if (filter === 'code') {
-        filtered = availableModels.filter(m => m.model_spec?.capabilities?.optimizedForCode);
+    function applyFilters() {
+      const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+
+      filteredModels = availableModels.filter(model => {
+        const d = getModelData(model);
+
+        // Search filter
+        if (search && !d.name.toLowerCase().includes(search)) return false;
+
+        // Capability filters (AND logic - model must have ALL selected capabilities)
+        for (const f of activeFilters) {
+          if (f === 'reasoning' && !d.reasoning) return false;
+          if (f === 'vision' && !d.vision) return false;
+          if (f === 'code' && !d.code) return false;
+          if (f === 'websearch' && !d.websearch) return false;
+          if (f === 'functions' && !d.functions) return false;
+          if (f === 'schema' && !d.schema) return false;
+          if (f === 'beta' && !d.beta) return false;
+        }
+
+        return true;
+      });
+
+      renderTable();
+      updateSearchCount();
+    }
+
+    function updateSearchCount() {
+      document.getElementById('searchCount').innerHTML =
+        `Showing <strong>${filteredModels.length}</strong> of <strong>${availableModels.length}</strong> models`;
+    }
+
+    // ===== SORTING =====
+    function sortBy(column) {
+      if (currentSort.column === column) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSort.column = column;
+        currentSort.direction = column === 'name' ? 'asc' : 'desc';
+      }
+      renderTable();
+    }
+
+    function getSortedModels() {
+      const models = [...filteredModels];
+      const { column, direction } = currentSort;
+      const mult = direction === 'asc' ? 1 : -1;
+
+      models.sort((a, b) => {
+        const da = getModelData(a);
+        const db = getModelData(b);
+        let av, bv;
+
+        switch (column) {
+          case 'name': av = da.name.toLowerCase(); bv = db.name.toLowerCase();
+            return mult * av.localeCompare(bv);
+          case 'context': av = da.contextTokens; bv = db.contextTokens; break;
+          case 'maxOutput': av = da.maxOutputTokens; bv = db.maxOutputTokens; break;
+          case 'inputPrice': av = da.inputPrice; bv = db.inputPrice; break;
+          case 'outputPrice': av = da.outputPrice; bv = db.outputPrice; break;
+          case 'budgetTokens': av = da.budgetTokens; bv = db.budgetTokens; break;
+          default: return 0;
+        }
+        return mult * (av - bv);
+      });
+      return models;
+    }
+
+    // ===== RENDER TABLE =====
+    function renderTable() {
+      const tbody = document.getElementById('modelTableBody');
+      const sorted = getSortedModels();
+
+      // Update sort arrows
+      document.querySelectorAll('.model-table th').forEach(th => th.classList.remove('sort-active'));
+      document.querySelectorAll('.sort-arrow').forEach(el => { el.innerHTML = '&#8597;'; });
+      const activeArrow = document.getElementById('sort-' + currentSort.column);
+      if (activeArrow) {
+        activeArrow.parentElement.classList.add('sort-active');
+        activeArrow.innerHTML = currentSort.direction === 'asc' ? '&#8593;' : '&#8595;';
       }
 
-      grid.innerHTML = filtered.map(model => {
-        const spec = model.model_spec || {};
-        const capabilities = spec.capabilities || {};
-        const pricing = spec.pricing || {};
-        const contextTokens = spec.availableContextTokens || 0;
-        const maxOutputTokens = spec.maxCompletionTokens || Math.floor(contextTokens * 0.25);
-        const outputPrice = pricing.output?.usd || 0;
-        const inputPrice = pricing.input?.usd || 0;
-        const maxBudgetTokens = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1000000 : 0;
+      if (sorted.length === 0) {
+        tbody.innerHTML = `
+          <tr><td colspan="7">
+            <div class="empty-state">
+              <span class="material-icons">search_off</span>
+              <h3>No models match your filters</h3>
+              <p>Try adjusting your search or removing some filters</p>
+            </div>
+          </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = sorted.map(model => {
+        const d = getModelData(model);
+        const isBestValue = bestValueIds.has(d.id);
+        const rowClass = isBestValue ? 'row-best-value' : '';
+
+        // Build capability badges
+        let caps = '';
+        if (d.reasoning) caps += '<span class="cap-dot dot-reasoning"><span class="material-icons">psychology</span>Reasoning</span>';
+        if (d.vision) caps += '<span class="cap-dot dot-vision"><span class="material-icons">visibility</span>Vision</span>';
+        if (d.code) caps += '<span class="cap-dot dot-code"><span class="material-icons">code</span>Code</span>';
+        if (d.websearch) caps += '<span class="cap-dot dot-websearch"><span class="material-icons">travel_explore</span>Web</span>';
+        if (d.functions) caps += '<span class="cap-dot dot-functions"><span class="material-icons">functions</span>Func</span>';
+        if (d.schema) caps += '<span class="cap-dot dot-schema"><span class="material-icons">schema</span>JSON</span>';
+
+        const betaTag = d.beta ? '<span class="beta-tag">BETA</span>' : '';
+        const bestTag = isBestValue ? ' <span class="best-value-badge"><span class="material-icons">star</span>Best Value</span>' : '';
 
         return `
-          <div class="model-card">
-            <div class="model-card-header">
-              <div class="model-card-title">${model.id}</div>
-              <div class="model-card-meta">
-                <span><span class="material-icons">memory</span> ${contextTokens.toLocaleString()} context</span>
-              </div>
-            </div>
-            <div class="model-card-body">
-              <div class="model-stats-grid">
-                <div class="model-stat-box">
-                  <div class="model-stat-icon"><span class="material-icons">input</span></div>
-                  <div class="model-stat-data">
-                    <span class="model-stat-value">$${inputPrice.toFixed(2)}</span>
-                    <span class="model-stat-label">Input/1M</span>
-                  </div>
-                </div>
-                <div class="model-stat-box">
-                  <div class="model-stat-icon"><span class="material-icons">output</span></div>
-                  <div class="model-stat-data">
-                    <span class="model-stat-value">$${outputPrice.toFixed(2)}</span>
-                    <span class="model-stat-label">Output/1M</span>
-                  </div>
-                </div>
-                <div class="model-stat-box highlight">
-                  <div class="model-stat-icon"><span class="material-icons">token</span></div>
-                  <div class="model-stat-data">
-                    <span class="model-stat-value">${formatTokens(maxBudgetTokens)}</span>
-                    <span class="model-stat-label">@ $48 Budget</span>
-                  </div>
-                </div>
-                <div class="model-stat-box">
-                  <div class="model-stat-icon"><span class="material-icons">edit_note</span></div>
-                  <div class="model-stat-data">
-                    <span class="model-stat-value">${formatTokens(maxOutputTokens)}</span>
-                    <span class="model-stat-label">Max Output</span>
-                  </div>
+          <tr class="${rowClass}" onclick="toggleDetail('${d.id}')" style="cursor:pointer;">
+            <td>
+              <div class="cell-model">
+                <div class="model-avatar ${getAvatarClass(model)}">${getInitials(d.id)}</div>
+                <div class="cell-model-info">
+                  <div class="cell-model-name">${d.name}${bestTag}</div>
+                  <div class="cell-model-sub">${betaTag}</div>
                 </div>
               </div>
-              <div class="model-capabilities">
-                <div class="capability-badges">
-                  ${capabilities.supportsReasoning ? '<span class="cap-badge active"><span class="material-icons">psychology</span>Reasoning</span>' : ''}
-                  ${capabilities.supportsVision ? '<span class="cap-badge active"><span class="material-icons">visibility</span>Vision</span>' : ''}
-                  ${capabilities.supportsWebSearch ? '<span class="cap-badge active"><span class="material-icons">travel_explore</span>Web</span>' : ''}
-                  ${capabilities.supportsFunctionCalling ? '<span class="cap-badge active"><span class="material-icons">functions</span>Functions</span>' : ''}
-                  ${capabilities.optimizedForCode ? '<span class="cap-badge active"><span class="material-icons">code</span>Code</span>' : ''}
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
+            </td>
+            <td class="cell-number cell-context">${formatTokens(d.contextTokens)}</td>
+            <td class="cell-number cell-tokens">${formatTokens(d.maxOutputTokens)}</td>
+            <td class="cell-number cell-price ${getPriceClass(d.inputPrice)}">$${d.inputPrice.toFixed(2)}</td>
+            <td class="cell-number cell-price ${getPriceClass(d.outputPrice)}">$${d.outputPrice.toFixed(2)}</td>
+            <td class="cell-number cell-tokens" style="font-weight:700;">${formatTokens(d.budgetTokens)}</td>
+            <td><div class="cap-dots">${caps || '<span style="color:var(--text-muted);font-size:11px;">None</span>'}</div></td>
+          </tr>
+          <tr class="detail-row" id="detail-${d.id}" style="display:none;">
+            <td colspan="7">
+              ${buildDetailPanel(d)}
+            </td>
+          </tr>`;
       }).join('');
     }
 
-    // Filter Models
-    function filterModels(filter) {
-      document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-      event.target.classList.add('active');
-      renderModelsGrid(filter);
-    }
+    // ===== DETAIL PANEL =====
+    function buildDetailPanel(d) {
+      const costPerToken = d.outputPrice > 0 ? (d.outputPrice / 1000000) : 0;
+      const inputBudget = d.inputPrice > 0 ? formatTokens((DIEM_BUDGET / d.inputPrice) * 1000000) : 'N/A';
+      const outputBudget = d.outputPrice > 0 ? formatTokens((DIEM_BUDGET / d.outputPrice) * 1000000) : 'N/A';
 
-    // Render Value Models (Top 4 best value)
-    function renderValueModels() {
-      const grid = document.getElementById('valueModelsGrid');
-
-      // Calculate value score (tokens per dollar) and sort by best value
-      const modelsWithValue = availableModels
-        .filter(m => m.model_spec?.pricing?.output?.usd > 0)
-        .map(model => {
-          const pricing = model.model_spec?.pricing || {};
-          const outputPrice = pricing.output?.usd || 0;
-          const maxTokens = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1000000 : 0;
-          return { model, maxTokens, outputPrice };
-        })
-        .sort((a, b) => b.maxTokens - a.maxTokens)
-        .slice(0, 4);
-
-      grid.innerHTML = modelsWithValue.map((item, index) => `
-        <div class="value-model-card rank-${index + 1}">
-          <div class="value-model-rank">${index + 1}</div>
-          <div class="value-model-name">${item.model.id}</div>
-          <div class="value-model-context">${(item.model.model_spec?.availableContextTokens || 0).toLocaleString()} context</div>
-          <div class="value-model-tokens">${formatTokens(item.maxTokens)}</div>
-          <div class="value-model-label">Output Tokens</div>
-          <div class="value-model-price">
-            <strong>$${item.outputPrice.toFixed(2)}</strong> per 1M tokens
+      return `
+        <div class="detail-panel">
+          <div class="detail-card">
+            <h5>Token Limits</h5>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Context Window</span>
+              <span class="detail-stat-value" style="color:var(--indigo);">${d.contextTokens.toLocaleString()}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Max Output Tokens</span>
+              <span class="detail-stat-value">${d.maxOutputTokens.toLocaleString()}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Effective Input</span>
+              <span class="detail-stat-value">${(d.contextTokens - d.maxOutputTokens).toLocaleString()}</span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h5>Pricing Details</h5>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Input / 1M tokens</span>
+              <span class="detail-stat-value ${getPriceClass(d.inputPrice)}">$${d.inputPrice.toFixed(4)}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Output / 1M tokens</span>
+              <span class="detail-stat-value ${getPriceClass(d.outputPrice)}">$${d.outputPrice.toFixed(4)}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Cost / token (out)</span>
+              <span class="detail-stat-value">$${costPerToken.toFixed(8)}</span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h5>$48 Budget Analysis</h5>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Max Input Tokens</span>
+              <span class="detail-stat-value" style="color:var(--green);">${inputBudget}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Max Output Tokens</span>
+              <span class="detail-stat-value" style="color:var(--green);">${outputBudget}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Approx Conversations*</span>
+              <span class="detail-stat-value">${d.budgetTokens > 0 ? Math.floor(d.budgetTokens / 2000).toLocaleString() : 'N/A'}</span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h5>All Capabilities</h5>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Reasoning</span>
+              <span class="detail-stat-value">${d.reasoning ? '<span style="color:var(--violet);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Vision</span>
+              <span class="detail-stat-value">${d.vision ? '<span style="color:var(--blue);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Code Optimized</span>
+              <span class="detail-stat-value">${d.code ? '<span style="color:var(--green);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Web Search</span>
+              <span class="detail-stat-value">${d.websearch ? '<span style="color:var(--cyan);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Function Calling</span>
+              <span class="detail-stat-value">${d.functions ? '<span style="color:var(--orange);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">JSON Schema</span>
+              <span class="detail-stat-value">${d.schema ? '<span style="color:var(--pink);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Beta</span>
+              <span class="detail-stat-value">${d.beta ? '<span style="color:var(--amber);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
+            </div>
           </div>
         </div>
-      `).join('');
+        <div style="padding:0 20px 8px;font-size:10px;color:var(--text-muted);">*Approx conversations assumes ~2K output tokens per conversation</div>
+      `;
     }
 
-    // Fetch and display rate limits
+    function toggleDetail(modelId) {
+      const row = document.getElementById('detail-' + modelId);
+      if (!row) return;
+
+      if (expandedRow && expandedRow !== modelId) {
+        const prev = document.getElementById('detail-' + expandedRow);
+        if (prev) prev.style.display = 'none';
+      }
+
+      if (row.style.display === 'none') {
+        row.style.display = 'table-row';
+        expandedRow = modelId;
+      } else {
+        row.style.display = 'none';
+        expandedRow = null;
+      }
+    }
+
+    // ===== COLLAPSIBLE SECTIONS =====
+    function toggleCollapsible(header) {
+      header.classList.toggle('open');
+      const body = header.nextElementSibling;
+      body.classList.toggle('open');
+    }
+
+    // ===== RATE LIMITS =====
     async function fetchRateLimits() {
       const apiKey = getApiKey();
       if (!apiKey) return;
@@ -1766,17 +1322,10 @@
         const response = await fetch(`${BASE_URL}/api_keys/rate_limits`, {
           headers: { 'Authorization': `Bearer ${apiKey}` }
         });
-
-        if (!response.ok) {
-          console.warn('Could not fetch rate limits:', response.status);
-          return;
-        }
+        if (!response.ok) return;
 
         const data = await response.json();
-
-        // Display rate limits if available
         if (data) {
-          // Try to extract rate limit info from response
           const rpm = data.requests_per_minute || data.rpm || '--';
           const tpm = data.tokens_per_minute || data.tpm || '--';
           const rpd = data.requests_per_day || data.rpd || '--';
@@ -1792,7 +1341,38 @@
       }
     }
 
-    // Refresh Data
+    // ===== EXPORT CSV =====
+    function exportCSV() {
+      if (filteredModels.length === 0) return;
+
+      const headers = ['Model', 'Context Tokens', 'Max Output', 'Input $/1M', 'Output $/1M', 'Tokens @ $48', 'Reasoning', 'Vision', 'Code', 'Web Search', 'Functions', 'JSON Schema', 'Beta'];
+      const rows = filteredModels.map(m => {
+        const d = getModelData(m);
+        return [
+          d.name, d.contextTokens, d.maxOutputTokens,
+          d.inputPrice.toFixed(4), d.outputPrice.toFixed(4),
+          Math.round(d.budgetTokens),
+          d.reasoning ? 'Yes' : 'No',
+          d.vision ? 'Yes' : 'No',
+          d.code ? 'Yes' : 'No',
+          d.websearch ? 'Yes' : 'No',
+          d.functions ? 'Yes' : 'No',
+          d.schema ? 'Yes' : 'No',
+          d.beta ? 'Yes' : 'No'
+        ].join(',');
+      });
+
+      const csv = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'venice-models-' + new Date().toISOString().split('T')[0] + '.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ===== REFRESH =====
     function refreshData() {
       document.getElementById('loadingOverlay').style.display = 'flex';
       document.getElementById('loadingOverlay').innerHTML = `
@@ -1802,7 +1382,7 @@
       fetchModels();
     }
 
-    // Logout function
+    // ===== LOGOUT =====
     function logout() {
       if (confirm('Are you sure you want to sign out?')) {
         localStorage.removeItem('venice_password');
@@ -1812,7 +1392,25 @@
       }
     }
 
-    // Initialize
+    // ===== KEYBOARD SHORTCUT =====
+    document.addEventListener('keydown', (e) => {
+      // Ctrl/Cmd + K to focus search
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
+      }
+      // Escape to clear search
+      if (e.key === 'Escape') {
+        const input = document.getElementById('searchInput');
+        if (document.activeElement === input) {
+          input.value = '';
+          input.blur();
+          applyFilters();
+        }
+      }
+    });
+
+    // ===== INIT =====
     document.addEventListener('DOMContentLoaded', fetchModels);
   </script>
 </body>
