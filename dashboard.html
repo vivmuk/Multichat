@@ -41,6 +41,8 @@
       --pink-bg: rgba(236, 72, 153, 0.1);
       --rose: #f43f5e;
       --rose-bg: rgba(244, 63, 94, 0.1);
+      --slate: #64748b;
+      --slate-bg: rgba(100, 116, 139, 0.1);
       --background: #f8fafc;
       --surface: #ffffff;
       --surface-hover: #f1f5f9;
@@ -49,10 +51,10 @@
       --text-muted: #94a3b8;
       --border: #e2e8f0;
       --border-light: #f1f5f9;
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
-      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.03);
+      --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.04);
       --radius-sm: 6px;
       --radius-md: 8px;
       --radius-lg: 12px;
@@ -64,31 +66,18 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--background);
-      color: var(--text-primary);
-      min-height: 100vh;
-      line-height: 1.5;
+      background: var(--background); color: var(--text-primary);
+      min-height: 100vh; line-height: 1.5;
     }
 
     /* ===== TOP NAV ===== */
     .top-nav {
-      background: var(--primary);
-      padding: 0 32px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      background: var(--primary); padding: 0 32px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: white;
-    }
+    .nav-brand { display: flex; align-items: center; gap: 12px; color: white; }
     .nav-brand .logo {
       width: 36px; height: 36px;
       background: linear-gradient(135deg, var(--accent) 0%, var(--violet) 100%);
@@ -96,10 +85,7 @@
       display: flex; align-items: center; justify-content: center;
     }
     .nav-brand .logo .material-icons { font-size: 20px; color: white; }
-    .nav-brand h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 18px; font-weight: 700; letter-spacing: -0.3px;
-    }
+    .nav-brand h1 { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
     .nav-brand span { font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 400; }
     .nav-actions { display: flex; align-items: center; gap: 8px; }
     .nav-btn {
@@ -121,25 +107,13 @@
     .dashboard-container { max-width: 1800px; margin: 0 auto; padding: 24px 32px; }
 
     /* ===== KPI ROW ===== */
-    .kpi-row {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
+    .kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 20px; }
     .kpi-card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      padding: 16px 18px;
-      border: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-      transition: all 0.2s;
+      background: var(--surface); border-radius: var(--radius-lg); padding: 16px 18px;
+      border: 1px solid var(--border); position: relative; overflow: hidden; transition: all 0.2s;
     }
     .kpi-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
-    .kpi-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    }
+    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
     .kpi-card.c-indigo::before { background: var(--indigo); }
     .kpi-card.c-green::before { background: var(--green); }
     .kpi-card.c-blue::before { background: var(--blue); }
@@ -147,10 +121,7 @@
     .kpi-card.c-cyan::before { background: var(--cyan); }
     .kpi-card.c-rose::before { background: var(--rose); }
     .kpi-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .kpi-icon {
-      width: 34px; height: 34px; border-radius: var(--radius-md);
-      display: flex; align-items: center; justify-content: center;
-    }
+    .kpi-icon { width: 34px; height: 34px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; }
     .kpi-icon .material-icons { font-size: 18px; }
     .c-indigo .kpi-icon { background: var(--indigo-bg); color: var(--indigo); }
     .c-green .kpi-icon { background: var(--green-bg); color: var(--green); }
@@ -158,112 +129,100 @@
     .c-amber .kpi-icon { background: var(--amber-bg); color: var(--amber); }
     .c-cyan .kpi-icon { background: var(--cyan-bg); color: var(--cyan); }
     .c-rose .kpi-icon { background: var(--rose-bg); color: var(--rose); }
-    .kpi-value {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 22px; font-weight: 700; color: var(--text-primary); line-height: 1.2;
-    }
+    .kpi-value { font-family: 'Space Grotesk'; font-size: 22px; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
     .kpi-label { color: var(--text-muted); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; }
 
     /* ===== SEARCH & FILTER TOOLBAR ===== */
     .toolbar {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      padding: 20px 24px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow-sm);
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl);
+      padding: 20px 24px; margin-bottom: 16px; box-shadow: var(--shadow-sm);
     }
-    .toolbar-top {
-      display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
-    }
+    .toolbar-top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
     .search-box {
-      flex: 1;
-      display: flex; align-items: center; gap: 10px;
-      background: var(--background);
-      border: 2px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 10px 16px;
-      transition: all 0.2s;
+      flex: 1; display: flex; align-items: center; gap: 10px;
+      background: var(--background); border: 2px solid var(--border);
+      border-radius: var(--radius-lg); padding: 10px 16px; transition: all 0.2s;
     }
-    .search-box:focus-within {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-bg);
-      background: white;
-    }
+    .search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); background: white; }
     .search-box .material-icons { font-size: 20px; color: var(--text-muted); }
-    .search-box input {
-      flex: 1; border: none; outline: none; background: transparent;
-      font-size: 14px; font-family: inherit; color: var(--text-primary);
-    }
+    .search-box input { flex: 1; border: none; outline: none; background: transparent; font-size: 14px; font-family: inherit; color: var(--text-primary); }
     .search-box input::placeholder { color: var(--text-muted); }
     .search-count {
-      font-size: 13px; font-weight: 600; color: var(--text-secondary);
-      white-space: nowrap; padding: 8px 16px;
-      background: var(--background); border-radius: var(--radius-md);
-      border: 1px solid var(--border);
+      font-size: 13px; font-weight: 600; color: var(--text-secondary); white-space: nowrap;
+      padding: 8px 16px; background: var(--background); border-radius: var(--radius-md); border: 1px solid var(--border);
     }
     .search-count strong { color: var(--accent); }
-    .toolbar-actions { display: flex; gap: 8px; }
-    .toolbar-btn {
-      display: flex; align-items: center; gap: 6px;
-      padding: 8px 14px; border-radius: var(--radius-md);
-      font-size: 12px; font-weight: 600; cursor: pointer;
-      border: 1px solid var(--border); background: var(--surface);
-      color: var(--text-secondary); transition: all 0.15s;
-    }
-    .toolbar-btn:hover { background: var(--background); border-color: var(--accent); color: var(--accent); }
-    .toolbar-btn .material-icons { font-size: 16px; }
 
-    /* Filter chips */
-    .filter-section { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    /* Filter rows */
+    .filter-section { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    .filter-section:last-child { margin-bottom: 0; }
     .filter-label {
-      font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.6px; color: var(--text-muted); margin-right: 2px;
-      white-space: nowrap;
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+      color: var(--text-muted); margin-right: 2px; white-space: nowrap; min-width: 72px;
     }
-    .filter-divider {
-      width: 1px; height: 24px; background: var(--border); margin: 0 4px;
-    }
+    .filter-divider { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
     .filter-chip {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 6px 12px; border-radius: var(--radius-full);
-      font-size: 12px; font-weight: 600; cursor: pointer;
-      border: 2px solid transparent;
-      transition: all 0.15s;
-      user-select: none;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 10px; border-radius: var(--radius-full);
+      font-size: 11px; font-weight: 600; cursor: pointer;
+      border: 2px solid transparent; transition: all 0.15s; user-select: none;
     }
-    .filter-chip .material-icons { font-size: 14px; }
-    .filter-chip .check-icon { display: none; font-size: 13px; margin-right: -2px; }
+    .filter-chip .material-icons { font-size: 13px; }
+    .filter-chip .check-icon { display: none; font-size: 12px; margin-right: -2px; }
     .filter-chip.active .check-icon { display: inline-flex; }
 
-    /* Chip color variants */
-    .chip-reasoning { background: var(--violet-bg); color: var(--violet); border-color: transparent; }
+    /* Chip colors */
+    .chip-reasoning { background: var(--violet-bg); color: var(--violet); }
     .chip-reasoning.active { background: var(--violet); color: white; border-color: var(--violet); box-shadow: 0 2px 8px rgba(139,92,246,0.3); }
     .chip-reasoning:hover:not(.active) { border-color: var(--violet); }
 
-    .chip-vision { background: var(--blue-bg); color: var(--blue); border-color: transparent; }
+    .chip-vision { background: var(--blue-bg); color: var(--blue); }
     .chip-vision.active { background: var(--blue); color: white; border-color: var(--blue); box-shadow: 0 2px 8px rgba(59,130,246,0.3); }
     .chip-vision:hover:not(.active) { border-color: var(--blue); }
 
-    .chip-code { background: var(--green-bg); color: var(--green); border-color: transparent; }
+    .chip-code { background: var(--green-bg); color: var(--green); }
     .chip-code.active { background: var(--green); color: white; border-color: var(--green); box-shadow: 0 2px 8px rgba(16,185,129,0.3); }
     .chip-code:hover:not(.active) { border-color: var(--green); }
 
-    .chip-websearch { background: var(--cyan-bg); color: var(--cyan); border-color: transparent; }
+    .chip-websearch { background: var(--cyan-bg); color: var(--cyan); }
     .chip-websearch.active { background: var(--cyan); color: white; border-color: var(--cyan); box-shadow: 0 2px 8px rgba(6,182,212,0.3); }
     .chip-websearch:hover:not(.active) { border-color: var(--cyan); }
 
-    .chip-functions { background: var(--orange-bg); color: var(--orange); border-color: transparent; }
+    .chip-functions { background: var(--orange-bg); color: var(--orange); }
     .chip-functions.active { background: var(--orange); color: white; border-color: var(--orange); box-shadow: 0 2px 8px rgba(249,115,22,0.3); }
     .chip-functions:hover:not(.active) { border-color: var(--orange); }
 
-    .chip-schema { background: var(--pink-bg); color: var(--pink); border-color: transparent; }
+    .chip-schema { background: var(--pink-bg); color: var(--pink); }
     .chip-schema.active { background: var(--pink); color: white; border-color: var(--pink); box-shadow: 0 2px 8px rgba(236,72,153,0.3); }
     .chip-schema:hover:not(.active) { border-color: var(--pink); }
 
-    .chip-beta { background: var(--amber-bg); color: var(--amber); border-color: transparent; }
+    .chip-logprobs { background: var(--indigo-bg); color: var(--indigo); }
+    .chip-logprobs.active { background: var(--indigo); color: white; border-color: var(--indigo); box-shadow: 0 2px 8px rgba(99,102,241,0.3); }
+    .chip-logprobs:hover:not(.active) { border-color: var(--indigo); }
+
+    .chip-audio { background: var(--teal-bg); color: var(--teal); }
+    .chip-audio.active { background: var(--teal); color: white; border-color: var(--teal); box-shadow: 0 2px 8px rgba(20,184,166,0.3); }
+    .chip-audio:hover:not(.active) { border-color: var(--teal); }
+
+    .chip-video { background: var(--rose-bg); color: var(--rose); }
+    .chip-video.active { background: var(--rose); color: white; border-color: var(--rose); box-shadow: 0 2px 8px rgba(244,63,94,0.3); }
+    .chip-video:hover:not(.active) { border-color: var(--rose); }
+
+    .chip-beta { background: var(--amber-bg); color: var(--amber); }
     .chip-beta.active { background: var(--amber); color: white; border-color: var(--amber); box-shadow: 0 2px 8px rgba(245,158,11,0.3); }
     .chip-beta:hover:not(.active) { border-color: var(--amber); }
+
+    .chip-private { background: var(--green-bg); color: var(--green); }
+    .chip-private.active { background: var(--green); color: white; border-color: var(--green); box-shadow: 0 2px 8px rgba(16,185,129,0.3); }
+    .chip-private:hover:not(.active) { border-color: var(--green); }
+
+    .chip-anonymized { background: var(--slate-bg); color: var(--slate); }
+    .chip-anonymized.active { background: var(--slate); color: white; border-color: var(--slate); box-shadow: 0 2px 8px rgba(100,116,139,0.3); }
+    .chip-anonymized:hover:not(.active) { border-color: var(--slate); }
+
+    .chip-recommended { background: var(--purple-bg); color: var(--purple); }
+    .chip-recommended.active { background: var(--purple); color: white; border-color: var(--purple); box-shadow: 0 2px 8px rgba(168,85,247,0.3); }
+    .chip-recommended:hover:not(.active) { border-color: var(--purple); }
 
     .clear-filters {
       display: inline-flex; align-items: center; gap: 4px;
@@ -277,69 +236,37 @@
 
     /* ===== MODEL TABLE ===== */
     .table-container {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 24px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl);
+      overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 24px;
     }
-    .table-scroll {
-      overflow-x: auto;
-      max-height: calc(100vh - 360px);
-      overflow-y: auto;
-    }
-    .model-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
+    .table-scroll { overflow-x: auto; max-height: calc(100vh - 360px); overflow-y: auto; }
+    .model-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .model-table thead { position: sticky; top: 0; z-index: 10; }
     .model-table thead tr { background: var(--primary); }
     .model-table th {
-      padding: 12px 14px;
-      text-align: left;
-      font-size: 11px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.7);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: all 0.15s;
-      border-bottom: none;
-      user-select: none;
-      position: relative;
+      padding: 11px 12px; text-align: left; font-size: 10px; font-weight: 700;
+      color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.5px;
+      white-space: nowrap; cursor: pointer; transition: all 0.15s;
+      border-bottom: none; user-select: none; position: relative;
     }
     .model-table th:hover { color: white; background: rgba(255,255,255,0.05); }
-    .model-table th .sort-arrow {
-      display: inline-block; margin-left: 4px; font-size: 12px; opacity: 0.3;
-      vertical-align: middle;
-    }
+    .model-table th .sort-arrow { display: inline-block; margin-left: 3px; font-size: 11px; opacity: 0.3; vertical-align: middle; }
     .model-table th.sort-active .sort-arrow { opacity: 1; color: var(--accent-light); }
     .model-table th.sort-active { color: white; }
     .model-table td {
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border-light);
-      vertical-align: middle;
-      color: var(--text-primary);
+      padding: 8px 12px; border-bottom: 1px solid var(--border-light);
+      vertical-align: middle; color: var(--text-primary);
     }
-    .model-table tbody tr {
-      transition: background 0.1s;
-    }
-    .model-table tbody tr:hover {
-      background: var(--accent-bg);
-    }
+    .model-table tbody tr { transition: background 0.1s; }
+    .model-table tbody tr:hover { background: var(--accent-bg); }
     .model-table tbody tr:last-child td { border-bottom: none; }
 
     /* Table cells */
-    .cell-model {
-      display: flex; align-items: center; gap: 10px; min-width: 220px;
-    }
+    .cell-model { display: flex; align-items: center; gap: 10px; min-width: 200px; }
     .model-avatar {
       width: 32px; height: 32px; border-radius: var(--radius-sm);
       display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; color: white; flex-shrink: 0;
+      font-size: 10px; font-weight: 700; color: white; flex-shrink: 0;
       background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-mid) 100%);
     }
     .model-avatar.reasoning { background: linear-gradient(135deg, var(--violet) 0%, var(--purple) 100%); }
@@ -348,30 +275,36 @@
     .cell-model-info { min-width: 0; }
     .cell-model-name {
       font-weight: 600; color: var(--text-primary); font-size: 13px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px;
       display: flex; align-items: center; gap: 4px;
     }
     .copy-btn {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 22px; height: 22px; border-radius: var(--radius-sm);
+      width: 20px; height: 20px; border-radius: var(--radius-sm);
       border: none; background: transparent; cursor: pointer;
-      color: var(--text-muted); transition: all 0.15s; flex-shrink: 0;
-      padding: 0; opacity: 0;
+      color: var(--text-muted); transition: all 0.15s; flex-shrink: 0; padding: 0; opacity: 0;
     }
     .cell-model:hover .copy-btn { opacity: 1; }
     .copy-btn:hover { background: var(--accent-bg); color: var(--accent); }
-    .copy-btn .material-icons { font-size: 14px; }
-    .copy-btn.copied { color: var(--green); }
-    .copy-btn.copied .material-icons::after { content: 'check'; }
-    
+    .copy-btn .material-icons { font-size: 13px; }
+    .copy-btn.copied { color: var(--green); opacity: 1; }
     .cell-model-sub {
-      font-size: 11px; color: var(--text-muted);
-      display: flex; align-items: center; gap: 6px;
+      font-size: 10px; color: var(--text-muted);
+      display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px;
     }
-    .cell-model-sub .beta-tag {
-      display: inline-flex; padding: 1px 6px; border-radius: var(--radius-full);
-      background: var(--amber-bg); color: var(--amber); font-size: 9px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.3px;
+    .mini-tag {
+      display: inline-flex; padding: 0px 5px; border-radius: var(--radius-full);
+      font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;
+      line-height: 16px;
+    }
+    .tag-beta { background: var(--amber-bg); color: var(--amber); }
+    .tag-recommended { background: var(--purple-bg); color: var(--purple); }
+    .tag-private { background: var(--green-bg); color: var(--green); }
+    .tag-anonymized { background: var(--slate-bg); color: var(--slate); }
+    .tag-quant {
+      background: var(--background); color: var(--text-muted); border: 1px solid var(--border);
+      font-family: 'JetBrains Mono'; font-size: 8px;
     }
     .cell-number {
       font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
@@ -383,147 +316,116 @@
     .price-mid { color: var(--amber); }
     .price-high { color: var(--orange); }
     .price-premium { color: var(--red); }
-
     .cell-tokens { color: var(--text-primary); }
     .cell-context { color: var(--indigo); font-weight: 600; }
 
-    /* Capability dots in table */
-    .cap-dots { display: flex; gap: 4px; flex-wrap: wrap; }
+    /* Capability dots */
+    .cap-dots { display: flex; gap: 3px; flex-wrap: wrap; }
     .cap-dot {
-      display: inline-flex; align-items: center; gap: 3px;
-      padding: 2px 7px; border-radius: var(--radius-full);
-      font-size: 10px; font-weight: 600; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 2px;
+      padding: 1px 6px; border-radius: var(--radius-full);
+      font-size: 9px; font-weight: 600; white-space: nowrap;
     }
-    .cap-dot .material-icons { font-size: 11px; }
+    .cap-dot .material-icons { font-size: 10px; }
     .dot-reasoning { background: var(--violet-bg); color: var(--violet); }
     .dot-vision { background: var(--blue-bg); color: var(--blue); }
     .dot-code { background: var(--green-bg); color: var(--green); }
     .dot-websearch { background: var(--cyan-bg); color: var(--cyan); }
     .dot-functions { background: var(--orange-bg); color: var(--orange); }
     .dot-schema { background: var(--pink-bg); color: var(--pink); }
+    .dot-logprobs { background: var(--indigo-bg); color: var(--indigo); }
+    .dot-audio { background: var(--teal-bg); color: var(--teal); }
+    .dot-video { background: var(--rose-bg); color: var(--rose); }
 
-    /* ===== RATE LIMITS (compact) ===== */
-    .rate-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
+    /* ===== RATE LIMITS ===== */
+    .rate-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
     .rate-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 14px 16px;
-      display: flex; align-items: center; gap: 12px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 14px 16px; display: flex; align-items: center; gap: 12px;
     }
     .rate-icon {
-      width: 36px; height: 36px; border-radius: var(--radius-md);
-      background: var(--primary);
+      width: 36px; height: 36px; border-radius: var(--radius-md); background: var(--primary);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .rate-icon .material-icons { color: rgba(255,255,255,0.8); font-size: 18px; }
-    .rate-info {}
-    .rate-value {
-      font-family: 'Space Grotesk'; font-size: 18px; font-weight: 700;
-      color: var(--text-primary); line-height: 1.2;
-    }
+    .rate-value { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
     .rate-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; }
 
-    /* ===== COLLAPSIBLE SECTIONS ===== */
-    .collapsible-section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      margin-bottom: 16px;
-      overflow: hidden;
-    }
+    /* ===== COLLAPSIBLE ===== */
+    .collapsible-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); margin-bottom: 16px; overflow: hidden; }
     .collapsible-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px; cursor: pointer; transition: background 0.15s;
-      user-select: none;
+      padding: 16px 20px; cursor: pointer; transition: background 0.15s; user-select: none;
     }
     .collapsible-header:hover { background: var(--surface-hover); }
-    .collapsible-header h3 {
-      font-family: 'Space Grotesk';
-      font-size: 16px; font-weight: 600; color: var(--text-primary);
-      display: flex; align-items: center; gap: 10px;
-    }
+    .collapsible-header h3 { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
     .collapsible-header h3 .material-icons { font-size: 22px; color: var(--accent); }
-    .collapsible-header .toggle-icon {
-      transition: transform 0.25s; color: var(--text-muted); font-size: 24px;
-    }
+    .collapsible-header .toggle-icon { transition: transform 0.25s; color: var(--text-muted); font-size: 24px; }
     .collapsible-header.open .toggle-icon { transform: rotate(180deg); }
     .collapsible-body { display: none; padding: 0 20px 20px 20px; }
     .collapsible-body.open { display: block; }
 
-    /* Static pricing tables */
-    .static-tables-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-    .static-table-card {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-    }
-    .static-table-head {
-      padding: 14px 16px;
-      font-size: 14px; font-weight: 600;
-      display: flex; align-items: center; gap: 8px;
-    }
+    /* Static tables */
+    .static-tables-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .static-table-card { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .static-table-head { padding: 14px 16px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
     .static-table-head .material-icons { font-size: 18px; }
     .head-image { background: var(--blue-bg); color: var(--blue); }
     .head-edit { background: var(--purple-bg); color: var(--purple); }
     .head-audio { background: var(--green-bg); color: var(--green); }
-    .static-table {
-      width: 100%; border-collapse: collapse; font-size: 12px;
-    }
-    .static-table th {
-      padding: 8px 12px; text-align: left;
-      font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.4px; color: var(--text-muted);
-      background: var(--background); border-top: 1px solid var(--border-light);
-    }
-    .static-table td {
-      padding: 9px 12px; border-top: 1px solid var(--border-light);
-      font-size: 12px;
-    }
+    .static-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .static-table th { padding: 8px 12px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); background: var(--background); border-top: 1px solid var(--border-light); }
+    .static-table td { padding: 9px 12px; border-top: 1px solid var(--border-light); font-size: 12px; }
     .static-table .s-name { font-weight: 600; }
     .static-table .s-price { font-family: 'JetBrains Mono'; font-weight: 600; }
     .static-table .s-price.low { color: var(--green); }
     .static-table .s-price.mid { color: var(--amber); }
     .static-table .s-price.high { color: var(--orange); }
 
-    /* ===== DETAIL PANEL (row expand) ===== */
+    /* ===== DETAIL PANEL ===== */
     .detail-row td { padding: 0 !important; background: var(--background) !important; }
-    .detail-panel {
-      padding: 16px 20px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+    .detail-panel { padding: 16px 20px; }
+    .detail-description {
+      font-size: 12px; color: var(--text-secondary); line-height: 1.6;
+      margin-bottom: 12px; padding: 10px 14px;
+      background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border);
+    }
+    .detail-description .desc-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--text-muted); display: block; margin-bottom: 4px;
+    }
+    .detail-meta-row {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 12px; font-size: 11px;
+    }
+    .detail-meta-item {
+      display: inline-flex; align-items: center; gap: 4px; color: var(--text-secondary);
+    }
+    .detail-meta-item .material-icons { font-size: 14px; color: var(--text-muted); }
+    .detail-meta-item a { color: var(--accent); text-decoration: none; }
+    .detail-meta-item a:hover { text-decoration: underline; }
+    .detail-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
     }
     .detail-card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      padding: 14px 16px;
-      border: 1px solid var(--border);
+      background: var(--surface); border-radius: var(--radius-lg); padding: 12px 14px; border: 1px solid var(--border);
     }
     .detail-card h5 {
-      font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px;
+      font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--text-muted); margin-bottom: 6px;
     }
-    .detail-stat {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 3px 0; font-size: 12px;
-    }
+    .detail-stat { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; font-size: 11px; }
     .detail-stat-label { color: var(--text-secondary); }
-    .detail-stat-value { font-family: 'JetBrains Mono'; font-weight: 600; font-size: 12px; }
+    .detail-stat-value { font-family: 'JetBrains Mono'; font-weight: 600; font-size: 11px; }
+    .trait-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+    .trait-badge {
+      display: inline-flex; padding: 1px 7px; border-radius: var(--radius-full);
+      font-size: 9px; font-weight: 600; background: var(--accent-bg); color: var(--accent);
+    }
+    .detail-footer { padding: 4px 20px 8px; font-size: 9px; color: var(--text-muted); }
 
     /* ===== EMPTY STATE ===== */
-    .empty-state {
-      text-align: center; padding: 60px 20px; color: var(--text-muted);
-    }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
     .empty-state .material-icons { font-size: 48px; color: var(--border); margin-bottom: 12px; }
     .empty-state h3 { font-size: 16px; color: var(--text-secondary); margin-bottom: 4px; }
     .empty-state p { font-size: 13px; }
@@ -532,109 +434,81 @@
     .loading-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(248,250,252,0.97);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 1000;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
     }
-    .loading-spinner {
-      width: 40px; height: 40px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
+    .loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
     .loading-text { margin-top: 12px; color: var(--text-secondary); font-weight: 500; font-size: 14px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ===== FOOTER ===== */
-    .dashboard-footer {
-      text-align: center; padding: 24px; color: var(--text-muted); font-size: 12px;
-    }
+    .dashboard-footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 12px; }
     .dashboard-footer a { color: var(--accent); text-decoration: none; }
     .dashboard-footer a:hover { text-decoration: underline; }
+
+    /* Row highlight for best value */
+    .row-best-value { background: rgba(16,185,129,0.04); }
+    .row-best-value:hover { background: rgba(16,185,129,0.08) !important; }
+    .best-value-badge {
+      display: inline-flex; align-items: center; gap: 2px; padding: 0px 5px;
+      border-radius: var(--radius-full); background: var(--green-bg); color: var(--green);
+      font-size: 8px; font-weight: 700; text-transform: uppercase;
+    }
+    .best-value-badge .material-icons { font-size: 9px; }
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 1400px) {
       .kpi-row { grid-template-columns: repeat(3, 1fr); }
       .static-tables-grid { grid-template-columns: 1fr 1fr; }
-      .detail-panel { grid-template-columns: repeat(2, 1fr); }
+      .detail-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 1000px) {
       .dashboard-container { padding: 16px; }
       .kpi-row { grid-template-columns: repeat(2, 1fr); }
       .rate-row { grid-template-columns: repeat(2, 1fr); }
       .static-tables-grid { grid-template-columns: 1fr; }
-      .detail-panel { grid-template-columns: 1fr 1fr; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 768px) {
       .top-nav { padding: 0 16px; }
       .kpi-row { grid-template-columns: 1fr; }
       .rate-row { grid-template-columns: 1fr; }
-      .detail-panel { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
       .nav-btn span:not(.material-icons) { display: none; }
       .toolbar-top { flex-wrap: wrap; }
       .filter-section { flex-wrap: wrap; }
       .table-scroll { max-height: none; }
     }
 
-    /* ===== SCROLLBAR ===== */
+    /* Scrollbar */
     .table-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
     .table-scroll::-webkit-scrollbar-track { background: var(--background); }
     .table-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     .table-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-    /* Tooltip */
-    [data-tooltip] { position: relative; }
-    [data-tooltip]:hover::after {
-      content: attr(data-tooltip);
-      position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-      background: var(--primary); color: white; font-size: 11px; font-weight: 500;
-      padding: 4px 10px; border-radius: var(--radius-sm); white-space: nowrap;
-      z-index: 20; pointer-events: none;
-    }
-
-    /* Row highlight for best value */
-    .row-best-value { background: rgba(16, 185, 129, 0.04); }
-    .row-best-value:hover { background: rgba(16, 185, 129, 0.08) !important; }
-    .best-value-badge {
-      display: inline-flex; align-items: center; gap: 3px;
-      padding: 1px 6px; border-radius: var(--radius-full);
-      background: var(--green-bg); color: var(--green);
-      font-size: 9px; font-weight: 700; text-transform: uppercase;
-    }
-    .best-value-badge .material-icons { font-size: 10px; }
   </style>
 </head>
 
 <body>
-  <!-- Loading Overlay -->
+  <!-- Loading -->
   <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-spinner"></div>
     <div class="loading-text">Loading Venice AI Models...</div>
   </div>
 
-  <!-- Top Navigation -->
+  <!-- Top Nav -->
   <nav class="top-nav">
     <div class="nav-brand">
-      <div class="logo">
-        <span class="material-icons">hub</span>
-      </div>
-      <div>
-        <h1>Venice AI</h1>
-        <span>Model Explorer</span>
-      </div>
+      <div class="logo"><span class="material-icons">hub</span></div>
+      <div><h1>Venice AI</h1><span>Model Explorer</span></div>
     </div>
     <div class="nav-actions">
       <button class="nav-btn secondary" onclick="exportCSV()" title="Export as CSV">
-        <span class="material-icons">download</span>
-        <span>Export</span>
+        <span class="material-icons">download</span><span>Export</span>
       </button>
       <button class="nav-btn secondary" onclick="refreshData()">
-        <span class="material-icons">refresh</span>
-        <span>Refresh</span>
+        <span class="material-icons">refresh</span><span>Refresh</span>
       </button>
       <a href="index.html" class="nav-btn primary">
-        <span class="material-icons">chat</span>
-        <span>Back to Chat</span>
+        <span class="material-icons">chat</span><span>Back to Chat</span>
       </a>
       <button class="nav-btn secondary" onclick="logout()" title="Sign out">
         <span class="material-icons">logout</span>
@@ -642,171 +516,147 @@
     </div>
   </nav>
 
-  <!-- Main Container -->
+  <!-- Main -->
   <div class="dashboard-container">
 
     <!-- KPI Row -->
     <div class="kpi-row">
       <div class="kpi-card c-indigo">
-        <div class="kpi-top">
-          <div class="kpi-icon"><span class="material-icons">smart_toy</span></div>
-        </div>
+        <div class="kpi-top"><div class="kpi-icon"><span class="material-icons">smart_toy</span></div></div>
         <div class="kpi-value" id="totalModels">--</div>
         <div class="kpi-label">Total Models</div>
       </div>
       <div class="kpi-card c-green">
-        <div class="kpi-top">
-          <div class="kpi-icon"><span class="material-icons">speed</span></div>
-        </div>
+        <div class="kpi-top"><div class="kpi-icon"><span class="material-icons">speed</span></div></div>
         <div class="kpi-value" id="maxInputTokens">--</div>
         <div class="kpi-label">Max Input Tokens @ $48</div>
       </div>
       <div class="kpi-card c-blue">
-        <div class="kpi-top">
-          <div class="kpi-icon"><span class="material-icons">output</span></div>
-        </div>
+        <div class="kpi-top"><div class="kpi-icon"><span class="material-icons">output</span></div></div>
         <div class="kpi-value" id="maxOutputTokens">--</div>
         <div class="kpi-label">Max Output Tokens @ $48</div>
       </div>
       <div class="kpi-card c-amber">
-        <div class="kpi-top">
-          <div class="kpi-icon"><span class="material-icons">savings</span></div>
-        </div>
+        <div class="kpi-top"><div class="kpi-icon"><span class="material-icons">savings</span></div></div>
         <div class="kpi-value" id="avgCost">--</div>
         <div class="kpi-label">Avg Cost / 1M Tokens</div>
       </div>
       <div class="kpi-card c-cyan">
-        <div class="kpi-top">
-          <div class="kpi-icon"><span class="material-icons">token</span></div>
-        </div>
+        <div class="kpi-top"><div class="kpi-icon"><span class="material-icons">token</span></div></div>
         <div class="kpi-value" id="maxContext">--</div>
         <div class="kpi-label">Largest Context Window</div>
       </div>
       <div class="kpi-card c-rose">
-        <div class="kpi-top">
-          <div class="kpi-icon"><span class="material-icons">workspace_premium</span></div>
-        </div>
+        <div class="kpi-top"><div class="kpi-icon"><span class="material-icons">workspace_premium</span></div></div>
         <div class="kpi-value" id="bestValue">--</div>
         <div class="kpi-label">Best Value Model</div>
       </div>
     </div>
 
     <!-- Rate Limits -->
-    <div class="rate-row" id="rateLimitsRow">
+    <div class="rate-row">
       <div class="rate-card">
         <div class="rate-icon"><span class="material-icons">bolt</span></div>
-        <div class="rate-info">
-          <div class="rate-value" id="rpmLimit">--</div>
-          <div class="rate-label">Requests / Min</div>
-        </div>
+        <div class="rate-info"><div class="rate-value" id="rpmLimit">--</div><div class="rate-label">Requests / Min</div></div>
       </div>
       <div class="rate-card">
         <div class="rate-icon"><span class="material-icons">data_usage</span></div>
-        <div class="rate-info">
-          <div class="rate-value" id="tpmLimit">--</div>
-          <div class="rate-label">Tokens / Min</div>
-        </div>
+        <div class="rate-info"><div class="rate-value" id="tpmLimit">--</div><div class="rate-label">Tokens / Min</div></div>
       </div>
       <div class="rate-card">
         <div class="rate-icon"><span class="material-icons">today</span></div>
-        <div class="rate-info">
-          <div class="rate-value" id="rpdLimit">--</div>
-          <div class="rate-label">Requests / Day</div>
-        </div>
+        <div class="rate-info"><div class="rate-value" id="rpdLimit">--</div><div class="rate-label">Requests / Day</div></div>
       </div>
       <div class="rate-card">
         <div class="rate-icon"><span class="material-icons">calendar_month</span></div>
-        <div class="rate-info">
-          <div class="rate-value" id="tpdLimit">--</div>
-          <div class="rate-label">Tokens / Day</div>
-        </div>
+        <div class="rate-info"><div class="rate-value" id="tpdLimit">--</div><div class="rate-label">Tokens / Day</div></div>
       </div>
     </div>
 
-    <!-- Search & Filter Toolbar -->
+    <!-- Toolbar -->
     <div class="toolbar">
       <div class="toolbar-top">
         <div class="search-box">
           <span class="material-icons">search</span>
-          <input type="text" id="searchInput" placeholder="Search models by name (e.g. qwen, llama, deepseek, gemma...)" oninput="applyFilters()">
+          <input type="text" id="searchInput" placeholder="Search by model name or ID (e.g. qwen, claude, grok, gemini, GLM...)" oninput="applyFilters()">
         </div>
-        <div class="search-count" id="searchCount">
-          Showing <strong>0</strong> of <strong>0</strong> models
-        </div>
+        <div class="search-count" id="searchCount">Showing <strong>0</strong> of <strong>0</strong> models</div>
       </div>
+      <!-- Row 1: Capabilities -->
       <div class="filter-section">
         <span class="filter-label">Capabilities:</span>
         <button class="filter-chip chip-reasoning" data-filter="reasoning" onclick="toggleFilter(this)">
-          <span class="material-icons check-icon">check</span>
-          <span class="material-icons">psychology</span> Reasoning
+          <span class="material-icons check-icon">check</span><span class="material-icons">psychology</span> Reasoning
         </button>
         <button class="filter-chip chip-vision" data-filter="vision" onclick="toggleFilter(this)">
-          <span class="material-icons check-icon">check</span>
-          <span class="material-icons">visibility</span> Vision
+          <span class="material-icons check-icon">check</span><span class="material-icons">visibility</span> Vision
         </button>
         <button class="filter-chip chip-code" data-filter="code" onclick="toggleFilter(this)">
-          <span class="material-icons check-icon">check</span>
-          <span class="material-icons">code</span> Code
+          <span class="material-icons check-icon">check</span><span class="material-icons">code</span> Code
         </button>
         <button class="filter-chip chip-websearch" data-filter="websearch" onclick="toggleFilter(this)">
-          <span class="material-icons check-icon">check</span>
-          <span class="material-icons">travel_explore</span> Web Search
+          <span class="material-icons check-icon">check</span><span class="material-icons">travel_explore</span> Web Search
         </button>
         <button class="filter-chip chip-functions" data-filter="functions" onclick="toggleFilter(this)">
-          <span class="material-icons check-icon">check</span>
-          <span class="material-icons">functions</span> Functions
+          <span class="material-icons check-icon">check</span><span class="material-icons">functions</span> Functions
         </button>
         <button class="filter-chip chip-schema" data-filter="schema" onclick="toggleFilter(this)">
-          <span class="material-icons check-icon">check</span>
-          <span class="material-icons">schema</span> JSON Schema
+          <span class="material-icons check-icon">check</span><span class="material-icons">schema</span> JSON Schema
         </button>
-        <div class="filter-divider"></div>
+        <button class="filter-chip chip-logprobs" data-filter="logprobs" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">bar_chart</span> LogProbs
+        </button>
+        <button class="filter-chip chip-audio" data-filter="audio" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">mic</span> Audio In
+        </button>
+        <button class="filter-chip chip-video" data-filter="video" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">videocam</span> Video In
+        </button>
+      </div>
+      <!-- Row 2: Model properties -->
+      <div class="filter-section">
+        <span class="filter-label">Properties:</span>
         <button class="filter-chip chip-beta" data-filter="beta" onclick="toggleFilter(this)">
-          <span class="material-icons check-icon">check</span>
-          <span class="material-icons">science</span> Beta Only
+          <span class="material-icons check-icon">check</span><span class="material-icons">science</span> Beta
         </button>
+        <button class="filter-chip chip-recommended" data-filter="recommended" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">verified</span> Recommended
+        </button>
+        <button class="filter-chip chip-private" data-filter="private" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">lock</span> Private
+        </button>
+        <button class="filter-chip chip-anonymized" data-filter="anonymized" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">shield</span> Anonymized
+        </button>
+        <div style="flex:1;"></div>
         <button class="clear-filters" onclick="clearFilters()" id="clearFiltersBtn" style="display:none;">
           <span class="material-icons">close</span> Clear All
         </button>
       </div>
     </div>
 
-    <!-- Main Model Table -->
+    <!-- Table -->
     <div class="table-container">
       <div class="table-scroll">
         <table class="model-table" id="modelTable">
           <thead>
             <tr>
-              <th onclick="sortBy('name')" style="min-width:240px;">
-                Model <span class="sort-arrow" id="sort-name">&#8597;</span>
-              </th>
-              <th onclick="sortBy('context')" style="text-align:right;">
-                Context <span class="sort-arrow" id="sort-context">&#8597;</span>
-              </th>
-              <th onclick="sortBy('maxOutput')" style="text-align:right;">
-                Max Output <span class="sort-arrow" id="sort-maxOutput">&#8597;</span>
-              </th>
-              <th onclick="sortBy('inputPrice')" style="text-align:right;">
-                Input $/1M <span class="sort-arrow" id="sort-inputPrice">&#8597;</span>
-              </th>
-              <th onclick="sortBy('outputPrice')" style="text-align:right;">
-                Output $/1M <span class="sort-arrow" id="sort-outputPrice">&#8597;</span>
-              </th>
-              <th onclick="sortBy('budgetTokens')" style="text-align:right;">
-                Tokens @ $48 <span class="sort-arrow" id="sort-budgetTokens">&#8597;</span>
-              </th>
-              <th style="min-width:200px;">
-                Capabilities
-              </th>
+              <th onclick="sortBy('name')" style="min-width:260px;">Model <span class="sort-arrow" id="sort-name">&#8597;</span></th>
+              <th onclick="sortBy('context')" style="text-align:right;">Context <span class="sort-arrow" id="sort-context">&#8597;</span></th>
+              <th onclick="sortBy('maxOutput')" style="text-align:right;">Max Out <span class="sort-arrow" id="sort-maxOutput">&#8597;</span></th>
+              <th onclick="sortBy('inputPrice')" style="text-align:right;">In $/1M <span class="sort-arrow" id="sort-inputPrice">&#8597;</span></th>
+              <th onclick="sortBy('outputPrice')" style="text-align:right;">Out $/1M <span class="sort-arrow" id="sort-outputPrice">&#8597;</span></th>
+              <th onclick="sortBy('cachePrice')" style="text-align:right;">Cache In <span class="sort-arrow" id="sort-cachePrice">&#8597;</span></th>
+              <th onclick="sortBy('budgetTokens')" style="text-align:right;">@ $48 <span class="sort-arrow" id="sort-budgetTokens">&#8597;</span></th>
+              <th style="min-width:180px;">Capabilities</th>
             </tr>
           </thead>
-          <tbody id="modelTableBody">
-          </tbody>
+          <tbody id="modelTableBody"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- Static Pricing (collapsible) -->
+    <!-- Static Pricing -->
     <div class="collapsible-section">
       <div class="collapsible-header" onclick="toggleCollapsible(this)">
         <h3><span class="material-icons">palette</span> Image, Editing & Audio Pricing</h3>
@@ -814,11 +664,8 @@
       </div>
       <div class="collapsible-body">
         <div class="static-tables-grid">
-          <!-- Image Models -->
           <div class="static-table-card">
-            <div class="static-table-head head-image">
-              <span class="material-icons">image</span> Image Generation
-            </div>
+            <div class="static-table-head head-image"><span class="material-icons">image</span> Image Generation</div>
             <table class="static-table">
               <thead><tr><th>Model</th><th>Price/Gen</th><th>Max @ $48</th></tr></thead>
               <tbody>
@@ -831,11 +678,8 @@
               </tbody>
             </table>
           </div>
-          <!-- Image Editing -->
           <div class="static-table-card">
-            <div class="static-table-head head-edit">
-              <span class="material-icons">auto_fix_high</span> Image Editing / Upscaling
-            </div>
+            <div class="static-table-head head-edit"><span class="material-icons">auto_fix_high</span> Image Editing / Upscaling</div>
             <table class="static-table">
               <thead><tr><th>Task</th><th>Price</th><th>Max @ $48</th></tr></thead>
               <tbody>
@@ -845,11 +689,8 @@
               </tbody>
             </table>
           </div>
-          <!-- Audio Models -->
           <div class="static-table-card">
-            <div class="static-table-head head-audio">
-              <span class="material-icons">record_voice_over</span> Audio Models
-            </div>
+            <div class="static-table-head head-audio"><span class="material-icons">record_voice_over</span> Audio Models</div>
             <table class="static-table">
               <thead><tr><th>Model</th><th>Price/1M Chars</th><th>Max @ $48</th></tr></thead>
               <tbody>
@@ -861,100 +702,108 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="dashboard-footer">
       <p>Real-time data from <a href="https://venice.ai" target="_blank">Venice AI</a> API &middot; Prices reflect latest API response &middot; 48 Diem = $48 Compute Budget</p>
     </div>
   </div>
 
-  <!-- API key will be injected by build script from Netlify environment variable -->
-  <script src="config.js"
-    onerror="console.warn('config.js not found. Using build-injected API key if available.')"></script>
+  <script src="config.js" onerror="console.warn('config.js not found.')"></script>
   <script>
-    // ===== CONSTANTS =====
     const DIEM_BUDGET = 48;
     const BASE_URL = 'https://api.venice.ai/api/v1';
 
-    // ===== STATE =====
     let availableModels = [];
     let filteredModels = [];
     let activeFilters = new Set();
     let currentSort = { column: 'name', direction: 'asc' };
     let expandedRow = null;
-
-    // Best value model IDs (top 3, computed after load)
     let bestValueIds = new Set();
 
-    // ===== API KEY =====
     function getApiKey() {
-      if (window.VENICE_API_KEY && window.VENICE_API_KEY !== 'your-venice-api-key-here') {
-        return window.VENICE_API_KEY;
-      }
+      if (window.VENICE_API_KEY && window.VENICE_API_KEY !== 'your-venice-api-key-here') return window.VENICE_API_KEY;
       return localStorage.getItem('venice_backend_api_key') || '';
     }
 
     // ===== UTILITIES =====
-    function formatTokens(tokens) {
-      if (tokens >= 1000000000) return (tokens / 1000000000).toFixed(1) + 'B';
-      if (tokens >= 1000000) return (tokens / 1000000).toFixed(1) + 'M';
-      if (tokens >= 1000) return (tokens / 1000).toFixed(0) + 'K';
-      return tokens.toLocaleString();
+    function formatTokens(t) {
+      if (t >= 1e9) return (t / 1e9).toFixed(1) + 'B';
+      if (t >= 1e6) return (t / 1e6).toFixed(1) + 'M';
+      if (t >= 1e3) return (t / 1e3).toFixed(0) + 'K';
+      return t.toLocaleString();
     }
-
     function getInitials(id) {
-      const clean = id.replace(/[^a-zA-Z0-9]+/g, ' ').trim();
-      const parts = clean.split(' ').filter(Boolean);
-      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-      return clean.slice(0, 2).toUpperCase();
+      const p = id.replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(' ').filter(Boolean);
+      return p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : id.replace(/[^a-zA-Z0-9]/g,'').slice(0,2).toUpperCase();
     }
-
-    function getPriceClass(price) {
-      if (price <= 0) return 'price-free';
-      if (price <= 0.3) return 'price-low';
-      if (price <= 1.5) return 'price-mid';
-      if (price <= 5) return 'price-high';
+    function getPriceClass(p) {
+      if (p <= 0) return 'price-free';
+      if (p <= 0.3) return 'price-low';
+      if (p <= 1.5) return 'price-mid';
+      if (p <= 5) return 'price-high';
       return 'price-premium';
     }
-
-    function getAvatarClass(model) {
-      const caps = model.model_spec?.capabilities || {};
-      if (caps.supportsReasoning) return 'reasoning';
-      if (caps.supportsVision) return 'vision';
-      if (caps.optimizedForCode) return 'code';
+    function getAvatarClass(m) {
+      const c = m.model_spec?.capabilities || {};
+      if (c.supportsReasoning) return 'reasoning';
+      if (c.supportsVision) return 'vision';
+      if (c.optimizedForCode) return 'code';
       return '';
     }
+    function fmtDate(ts) {
+      if (!ts) return 'N/A';
+      const d = new Date(ts * 1000);
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+    function escHtml(s) {
+      const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+    }
 
+    // ===== MODEL DATA EXTRACTOR =====
     function getModelData(model) {
       const spec = model.model_spec || {};
       const pricing = spec.pricing || {};
       const caps = spec.capabilities || {};
       const inputPrice = pricing.input?.usd || 0;
       const outputPrice = pricing.output?.usd || 0;
+      const cacheInputPrice = pricing.cache_input?.usd || 0;
+      const cacheWritePrice = pricing.cache_write?.usd || 0;
       const contextTokens = spec.availableContextTokens || 0;
       const maxOutputTokens = spec.maxCompletionTokens || Math.floor(contextTokens * 0.25);
-      const budgetTokens = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1000000 : 0;
+      const budgetTokens = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1e6 : 0;
+      const extended = pricing.extended || null;
 
       return {
         id: model.id,
-        name: model.id,
-        contextTokens,
-        maxOutputTokens,
-        inputPrice,
-        outputPrice,
-        budgetTokens,
+        displayName: spec.name || model.id,
+        description: spec.description || '',
+        modelSource: spec.modelSource || '',
+        privacy: spec.privacy || 'unknown',
+        quantization: caps.quantization || 'N/A',
+        traits: spec.traits || [],
+        modelSets: spec.model_sets || [],
+        beta: !!spec.betaModel,
+        created: model.created || 0,
+        ownedBy: model.owned_by || '',
+        contextTokens, maxOutputTokens,
+        inputPrice, outputPrice, cacheInputPrice, cacheWritePrice,
+        budgetTokens, extended,
+        // Capabilities
         reasoning: !!caps.supportsReasoning,
         vision: !!caps.supportsVision,
         code: !!caps.optimizedForCode,
         websearch: !!caps.supportsWebSearch,
         functions: !!caps.supportsFunctionCalling,
         schema: !!caps.supportsResponseSchema,
-        beta: !!spec.beta,
-        traits: spec.traits || [],
+        logprobs: !!caps.supportsLogProbs,
+        audioInput: !!caps.supportsAudioInput,
+        videoInput: !!caps.supportsVideoInput,
+        // Derived
+        recommended: (spec.model_sets || []).includes('venice_recommendations'),
         model: model
       };
     }
 
-    // ===== FETCH MODELS =====
+    // ===== FETCH =====
     async function fetchModels() {
       const apiKey = getApiKey();
       if (!apiKey) {
@@ -963,23 +812,16 @@
             <span class="material-icons" style="font-size:56px;color:var(--accent);">vpn_key</span>
             <h2 style="margin:16px 0 8px;">API Key Not Configured</h2>
             <p style="color:var(--text-secondary);margin-bottom:20px;">Please check your deployment or config settings.</p>
-            <a href="index.html" class="nav-btn primary" style="display:inline-flex;">
-              <span class="material-icons">arrow_back</span> <span>Go to Chat</span>
-            </a>
+            <a href="index.html" class="nav-btn primary" style="display:inline-flex;"><span class="material-icons">arrow_back</span> <span>Go to Chat</span></a>
           </div>`;
         return;
       }
-
       try {
-        const response = await fetch(`${BASE_URL}/models?type=text`, {
-          headers: { 'Authorization': `Bearer ${apiKey}` }
-        });
-        if (!response.ok) throw new Error(`API Error: ${response.status}`);
-
-        const data = await response.json();
+        const res = await fetch(`${BASE_URL}/models?type=text`, { headers: { 'Authorization': `Bearer ${apiKey}` } });
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const data = await res.json();
         availableModels = (data.data || [])
           .filter(m => m.type === 'text' && m.model_spec?.offline !== true)
-          .filter(m => !m.id.toLowerCase().includes('coder') || m.id.toLowerCase().includes('qwen'))
           .sort((a, b) => {
             const aR = a.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
             const bR = b.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
@@ -987,87 +829,50 @@
             return (b.model_spec?.availableContextTokens || 0) - (a.model_spec?.availableContextTokens || 0);
           });
 
-        // Compute best value models (top 3 by budget tokens)
-        const sorted = availableModels
-          .map(m => ({ id: m.id, bt: getModelData(m).budgetTokens }))
-          .filter(x => x.bt > 0)
-          .sort((a, b) => b.bt - a.bt);
+        const sorted = availableModels.map(m => ({ id: m.id, bt: getModelData(m).budgetTokens })).filter(x => x.bt > 0).sort((a,b) => b.bt - a.bt);
         bestValueIds = new Set(sorted.slice(0, 3).map(x => x.id));
-
         renderAll();
         document.getElementById('loadingOverlay').style.display = 'none';
-      } catch (error) {
-        console.error('Failed to fetch models:', error);
+      } catch (err) {
+        console.error('Failed to fetch:', err);
         document.getElementById('loadingOverlay').innerHTML = `
           <div style="text-align:center;padding:40px;">
             <span class="material-icons" style="font-size:56px;color:var(--red);">error</span>
             <h2 style="margin:16px 0 8px;">Failed to Load Models</h2>
-            <p style="color:var(--text-secondary);margin-bottom:20px;">${error.message}</p>
-            <button onclick="location.reload()" class="nav-btn primary" style="display:inline-flex;">
-              <span class="material-icons">refresh</span> <span>Retry</span>
-            </button>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">${err.message}</p>
+            <button onclick="location.reload()" class="nav-btn primary" style="display:inline-flex;"><span class="material-icons">refresh</span> <span>Retry</span></button>
           </div>`;
       }
     }
 
-    // ===== RENDER ALL =====
-    function renderAll() {
-      updateKPIs();
-      applyFilters();
-      fetchRateLimits();
-    }
+    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); }
 
     // ===== KPIs =====
     function updateKPIs() {
       document.getElementById('totalModels').textContent = availableModels.length;
-
-      let maxInput = 0, maxOutput = 0, totalCost = 0, costCount = 0, maxCtx = 0;
-      let bestModel = '--';
-      let bestBudget = 0;
-
-      availableModels.forEach(model => {
-        const d = getModelData(model);
-        if (d.inputPrice > 0) {
-          const it = (DIEM_BUDGET / d.inputPrice) * 1000000;
-          if (it > maxInput) maxInput = it;
-          totalCost += d.inputPrice;
-          costCount++;
-        }
-        if (d.outputPrice > 0) {
-          const ot = (DIEM_BUDGET / d.outputPrice) * 1000000;
-          if (ot > maxOutput) maxOutput = ot;
-          totalCost += d.outputPrice;
-        }
+      let maxIn = 0, maxOut = 0, totalC = 0, cCnt = 0, maxCtx = 0, bestModel = '--', bestBt = 0;
+      availableModels.forEach(m => {
+        const d = getModelData(m);
+        if (d.inputPrice > 0) { const it = (DIEM_BUDGET / d.inputPrice) * 1e6; if (it > maxIn) maxIn = it; totalC += d.inputPrice; cCnt++; }
+        if (d.outputPrice > 0) { const ot = (DIEM_BUDGET / d.outputPrice) * 1e6; if (ot > maxOut) maxOut = ot; totalC += d.outputPrice; }
         if (d.contextTokens > maxCtx) maxCtx = d.contextTokens;
-        if (d.budgetTokens > bestBudget) {
-          bestBudget = d.budgetTokens;
-          bestModel = d.name.split('-').slice(0, 2).join('-');
-        }
+        if (d.budgetTokens > bestBt) { bestBt = d.budgetTokens; bestModel = d.displayName.length > 16 ? d.id.split('-').slice(0,2).join('-') : d.displayName; }
       });
-
-      document.getElementById('maxInputTokens').textContent = formatTokens(maxInput);
-      document.getElementById('maxOutputTokens').textContent = formatTokens(maxOutput);
+      document.getElementById('maxInputTokens').textContent = formatTokens(maxIn);
+      document.getElementById('maxOutputTokens').textContent = formatTokens(maxOut);
       document.getElementById('maxContext').textContent = formatTokens(maxCtx);
       document.getElementById('bestValue').textContent = bestModel;
-
-      const avg = costCount > 0 ? (totalCost / (costCount * 2)).toFixed(2) : '--';
-      document.getElementById('avgCost').textContent = '$' + avg;
+      document.getElementById('avgCost').textContent = '$' + (cCnt > 0 ? (totalC / (cCnt * 2)).toFixed(2) : '--');
     }
 
     // ===== FILTERS =====
     function toggleFilter(btn) {
-      const filter = btn.dataset.filter;
-      if (activeFilters.has(filter)) {
-        activeFilters.delete(filter);
-        btn.classList.remove('active');
-      } else {
-        activeFilters.add(filter);
-        btn.classList.add('active');
-      }
+      const f = btn.dataset.filter;
+      if (activeFilters.has(f)) { activeFilters.delete(f); btn.classList.remove('active'); }
+      else { activeFilters.add(f); btn.classList.add('active'); }
       document.getElementById('clearFiltersBtn').style.display = activeFilters.size > 0 ? 'inline-flex' : 'none';
       applyFilters();
     }
-
     function clearFilters() {
       activeFilters.clear();
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
@@ -1075,17 +880,12 @@
       document.getElementById('searchInput').value = '';
       applyFilters();
     }
-
     function applyFilters() {
       const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
-
       filteredModels = availableModels.filter(model => {
         const d = getModelData(model);
-
-        // Search filter
-        if (search && !d.name.toLowerCase().includes(search)) return false;
-
-        // Capability filters (AND logic - model must have ALL selected capabilities)
+        // Search matches ID or display name
+        if (search && !d.id.toLowerCase().includes(search) && !d.displayName.toLowerCase().includes(search)) return false;
         for (const f of activeFilters) {
           if (f === 'reasoning' && !d.reasoning) return false;
           if (f === 'vision' && !d.vision) return false;
@@ -1093,108 +893,96 @@
           if (f === 'websearch' && !d.websearch) return false;
           if (f === 'functions' && !d.functions) return false;
           if (f === 'schema' && !d.schema) return false;
+          if (f === 'logprobs' && !d.logprobs) return false;
+          if (f === 'audio' && !d.audioInput) return false;
+          if (f === 'video' && !d.videoInput) return false;
           if (f === 'beta' && !d.beta) return false;
+          if (f === 'recommended' && !d.recommended) return false;
+          if (f === 'private' && d.privacy !== 'private') return false;
+          if (f === 'anonymized' && d.privacy !== 'anonymized') return false;
         }
-
         return true;
       });
-
       renderTable();
-      updateSearchCount();
-    }
-
-    function updateSearchCount() {
-      document.getElementById('searchCount').innerHTML =
-        `Showing <strong>${filteredModels.length}</strong> of <strong>${availableModels.length}</strong> models`;
+      document.getElementById('searchCount').innerHTML = `Showing <strong>${filteredModels.length}</strong> of <strong>${availableModels.length}</strong> models`;
     }
 
     // ===== SORTING =====
-    function sortBy(column) {
-      if (currentSort.column === column) {
-        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-      } else {
-        currentSort.column = column;
-        currentSort.direction = column === 'name' ? 'asc' : 'desc';
-      }
+    function sortBy(col) {
+      if (currentSort.column === col) currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      else { currentSort.column = col; currentSort.direction = col === 'name' ? 'asc' : 'desc'; }
       renderTable();
     }
-
-    function getSortedModels() {
-      const models = [...filteredModels];
-      const { column, direction } = currentSort;
-      const mult = direction === 'asc' ? 1 : -1;
-
-      models.sort((a, b) => {
-        const da = getModelData(a);
-        const db = getModelData(b);
+    function getSorted() {
+      const m = [...filteredModels]; const { column, direction } = currentSort; const mul = direction === 'asc' ? 1 : -1;
+      m.sort((a, b) => {
+        const da = getModelData(a), db = getModelData(b);
         let av, bv;
-
         switch (column) {
-          case 'name': av = da.name.toLowerCase(); bv = db.name.toLowerCase();
-            return mult * av.localeCompare(bv);
+          case 'name': return mul * da.displayName.toLowerCase().localeCompare(db.displayName.toLowerCase());
           case 'context': av = da.contextTokens; bv = db.contextTokens; break;
           case 'maxOutput': av = da.maxOutputTokens; bv = db.maxOutputTokens; break;
           case 'inputPrice': av = da.inputPrice; bv = db.inputPrice; break;
           case 'outputPrice': av = da.outputPrice; bv = db.outputPrice; break;
+          case 'cachePrice': av = da.cacheInputPrice; bv = db.cacheInputPrice; break;
           case 'budgetTokens': av = da.budgetTokens; bv = db.budgetTokens; break;
           default: return 0;
         }
-        return mult * (av - bv);
+        return mul * (av - bv);
       });
-      return models;
+      return m;
     }
 
     // ===== RENDER TABLE =====
     function renderTable() {
       const tbody = document.getElementById('modelTableBody');
-      const sorted = getSortedModels();
+      const sorted = getSorted();
 
-      // Update sort arrows
       document.querySelectorAll('.model-table th').forEach(th => th.classList.remove('sort-active'));
       document.querySelectorAll('.sort-arrow').forEach(el => { el.innerHTML = '&#8597;'; });
-      const activeArrow = document.getElementById('sort-' + currentSort.column);
-      if (activeArrow) {
-        activeArrow.parentElement.classList.add('sort-active');
-        activeArrow.innerHTML = currentSort.direction === 'asc' ? '&#8593;' : '&#8595;';
-      }
+      const arr = document.getElementById('sort-' + currentSort.column);
+      if (arr) { arr.parentElement.classList.add('sort-active'); arr.innerHTML = currentSort.direction === 'asc' ? '&#8593;' : '&#8595;'; }
 
       if (sorted.length === 0) {
-        tbody.innerHTML = `
-          <tr><td colspan="7">
-            <div class="empty-state">
-              <span class="material-icons">search_off</span>
-              <h3>No models match your filters</h3>
-              <p>Try adjusting your search or removing some filters</p>
-            </div>
-          </td></tr>`;
+        tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><span class="material-icons">search_off</span><h3>No models match your filters</h3><p>Try adjusting your search or removing some filters</p></div></td></tr>';
         return;
       }
 
       tbody.innerHTML = sorted.map(model => {
         const d = getModelData(model);
-        const isBestValue = bestValueIds.has(d.id);
-        const rowClass = isBestValue ? 'row-best-value' : '';
+        const bv = bestValueIds.has(d.id);
 
-        // Build capability badges
+        // Capability dots
         let caps = '';
-        if (d.reasoning) caps += '<span class="cap-dot dot-reasoning"><span class="material-icons">psychology</span>Reasoning</span>';
+        if (d.reasoning) caps += '<span class="cap-dot dot-reasoning"><span class="material-icons">psychology</span>Reason</span>';
         if (d.vision) caps += '<span class="cap-dot dot-vision"><span class="material-icons">visibility</span>Vision</span>';
         if (d.code) caps += '<span class="cap-dot dot-code"><span class="material-icons">code</span>Code</span>';
         if (d.websearch) caps += '<span class="cap-dot dot-websearch"><span class="material-icons">travel_explore</span>Web</span>';
         if (d.functions) caps += '<span class="cap-dot dot-functions"><span class="material-icons">functions</span>Func</span>';
         if (d.schema) caps += '<span class="cap-dot dot-schema"><span class="material-icons">schema</span>JSON</span>';
+        if (d.logprobs) caps += '<span class="cap-dot dot-logprobs"><span class="material-icons">bar_chart</span>LP</span>';
+        if (d.audioInput) caps += '<span class="cap-dot dot-audio"><span class="material-icons">mic</span>Audio</span>';
+        if (d.videoInput) caps += '<span class="cap-dot dot-video"><span class="material-icons">videocam</span>Video</span>';
 
-        const betaTag = d.beta ? '<span class="beta-tag">BETA</span>' : '';
-        const bestTag = isBestValue ? ' <span class="best-value-badge"><span class="material-icons">star</span>Best Value</span>' : '';
+        // Tags
+        let tags = '';
+        if (d.beta) tags += '<span class="mini-tag tag-beta">BETA</span>';
+        if (d.recommended) tags += '<span class="mini-tag tag-recommended">REC</span>';
+        if (d.privacy === 'private') tags += '<span class="mini-tag tag-private">PRIVATE</span>';
+        else if (d.privacy === 'anonymized') tags += '<span class="mini-tag tag-anonymized">ANON</span>';
+        if (d.quantization && d.quantization !== 'N/A' && d.quantization !== 'not-available') tags += `<span class="mini-tag tag-quant">${d.quantization}</span>`;
+
+        const bestTag = bv ? ' <span class="best-value-badge"><span class="material-icons">star</span>VALUE</span>' : '';
+        const cacheCell = d.cacheInputPrice > 0 ? `$${d.cacheInputPrice.toFixed(2)}` : '<span style="color:var(--text-muted);">—</span>';
 
         return `
-          <tr class="${rowClass}" onclick="toggleDetail('${d.id}')" style="cursor:pointer;">
+          <tr class="${bv ? 'row-best-value' : ''}" onclick="toggleDetail('${d.id}')" style="cursor:pointer;">
             <td>
               <div class="cell-model">
                 <div class="model-avatar ${getAvatarClass(model)}">${getInitials(d.id)}</div>
                 <div class="cell-model-info">
-                  <div class="cell-model-name"><span>${d.name}</span>${bestTag}<button class="copy-btn" onclick="copyModelId(event,'${d.id}')" title="Copy model ID"><span class="material-icons">content_copy</span></button></div>
-                  <div class="cell-model-sub">${betaTag}</div>
+                  <div class="cell-model-name"><span>${escHtml(d.displayName)}</span>${bestTag}<button class="copy-btn" onclick="copyModelId(event,'${d.id}')" title="Copy model ID: ${d.id}"><span class="material-icons">content_copy</span></button></div>
+                  <div class="cell-model-sub"><span style="opacity:0.7;">${d.id}</span> ${tags}</div>
                 </div>
               </div>
             </td>
@@ -1202,216 +990,168 @@
             <td class="cell-number cell-tokens">${formatTokens(d.maxOutputTokens)}</td>
             <td class="cell-number cell-price ${getPriceClass(d.inputPrice)}">$${d.inputPrice.toFixed(2)}</td>
             <td class="cell-number cell-price ${getPriceClass(d.outputPrice)}">$${d.outputPrice.toFixed(2)}</td>
+            <td class="cell-number cell-price ${d.cacheInputPrice > 0 ? getPriceClass(d.cacheInputPrice) : ''}">${cacheCell}</td>
             <td class="cell-number cell-tokens" style="font-weight:700;">${formatTokens(d.budgetTokens)}</td>
-            <td><div class="cap-dots">${caps || '<span style="color:var(--text-muted);font-size:11px;">None</span>'}</div></td>
+            <td><div class="cap-dots">${caps || '<span style="color:var(--text-muted);font-size:10px;">—</span>'}</div></td>
           </tr>
           <tr class="detail-row" id="detail-${d.id}" style="display:none;">
-            <td colspan="7">
-              ${buildDetailPanel(d)}
-            </td>
+            <td colspan="8">${buildDetailPanel(d)}</td>
           </tr>`;
       }).join('');
     }
 
     // ===== DETAIL PANEL =====
     function buildDetailPanel(d) {
-      const costPerToken = d.outputPrice > 0 ? (d.outputPrice / 1000000) : 0;
-      const inputBudget = d.inputPrice > 0 ? formatTokens((DIEM_BUDGET / d.inputPrice) * 1000000) : 'N/A';
-      const outputBudget = d.outputPrice > 0 ? formatTokens((DIEM_BUDGET / d.outputPrice) * 1000000) : 'N/A';
+      const inBudget = d.inputPrice > 0 ? formatTokens((DIEM_BUDGET / d.inputPrice) * 1e6) : 'N/A';
+      const outBudget = d.outputPrice > 0 ? formatTokens((DIEM_BUDGET / d.outputPrice) * 1e6) : 'N/A';
+      const costPerTok = d.outputPrice > 0 ? (d.outputPrice / 1e6) : 0;
+
+      // Extended pricing section
+      let extPricing = '';
+      if (d.extended) {
+        const e = d.extended;
+        extPricing = `
+          <div class="detail-stat" style="padding-top:4px;border-top:1px dashed var(--border);margin-top:4px;">
+            <span class="detail-stat-label" style="font-weight:600;color:var(--orange);">Extended (>${(e.context_token_threshold||0).toLocaleString()} ctx)</span>
+            <span class="detail-stat-value"></span>
+          </div>
+          <div class="detail-stat"><span class="detail-stat-label">Ext. Input</span><span class="detail-stat-value ${getPriceClass(e.input?.usd||0)}">$${(e.input?.usd||0).toFixed(2)}</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">Ext. Output</span><span class="detail-stat-value ${getPriceClass(e.output?.usd||0)}">$${(e.output?.usd||0).toFixed(2)}</span></div>`;
+      }
+
+      // Traits
+      let traitsHtml = '';
+      if (d.traits.length > 0) {
+        traitsHtml = '<div class="trait-badges">' + d.traits.map(t => `<span class="trait-badge">${t}</span>`).join('') + '</div>';
+      }
+
+      // Source link
+      const sourceLink = d.modelSource ? `<a href="${d.modelSource}" target="_blank">${d.modelSource.includes('huggingface') ? 'HuggingFace' : 'Source'}</a>` : '<span style="color:var(--text-muted);">Proprietary</span>';
+
+      const yesNo = (v, color) => v ? `<span style="color:var(--${color});">Yes</span>` : '<span style="color:var(--text-muted);">No</span>';
 
       return `
         <div class="detail-panel">
-          <div class="detail-card">
-            <h5>Token Limits</h5>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Context Window</span>
-              <span class="detail-stat-value" style="color:var(--indigo);">${d.contextTokens.toLocaleString()}</span>
-            </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Max Output Tokens</span>
-              <span class="detail-stat-value">${d.maxOutputTokens.toLocaleString()}</span>
-            </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Effective Input</span>
-              <span class="detail-stat-value">${(d.contextTokens - d.maxOutputTokens).toLocaleString()}</span>
-            </div>
+          ${d.description ? `<div class="detail-description"><span class="desc-label">Description</span>${escHtml(d.description)}</div>` : ''}
+          <div class="detail-meta-row">
+            <span class="detail-meta-item"><span class="material-icons">link</span> ${sourceLink}</span>
+            <span class="detail-meta-item"><span class="material-icons">event</span> Created: ${fmtDate(d.created)}</span>
+            <span class="detail-meta-item"><span class="material-icons">${d.privacy === 'private' ? 'lock' : 'shield'}</span> ${d.privacy}</span>
+            <span class="detail-meta-item"><span class="material-icons">memory</span> Quantization: <strong>${d.quantization}</strong></span>
+            ${d.ownedBy ? `<span class="detail-meta-item"><span class="material-icons">business</span> ${d.ownedBy}</span>` : ''}
           </div>
-          <div class="detail-card">
-            <h5>Pricing Details</h5>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Input / 1M tokens</span>
-              <span class="detail-stat-value ${getPriceClass(d.inputPrice)}">$${d.inputPrice.toFixed(4)}</span>
+          <div class="detail-grid">
+            <div class="detail-card">
+              <h5>Token Limits</h5>
+              <div class="detail-stat"><span class="detail-stat-label">Context Window</span><span class="detail-stat-value" style="color:var(--indigo);">${d.contextTokens.toLocaleString()}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Max Output</span><span class="detail-stat-value">${d.maxOutputTokens.toLocaleString()}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Effective Input</span><span class="detail-stat-value">${(d.contextTokens - d.maxOutputTokens).toLocaleString()}</span></div>
             </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Output / 1M tokens</span>
-              <span class="detail-stat-value ${getPriceClass(d.outputPrice)}">$${d.outputPrice.toFixed(4)}</span>
+            <div class="detail-card">
+              <h5>Pricing</h5>
+              <div class="detail-stat"><span class="detail-stat-label">Input / 1M</span><span class="detail-stat-value ${getPriceClass(d.inputPrice)}">$${d.inputPrice.toFixed(4)}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Output / 1M</span><span class="detail-stat-value ${getPriceClass(d.outputPrice)}">$${d.outputPrice.toFixed(4)}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Cache Input</span><span class="detail-stat-value">${d.cacheInputPrice > 0 ? '$' + d.cacheInputPrice.toFixed(4) : '—'}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Cache Write</span><span class="detail-stat-value">${d.cacheWritePrice > 0 ? '$' + d.cacheWritePrice.toFixed(4) : '—'}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Cost/token (out)</span><span class="detail-stat-value">$${costPerTok.toFixed(8)}</span></div>
+              ${extPricing}
             </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Cost / token (out)</span>
-              <span class="detail-stat-value">$${costPerToken.toFixed(8)}</span>
+            <div class="detail-card">
+              <h5>$48 Budget Analysis</h5>
+              <div class="detail-stat"><span class="detail-stat-label">Max Input Tokens</span><span class="detail-stat-value" style="color:var(--green);">${inBudget}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Max Output Tokens</span><span class="detail-stat-value" style="color:var(--green);">${outBudget}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Approx Conversations*</span><span class="detail-stat-value">${d.budgetTokens > 0 ? Math.floor(d.budgetTokens / 2000).toLocaleString() : 'N/A'}</span></div>
+              ${d.traits.length > 0 ? `<h5 style="margin-top:8px;">Traits</h5>${traitsHtml}` : ''}
             </div>
-          </div>
-          <div class="detail-card">
-            <h5>$48 Budget Analysis</h5>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Max Input Tokens</span>
-              <span class="detail-stat-value" style="color:var(--green);">${inputBudget}</span>
-            </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Max Output Tokens</span>
-              <span class="detail-stat-value" style="color:var(--green);">${outputBudget}</span>
-            </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Approx Conversations*</span>
-              <span class="detail-stat-value">${d.budgetTokens > 0 ? Math.floor(d.budgetTokens / 2000).toLocaleString() : 'N/A'}</span>
-            </div>
-          </div>
-          <div class="detail-card">
-            <h5>All Capabilities</h5>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Reasoning</span>
-              <span class="detail-stat-value">${d.reasoning ? '<span style="color:var(--violet);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
-            </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Vision</span>
-              <span class="detail-stat-value">${d.vision ? '<span style="color:var(--blue);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
-            </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Code Optimized</span>
-              <span class="detail-stat-value">${d.code ? '<span style="color:var(--green);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
-            </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Web Search</span>
-              <span class="detail-stat-value">${d.websearch ? '<span style="color:var(--cyan);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
-            </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Function Calling</span>
-              <span class="detail-stat-value">${d.functions ? '<span style="color:var(--orange);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
-            </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">JSON Schema</span>
-              <span class="detail-stat-value">${d.schema ? '<span style="color:var(--pink);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
-            </div>
-            <div class="detail-stat">
-              <span class="detail-stat-label">Beta</span>
-              <span class="detail-stat-value">${d.beta ? '<span style="color:var(--amber);">Yes</span>' : '<span style="color:var(--text-muted);">No</span>'}</span>
+            <div class="detail-card">
+              <h5>All Capabilities</h5>
+              <div class="detail-stat"><span class="detail-stat-label">Reasoning</span><span class="detail-stat-value">${yesNo(d.reasoning, 'violet')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Vision</span><span class="detail-stat-value">${yesNo(d.vision, 'blue')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Code Optimized</span><span class="detail-stat-value">${yesNo(d.code, 'green')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Web Search</span><span class="detail-stat-value">${yesNo(d.websearch, 'cyan')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Function Calling</span><span class="detail-stat-value">${yesNo(d.functions, 'orange')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">JSON Schema</span><span class="detail-stat-value">${yesNo(d.schema, 'pink')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">LogProbs</span><span class="detail-stat-value">${yesNo(d.logprobs, 'indigo')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Audio Input</span><span class="detail-stat-value">${yesNo(d.audioInput, 'teal')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Video Input</span><span class="detail-stat-value">${yesNo(d.videoInput, 'rose')}</span></div>
             </div>
           </div>
         </div>
-        <div style="padding:0 20px 8px;font-size:10px;color:var(--text-muted);">*Approx conversations assumes ~2K output tokens per conversation</div>
-      `;
+        <div class="detail-footer">*Approx conversations assumes ~2K output tokens per conversation</div>`;
     }
 
-    function toggleDetail(modelId) {
-      const row = document.getElementById('detail-' + modelId);
+    function toggleDetail(id) {
+      const row = document.getElementById('detail-' + id);
       if (!row) return;
-
-      if (expandedRow && expandedRow !== modelId) {
-        const prev = document.getElementById('detail-' + expandedRow);
-        if (prev) prev.style.display = 'none';
-      }
-
-      if (row.style.display === 'none') {
-        row.style.display = 'table-row';
-        expandedRow = modelId;
-      } else {
-        row.style.display = 'none';
-        expandedRow = null;
-      }
+      if (expandedRow && expandedRow !== id) { const p = document.getElementById('detail-' + expandedRow); if (p) p.style.display = 'none'; }
+      if (row.style.display === 'none') { row.style.display = 'table-row'; expandedRow = id; }
+      else { row.style.display = 'none'; expandedRow = null; }
     }
 
-    // ===== COLLAPSIBLE SECTIONS =====
-    function toggleCollapsible(header) {
-      header.classList.toggle('open');
-      const body = header.nextElementSibling;
-      body.classList.toggle('open');
-    }
+    function toggleCollapsible(h) { h.classList.toggle('open'); h.nextElementSibling.classList.toggle('open'); }
 
     // ===== RATE LIMITS =====
     async function fetchRateLimits() {
-      const apiKey = getApiKey();
-      if (!apiKey) return;
-
+      const k = getApiKey(); if (!k) return;
       try {
-        const response = await fetch(`${BASE_URL}/api_keys/rate_limits`, {
-          headers: { 'Authorization': `Bearer ${apiKey}` }
-        });
-        if (!response.ok) return;
-
-        const data = await response.json();
-        if (data) {
-          const rpm = data.requests_per_minute || data.rpm || '--';
-          const tpm = data.tokens_per_minute || data.tpm || '--';
-          const rpd = data.requests_per_day || data.rpd || '--';
-          const tpd = data.tokens_per_day || data.tpd || '--';
-
+        const r = await fetch(`${BASE_URL}/api_keys/rate_limits`, { headers: { 'Authorization': `Bearer ${k}` } });
+        if (!r.ok) return;
+        const d = await r.json();
+        if (d) {
+          const rpm = d.requests_per_minute || d.rpm || '--';
+          const tpm = d.tokens_per_minute || d.tpm || '--';
+          const rpd = d.requests_per_day || d.rpd || '--';
+          const tpd = d.tokens_per_day || d.tpd || '--';
           document.getElementById('rpmLimit').textContent = typeof rpm === 'number' ? rpm.toLocaleString() : rpm;
           document.getElementById('tpmLimit').textContent = typeof tpm === 'number' ? formatTokens(tpm) : tpm;
           document.getElementById('rpdLimit').textContent = typeof rpd === 'number' ? rpd.toLocaleString() : rpd;
           document.getElementById('tpdLimit').textContent = typeof tpd === 'number' ? formatTokens(tpd) : tpd;
         }
-      } catch (error) {
-        console.warn('Error fetching rate limits:', error);
-      }
+      } catch (e) { console.warn('Rate limits error:', e); }
     }
 
-    // ===== COPY MODEL ID =====
+    // ===== COPY =====
     function copyModelId(e, id) {
       e.stopPropagation();
       navigator.clipboard.writeText(id).then(() => {
-        const btn = e.currentTarget;
-        const icon = btn.querySelector('.material-icons');
-        icon.textContent = 'check';
-        btn.classList.add('copied');
-        setTimeout(() => {
-          icon.textContent = 'content_copy';
-          btn.classList.remove('copied');
-        }, 1500);
+        const btn = e.currentTarget, icon = btn.querySelector('.material-icons');
+        icon.textContent = 'check'; btn.classList.add('copied');
+        setTimeout(() => { icon.textContent = 'content_copy'; btn.classList.remove('copied'); }, 1500);
       });
     }
 
     // ===== EXPORT CSV =====
     function exportCSV() {
       if (filteredModels.length === 0) return;
-
-      const headers = ['Model', 'Context Tokens', 'Max Output', 'Input $/1M', 'Output $/1M', 'Tokens @ $48', 'Reasoning', 'Vision', 'Code', 'Web Search', 'Functions', 'JSON Schema', 'Beta'];
+      const h = ['ID','Display Name','Context','Max Output','Input $/1M','Output $/1M','Cache Input $/1M','Cache Write $/1M','Tokens @ $48','Quantization','Privacy','Beta','Recommended','Reasoning','Vision','Code','Web Search','Functions','JSON Schema','LogProbs','Audio Input','Video Input','Traits','Description','Model Source','Created'];
       const rows = filteredModels.map(m => {
         const d = getModelData(m);
         return [
-          d.name, d.contextTokens, d.maxOutputTokens,
-          d.inputPrice.toFixed(4), d.outputPrice.toFixed(4),
-          Math.round(d.budgetTokens),
-          d.reasoning ? 'Yes' : 'No',
-          d.vision ? 'Yes' : 'No',
-          d.code ? 'Yes' : 'No',
-          d.websearch ? 'Yes' : 'No',
-          d.functions ? 'Yes' : 'No',
-          d.schema ? 'Yes' : 'No',
-          d.beta ? 'Yes' : 'No'
+          `"${d.id}"`, `"${d.displayName}"`, d.contextTokens, d.maxOutputTokens,
+          d.inputPrice.toFixed(4), d.outputPrice.toFixed(4), d.cacheInputPrice.toFixed(4), d.cacheWritePrice.toFixed(4),
+          Math.round(d.budgetTokens), d.quantization, d.privacy,
+          d.beta?'Yes':'No', d.recommended?'Yes':'No',
+          d.reasoning?'Yes':'No', d.vision?'Yes':'No', d.code?'Yes':'No',
+          d.websearch?'Yes':'No', d.functions?'Yes':'No', d.schema?'Yes':'No',
+          d.logprobs?'Yes':'No', d.audioInput?'Yes':'No', d.videoInput?'Yes':'No',
+          `"${d.traits.join(';')}"`, `"${d.description.replace(/"/g,'""')}"`,
+          `"${d.modelSource}"`, fmtDate(d.created)
         ].join(',');
       });
-
-      const csv = [headers.join(','), ...rows].join('\n');
+      const csv = [h.join(','), ...rows].join('\n');
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
+      const a = document.createElement('a'); a.href = url;
       a.download = 'venice-models-' + new Date().toISOString().split('T')[0] + '.csv';
-      a.click();
-      URL.revokeObjectURL(url);
+      a.click(); URL.revokeObjectURL(url);
     }
 
-    // ===== REFRESH =====
     function refreshData() {
       document.getElementById('loadingOverlay').style.display = 'flex';
-      document.getElementById('loadingOverlay').innerHTML = `
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Refreshing data...</div>
-      `;
+      document.getElementById('loadingOverlay').innerHTML = '<div class="loading-spinner"></div><div class="loading-text">Refreshing data...</div>';
       fetchModels();
     }
 
-    // ===== LOGOUT =====
     function logout() {
       if (confirm('Are you sure you want to sign out?')) {
         localStorage.removeItem('venice_password');
@@ -1421,27 +1161,12 @@
       }
     }
 
-    // ===== KEYBOARD SHORTCUT =====
     document.addEventListener('keydown', (e) => {
-      // Ctrl/Cmd + K to focus search
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        document.getElementById('searchInput').focus();
-      }
-      // Escape to clear search
-      if (e.key === 'Escape') {
-        const input = document.getElementById('searchInput');
-        if (document.activeElement === input) {
-          input.value = '';
-          input.blur();
-          applyFilters();
-        }
-      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); document.getElementById('searchInput').focus(); }
+      if (e.key === 'Escape') { const i = document.getElementById('searchInput'); if (document.activeElement === i) { i.value = ''; i.blur(); applyFilters(); } }
     });
 
-    // ===== INIT =====
     document.addEventListener('DOMContentLoaded', fetchModels);
   </script>
 </body>
-
 </html>
