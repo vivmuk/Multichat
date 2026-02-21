@@ -525,6 +525,7 @@
         <div class="kpi-top"><div class="kpi-icon"><span class="material-icons">smart_toy</span></div></div>
         <div class="kpi-value" id="totalModels">--</div>
         <div class="kpi-label">Total Models</div>
+        <div id="modelsBreakdown" style="font-size:10px;color:var(--text-muted);margin-top:3px;"></div>
       </div>
       <div class="kpi-card c-green">
         <div class="kpi-top"><div class="kpi-icon"><span class="material-icons">speed</span></div></div>
@@ -656,10 +657,10 @@
       </div>
     </div>
 
-    <!-- Static Pricing -->
+    <!-- Non-Text Model Pricing (dynamically populated from API) -->
     <div class="collapsible-section">
       <div class="collapsible-header" onclick="toggleCollapsible(this)">
-        <h3><span class="material-icons">palette</span> Image, Editing & Audio Pricing</h3>
+        <h3><span class="material-icons">palette</span> Image, Audio & Other Model Pricing</h3>
         <span class="material-icons toggle-icon">expand_more</span>
       </div>
       <div class="collapsible-body">
@@ -668,13 +669,8 @@
             <div class="static-table-head head-image"><span class="material-icons">image</span> Image Generation</div>
             <table class="static-table">
               <thead><tr><th>Model</th><th>Price/Gen</th><th>Max @ $48</th></tr></thead>
-              <tbody>
-                <tr><td class="s-name">Nano Banana Pro</td><td class="s-price high">$0.18</td><td>266</td></tr>
-                <tr><td class="s-name">Venice SD35</td><td class="s-price low">$0.01</td><td>4,800</td></tr>
-                <tr><td class="s-name">HiDream</td><td class="s-price low">$0.01</td><td>4,800</td></tr>
-                <tr><td class="s-name">Qwen Image</td><td class="s-price low">$0.01</td><td>4,800</td></tr>
-                <tr><td class="s-name">Lustify (SDXL/v7)</td><td class="s-price low">$0.01</td><td>4,800</td></tr>
-                <tr><td class="s-name">Anime (WAI)</td><td class="s-price low">$0.01</td><td>4,800</td></tr>
+              <tbody id="imageModelsBody">
+                <tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -682,7 +678,7 @@
             <div class="static-table-head head-edit"><span class="material-icons">auto_fix_high</span> Image Editing / Upscaling</div>
             <table class="static-table">
               <thead><tr><th>Task</th><th>Price</th><th>Max @ $48</th></tr></thead>
-              <tbody>
+              <tbody id="upscaleModelsBody">
                 <tr><td class="s-name">Upscale 2x</td><td class="s-price low">$0.02</td><td>2,400</td></tr>
                 <tr><td class="s-name">Upscale 4x</td><td class="s-price mid">$0.08</td><td>600</td></tr>
                 <tr><td class="s-name">Image Editing</td><td class="s-price mid">$0.04</td><td>1,200</td></tr>
@@ -690,12 +686,22 @@
             </table>
           </div>
           <div class="static-table-card">
-            <div class="static-table-head head-audio"><span class="material-icons">record_voice_over</span> Audio Models</div>
+            <div class="static-table-head head-audio"><span class="material-icons">record_voice_over</span> Audio / TTS Models</div>
             <table class="static-table">
               <thead><tr><th>Model</th><th>Price/1M Chars</th><th>Max @ $48</th></tr></thead>
-              <tbody>
-                <tr><td class="s-name">Kokoro TTS</td><td class="s-price low">$3.50</td><td>13.7M chars</td></tr>
+              <tbody id="audioModelsBody">
+                <tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Loading...</td></tr>
               </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Video models section — shown only when the API returns video models -->
+        <div id="videoModelsSection" style="display:none;margin-top:16px;">
+          <div class="static-table-card">
+            <div class="static-table-head" style="background:var(--rose-bg);color:var(--rose);"><span class="material-icons">videocam</span> Video Models</div>
+            <table class="static-table">
+              <thead><tr><th>Model</th><th>Price/Sec</th><th>Max Secs @ $48</th></tr></thead>
+              <tbody id="videoModelsBody"></tbody>
             </table>
           </div>
         </div>
@@ -703,7 +709,7 @@
     </div>
 
     <div class="dashboard-footer">
-      <p>Real-time data from <a href="https://venice.ai" target="_blank">Venice AI</a> API &middot; Prices reflect latest API response &middot; 48 Diem = $48 Compute Budget</p>
+      <p>Real-time data from <a href="https://venice.ai" target="_blank">Venice AI</a> API &middot; All model types fetched live &middot; Prices reflect latest API response &middot; 48 Diem = $48 Compute Budget</p>
     </div>
   </div>
 
@@ -714,6 +720,11 @@
 
     let availableModels = [];
     let filteredModels = [];
+    let allImageModels = [];
+    let allAudioModels = [];
+    let allUpscaleModels = [];
+    let allVideoModels = [];
+    let allEmbeddingModels = [];
     let activeFilters = new Set();
     let currentSort = { column: 'name', direction: 'asc' };
     let expandedRow = null;
@@ -817,17 +828,25 @@
         return;
       }
       try {
-        const res = await fetch(`${BASE_URL}/models?type=text`, { headers: { 'Authorization': `Bearer ${apiKey}` } });
+        const res = await fetch(`${BASE_URL}/models`, { headers: { 'Authorization': `Bearer ${apiKey}` } });
         if (!res.ok) throw new Error(`API Error: ${res.status}`);
         const data = await res.json();
-        availableModels = (data.data || [])
-          .filter(m => m.type === 'text' && m.model_spec?.offline !== true)
+        const allModels = (data.data || []).filter(m => m.model_spec?.offline !== true);
+
+        // Separate by model type
+        availableModels = allModels
+          .filter(m => m.type === 'text')
           .sort((a, b) => {
             const aR = a.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
             const bR = b.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
             if (aR !== bR) return bR - aR;
             return (b.model_spec?.availableContextTokens || 0) - (a.model_spec?.availableContextTokens || 0);
           });
+        allImageModels = allModels.filter(m => m.type === 'image');
+        allAudioModels = allModels.filter(m => m.type === 'tts' || m.type === 'audio' || m.type === 'speech');
+        allUpscaleModels = allModels.filter(m => m.type === 'upscale' || m.type === 'img2img' || m.type === 'image_edit');
+        allVideoModels = allModels.filter(m => m.type === 'video');
+        allEmbeddingModels = allModels.filter(m => m.type === 'embedding' || m.type === 'embeddings');
 
         const sorted = availableModels.map(m => ({ id: m.id, bt: getModelData(m).budgetTokens })).filter(x => x.bt > 0).sort((a,b) => b.bt - a.bt);
         bestValueIds = new Set(sorted.slice(0, 3).map(x => x.id));
@@ -845,11 +864,23 @@
       }
     }
 
-    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); }
+    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); renderImageModels(); renderUpscaleModels(); renderAudioModels(); renderVideoModels(); }
 
     // ===== KPIs =====
     function updateKPIs() {
-      document.getElementById('totalModels').textContent = availableModels.length;
+      const totalAll = availableModels.length + allImageModels.length + allAudioModels.length + allUpscaleModels.length + allVideoModels.length + allEmbeddingModels.length;
+      document.getElementById('totalModels').textContent = totalAll;
+      const breakdownEl = document.getElementById('modelsBreakdown');
+      if (breakdownEl) {
+        const parts = [];
+        if (availableModels.length) parts.push(`${availableModels.length} text`);
+        if (allImageModels.length) parts.push(`${allImageModels.length} image`);
+        if (allAudioModels.length) parts.push(`${allAudioModels.length} audio`);
+        if (allVideoModels.length) parts.push(`${allVideoModels.length} video`);
+        if (allUpscaleModels.length) parts.push(`${allUpscaleModels.length} upscale`);
+        if (allEmbeddingModels.length) parts.push(`${allEmbeddingModels.length} embedding`);
+        breakdownEl.textContent = parts.join(' · ');
+      }
       let maxIn = 0, maxOut = 0, totalC = 0, cCnt = 0, maxCtx = 0, bestModel = '--', bestBt = 0;
       availableModels.forEach(m => {
         const d = getModelData(m);
@@ -1078,6 +1109,104 @@
           </div>
         </div>
         <div class="detail-footer">*Approx conversations assumes ~2K output tokens per conversation</div>`;
+    }
+
+    // ===== NON-TEXT MODEL RENDERERS =====
+    function getImagePriceClass(p) {
+      if (p <= 0) return 'low';
+      if (p <= 0.02) return 'low';
+      if (p <= 0.08) return 'mid';
+      return 'high';
+    }
+
+    function renderImageModels() {
+      const tbody = document.getElementById('imageModelsBody');
+      if (!tbody) return;
+      if (allImageModels.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No image generation models available</td></tr>';
+        return;
+      }
+      tbody.innerHTML = allImageModels
+        .sort((a, b) => (a.model_spec?.name || a.id).localeCompare(b.model_spec?.name || b.id))
+        .map(m => {
+          const spec = m.model_spec || {};
+          const pricing = spec.pricing || {};
+          const name = spec.name || m.id;
+          const pricePerImage = pricing.per_image?.usd || pricing.per_generation?.usd || 0;
+          const maxAtBudget = pricePerImage > 0 ? Math.floor(DIEM_BUDGET / pricePerImage).toLocaleString() : 'N/A';
+          const priceStr = pricePerImage > 0 ? `$${pricePerImage.toFixed(2)}` : 'N/A';
+          const pClass = getImagePriceClass(pricePerImage);
+          const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
+          const recTag = (spec.model_sets || []).includes('venice_recommendations') ? ' <span class="mini-tag tag-recommended">REC</span>' : '';
+          return `<tr><td class="s-name">${escHtml(name)}${betaTag}${recTag}</td><td class="s-price ${pClass}">${priceStr}</td><td>${maxAtBudget}</td></tr>`;
+        }).join('');
+    }
+
+    function renderUpscaleModels() {
+      const tbody = document.getElementById('upscaleModelsBody');
+      if (!tbody) return;
+      // If the API returns upscale/editing models, show them; otherwise keep static rows visible
+      if (allUpscaleModels.length === 0) return; // keep static fallback rows
+      tbody.innerHTML = allUpscaleModels
+        .map(m => {
+          const spec = m.model_spec || {};
+          const pricing = spec.pricing || {};
+          const name = spec.name || m.id;
+          const pricePerOp = pricing.per_image?.usd || pricing.per_operation?.usd || 0;
+          const maxAtBudget = pricePerOp > 0 ? Math.floor(DIEM_BUDGET / pricePerOp).toLocaleString() : 'N/A';
+          const priceStr = pricePerOp > 0 ? `$${pricePerOp.toFixed(2)}` : 'N/A';
+          const pClass = getImagePriceClass(pricePerOp);
+          return `<tr><td class="s-name">${escHtml(name)}</td><td class="s-price ${pClass}">${priceStr}</td><td>${maxAtBudget}</td></tr>`;
+        }).join('');
+    }
+
+    function renderAudioModels() {
+      const tbody = document.getElementById('audioModelsBody');
+      if (!tbody) return;
+      if (allAudioModels.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No audio models available</td></tr>';
+        return;
+      }
+      tbody.innerHTML = allAudioModels
+        .sort((a, b) => (a.model_spec?.name || a.id).localeCompare(b.model_spec?.name || b.id))
+        .map(m => {
+          const spec = m.model_spec || {};
+          const pricing = spec.pricing || {};
+          const name = spec.name || m.id;
+          // Support various pricing field names
+          const pricePerChar = pricing.per_character?.usd || 0;
+          const pricePerMChar = pricePerChar > 0
+            ? pricePerChar * 1e6
+            : (pricing.per_million_characters?.usd || pricing.per_1m_characters?.usd || 0);
+          const maxCharsAtBudget = pricePerMChar > 0
+            ? formatTokens(Math.floor((DIEM_BUDGET / pricePerMChar) * 1e6)) + ' chars'
+            : 'N/A';
+          const priceStr = pricePerMChar > 0 ? `$${pricePerMChar.toFixed(2)}` : 'N/A';
+          const pClass = pricePerMChar <= 5 ? 'low' : pricePerMChar <= 20 ? 'mid' : 'high';
+          const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
+          return `<tr><td class="s-name">${escHtml(name)}${betaTag}</td><td class="s-price ${pClass}">${priceStr}</td><td>${maxCharsAtBudget}</td></tr>`;
+        }).join('');
+    }
+
+    function renderVideoModels() {
+      const section = document.getElementById('videoModelsSection');
+      if (!section) return;
+      if (allVideoModels.length === 0) { section.style.display = 'none'; return; }
+      section.style.display = '';
+      const tbody = document.getElementById('videoModelsBody');
+      if (!tbody) return;
+      tbody.innerHTML = allVideoModels
+        .map(m => {
+          const spec = m.model_spec || {};
+          const pricing = spec.pricing || {};
+          const name = spec.name || m.id;
+          const pricePerSec = pricing.per_second?.usd || pricing.per_video?.usd || 0;
+          const priceStr = pricePerSec > 0 ? `$${pricePerSec.toFixed(3)}` : 'N/A';
+          const maxAtBudget = pricePerSec > 0 ? Math.floor(DIEM_BUDGET / pricePerSec).toLocaleString() : 'N/A';
+          const pClass = pricePerSec <= 0.1 ? 'low' : pricePerSec <= 0.5 ? 'mid' : 'high';
+          const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
+          return `<tr><td class="s-name">${escHtml(name)}${betaTag}</td><td class="s-price ${pClass}">${priceStr}</td><td>${maxAtBudget}</td></tr>`;
+        }).join('');
     }
 
     function toggleDetail(id) {

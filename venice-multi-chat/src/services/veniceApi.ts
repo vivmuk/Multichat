@@ -10,17 +10,17 @@ if (!API_KEY) {
 
 export const fetchModels = async (): Promise<ModelInfo[]> => {
   try {
-    // Use the standard models endpoint; traits info is included in model_spec
+    // Fetch all models (text only) for the chat interface
     const response = await fetch(`${BASE_URL}/models?type=text`, {
       headers: {
         'Authorization': `Bearer ${API_KEY}`
       }
     });
-    
+
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
     }
-    
+
     const data = await response.json();
     return data.data || [];
   } catch (error) {
