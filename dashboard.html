@@ -676,11 +676,11 @@
 
     <!-- Non-Text Model Pricing (dynamically populated from API) -->
     <div class="collapsible-section">
-      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <div class="collapsible-header open" onclick="toggleCollapsible(this)">
         <h3><span class="material-icons">palette</span> Image, Audio & Other Model Pricing</h3>
         <span class="material-icons toggle-icon">expand_more</span>
       </div>
-      <div class="collapsible-body">
+      <div class="collapsible-body open">
         <div class="static-tables-grid">
           <div class="static-table-card">
             <div class="static-table-head head-image"><span class="material-icons">image</span> Image Generation</div>
@@ -855,10 +855,23 @@
       try {
         // Fetch each model type in parallel using the dedicated ?type= endpoints
         const headers = { 'Authorization': `Bearer ${apiKey}` };
-        const fetchType = t => fetch(`${BASE_URL}/models?type=${t}`, { headers })
-          .then(r => r.ok ? r.json() : { data: [] })
-          .then(d => (d.data || []).filter(m => m.model_spec?.offline !== true))
-          .catch(() => []);
+
+        const fetchType = async t => {
+          try {
+            const r = await fetch(`${BASE_URL}/models?type=${t}`, { headers });
+            if (!r.ok) {
+              console.warn(`[Venice] /models?type=${t} returned HTTP ${r.status}`);
+              return [];
+            }
+            const d = await r.json();
+            const models = (d.data || []).filter(m => m.model_spec?.offline !== true);
+            console.log(`[Venice] type=${t} → ${models.length} models`, models.map(m => m.id));
+            return models;
+          } catch (err) {
+            console.error(`[Venice] Failed to fetch type=${t}:`, err);
+            return [];
+          }
+        };
 
         const [textModels, imageModels, ttsModels, inpaintModels, embeddingModels, videoModels] =
           await Promise.all([
@@ -1153,7 +1166,7 @@
       const tbody = document.getElementById('imageModelsBody');
       if (!tbody) return;
       if (allImageModels.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No image generation models available</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No image generation models available from API</td></tr>';
         return;
       }
       tbody.innerHTML = allImageModels
@@ -1162,9 +1175,16 @@
           const spec = m.model_spec || {};
           const pricing = spec.pricing || {};
           const name = spec.name || m.id;
-          const pricePerImage = pricing.per_image?.usd || pricing.per_generation?.usd || 0;
-          const maxAtBudget = pricePerImage > 0 ? Math.floor(DIEM_BUDGET / pricePerImage).toLocaleString() : 'N/A';
-          const priceStr = pricePerImage > 0 ? `$${pricePerImage.toFixed(2)}` : 'N/A';
+          // Try every pricing field Venice uses for image generation
+          const pricePerImage =
+            pricing.per_image?.usd ??
+            pricing.per_generation?.usd ??
+            pricing.inference?.usd ??
+            pricing.usd ??
+            pricing.amount ??
+            0;
+          const maxAtBudget = pricePerImage > 0 ? Math.floor(DIEM_BUDGET / pricePerImage).toLocaleString() : '—';
+          const priceStr = pricePerImage > 0 ? `$${pricePerImage.toFixed(3)}` : '—';
           const pClass = getImagePriceClass(pricePerImage);
           const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
           const recTag = (spec.model_sets || []).includes('venice_recommendations') ? ' <span class="mini-tag tag-recommended">REC</span>' : '';
@@ -1194,7 +1214,7 @@
       const tbody = document.getElementById('audioModelsBody');
       if (!tbody) return;
       if (allAudioModels.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No audio models available</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No audio / TTS models available from API</td></tr>';
         return;
       }
       tbody.innerHTML = allAudioModels
@@ -1203,15 +1223,22 @@
           const spec = m.model_spec || {};
           const pricing = spec.pricing || {};
           const name = spec.name || m.id;
-          // Support various pricing field names
-          const pricePerChar = pricing.per_character?.usd || 0;
+          // Try every pricing field Venice uses for TTS
+          const pricePerChar =
+            pricing.per_character?.usd ??
+            pricing.per_char?.usd ??
+            0;
           const pricePerMChar = pricePerChar > 0
             ? pricePerChar * 1e6
-            : (pricing.per_million_characters?.usd || pricing.per_1m_characters?.usd || 0);
+            : (pricing.per_million_characters?.usd ??
+               pricing.per_1m_characters?.usd ??
+               pricing.inference?.usd ??
+               pricing.usd ??
+               0);
           const maxCharsAtBudget = pricePerMChar > 0
             ? formatTokens(Math.floor((DIEM_BUDGET / pricePerMChar) * 1e6)) + ' chars'
-            : 'N/A';
-          const priceStr = pricePerMChar > 0 ? `$${pricePerMChar.toFixed(2)}` : 'N/A';
+            : '—';
+          const priceStr = pricePerMChar > 0 ? `$${pricePerMChar.toFixed(2)}/1M` : '—';
           const pClass = pricePerMChar <= 5 ? 'low' : pricePerMChar <= 20 ? 'mid' : 'high';
           const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
           return `<tr><td class="s-name">${escHtml(name)}${betaTag}</td><td class="s-price ${pClass}">${priceStr}</td><td>${maxCharsAtBudget}</td></tr>`;
