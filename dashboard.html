@@ -62,6 +62,20 @@
       --radius-full: 9999px;
     }
 
+    /* ===== DARK MODE ===== */
+    [data-theme="dark"] {
+      --background: #0f172a; --surface: #1e293b; --surface-hover: #334155;
+      --text-primary: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #475569;
+      --border: #334155; --border-light: #1e293b;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.4); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5);
+    }
+    [data-theme="dark"] .model-table tbody tr:hover { background: rgba(99,102,241,0.15); }
+    [data-theme="dark"] .search-box { background: #0f172a; border-color: #334155; }
+    [data-theme="dark"] .search-box:focus-within { background: #1e293b; }
+    [data-theme="dark"] .loading-overlay { background: rgba(15,23,42,0.97); }
+    [data-theme="dark"] .detail-row td { background: #0f172a !important; }
+    [data-theme="dark"] .static-table th { background: #0f172a; }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -366,7 +380,7 @@
     .collapsible-body.open { display: block; }
 
     /* Static tables */
-    .static-tables-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .static-tables-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
     .static-table-card { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
     .static-table-head { padding: 14px 16px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
     .static-table-head .material-icons { font-size: 18px; }
@@ -506,6 +520,9 @@
       </button>
       <button class="nav-btn secondary" onclick="refreshData()">
         <span class="material-icons">refresh</span><span>Refresh</span>
+      </button>
+      <button class="nav-btn secondary" onclick="toggleDarkMode()" id="darkModeBtn" title="Toggle dark mode">
+        <span class="material-icons">dark_mode</span>
       </button>
       <a href="index.html" class="nav-btn primary">
         <span class="material-icons">chat</span><span>Back to Chat</span>
@@ -659,11 +676,11 @@
 
     <!-- Non-Text Model Pricing (dynamically populated from API) -->
     <div class="collapsible-section">
-      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <div class="collapsible-header open" onclick="toggleCollapsible(this)">
         <h3><span class="material-icons">palette</span> Image, Audio & Other Model Pricing</h3>
         <span class="material-icons toggle-icon">expand_more</span>
       </div>
-      <div class="collapsible-body">
+      <div class="collapsible-body open">
         <div class="static-tables-grid">
           <div class="static-table-card">
             <div class="static-table-head head-image"><span class="material-icons">image</span> Image Generation</div>
@@ -694,10 +711,16 @@
               </tbody>
             </table>
           </div>
-        </div>
-        <!-- Video models section — shown only when the API returns video models -->
-        <div id="videoModelsSection" style="display:none;margin-top:16px;">
-          <div class="static-table-card">
+          <!-- Embedding models — shown when API returns results -->
+          <div class="static-table-card" id="embeddingModelsCard" style="display:none;">
+            <div class="static-table-head" style="background:var(--teal-bg);color:var(--teal);"><span class="material-icons">hub</span> Embedding Models</div>
+            <table class="static-table">
+              <thead><tr><th>Model</th><th>Price/1M Tokens</th><th>Max @ $48</th></tr></thead>
+              <tbody id="embeddingModelsBody"></tbody>
+            </table>
+          </div>
+          <!-- Video models — shown when API returns results -->
+          <div class="static-table-card" id="videoModelsCard" style="display:none;">
             <div class="static-table-head" style="background:var(--rose-bg);color:var(--rose);"><span class="material-icons">videocam</span> Video Models</div>
             <table class="static-table">
               <thead><tr><th>Model</th><th>Price/Sec</th><th>Max Secs @ $48</th></tr></thead>
@@ -705,6 +728,8 @@
             </table>
           </div>
         </div>
+        <!-- Legacy wrapper div — kept for backward compat, no longer needed -->
+        <div id="videoModelsSection" style="display:none;"></div>
       </div>
     </div>
 
@@ -828,25 +853,43 @@
         return;
       }
       try {
-        const res = await fetch(`${BASE_URL}/models`, { headers: { 'Authorization': `Bearer ${apiKey}` } });
-        if (!res.ok) throw new Error(`API Error: ${res.status}`);
-        const data = await res.json();
-        const allModels = (data.data || []).filter(m => m.model_spec?.offline !== true);
+        // Fetch each model type in parallel using the dedicated ?type= endpoints
+        const headers = { 'Authorization': `Bearer ${apiKey}` };
 
-        // Separate by model type
-        availableModels = allModels
-          .filter(m => m.type === 'text')
-          .sort((a, b) => {
+        const fetchType = async t => {
+          try {
+            const r = await fetch(`${BASE_URL}/models?type=${t}`, { headers });
+            if (!r.ok) {
+              console.warn(`[Venice] /models?type=${t} returned HTTP ${r.status}`);
+              return [];
+            }
+            const d = await r.json();
+            const models = (d.data || []).filter(m => m.model_spec?.offline !== true);
+            console.log(`[Venice] type=${t} → ${models.length} models`, models.map(m => m.id));
+            return models;
+          } catch (err) {
+            console.error(`[Venice] Failed to fetch type=${t}:`, err);
+            return [];
+          }
+        };
+
+        const [textModels, imageModels, ttsModels, inpaintModels, embeddingModels, videoModels] =
+          await Promise.all([
+            fetchType('text'), fetchType('image'), fetchType('tts'),
+            fetchType('inpaint'), fetchType('embedding'), fetchType('video')
+          ]);
+
+        availableModels = textModels.sort((a, b) => {
             const aR = a.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
             const bR = b.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
             if (aR !== bR) return bR - aR;
             return (b.model_spec?.availableContextTokens || 0) - (a.model_spec?.availableContextTokens || 0);
           });
-        allImageModels = allModels.filter(m => m.type === 'image');
-        allAudioModels = allModels.filter(m => m.type === 'tts' || m.type === 'audio' || m.type === 'speech');
-        allUpscaleModels = allModels.filter(m => m.type === 'upscale' || m.type === 'img2img' || m.type === 'image_edit');
-        allVideoModels = allModels.filter(m => m.type === 'video');
-        allEmbeddingModels = allModels.filter(m => m.type === 'embedding' || m.type === 'embeddings');
+        allImageModels = imageModels;
+        allAudioModels = ttsModels;
+        allUpscaleModels = inpaintModels;
+        allEmbeddingModels = embeddingModels;
+        allVideoModels = videoModels;
 
         const sorted = availableModels.map(m => ({ id: m.id, bt: getModelData(m).budgetTokens })).filter(x => x.bt > 0).sort((a,b) => b.bt - a.bt);
         bestValueIds = new Set(sorted.slice(0, 3).map(x => x.id));
@@ -864,7 +907,7 @@
       }
     }
 
-    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); renderImageModels(); renderUpscaleModels(); renderAudioModels(); renderVideoModels(); }
+    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); renderImageModels(); renderUpscaleModels(); renderAudioModels(); renderVideoModels(); renderEmbeddingModels(); }
 
     // ===== KPIs =====
     function updateKPIs() {
@@ -1012,7 +1055,7 @@
               <div class="cell-model">
                 <div class="model-avatar ${getAvatarClass(model)}">${getInitials(d.id)}</div>
                 <div class="cell-model-info">
-                  <div class="cell-model-name"><span>${escHtml(d.displayName)}</span>${bestTag}<button class="copy-btn" onclick="copyModelId(event,'${d.id}')" title="Copy model ID: ${d.id}"><span class="material-icons">content_copy</span></button></div>
+                  <div class="cell-model-name"><span>${escHtml(d.displayName)}</span>${bestTag}<button class="copy-btn" onclick="copyModelId(event,'${d.id}')" title="Copy model ID: ${d.id}"><span class="material-icons">content_copy</span></button><button class="copy-btn" onclick="tryInChat(event,'${d.id}')" title="Try in chat"><span class="material-icons">chat</span></button></div>
                   <div class="cell-model-sub"><span style="opacity:0.7;">${d.id}</span> ${tags}</div>
                 </div>
               </div>
@@ -1123,7 +1166,7 @@
       const tbody = document.getElementById('imageModelsBody');
       if (!tbody) return;
       if (allImageModels.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No image generation models available</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No image generation models available from API</td></tr>';
         return;
       }
       tbody.innerHTML = allImageModels
@@ -1132,9 +1175,16 @@
           const spec = m.model_spec || {};
           const pricing = spec.pricing || {};
           const name = spec.name || m.id;
-          const pricePerImage = pricing.per_image?.usd || pricing.per_generation?.usd || 0;
-          const maxAtBudget = pricePerImage > 0 ? Math.floor(DIEM_BUDGET / pricePerImage).toLocaleString() : 'N/A';
-          const priceStr = pricePerImage > 0 ? `$${pricePerImage.toFixed(2)}` : 'N/A';
+          // Try every pricing field Venice uses for image generation
+          const pricePerImage =
+            pricing.per_image?.usd ??
+            pricing.per_generation?.usd ??
+            pricing.inference?.usd ??
+            pricing.usd ??
+            pricing.amount ??
+            0;
+          const maxAtBudget = pricePerImage > 0 ? Math.floor(DIEM_BUDGET / pricePerImage).toLocaleString() : '—';
+          const priceStr = pricePerImage > 0 ? `$${pricePerImage.toFixed(3)}` : '—';
           const pClass = getImagePriceClass(pricePerImage);
           const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
           const recTag = (spec.model_sets || []).includes('venice_recommendations') ? ' <span class="mini-tag tag-recommended">REC</span>' : '';
@@ -1164,7 +1214,7 @@
       const tbody = document.getElementById('audioModelsBody');
       if (!tbody) return;
       if (allAudioModels.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No audio models available</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No audio / TTS models available from API</td></tr>';
         return;
       }
       tbody.innerHTML = allAudioModels
@@ -1173,15 +1223,22 @@
           const spec = m.model_spec || {};
           const pricing = spec.pricing || {};
           const name = spec.name || m.id;
-          // Support various pricing field names
-          const pricePerChar = pricing.per_character?.usd || 0;
+          // Try every pricing field Venice uses for TTS
+          const pricePerChar =
+            pricing.per_character?.usd ??
+            pricing.per_char?.usd ??
+            0;
           const pricePerMChar = pricePerChar > 0
             ? pricePerChar * 1e6
-            : (pricing.per_million_characters?.usd || pricing.per_1m_characters?.usd || 0);
+            : (pricing.per_million_characters?.usd ??
+               pricing.per_1m_characters?.usd ??
+               pricing.inference?.usd ??
+               pricing.usd ??
+               0);
           const maxCharsAtBudget = pricePerMChar > 0
             ? formatTokens(Math.floor((DIEM_BUDGET / pricePerMChar) * 1e6)) + ' chars'
-            : 'N/A';
-          const priceStr = pricePerMChar > 0 ? `$${pricePerMChar.toFixed(2)}` : 'N/A';
+            : '—';
+          const priceStr = pricePerMChar > 0 ? `$${pricePerMChar.toFixed(2)}/1M` : '—';
           const pClass = pricePerMChar <= 5 ? 'low' : pricePerMChar <= 20 ? 'mid' : 'high';
           const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
           return `<tr><td class="s-name">${escHtml(name)}${betaTag}</td><td class="s-price ${pClass}">${priceStr}</td><td>${maxCharsAtBudget}</td></tr>`;
@@ -1189,10 +1246,10 @@
     }
 
     function renderVideoModels() {
-      const section = document.getElementById('videoModelsSection');
-      if (!section) return;
-      if (allVideoModels.length === 0) { section.style.display = 'none'; return; }
-      section.style.display = '';
+      const card = document.getElementById('videoModelsCard');
+      if (!card) return;
+      if (allVideoModels.length === 0) { card.style.display = 'none'; return; }
+      card.style.display = '';
       const tbody = document.getElementById('videoModelsBody');
       if (!tbody) return;
       tbody.innerHTML = allVideoModels
@@ -1207,6 +1264,44 @@
           const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
           return `<tr><td class="s-name">${escHtml(name)}${betaTag}</td><td class="s-price ${pClass}">${priceStr}</td><td>${maxAtBudget}</td></tr>`;
         }).join('');
+    }
+
+    function renderEmbeddingModels() {
+      const card = document.getElementById('embeddingModelsCard');
+      if (!card) return;
+      if (allEmbeddingModels.length === 0) { card.style.display = 'none'; return; }
+      card.style.display = '';
+      const tbody = document.getElementById('embeddingModelsBody');
+      if (!tbody) return;
+      tbody.innerHTML = allEmbeddingModels
+        .sort((a, b) => (a.model_spec?.name || a.id).localeCompare(b.model_spec?.name || b.id))
+        .map(m => {
+          const spec = m.model_spec || {};
+          const pricing = spec.pricing || {};
+          const name = spec.name || m.id;
+          const pricePerMTok = pricing.input?.usd || pricing.per_million_tokens?.usd || 0;
+          const maxAtBudget = pricePerMTok > 0 ? formatTokens(Math.floor((DIEM_BUDGET / pricePerMTok) * 1e6)) : 'N/A';
+          const priceStr = pricePerMTok > 0 ? `$${pricePerMTok.toFixed(3)}` : 'N/A';
+          const pClass = pricePerMTok <= 0.1 ? 'low' : pricePerMTok <= 0.5 ? 'mid' : 'high';
+          const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
+          return `<tr><td class="s-name">${escHtml(name)}${betaTag}</td><td class="s-price ${pClass}">${priceStr}</td><td>${maxAtBudget}</td></tr>`;
+        }).join('');
+    }
+
+    // ===== DARK MODE =====
+    function toggleDarkMode() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const next = isDark ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('venice_theme', next);
+      const icon = document.getElementById('darkModeBtn')?.querySelector('.material-icons');
+      if (icon) icon.textContent = next === 'dark' ? 'light_mode' : 'dark_mode';
+    }
+
+    // ===== TRY IN CHAT =====
+    function tryInChat(e, modelId) {
+      e.stopPropagation();
+      window.location.href = 'index.html?model=' + encodeURIComponent(modelId);
     }
 
     function toggleDetail(id) {
@@ -1295,7 +1390,13 @@
       if (e.key === 'Escape') { const i = document.getElementById('searchInput'); if (document.activeElement === i) { i.value = ''; i.blur(); applyFilters(); } }
     });
 
-    document.addEventListener('DOMContentLoaded', fetchModels);
+    document.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('venice_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+      const icon = document.getElementById('darkModeBtn')?.querySelector('.material-icons');
+      if (icon) icon.textContent = saved === 'dark' ? 'light_mode' : 'dark_mode';
+      fetchModels();
+    });
   </script>
 </body>
 </html>
