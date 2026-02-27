@@ -1213,7 +1213,20 @@
           const pClass = getImagePriceClass(pricePerImage);
           const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
           const recTag = (spec.model_sets || []).includes('venice_recommendations') ? ' <span class="mini-tag tag-recommended">REC</span>' : '';
-          return `<tr><td class="s-name">${escHtml(name)}${betaTag}${recTag}</td><td class="s-price ${pClass}">${priceStr}</td><td>${maxAtBudget}</td></tr>`;
+          const safeId = escHtml(m.id);
+          return `<tr>
+            <td class="s-name">
+              <div>${escHtml(name)}${betaTag}${recTag}</div>
+              <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+                <span style="font-family:monospace;font-size:10px;color:var(--text-muted);opacity:0.8;">${safeId}</span>
+                <button class="copy-btn" onclick="copyModelId(event,'${safeId}')" title="Copy model ID" style="width:18px;height:18px;min-width:18px;padding:0;">
+                  <span class="material-icons" style="font-size:11px;">content_copy</span>
+                </button>
+              </div>
+            </td>
+            <td class="s-price ${pClass}">${priceStr}</td>
+            <td>${maxAtBudget}</td>
+          </tr>`;
         }).join('');
     }
 
