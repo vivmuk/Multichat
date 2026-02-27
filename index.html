@@ -1915,26 +1915,7 @@
         <p>Choose how you want to connect</p>
       </div>
       <div class="auth-form">
-        <div class="auth-tabs">
-          <button class="auth-tab active" data-tab="password">Member Access</button>
-          <button class="auth-tab" data-tab="apikey">Use Your API Key</button>
-        </div>
-        <div class="auth-tab-content" id="passwordTab">
-          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">For authorized members with shared access</p>
-          <div class="auth-input-group">
-            <label for="passwordInput">Enter Password</label>
-            <input type="password" id="passwordInput" placeholder="Enter member password..." autocomplete="current-password">
-          </div>
-          <label class="auth-checkbox">
-            <input type="checkbox" id="rememberPassword" checked>
-            <span>Remember me on this device</span>
-          </label>
-          <button class="auth-submit" id="passwordSubmit">
-            <span class="material-icons">lock_open</span>
-            Unlock
-          </button>
-        </div>
-        <div class="auth-tab-content" id="apikeyTab" style="display: none;">
+        <div class="auth-tab-content" id="apikeyTab">
           <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Connect with your own Venice AI API key</p>
           <div class="auth-input-group">
             <label for="apiKeyInput">Your Venice API Key</label>
@@ -1948,7 +1929,7 @@
             <span class="material-icons">vpn_key</span>
             Connect
           </button>
-          <p class="auth-hint">Don't have a key? Get one from <a href="https://venice.ai" target="_blank">venice.ai</a></p>
+          <p class="auth-hint">Don't have a key? Get one from <a href="https://venice.ai" target="_blank">venice.ai</a> or email the site builder to request a key.</p>
         </div>
         <div class="auth-error" id="authError" style="display: none;">
           <span class="material-icons">error</span>
@@ -1993,32 +1974,13 @@
   <script src="config.js" onerror="console.warn('config.js not found. Using build-injected API key if available.')"></script>
   <script>
     // Authentication System
-    const CORRECT_PASSWORD = 'surat';
     const BASE_URL = 'https://api.venice.ai/api/v1';
-
-    // Get the backend API key (from Netlify build injection or localStorage)
-    function getBackendApiKey() {
-      // First try Netlify-injected key (from build.js)
-      if (window.VENICE_API_KEY && window.VENICE_API_KEY !== 'your-venice-api-key-here') {
-        return window.VENICE_API_KEY;
-      }
-      // Fall back to localStorage (for local development)
-      return localStorage.getItem('venice_backend_api_key') || '';
-    }
 
     // Check if user is authenticated
     function checkAuthentication() {
-      const savedPassword = localStorage.getItem('venice_password');
       const savedUserKey = localStorage.getItem('venice_user_api_key');
-      const backendKey = getBackendApiKey();
-
-      // Password users get the backend key (Netlify-injected or localStorage)
-      if (savedPassword === CORRECT_PASSWORD && backendKey) {
-        return { authenticated: true, useBackendKey: true, apiKey: backendKey };
-      }
-      // Direct API key users
       if (savedUserKey) {
-        return { authenticated: true, useBackendKey: false, apiKey: savedUserKey };
+        return { authenticated: true, apiKey: savedUserKey };
       }
       return { authenticated: false };
     }
@@ -2037,94 +1999,11 @@
     // Authentication Modal Logic
     function initAuthModal() {
       const authModal = document.getElementById('authModal');
-      const passwordTab = document.getElementById('passwordTab');
-      const apikeyTab = document.getElementById('apikeyTab');
-      const authTabs = document.querySelectorAll('.auth-tab');
-      const passwordInput = document.getElementById('passwordInput');
       const apiKeyInput = document.getElementById('apiKeyInput');
-      const passwordSubmit = document.getElementById('passwordSubmit');
       const apiKeySubmit = document.getElementById('apiKeySubmit');
-      const rememberPassword = document.getElementById('rememberPassword');
       const rememberApiKey = document.getElementById('rememberApiKey');
       const authError = document.getElementById('authError');
       const authErrorText = document.getElementById('authErrorText');
-
-      // Tab switching
-      authTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          authTabs.forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          if (tab.dataset.tab === 'password') {
-            passwordTab.style.display = 'block';
-            apikeyTab.style.display = 'none';
-          } else {
-            passwordTab.style.display = 'none';
-            apikeyTab.style.display = 'block';
-          }
-          authError.style.display = 'none';
-        });
-      });
-
-      // Password submit
-      passwordSubmit.addEventListener('click', async () => {
-        const password = passwordInput.value.trim();
-        if (password === CORRECT_PASSWORD) {
-          // Get backend API key (Netlify-injected first, then localStorage)
-          let backendKey = getBackendApiKey();
-
-          // If no backend key available (local development without config)
-          if (!backendKey) {
-            const inputKey = prompt('Password correct! Enter your Venice API key (one-time setup for local dev):');
-            if (!inputKey || !inputKey.trim()) {
-              authError.style.display = 'flex';
-              authErrorText.textContent = 'API key is required for first-time setup.';
-              return;
-            }
-
-            // Validate the API key
-            try {
-              passwordSubmit.disabled = true;
-              passwordSubmit.innerHTML = '<span class="material-icons spin">refresh</span> Validating...';
-
-              const response = await fetch(`${BASE_URL}/models?type=text`, {
-                headers: { 'Authorization': `Bearer ${inputKey.trim()}` }
-              });
-
-              if (!response.ok) {
-                authError.style.display = 'flex';
-                authErrorText.textContent = 'Invalid API key. Please try again.';
-                passwordSubmit.disabled = false;
-                passwordSubmit.innerHTML = '<span class="material-icons">lock_open</span> Unlock';
-                return;
-              }
-
-              backendKey = inputKey.trim();
-              localStorage.setItem('venice_backend_api_key', backendKey);
-            } catch (error) {
-              authError.style.display = 'flex';
-              authErrorText.textContent = 'Connection error. Please try again.';
-              passwordSubmit.disabled = false;
-              passwordSubmit.innerHTML = '<span class="material-icons">lock_open</span> Unlock';
-              return;
-            }
-          }
-
-          if (rememberPassword.checked) {
-            localStorage.setItem('venice_password', password);
-          }
-
-          API_KEY = backendKey;
-          authModal.classList.remove('show');
-          passwordSubmit.disabled = false;
-          passwordSubmit.innerHTML = '<span class="material-icons">lock_open</span> Unlock';
-          fetchVeniceModels();
-        } else {
-          authError.style.display = 'flex';
-          authErrorText.textContent = 'Invalid password. Please try again.';
-          passwordInput.value = '';
-          passwordInput.focus();
-        }
-      });
 
       // API Key submit
       apiKeySubmit.addEventListener('click', async () => {
@@ -2165,9 +2044,6 @@
       });
 
       // Enter key support
-      passwordInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') passwordSubmit.click();
-      });
       apiKeyInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') apiKeySubmit.click();
       });
@@ -2176,14 +2052,12 @@
     function showAuthModal() {
       const authModal = document.getElementById('authModal');
       authModal.classList.add('show');
-      document.getElementById('passwordInput').focus();
+      document.getElementById('apiKeyInput').focus();
     }
 
     // Logout function
     window.veniceLogout = function() {
-      localStorage.removeItem('venice_password');
       localStorage.removeItem('venice_user_api_key');
-      localStorage.removeItem('venice_backend_api_key');
       location.reload();
     };
 
