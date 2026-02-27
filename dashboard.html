@@ -757,7 +757,7 @@
 
     function getApiKey() {
       if (window.VENICE_API_KEY && window.VENICE_API_KEY !== 'your-venice-api-key-here') return window.VENICE_API_KEY;
-      return localStorage.getItem('venice_backend_api_key') || '';
+      return localStorage.getItem('venice_user_api_key') || localStorage.getItem('venice_backend_api_key') || '';
     }
 
     // ===== UTILITIES =====
@@ -1162,6 +1162,37 @@
       return 'high';
     }
 
+    // Try to extract a numeric price from any pricing object by scanning all leaf values
+    function scanPricingUsd(pricing) {
+      if (!pricing || typeof pricing !== 'object') return 0;
+      // Prefer known field names first (most specific → most generic)
+      const candidates = [
+        pricing.per_image?.usd,
+        pricing.per_generation?.usd,
+        pricing.inference?.usd,
+        pricing.image?.usd,
+        pricing.cost?.usd,
+        pricing.cost_per_image?.usd,
+        pricing.amount?.usd,
+        pricing.usd,
+        pricing.amount,
+      ];
+      for (const v of candidates) {
+        if (typeof v === 'number' && v > 0) return v;
+      }
+      // Last resort: walk all leaf numeric values and pick the smallest positive one
+      let found = 0;
+      function walk(obj) {
+        if (!obj || typeof obj !== 'object') return;
+        for (const [, val] of Object.entries(obj)) {
+          if (typeof val === 'number' && val > 0) { if (!found || val < found) found = val; }
+          else if (typeof val === 'object') walk(val);
+        }
+      }
+      walk(pricing);
+      return found;
+    }
+
     function renderImageModels() {
       const tbody = document.getElementById('imageModelsBody');
       if (!tbody) return;
@@ -1175,14 +1206,8 @@
           const spec = m.model_spec || {};
           const pricing = spec.pricing || {};
           const name = spec.name || m.id;
-          // Try every pricing field Venice uses for image generation
-          const pricePerImage =
-            pricing.per_image?.usd ??
-            pricing.per_generation?.usd ??
-            pricing.inference?.usd ??
-            pricing.usd ??
-            pricing.amount ??
-            0;
+          console.log('[Venice image pricing]', m.id, JSON.stringify(pricing));
+          const pricePerImage = scanPricingUsd(pricing);
           const maxAtBudget = pricePerImage > 0 ? Math.floor(DIEM_BUDGET / pricePerImage).toLocaleString() : '—';
           const priceStr = pricePerImage > 0 ? `$${pricePerImage.toFixed(3)}` : '—';
           const pClass = getImagePriceClass(pricePerImage);
@@ -1245,6 +1270,33 @@
         }).join('');
     }
 
+    function scanVideoPricingUsd(pricing) {
+      if (!pricing || typeof pricing !== 'object') return 0;
+      const candidates = [
+        pricing.per_second?.usd,
+        pricing.per_video?.usd,
+        pricing.video?.usd,
+        pricing.inference?.usd,
+        pricing.cost?.usd,
+        pricing.usd,
+        pricing.amount,
+      ];
+      for (const v of candidates) {
+        if (typeof v === 'number' && v > 0) return v;
+      }
+      // Walk all leaves and pick smallest positive value
+      let found = 0;
+      function walk(obj) {
+        if (!obj || typeof obj !== 'object') return;
+        for (const [, val] of Object.entries(obj)) {
+          if (typeof val === 'number' && val > 0) { if (!found || val < found) found = val; }
+          else if (typeof val === 'object') walk(val);
+        }
+      }
+      walk(pricing);
+      return found;
+    }
+
     function renderVideoModels() {
       const card = document.getElementById('videoModelsCard');
       if (!card) return;
@@ -1257,9 +1309,10 @@
           const spec = m.model_spec || {};
           const pricing = spec.pricing || {};
           const name = spec.name || m.id;
-          const pricePerSec = pricing.per_second?.usd || pricing.per_video?.usd || 0;
-          const priceStr = pricePerSec > 0 ? `$${pricePerSec.toFixed(3)}` : 'N/A';
-          const maxAtBudget = pricePerSec > 0 ? Math.floor(DIEM_BUDGET / pricePerSec).toLocaleString() : 'N/A';
+          console.log('[Venice video pricing]', m.id, JSON.stringify(pricing));
+          const pricePerSec = scanVideoPricingUsd(pricing);
+          const priceStr = pricePerSec > 0 ? `$${pricePerSec.toFixed(3)}/s` : '—';
+          const maxAtBudget = pricePerSec > 0 ? Math.floor(DIEM_BUDGET / pricePerSec).toLocaleString() + 's' : '—';
           const pClass = pricePerSec <= 0.1 ? 'low' : pricePerSec <= 0.5 ? 'mid' : 'high';
           const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
           return `<tr><td class="s-name">${escHtml(name)}${betaTag}</td><td class="s-price ${pClass}">${priceStr}</td><td>${maxAtBudget}</td></tr>`;

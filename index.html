@@ -2110,16 +2110,6 @@
 
     function formatPriceBadge(model) {
       const pricing = model.model_spec?.pricing || {};
-      const type = model.modelType || 'text';
-      if (type === 'image') {
-        const p = pricing.per_image?.usd ?? pricing.per_generation?.usd ?? pricing.inference?.usd ?? pricing.usd ?? null;
-        return p !== null ? `$${p}/img` : '—';
-      }
-      if (type === 'video') {
-        const p = pricing.per_second?.usd ?? pricing.per_video?.usd ?? null;
-        return p !== null ? `$${p}/s` : '—';
-      }
-      // text
       const inputPrice = pricing.input?.usd;
       const outputPrice = pricing.output?.usd;
       if (inputPrice !== undefined && outputPrice !== undefined) {
@@ -2454,36 +2444,26 @@
       if (modelSelectMobile) modelSelectMobile.innerHTML = '';
 
       try {
-        const headers = { 'Authorization': `Bearer ${API_KEY}` };
-
-        const fetchType = async (type) => {
-          const r = await fetch(`${BASE_URL}/models?type=${type}`, { headers });
-          if (!r.ok) throw new Error(`API error ${r.status} for type=${type}`);
-          const d = await r.json();
-          return (d.data || [])
-            .filter(m => m.id && !m.model_spec?.offline)
-            .map(m => ({ ...m, modelType: type }));
-        };
-
-        const [textModels, imageModels, videoModels] = await Promise.all([
-          fetchType('text'), fetchType('image'), fetchType('video')
-        ]);
+        const r = await fetch(`${BASE_URL}/models?type=text`, {
+          headers: { 'Authorization': `Bearer ${API_KEY}` }
+        });
+        if (!r.ok) throw new Error(`API error: ${r.status} ${r.statusText}`);
+        const data = await r.json();
 
         const isReasoningModel = (m) => {
           const traits = m.model_spec?.traits || [];
           return traits.includes('default_reasoning') || m.id.toLowerCase().includes('reasoning');
         };
 
-        const sortedText = textModels
-          .filter(m => !m.id.toLowerCase().includes('coder'))
+        availableModels = (data.data || [])
+          .filter(m => m.id && !m.model_spec?.offline && !m.id.toLowerCase().includes('coder'))
           .sort((a, b) => {
             const aR = isReasoningModel(a), bR = isReasoningModel(b);
             if (aR !== bR) return aR ? 1 : -1;
             return (a.model_spec?.availableContextTokens || 0) - (b.model_spec?.availableContextTokens || 0);
           });
 
-        availableModels = [...sortedText, ...imageModels, ...videoModels];
-        console.log(`Loaded models — text: ${sortedText.length}, image: ${imageModels.length}, video: ${videoModels.length}`);
+        console.log(`Loaded ${availableModels.length} text models`);
         renderModelList();
       } catch (error) {
         console.error('Failed to fetch models:', error);
