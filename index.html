@@ -2005,42 +2005,20 @@
       const authError = document.getElementById('authError');
       const authErrorText = document.getElementById('authErrorText');
 
-      // API Key submit
-      apiKeySubmit.addEventListener('click', async () => {
+      // API Key submit — save immediately and let fetchVeniceModels validate
+      apiKeySubmit.addEventListener('click', () => {
         const apiKey = apiKeyInput.value.trim();
         if (!apiKey) {
           authError.style.display = 'flex';
           authErrorText.textContent = 'Please enter an API key.';
           return;
         }
-
-        // Validate API key by making a test request
-        try {
-          apiKeySubmit.disabled = true;
-          apiKeySubmit.innerHTML = '<span class="material-icons spin">refresh</span> Validating...';
-
-          const response = await fetch(`${BASE_URL}/models?type=text`, {
-            headers: { 'Authorization': `Bearer ${apiKey}` }
-          });
-
-          if (response.ok) {
-            if (rememberApiKey.checked) {
-              localStorage.setItem('venice_user_api_key', apiKey);
-            }
-            API_KEY = apiKey;
-            authModal.classList.remove('show');
-            fetchVeniceModels();
-          } else {
-            authError.style.display = 'flex';
-            authErrorText.textContent = 'Invalid API key. Please check and try again.';
-          }
-        } catch (error) {
-          authError.style.display = 'flex';
-          authErrorText.textContent = 'Connection error. Please try again.';
-        } finally {
-          apiKeySubmit.disabled = false;
-          apiKeySubmit.innerHTML = '<span class="material-icons">vpn_key</span> Connect';
+        if (rememberApiKey.checked) {
+          localStorage.setItem('venice_user_api_key', apiKey);
         }
+        API_KEY = apiKey;
+        authModal.classList.remove('show');
+        fetchVeniceModels();
       });
 
       // Enter key support
@@ -2132,6 +2110,16 @@
 
     function formatPriceBadge(model) {
       const pricing = model.model_spec?.pricing || {};
+      const type = model.modelType || 'text';
+      if (type === 'image') {
+        const p = pricing.per_image?.usd ?? pricing.per_generation?.usd ?? pricing.inference?.usd ?? pricing.usd ?? null;
+        return p !== null ? `$${p}/img` : '—';
+      }
+      if (type === 'video') {
+        const p = pricing.per_second?.usd ?? pricing.per_video?.usd ?? null;
+        return p !== null ? `$${p}/s` : '—';
+      }
+      // text
       const inputPrice = pricing.input?.usd;
       const outputPrice = pricing.output?.usd;
       if (inputPrice !== undefined && outputPrice !== undefined) {
@@ -2156,11 +2144,12 @@
       item.classList.add('drawer-item');
       item.dataset.modelId = model.id;
       const priceText = formatPriceBadge(model);
+      const type = model.modelType || 'text';
+      const typeColors = { text: '#2a9d8f', image: '#6366f1', video: '#e63946' };
+      const typeBadge = `<span style="font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;text-transform:uppercase;background:${typeColors[type] || '#555'};color:#fff;margin-right:5px;vertical-align:middle;">${type}</span>`;
       item.innerHTML = `
         <div class="drawer-top">
-          <div class="drawer-name">
-            ${model.id}
-          </div>
+          <div class="drawer-name">${typeBadge}${model.id}</div>
           <div class="drawer-meta">
             <div class="price-badge">${priceText}</div>
             <div class="drawer-time model-item-time" data-time="">—</div>
@@ -2463,64 +2452,56 @@
       if (modelRail) modelRail.innerHTML = '';
       if (modelDrawerList) modelDrawerList.innerHTML = '<div class="empty-state"><div class="loading">Loading models...</div></div>';
       if (modelSelectMobile) modelSelectMobile.innerHTML = '';
-      
+
       try {
-        const response = await fetch(`${BASE_URL}/models?type=text`, {
-          headers: { 'Authorization': `Bearer ${API_KEY}` }
-        });
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        if (data && data.data && Array.isArray(data.data)) {
-          
-          const filteredModels = data.data.filter(model => {
-            // Only exclude offline models or models without an ID
-            const isOffline = model.model_spec?.offline;
-            if (!model.id || isOffline) {
-              return false;
-            }
+        const headers = { 'Authorization': `Bearer ${API_KEY}` };
 
-            // Only filter out models that explicitly have "coder" in their ID
-            // Allow all other models including those with optimizedForCode capability
-            const isCoderModel = model.id.toLowerCase().includes('coder');
-            
-            return !isCoderModel;
+        const fetchType = async (type) => {
+          const r = await fetch(`${BASE_URL}/models?type=${type}`, { headers });
+          if (!r.ok) throw new Error(`API error ${r.status} for type=${type}`);
+          const d = await r.json();
+          return (d.data || [])
+            .filter(m => m.id && !m.model_spec?.offline)
+            .map(m => ({ ...m, modelType: type }));
+        };
+
+        const [textModels, imageModels, videoModels] = await Promise.all([
+          fetchType('text'), fetchType('image'), fetchType('video')
+        ]);
+
+        const isReasoningModel = (m) => {
+          const traits = m.model_spec?.traits || [];
+          return traits.includes('default_reasoning') || m.id.toLowerCase().includes('reasoning');
+        };
+
+        const sortedText = textModels
+          .filter(m => !m.id.toLowerCase().includes('coder'))
+          .sort((a, b) => {
+            const aR = isReasoningModel(a), bR = isReasoningModel(b);
+            if (aR !== bR) return aR ? 1 : -1;
+            return (a.model_spec?.availableContextTokens || 0) - (b.model_spec?.availableContextTokens || 0);
           });
 
-          const isReasoningModel = (model) => {
-            const traits = model.model_spec?.traits || [];
-            return traits.includes('default_reasoning') || model.id.toLowerCase().includes('reasoning');
-          };
-
-          availableModels = filteredModels.sort((a, b) => {
-            const aIsReasoning = isReasoningModel(a);
-            const bIsReasoning = isReasoningModel(b);
-
-            if (aIsReasoning !== bIsReasoning) {
-              return aIsReasoning ? 1 : -1;
-            }
-            
-            const contextA = a.model_spec?.availableContextTokens || 0;
-            const contextB = b.model_spec?.availableContextTokens || 0;
-            return contextA - contextB;
-          });
-          
-          console.log('Fetched and sorted models:', availableModels);
-        } else {
-          throw new Error('Unexpected API response format for models.');
-        }
+        availableModels = [...sortedText, ...imageModels, ...videoModels];
+        console.log(`Loaded models — text: ${sortedText.length}, image: ${imageModels.length}, video: ${videoModels.length}`);
         renderModelList();
       } catch (error) {
         console.error('Failed to fetch models:', error);
+        availableModels = [];
         if (modelDrawerList) {
           modelDrawerList.innerHTML = `<div class="error"><span class="material-icons">error</span>Failed to load models: ${error.message}</div>`;
         }
-        availableModels = [];
+        // Key likely invalid — clear it and re-show auth
+        localStorage.removeItem('venice_user_api_key');
+        API_KEY = '';
+        const authError = document.getElementById('authError');
+        const authErrorText = document.getElementById('authErrorText');
+        if (authError) { authError.style.display = 'flex'; authErrorText.textContent = 'Invalid API key or connection error. Please try again.'; }
+        showAuthModal();
       } finally {
         refreshModelsButton.disabled = false;
         if (refreshModelsButton.querySelector('.material-icons.spin')) {
-            refreshModelsButton.querySelector('.material-icons').classList.remove('spin');
+          refreshModelsButton.querySelector('.material-icons').classList.remove('spin');
         }
       }
     }
@@ -3004,9 +2985,10 @@
       const prompt = promptTextarea.value;
       const webSearch = webSearchCheckbox.checked;
       
-      if (!prompt.trim() || availableModels.length === 0) {
-        if (availableModels.length === 0) {
-          alert("No models loaded. Please refresh models first.");
+      const textModelsAvailable = availableModels.filter(m => !m.modelType || m.modelType === 'text');
+      if (!prompt.trim() || textModelsAvailable.length === 0) {
+        if (textModelsAvailable.length === 0) {
+          alert("No text models loaded. Please refresh models first.");
         }
         return;
       }
@@ -3027,9 +3009,10 @@
         updateModelStatus(model.id, 'loading');
       });
       
-      // Start streaming for all models simultaneously
+      // Start streaming for text models only (image/video models are listed for reference)
       const disableReasoning = disableReasoningCheckbox.checked;
-      const promises = availableModels.map(model => queryModelStreaming(model, prompt, webSearch, disableReasoning));
+      const textModels = availableModels.filter(m => !m.modelType || m.modelType === 'text');
+      const promises = textModels.map(model => queryModelStreaming(model, prompt, webSearch, disableReasoning));
       
       try {
         await Promise.all(promises);
