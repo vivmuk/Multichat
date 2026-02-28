@@ -1832,8 +1832,8 @@
             <span class="material-icons">analytics</span>
             Analytics
           </button>
-          <button id="logoutButton" class="button" title="Sign out" style="background: #6b7280;">
-            <span class="material-icons">logout</span>
+          <button id="settingsButton" class="button" title="API Key Settings" style="background: #6b7280;">
+            <span class="material-icons">settings</span>
           </button>
         </div>
       </div>
@@ -1912,7 +1912,7 @@
       <div class="auth-header">
         <span class="material-icons" style="font-size: 48px; color: #e63946;">smart_toy</span>
         <h2>Venice AI Multi-Chat</h2>
-        <p>Choose how you want to connect</p>
+        <p id="authModalSubtitle">Enter your Venice AI API key to get started</p>
       </div>
       <div class="auth-form">
         <div class="auth-tab-content" id="apikeyTab">
@@ -2027,10 +2027,19 @@
       });
     }
 
-    function showAuthModal() {
+    function showAuthModal(prefillKey) {
       const authModal = document.getElementById('authModal');
+      const input = document.getElementById('apiKeyInput');
+      const subtitle = document.getElementById('authModalSubtitle');
+      if (prefillKey) {
+        input.value = prefillKey;
+        if (subtitle) subtitle.textContent = 'Update your Venice AI API key';
+      } else {
+        input.value = '';
+        if (subtitle) subtitle.textContent = 'Enter your Venice AI API key to get started';
+      }
       authModal.classList.add('show');
-      document.getElementById('apiKeyInput').focus();
+      input.focus();
     }
 
     // Logout function
@@ -2465,9 +2474,7 @@
             .map(m => ({ ...m, modelType: type }));
         };
 
-        const [textModels, imageModels, videoModels] = await Promise.all([
-          fetchType('text'), fetchType('image'), fetchType('video')
-        ]);
+        const textModels = await fetchType('text');
 
         const isReasoningModel = (m) => {
           const traits = m.model_spec?.traits || [];
@@ -2482,8 +2489,8 @@
             return (a.model_spec?.availableContextTokens || 0) - (b.model_spec?.availableContextTokens || 0);
           });
 
-        availableModels = [...sortedText, ...imageModels, ...videoModels];
-        console.log(`Loaded models — text: ${sortedText.length}, image: ${imageModels.length}, video: ${videoModels.length}`);
+        availableModels = [...sortedText];
+        console.log(`Loaded text models: ${sortedText.length}`);
         renderModelList();
       } catch (error) {
         console.error('Failed to fetch models:', error);
@@ -3367,11 +3374,9 @@
       window.location.href = 'dashboard.html';
     });
 
-    // Logout button
-    document.getElementById('logoutButton').addEventListener('click', () => {
-      if (confirm('Are you sure you want to sign out?')) {
-        veniceLogout();
-      }
+    // Settings button — opens the API key modal with the current key pre-filled
+    document.getElementById('settingsButton').addEventListener('click', () => {
+      showAuthModal(API_KEY);
     });
 
     // Analysis button and modal
