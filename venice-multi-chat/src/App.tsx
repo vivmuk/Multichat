@@ -6,6 +6,15 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import TextField from '@mui/material/TextField';
+import Alert from '@mui/material/Alert';
+import SettingsIcon from '@mui/icons-material/Settings';
+import KeyIcon from '@mui/icons-material/Key';
 import PromptInput from './components/PromptInput';
 import ModelSelectionPanel from './components/ModelSelectionPanel';
 import ResponseGrid from './components/ResponseGrid';
@@ -35,8 +44,30 @@ function App() {
   const [selectedModels, setSelectedModels] = useState<ModelConfig[]>([]);
   const [conversationHistory, setConversationHistory] = useState<Record<string, Message[]>>({});
 
+  // API key state — persisted to localStorage
+  const [apiKey, setApiKey] = useState<string>(() => localStorage.getItem('venice_api_key') || '');
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [draftApiKey, setDraftApiKey] = useState('');
+
+  const openSettings = () => {
+    setDraftApiKey(apiKey);
+    setSettingsOpen(true);
+  };
+
+  const saveSettings = () => {
+    const trimmed = draftApiKey.trim();
+    setApiKey(trimmed);
+    localStorage.setItem('venice_api_key', trimmed);
+    setSettingsOpen(false);
+    // Clear existing state so models reload with new key
+    setSelectedModels([]);
+    setResponses({});
+    setConversationHistory({});
+    setPrompt('');
+  };
+
   const handlePromptSubmit = async (inputPrompt: string) => {
-    if (!inputPrompt.trim() || selectedModels.length === 0) return;
+    if (!inputPrompt.trim() || selectedModels.length === 0 || !apiKey) return;
     setPrompt(inputPrompt);
 
     const newLoadingState: Record<string, boolean> = {};
@@ -56,7 +87,7 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.REACT_APP_VENICE_API_KEY || ''}`
+          'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
           model: model.id,
@@ -95,7 +126,6 @@ function App() {
         }
       }
 
-      // Append full exchange to this model's conversation history
       setConversationHistory(prev => ({
         ...prev,
         [model.id]: [
@@ -132,35 +162,60 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container maxWidth={false} sx={{ height: '100vh', py: 2 }}>
+        {/* Header */}
         <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography variant="h5" component="h1">
             Venice AI Multi-Chat
           </Typography>
-          {totalTurns > 0 && (
-            <Tooltip title="Clear all conversation history">
-              <Button
-                size="small"
-                variant="outlined"
-                color="error"
-                onClick={() => clearConversation()}
-                sx={{ fontSize: '0.75rem' }}
-              >
-                New Chat ({totalTurns} turn{totalTurns !== 1 ? 's' : ''})
-              </Button>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {totalTurns > 0 && (
+              <Tooltip title="Clear all conversation history">
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="error"
+                  onClick={() => clearConversation()}
+                  sx={{ fontSize: '0.75rem' }}
+                >
+                  New Chat ({totalTurns} turn{totalTurns !== 1 ? 's' : ''})
+                </Button>
+              </Tooltip>
+            )}
+            <Tooltip title="Settings — API Key">
+              <IconButton onClick={openSettings} size="small" color={apiKey ? 'primary' : 'error'}>
+                <SettingsIcon />
+              </IconButton>
             </Tooltip>
-          )}
+          </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', height: 'calc(100% - 80px)' }}>
+        {/* No API key banner */}
+        {!apiKey && (
+          <Alert
+            severity="warning"
+            icon={<KeyIcon />}
+            action={
+              <Button color="inherit" size="small" onClick={openSettings}>
+                Add API Key
+              </Button>
+            }
+            sx={{ mb: 2 }}
+          >
+            A Venice API key is required to load models and send queries.
+          </Alert>
+        )}
+
+        <Box sx={{ display: 'flex', height: apiKey ? 'calc(100% - 80px)' : 'calc(100% - 136px)' }}>
           <Box sx={{ width: 300, mr: 2 }}>
             <ModelSelectionPanel
               selectedModels={selectedModels}
               setSelectedModels={setSelectedModels}
+              apiKey={apiKey}
             />
           </Box>
 
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <PromptInput onSubmit={handlePromptSubmit} />
+            <PromptInput onSubmit={handlePromptSubmit} disabled={!apiKey || selectedModels.length === 0} />
 
             <Box sx={{ flex: 1, mt: 2, overflow: 'auto' }}>
               <ResponseGrid
@@ -174,6 +229,36 @@ function App() {
           </Box>
         </Box>
       </Container>
+
+      {/* Settings Dialog */}
+      <Dialog open={settingsOpen} onClose={() => setSettingsOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <KeyIcon fontSize="small" />
+          API Key Settings
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Enter your Venice AI API key. It is stored only in your browser's local storage and never sent anywhere except directly to the Venice API.
+          </Typography>
+          <TextField
+            fullWidth
+            label="Venice API Key"
+            type="password"
+            value={draftApiKey}
+            onChange={(e) => setDraftApiKey(e.target.value)}
+            placeholder="sk-..."
+            autoFocus
+            onKeyDown={(e) => { if (e.key === 'Enter') saveSettings(); }}
+            InputProps={{ sx: { fontFamily: 'monospace', fontSize: '0.85rem' } }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setSettingsOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={saveSettings} disabled={!draftApiKey.trim()}>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </ThemeProvider>
   );
 }
