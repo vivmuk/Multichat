@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venice AI - API Guide</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-light: #1e293b;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --accent-bg: rgba(99,102,241,0.08);
+      --green: #10b981;
+      --green-bg: rgba(16,185,129,0.1);
+      --orange: #f97316;
+      --orange-bg: rgba(249,115,22,0.1);
+      --red: #ef4444;
+      --red-bg: rgba(239,68,68,0.1);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245,158,11,0.1);
+      --cyan: #06b6d4;
+      --cyan-bg: rgba(6,182,212,0.1);
+      --violet: #8b5cf6;
+      --violet-bg: rgba(139,92,246,0.1);
+      --blue: #3b82f6;
+      --blue-bg: rgba(59,130,246,0.1);
+      --teal: #14b8a6;
+      --teal-bg: rgba(20,184,166,0.1);
+      --rose: #f43f5e;
+      --rose-bg: rgba(244,63,94,0.1);
+      --background: #f8fafc;
+      --surface: #ffffff;
+      --surface-hover: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07),0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08),0 4px 6px -4px rgba(0,0,0,0.03);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--background);color:var(--text-primary);min-height:100vh;line-height:1.6;}
+
+    /* TOP NAV */
+    .top-nav{background:var(--primary);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06);}
+    .nav-brand{display:flex;align-items:center;gap:12px;color:white;}
+    .nav-brand .logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent) 0%,var(--violet) 100%);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;}
+    .nav-brand .logo .material-icons{font-size:20px;color:white;}
+    .nav-brand h1{font-family:'Space Grotesk';font-size:18px;font-weight:700;letter-spacing:-0.3px;}
+    .nav-brand span{font-size:12px;color:rgba(255,255,255,0.5);font-weight:400;}
+    .nav-actions{display:flex;align-items:center;gap:8px;}
+    .nav-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius-md);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;text-decoration:none;border:none;}
+    .nav-btn .material-icons{font-size:18px;}
+    .nav-btn.primary{background:var(--accent);color:white;}
+    .nav-btn.primary:hover{background:var(--accent-light);}
+    .nav-btn.secondary{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.1);}
+    .nav-btn.secondary:hover{background:rgba(255,255,255,0.12);}
+
+    /* LAYOUT */
+    .page-wrap{display:flex;max-width:1400px;margin:0 auto;padding:32px 32px 80px;}
+
+    /* SIDEBAR TOC */
+    .toc{width:240px;flex-shrink:0;margin-right:40px;}
+    .toc-sticky{position:sticky;top:80px;}
+    .toc-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);margin-bottom:12px;padding-left:12px;}
+    .toc-list{list-style:none;}
+    .toc-list li a{display:block;padding:6px 12px;font-size:13px;color:var(--text-secondary);text-decoration:none;border-radius:var(--radius-md);border-left:2px solid transparent;transition:all 0.15s;}
+    .toc-list li a:hover{color:var(--accent);background:var(--accent-bg);border-left-color:var(--accent);}
+    .toc-list li a.active{color:var(--accent);background:var(--accent-bg);border-left-color:var(--accent);font-weight:600;}
+    .toc-list .toc-sub a{padding-left:24px;font-size:12px;}
+    .toc-divider{height:1px;background:var(--border);margin:8px 12px;}
+
+    /* MAIN CONTENT */
+    .content{flex:1;min-width:0;}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);border-radius:var(--radius-xl);padding:40px 48px;margin-bottom:32px;color:white;position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(99,102,241,0.3) 0%,transparent 70%);pointer-events:none;}
+    .hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);border-radius:var(--radius-full);padding:4px 12px;font-size:12px;font-weight:600;color:var(--accent-light);margin-bottom:16px;}
+    .hero h2{font-family:'Space Grotesk';font-size:32px;font-weight:700;margin-bottom:12px;letter-spacing:-0.5px;}
+    .hero p{font-size:15px;color:rgba(255,255,255,0.7);max-width:600px;line-height:1.7;}
+    .hero-meta{display:flex;gap:24px;margin-top:24px;}
+    .hero-meta-item{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.6);}
+    .hero-meta-item .material-icons{font-size:16px;color:var(--accent-light);}
+
+    /* SECTION */
+    .section{margin-bottom:48px;}
+    .section-header{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border);}
+    .section-icon{width:36px;height:36px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .section-icon .material-icons{font-size:20px;}
+    .section-title{font-family:'Space Grotesk';font-size:22px;font-weight:700;color:var(--text-primary);}
+    .section-sub{font-size:14px;color:var(--text-muted);}
+
+    /* CODE BLOCK */
+    .code-block{position:relative;margin:16px 0;}
+    .code-header{display:flex;align-items:center;justify-content:space-between;background:var(--primary);padding:10px 16px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
+    .code-lang{font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:6px;}
+    .code-lang .material-icons{font-size:14px;}
+    .copy-btn{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius-sm);padding:4px 10px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.15s;font-family:inherit;}
+    .copy-btn:hover{background:rgba(255,255,255,0.15);color:white;}
+    .copy-btn.copied{background:rgba(16,185,129,0.2);border-color:rgba(16,185,129,0.4);color:#6ee7b7;}
+    .copy-btn .material-icons{font-size:13px;}
+    pre{background:#0d1117;padding:20px;border-radius:0 0 var(--radius-lg) var(--radius-lg);overflow-x:auto;margin:0;}
+    code{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:#e6edf3;}
+    .token-comment{color:#8b949e;}
+    .token-string{color:#a5d6ff;}
+    .token-keyword{color:#ff7b72;}
+    .token-number{color:#79c0ff;}
+    .token-key{color:#7ee787;}
+
+    /* INLINE CODE */
+    .inline-code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.15);border-radius:4px;padding:2px 6px;color:var(--accent);}
+
+    /* CARDS */
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:20px;}
+    .info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;transition:all 0.2s;}
+    .info-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+    .info-card-icon{width:40px;height:40px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+    .info-card-icon .material-icons{font-size:22px;}
+    .info-card h4{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-primary);}
+    .info-card p{font-size:13px;color:var(--text-secondary);line-height:1.6;}
+
+    /* PARAM TABLE */
+    .param-table{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0;}
+    .param-table th{background:var(--primary);color:rgba(255,255,255,0.8);padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;}
+    .param-table th:first-child{border-radius:var(--radius-md) 0 0 0;}
+    .param-table th:last-child{border-radius:0 var(--radius-md) 0 0;}
+    .param-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+    .param-table tr:last-child td{border-bottom:none;}
+    .param-table tr:hover td{background:var(--surface-hover);}
+    .param-table .p-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);font-weight:600;}
+    .param-table .p-type{font-size:11px;background:var(--accent-bg);color:var(--accent);border-radius:4px;padding:2px 6px;font-weight:600;white-space:nowrap;}
+    .param-table .p-req{font-size:11px;background:var(--red-bg);color:var(--red);border-radius:4px;padding:2px 6px;font-weight:600;}
+    .param-table .p-opt{font-size:11px;background:var(--green-bg);color:var(--green);border-radius:4px;padding:2px 6px;font-weight:600;}
+    .param-table .p-desc{color:var(--text-secondary);}
+
+    /* PRICING TABLE */
+    .pricing-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;margin:16px 0;}
+    .pricing-table-head{background:var(--primary);padding:14px 20px;display:flex;align-items:center;gap:10px;color:white;}
+    .pricing-table-head .material-icons{font-size:20px;color:var(--accent-light);}
+    .pricing-table-head span{font-family:'Space Grotesk';font-size:15px;font-weight:700;}
+    table.ptable{width:100%;border-collapse:collapse;font-size:13px;}
+    table.ptable th{background:#f1f5f9;padding:9px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-muted);border-bottom:1px solid var(--border);}
+    table.ptable td{padding:10px 16px;border-bottom:1px solid var(--border);vertical-align:middle;}
+    table.ptable tr:last-child td{border-bottom:none;}
+    table.ptable tr:hover td{background:var(--surface-hover);}
+    .model-id{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-primary);font-weight:500;}
+    .price-val{font-weight:600;font-family:'Space Grotesk';}
+    .price-low{color:var(--green);}
+    .price-mid{color:var(--amber);}
+    .price-high{color:var(--orange);}
+    .price-premium{color:var(--red);}
+    .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:700;}
+    .badge-reasoning{background:var(--violet-bg);color:var(--violet);}
+    .badge-vision{background:var(--blue-bg);color:var(--blue);}
+    .badge-fast{background:var(--green-bg);color:var(--green);}
+    .badge-e2ee{background:var(--teal-bg);color:var(--teal);}
+
+    /* ENDPOINT CARD */
+    .endpoint-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;margin-bottom:24px;}
+    .endpoint-head{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
+    .method-badge{font-family:'JetBrains Mono';font-size:12px;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm);}
+    .method-get{background:var(--green-bg);color:var(--green);}
+    .method-post{background:var(--blue-bg);color:var(--blue);}
+    .endpoint-url{font-family:'JetBrains Mono';font-size:13px;font-weight:600;color:var(--text-primary);}
+    .endpoint-desc{font-size:13px;color:var(--text-secondary);margin-left:auto;}
+    .endpoint-body{padding:20px;}
+
+    /* CALLOUT */
+    .callout{display:flex;gap:12px;padding:14px 18px;border-radius:var(--radius-lg);margin:16px 0;font-size:13px;}
+    .callout-info{background:var(--accent-bg);border:1px solid rgba(99,102,241,0.2);}
+    .callout-warn{background:var(--amber-bg);border:1px solid rgba(245,158,11,0.2);}
+    .callout-tip{background:var(--green-bg);border:1px solid rgba(16,185,129,0.2);}
+    .callout .material-icons{font-size:18px;flex-shrink:0;margin-top:1px;}
+    .callout-info .material-icons{color:var(--accent);}
+    .callout-warn .material-icons{color:var(--amber);}
+    .callout-tip .material-icons{color:var(--green);}
+    .callout-text{line-height:1.6;color:var(--text-secondary);}
+    .callout-text strong{color:var(--text-primary);}
+
+    /* ALL MODELS SECTION */
+    .model-type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:16px 0;}
+    .model-type-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.15s;text-decoration:none;color:inherit;}
+    .model-type-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);border-color:var(--accent);}
+    .model-type-card .mt-icon{width:36px;height:36px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .model-type-card .mt-icon .material-icons{font-size:20px;}
+    .model-type-card .mt-info h5{font-size:13px;font-weight:700;margin-bottom:2px;}
+    .model-type-card .mt-info p{font-size:11px;color:var(--text-muted);}
+
+    /* CURL ALL */
+    .curl-grid{display:grid;gap:12px;}
+
+    @media(max-width:900px){
+      .toc{display:none;}
+      .page-wrap{padding:20px 16px 60px;}
+      .hero{padding:28px 24px;}
+      .hero h2{font-size:24px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <div class="nav-brand">
+    <div class="logo"><span class="material-icons">menu_book</span></div>
+    <div><h1>Venice AI</h1><span>API Guide</span></div>
+  </div>
+  <div class="nav-actions">
+    <a href="dashboard.html" class="nav-btn secondary">
+      <span class="material-icons">bar_chart</span><span>Analytics</span>
+    </a>
+    <a href="index.html" class="nav-btn primary">
+      <span class="material-icons">chat</span><span>Back to Chat</span>
+    </a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- TABLE OF CONTENTS -->
+  <aside class="toc">
+    <div class="toc-sticky">
+      <div class="toc-title">On this page</div>
+      <ul class="toc-list">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#authentication">Authentication</a></li>
+        <li><a href="#list-models">List Models</a></li>
+        <li class="toc-sub"><a href="#list-all">All Models</a></li>
+        <li class="toc-sub"><a href="#list-by-type">By Type</a></li>
+        <div class="toc-divider"></div>
+        <li><a href="#chat">Chat Completions</a></li>
+        <li class="toc-sub"><a href="#chat-basic">Basic Request</a></li>
+        <li class="toc-sub"><a href="#chat-streaming">Streaming</a></li>
+        <li class="toc-sub"><a href="#chat-vision">Vision</a></li>
+        <li class="toc-sub"><a href="#chat-tools">Tool Calling</a></li>
+        <li class="toc-sub"><a href="#chat-venice-params">Venice Params</a></li>
+        <div class="toc-divider"></div>
+        <li><a href="#image">Image Generation</a></li>
+        <li class="toc-sub"><a href="#image-basic">Basic Generate</a></li>
+        <li class="toc-sub"><a href="#image-inpaint">Inpainting/Edit</a></li>
+        <li class="toc-sub"><a href="#image-upscale">Upscale</a></li>
+        <div class="toc-divider"></div>
+        <li><a href="#audio">Audio</a></li>
+        <li class="toc-sub"><a href="#tts">Text-to-Speech</a></li>
+        <li class="toc-sub"><a href="#asr">Speech-to-Text</a></li>
+        <li><a href="#music">Music Generation</a></li>
+        <li><a href="#video">Video Generation</a></li>
+        <li><a href="#embeddings">Embeddings</a></li>
+        <div class="toc-divider"></div>
+        <li><a href="#pricing">Pricing Reference</a></li>
+        <li><a href="#sdk">SDK Quickstart</a></li>
+        <li><a href="#errors">Error Reference</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <!-- HERO -->
+    <div class="hero" id="overview">
+      <div class="hero-tag"><span class="material-icons" style="font-size:13px;">rocket_launch</span> Venice AI API — Complete Reference</div>
+      <h2>Everything you need to build with Venice</h2>
+      <p>Venice provides a privacy-first AI API with no data retention. It's OpenAI-compatible — just swap the base URL. Supports text, image, audio, music, video, embedding, and more.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item"><span class="material-icons">link</span> Base URL: <strong style="color:white;">https://api.venice.ai/api/v1</strong></div>
+        <div class="hero-meta-item"><span class="material-icons">shield</span> No data retention</div>
+        <div class="hero-meta-item"><span class="material-icons">check_circle</span> OpenAI-compatible</div>
+      </div>
+    </div>
+
+    <!-- AUTHENTICATION -->
+    <div class="section" id="authentication">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--amber-bg);"><span class="material-icons" style="color:var(--amber);">vpn_key</span></div>
+        <div><div class="section-title">Authentication</div><div class="section-sub">Get your API key and start making requests</div></div>
+      </div>
+
+      <div class="card-grid">
+        <div class="info-card">
+          <div class="info-card-icon" style="background:var(--accent-bg);"><span class="material-icons" style="color:var(--accent);">key</span></div>
+          <h4>Bearer Token</h4>
+          <p>Add <span class="inline-code">Authorization: Bearer YOUR_KEY</span> to every request header.</p>
+        </div>
+        <div class="info-card">
+          <div class="info-card-icon" style="background:var(--green-bg);"><span class="material-icons" style="color:var(--green);">account_balance_wallet</span></div>
+          <h4>x402 Wallet</h4>
+          <p>Pay-per-request via Ethereum wallet with USDC on Base chain. No subscription needed.</p>
+        </div>
+        <div class="info-card">
+          <div class="info-card-icon" style="background:var(--violet-bg);"><span class="material-icons" style="color:var(--violet);">workspace_premium</span></div>
+          <h4>Pro Account</h4>
+          <p>$18/month or $149/year. Includes $10 API credit to get started instantly.</p>
+        </div>
+      </div>
+
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Generate your API key at <strong>venice.ai/settings/api</strong> → scroll to API Keys → Generate New API Key.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang"><span class="material-icons">terminal</span>cURL — Authentication Header</span>
+          <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+        </div>
+        <pre><code>curl https://api.venice.ai/api/v1/models \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="material-icons">info</span>
+        <div class="callout-text"><strong>OpenAI SDK users:</strong> You only need to change the <span class="inline-code">base_url</span> to <span class="inline-code">https://api.venice.ai/api/v1</span> and provide your Venice API key. All other code stays the same.</div>
+      </div>
+    </div>
+
+    <!-- LIST MODELS -->
+    <div class="section" id="list-models">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--cyan-bg);"><span class="material-icons" style="color:var(--cyan);">list</span></div>
+        <div><div class="section-title">List Models</div><div class="section-sub">Discover all available models by type</div></div>
+      </div>
+
+      <div class="endpoint-card" id="list-all">
+        <div class="endpoint-head">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-url">/models</span>
+          <span class="endpoint-desc">List all models</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang"><span class="material-icons">terminal</span>cURL</span>
+              <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+            </div>
+            <pre><code>curl --request GET \
+  --url https://api.venice.ai/api/v1/models \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="list-by-type">
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;">Filter by type using the <span class="inline-code">?type=</span> query parameter. Available types below — click to copy any command:</p>
+
+        <div class="curl-grid">
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang"><span class="material-icons">chat</span>Text / Chat Models</span>
+              <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+            </div>
+            <pre><code>curl --request GET \
+  --url 'https://api.venice.ai/api/v1/models?type=text' \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang"><span class="material-icons">image</span>Image Generation Models</span>
+              <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+            </div>
+            <pre><code>curl --request GET \
+  --url 'https://api.venice.ai/api/v1/models?type=image' \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang"><span class="material-icons">record_voice_over</span>Text-to-Speech (TTS) Models</span>
+              <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+            </div>
+            <pre><code>curl --request GET \
+  --url 'https://api.venice.ai/api/v1/models?type=tts' \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang"><span class="material-icons">mic</span>Speech-to-Text / ASR Models</span>
+              <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+            </div>
+            <pre><code>curl --request GET \
+  --url 'https://api.venice.ai/api/v1/models?type=asr' \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang"><span class="material-icons">data_object</span>Embedding Models</span>
+              <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+            </div>
+            <pre><code>curl --request GET \
+  --url 'https://api.venice.ai/api/v1/models?type=embedding' \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang"><span class="material-icons">music_note</span>Music Generation Models</span>
+              <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+            </div>
+            <pre><code>curl --request GET \
+  --url 'https://api.venice.ai/api/v1/models?type=music' \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang"><span class="material-icons">videocam</span>Video Generation Models</span>
+              <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+            </div>
+            <pre><code>curl --request GET \
+  --url 'https://api.venice.ai/api/v1/models?type=video' \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang"><span class="material-icons">zoom_out_map</span>Upscale Models</span>
+              <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+            </div>
+            <pre><code>curl --request GET \
+  --url 'https://api.venice.ai/api/v1/models?type=upscale' \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang"><span class="material-icons">auto_fix_high</span>Inpaint / Image Edit Models</span>
+              <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+            </div>
+            <pre><code>curl --request GET \
+  --url 'https://api.venice.ai/api/v1/models?type=inpaint' \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT COMPLETIONS -->
+    <div class="section" id="chat">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--accent-bg);"><span class="material-icons" style="color:var(--accent);">chat</span></div>
+        <div><div class="section-title">Chat Completions</div><div class="section-sub">POST /chat/completions — OpenAI-compatible</div></div>
+      </div>
+
+      <table class="param-table">
+        <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="p-name">model</td><td><span class="p-type">string</span></td><td><span class="p-req">Required</span></td><td class="p-desc">Model ID, e.g. <span class="inline-code">zai-org-glm-4.7</span>, <span class="inline-code">llama-3.3-70b</span></td></tr>
+          <tr><td class="p-name">messages</td><td><span class="p-type">array</span></td><td><span class="p-req">Required</span></td><td class="p-desc">Array of message objects with <span class="inline-code">role</span> (system/user/assistant/tool) and <span class="inline-code">content</span></td></tr>
+          <tr><td class="p-name">temperature</td><td><span class="p-type">number</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">0–2. Controls randomness. Default: 1</td></tr>
+          <tr><td class="p-name">max_completion_tokens</td><td><span class="p-type">integer</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Maximum output tokens to generate</td></tr>
+          <tr><td class="p-name">stream</td><td><span class="p-type">boolean</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Stream tokens as SSE. Default: false</td></tr>
+          <tr><td class="p-name">top_p</td><td><span class="p-type">number</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Nucleus sampling (0–1)</td></tr>
+          <tr><td class="p-name">top_k</td><td><span class="p-type">integer</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Limit sampling to top-k tokens</td></tr>
+          <tr><td class="p-name">frequency_penalty</td><td><span class="p-type">number</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">-2 to 2. Reduces token repetition</td></tr>
+          <tr><td class="p-name">presence_penalty</td><td><span class="p-type">number</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">-2 to 2. Encourages new topics</td></tr>
+          <tr><td class="p-name">tools</td><td><span class="p-type">array</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Function definitions for tool calling</td></tr>
+          <tr><td class="p-name">reasoning_effort</td><td><span class="p-type">string</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc"><span class="inline-code">none</span> | <span class="inline-code">minimal</span> | <span class="inline-code">low</span> | <span class="inline-code">medium</span> | <span class="inline-code">high</span> | <span class="inline-code">xhigh</span> | <span class="inline-code">max</span></td></tr>
+          <tr><td class="p-name">venice_parameters</td><td><span class="p-type">object</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Venice-specific extensions (see below)</td></tr>
+        </tbody>
+      </table>
+
+      <div id="chat-basic">
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">terminal</span>cURL — Basic Chat</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/chat/completions \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "zai-org-glm-4.7",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant."},
+      {"role": "user", "content": "Explain quantum computing in simple terms."}
+    ],
+    "temperature": 0.7,
+    "max_completion_tokens": 500
+  }'</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">code</span>Python — Basic Chat</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>from openai import OpenAI
+
+client = OpenAI(
+    api_key="YOUR_API_KEY",
+    base_url="https://api.venice.ai/api/v1"
+)
+
+response = client.chat.completions.create(
+    model="zai-org-glm-4.7",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Explain quantum computing in simple terms."}
+    ],
+    temperature=0.7,
+    max_tokens=500
+)
+
+print(response.choices[0].message.content)</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">javascript</span>JavaScript / Node.js — Basic Chat</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: 'YOUR_API_KEY',
+  baseURL: 'https://api.venice.ai/api/v1'
+});
+
+const response = await client.chat.completions.create({
+  model: 'zai-org-glm-4.7',
+  messages: [
+    { role: 'system', content: 'You are a helpful assistant.' },
+    { role: 'user', content: 'Explain quantum computing in simple terms.' }
+  ],
+  temperature: 0.7,
+  max_tokens: 500
+});
+
+console.log(response.choices[0].message.content);</code></pre>
+        </div>
+      </div>
+
+      <div id="chat-streaming">
+        <h4 style="font-size:16px;font-weight:700;margin:24px 0 12px;">Streaming</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">terminal</span>cURL — Streaming</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/chat/completions \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "zai-org-glm-4.7",
+    "messages": [{"role": "user", "content": "Write a short poem about the ocean."}],
+    "stream": true
+  }'</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">code</span>Python — Streaming</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>from openai import OpenAI
+
+client = OpenAI(
+    api_key="YOUR_API_KEY",
+    base_url="https://api.venice.ai/api/v1"
+)
+
+stream = client.chat.completions.create(
+    model="zai-org-glm-4.7",
+    messages=[{"role": "user", "content": "Write a short poem about the ocean."}],
+    stream=True
+)
+
+for chunk in stream:
+    if chunk.choices[0].delta.content is not None:
+        print(chunk.choices[0].delta.content, end="", flush=True)</code></pre>
+        </div>
+      </div>
+
+      <div id="chat-vision">
+        <h4 style="font-size:16px;font-weight:700;margin:24px 0 12px;">Vision (Image Input)</h4>
+        <div class="callout callout-info">
+          <span class="material-icons">info</span>
+          <div class="callout-text"><strong>Vision-capable models:</strong> <span class="inline-code">zai-org-glm-4.7</span>, <span class="inline-code">mistral-small-3-2-24b-instruct</span>, <span class="inline-code">qwen3-vl-235b-a22b</span>, <span class="inline-code">claude-sonnet-4-6</span>, <span class="inline-code">openai-gpt-54</span></div>
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">terminal</span>cURL — Image Input</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/chat/completions \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "zai-org-glm-4.7",
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {"type": "text", "text": "What is in this image?"},
+          {"type": "image_url", "image_url": {"url": "https://example.com/image.jpg"}}
+        ]
+      }
+    ]
+  }'</code></pre>
+        </div>
+      </div>
+
+      <div id="chat-tools">
+        <h4 style="font-size:16px;font-weight:700;margin:24px 0 12px;">Tool / Function Calling</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">terminal</span>cURL — Tool Calling</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/chat/completions \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "zai-org-glm-4.7",
+    "messages": [
+      {"role": "user", "content": "What is the weather in London?"}
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_weather",
+          "description": "Get current weather for a location",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "location": {"type": "string", "description": "City name"},
+              "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]}
+            },
+            "required": ["location"]
+          }
+        }
+      }
+    ],
+    "tool_choice": "auto"
+  }'</code></pre>
+        </div>
+      </div>
+
+      <div id="chat-venice-params">
+        <h4 style="font-size:16px;font-weight:700;margin:24px 0 12px;">Venice-Specific Parameters</h4>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Pass a <span class="inline-code">venice_parameters</span> object alongside standard parameters for Venice-specific features:</p>
+
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="p-name">enable_web_search</td><td><span class="p-type">string</span></td><td class="p-desc"><span class="inline-code">auto</span> | <span class="inline-code">on</span> | <span class="inline-code">off</span> — Adds live web search results (+$0.01/request)</td></tr>
+            <tr><td class="p-name">enable_web_citations</td><td><span class="p-type">boolean</span></td><td class="p-desc">Include source citations in response</td></tr>
+            <tr><td class="p-name">enable_web_scraping</td><td><span class="p-type">boolean</span></td><td class="p-desc">Scrape full page content for URLs in prompt</td></tr>
+            <tr><td class="p-name">enable_e2ee</td><td><span class="p-type">boolean</span></td><td class="p-desc">End-to-end encryption for the request</td></tr>
+            <tr><td class="p-name">character_slug</td><td><span class="p-type">string</span></td><td class="p-desc">Use a Venice AI character persona (e.g. <span class="inline-code">venice</span>)</td></tr>
+            <tr><td class="p-name">disable_thinking</td><td><span class="p-type">boolean</span></td><td class="p-desc">Strip internal reasoning/thinking tokens from response</td></tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">terminal</span>cURL — Venice Parameters (Web Search + Reasoning)</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/chat/completions \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "qwen3-235b-a22b-thinking-2507",
+    "messages": [
+      {"role": "user", "content": "What are the latest AI news today?"}
+    ],
+    "reasoning_effort": "high",
+    "venice_parameters": {
+      "enable_web_search": "auto",
+      "enable_web_citations": true,
+      "disable_thinking": false
+    }
+  }'</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMAGE GENERATION -->
+    <div class="section" id="image">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--violet-bg);"><span class="material-icons" style="color:var(--violet);">image</span></div>
+        <div><div class="section-title">Image Generation</div><div class="section-sub">POST /image/generate — Create images from text prompts</div></div>
+      </div>
+
+      <table class="param-table">
+        <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="p-name">model</td><td><span class="p-type">string</span></td><td><span class="p-req">Required</span></td><td class="p-desc">Image model ID, e.g. <span class="inline-code">flux-2-pro</span>, <span class="inline-code">nano-banana-pro</span></td></tr>
+          <tr><td class="p-name">prompt</td><td><span class="p-type">string</span></td><td><span class="p-req">Required</span></td><td class="p-desc">Image description. Max 7,500 characters</td></tr>
+          <tr><td class="p-name">negative_prompt</td><td><span class="p-type">string</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">What should NOT appear in the image</td></tr>
+          <tr><td class="p-name">width</td><td><span class="p-type">integer</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">1–1280. Default: 1024</td></tr>
+          <tr><td class="p-name">height</td><td><span class="p-type">integer</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">1–1280. Default: 1024</td></tr>
+          <tr><td class="p-name">steps</td><td><span class="p-type">integer</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Inference steps. Default: 8 (model-dependent)</td></tr>
+          <tr><td class="p-name">cfg_scale</td><td><span class="p-type">number</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">0–20. How closely to follow the prompt</td></tr>
+          <tr><td class="p-name">seed</td><td><span class="p-type">integer</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Fixed seed for reproducibility. 0 = random</td></tr>
+          <tr><td class="p-name">variants</td><td><span class="p-type">integer</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">1–4 images to generate. Default: 1</td></tr>
+          <tr><td class="p-name">format</td><td><span class="p-type">string</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc"><span class="inline-code">webp</span> | <span class="inline-code">jpeg</span> | <span class="inline-code">png</span>. Default: webp</td></tr>
+          <tr><td class="p-name">return_binary</td><td><span class="p-type">boolean</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Return raw image bytes instead of base64 JSON</td></tr>
+          <tr><td class="p-name">safe_mode</td><td><span class="p-type">boolean</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Blur adult content. Default: true</td></tr>
+          <tr><td class="p-name">hide_watermark</td><td><span class="p-type">boolean</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Attempt to hide Venice watermark</td></tr>
+          <tr><td class="p-name">embed_exif_metadata</td><td><span class="p-type">boolean</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Embed generation params in image EXIF data</td></tr>
+          <tr><td class="p-name">style_preset</td><td><span class="p-type">string</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">Apply a style preset to the generation</td></tr>
+          <tr><td class="p-name">aspect_ratio</td><td><span class="p-type">string</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">e.g. <span class="inline-code">1:1</span>, <span class="inline-code">16:9</span>, <span class="inline-code">9:16</span></td></tr>
+          <tr><td class="p-name">resolution</td><td><span class="p-type">string</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc"><span class="inline-code">1K</span> | <span class="inline-code">2K</span> | <span class="inline-code">4K</span> (for Nano Banana)</td></tr>
+          <tr><td class="p-name">lora_strength</td><td><span class="p-type">integer</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">0–100. LoRA model influence strength</td></tr>
+        </tbody>
+      </table>
+
+      <div id="image-basic">
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">terminal</span>cURL — Generate Image</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/image/generate \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "flux-2-pro",
+    "prompt": "A majestic mountain landscape at golden hour, photorealistic, 8K",
+    "negative_prompt": "blurry, low quality, distorted",
+    "width": 1024,
+    "height": 1024,
+    "steps": 20,
+    "cfg_scale": 7.5,
+    "seed": 0,
+    "format": "webp",
+    "safe_mode": true,
+    "hide_watermark": false
+  }'</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">terminal</span>cURL — Return Binary Image (saves to file)</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/image/generate \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --output image.webp \
+  --data '{
+    "model": "flux-2-pro",
+    "prompt": "A serene Japanese garden with cherry blossoms",
+    "return_binary": true,
+    "width": 1024,
+    "height": 1024
+  }'</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">code</span>Python — Generate &amp; Save Image</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>import requests, base64
+
+response = requests.post(
+    "https://api.venice.ai/api/v1/image/generate",
+    headers={"Authorization": "Bearer YOUR_API_KEY"},
+    json={
+        "model": "flux-2-pro",
+        "prompt": "A futuristic city at night, neon lights, cyberpunk",
+        "width": 1024,
+        "height": 1024,
+        "steps": 20,
+        "seed": 42
+    }
+)
+
+data = response.json()
+image_data = base64.b64decode(data["images"][0])
+
+with open("output.webp", "wb") as f:
+    f.write(image_data)
+
+print(f"Image saved. Generation time: {data['timing']['total']}ms")</code></pre>
+        </div>
+      </div>
+
+      <div id="image-inpaint">
+        <h4 style="font-size:16px;font-weight:700;margin:24px 0 12px;">Image Editing / Inpainting</h4>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Use inpaint models to edit specific areas of an existing image using a mask. Endpoint: <span class="inline-code">POST /image/generate</span></p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">terminal</span>cURL — Image Inpainting/Edit</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/image/generate \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "flux-2-max-edit",
+    "prompt": "Replace the sky with a dramatic sunset",
+    "image": "BASE64_ENCODED_SOURCE_IMAGE",
+    "mask": "BASE64_ENCODED_MASK_IMAGE"
+  }'</code></pre>
+        </div>
+      </div>
+
+      <div id="image-upscale">
+        <h4 style="font-size:16px;font-weight:700;margin:24px 0 12px;">Image Upscaling</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">terminal</span>cURL — Upscale Image (2x or 4x)</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/image/upscale \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "upscaler",
+    "image": "BASE64_ENCODED_IMAGE",
+    "scale": 2
+  }'</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIO -->
+    <div class="section" id="audio">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--teal-bg);"><span class="material-icons" style="color:var(--teal);">record_voice_over</span></div>
+        <div><div class="section-title">Audio</div><div class="section-sub">Text-to-Speech and Speech-to-Text</div></div>
+      </div>
+
+      <div id="tts">
+        <h4 style="font-size:16px;font-weight:700;margin:0 0 12px;">Text-to-Speech (TTS)</h4>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Endpoint: <span class="inline-code">POST /audio/speech</span> — OpenAI-compatible</p>
+
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="p-name">model</td><td><span class="p-type">string</span></td><td><span class="p-req">Required</span></td><td class="p-desc"><span class="inline-code">tts-kokoro</span> | <span class="inline-code">tts-qwen3-0-6b</span> | <span class="inline-code">tts-qwen3-1-7b</span></td></tr>
+            <tr><td class="p-name">input</td><td><span class="p-type">string</span></td><td><span class="p-req">Required</span></td><td class="p-desc">Text to convert to speech</td></tr>
+            <tr><td class="p-name">voice</td><td><span class="p-type">string</span></td><td><span class="p-req">Required</span></td><td class="p-desc">Voice ID. Kokoro supports 54 voices across 10 languages</td></tr>
+            <tr><td class="p-name">response_format</td><td><span class="p-type">string</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc"><span class="inline-code">mp3</span> | <span class="inline-code">opus</span> | <span class="inline-code">aac</span> | <span class="inline-code">flac</span>. Default: mp3</td></tr>
+            <tr><td class="p-name">speed</td><td><span class="p-type">number</span></td><td><span class="p-opt">Optional</span></td><td class="p-desc">0.25–4.0. Speech speed. Default: 1.0</td></tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">terminal</span>cURL — Text-to-Speech</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/audio/speech \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --output speech.mp3 \
+  --data '{
+    "model": "tts-kokoro",
+    "input": "Hello! Welcome to Venice AI. This is a text-to-speech example.",
+    "voice": "af_heart",
+    "response_format": "mp3",
+    "speed": 1.0
+  }'</code></pre>
+        </div>
+      </div>
+
+      <div id="asr" style="margin-top:24px;">
+        <h4 style="font-size:16px;font-weight:700;margin:0 0 12px;">Speech-to-Text (ASR / Transcription)</h4>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Endpoint: <span class="inline-code">POST /audio/transcriptions</span> — OpenAI Whisper-compatible</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">terminal</span>cURL — Speech-to-Text</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/audio/transcriptions \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --form model=openai/whisper-large-v3 \
+  --form file=@audio.mp3</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="material-icons">code</span>Python — Speech-to-Text</span>
+            <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+          </div>
+          <pre><code>from openai import OpenAI
+
+client = OpenAI(
+    api_key="YOUR_API_KEY",
+    base_url="https://api.venice.ai/api/v1"
+)
+
+with open("audio.mp3", "rb") as audio_file:
+    transcription = client.audio.transcriptions.create(
+        model="openai/whisper-large-v3",
+        file=audio_file
+    )
+
+print(transcription.text)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- MUSIC -->
+    <div class="section" id="music">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--rose-bg);"><span class="material-icons" style="color:var(--rose);">music_note</span></div>
+        <div><div class="section-title">Music Generation</div><div class="section-sub">POST /audio/music — Generate original music from text</div></div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang"><span class="material-icons">terminal</span>cURL — Generate Music</span>
+          <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+        </div>
+        <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/audio/music \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "ace-step-15",
+    "prompt": "Upbeat jazz with saxophone and piano, smooth and energetic",
+    "duration": 60
+  }'</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="material-icons">info</span>
+        <div class="callout-text"><strong>Available music models:</strong> <span class="inline-code">ace-step-15</span> ($0.03–$0.08/track), <span class="inline-code">elevenlabs-music</span> ($0.87–$8.63/track), <span class="inline-code">minimax-music-v2</span> ($0.04/gen), <span class="inline-code">stable-audio-25</span> ($0.24/gen)</div>
+      </div>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="section" id="video">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--orange-bg);"><span class="material-icons" style="color:var(--orange);">videocam</span></div>
+        <div><div class="section-title">Video Generation</div><div class="section-sub">Async queue-based video generation</div></div>
+      </div>
+
+      <div class="callout callout-warn">
+        <span class="material-icons">warning</span>
+        <div class="callout-text"><strong>Async processing:</strong> Video generation is queue-based. Submit a job and poll for results using the returned job ID.</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang"><span class="material-icons">terminal</span>cURL — Text-to-Video</span>
+          <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+        </div>
+        <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/video/generate \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "wan-2-7-text-to-video",
+    "prompt": "A dog running through a field of flowers, cinematic, 4K",
+    "width": 1280,
+    "height": 720,
+    "duration": 5
+  }'</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang"><span class="material-icons">terminal</span>cURL — Image-to-Video</span>
+          <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+        </div>
+        <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/video/generate \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "wan-2-7-image-to-video",
+    "prompt": "Gentle waves moving on the ocean",
+    "image": "BASE64_ENCODED_IMAGE",
+    "duration": 4
+  }'</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang"><span class="material-icons">terminal</span>cURL — Poll Video Job Status</span>
+          <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+        </div>
+        <pre><code>curl --request GET \
+  --url https://api.venice.ai/api/v1/video/generate/JOB_ID \
+  --header 'Authorization: Bearer YOUR_API_KEY'</code></pre>
+      </div>
+    </div>
+
+    <!-- EMBEDDINGS -->
+    <div class="section" id="embeddings">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--green-bg);"><span class="material-icons" style="color:var(--green);">data_object</span></div>
+        <div><div class="section-title">Embeddings</div><div class="section-sub">POST /embeddings — Semantic text embeddings</div></div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang"><span class="material-icons">terminal</span>cURL — Get Embeddings</span>
+          <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+        </div>
+        <pre><code>curl --request POST \
+  --url https://api.venice.ai/api/v1/embeddings \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "text-embedding-bge-m3",
+    "input": "Venice AI provides privacy-first AI inference."
+  }'</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang"><span class="material-icons">code</span>Python — Embeddings for Semantic Search</span>
+          <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+        </div>
+        <pre><code>from openai import OpenAI
+
+client = OpenAI(
+    api_key="YOUR_API_KEY",
+    base_url="https://api.venice.ai/api/v1"
+)
+
+response = client.embeddings.create(
+    model="text-embedding-bge-m3",
+    input=["First document to embed", "Second document to embed"]
+)
+
+for item in response.data:
+    print(f"Index {item.index}: vector length = {len(item.embedding)}")</code></pre>
+      </div>
+    </div>
+
+    <!-- PRICING REFERENCE -->
+    <div class="section" id="pricing">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--amber-bg);"><span class="material-icons" style="color:var(--amber);">payments</span></div>
+        <div><div class="section-title">Pricing Reference</div><div class="section-sub">Live prices from Venice API as of April 2026</div></div>
+      </div>
+
+      <!-- Text Models -->
+      <div class="pricing-table-wrap" style="margin-bottom:20px;">
+        <div class="pricing-table-head"><span class="material-icons">chat</span><span>Text / Chat Models — $/1M tokens (Input / Output)</span></div>
+        <table class="ptable">
+          <thead><tr><th>Model ID</th><th>Context</th><th>Input $/1M</th><th>Output $/1M</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="model-id">zai-org-glm-5-1</td><td>200K</td><td class="price-val price-mid">$1.75</td><td class="price-val price-high">$5.50</td><td></td></tr>
+            <tr><td class="model-id">zai-org-glm-5</td><td>198K</td><td class="price-val price-low">$1.00</td><td class="price-val price-mid">$3.20</td><td></td></tr>
+            <tr><td class="model-id">zai-org-glm-4.7</td><td>198K</td><td class="price-val price-low">$0.55</td><td class="price-val price-mid">$2.65</td><td><span class="badge badge-reasoning">Reasoning</span></td></tr>
+            <tr><td class="model-id">zai-org-glm-4.7-flash</td><td>128K</td><td class="price-val price-low">$0.125</td><td class="price-val price-low">$0.50</td><td><span class="badge badge-fast">Fast</span></td></tr>
+            <tr><td class="model-id">grok-4-20</td><td>2M</td><td class="price-val price-mid">$2.27</td><td class="price-val price-high">$6.80</td><td></td></tr>
+            <tr><td class="model-id">grok-41-fast</td><td>1M</td><td class="price-val price-low">$0.23</td><td class="price-val price-low">$0.57</td><td><span class="badge badge-fast">Fast</span></td></tr>
+            <tr><td class="model-id">claude-opus-4-6</td><td>1M</td><td class="price-val price-premium">$6.00</td><td class="price-val price-premium">$30.00</td><td></td></tr>
+            <tr><td class="model-id">claude-sonnet-4-6</td><td>1M</td><td class="price-val price-high">$3.60</td><td class="price-val price-premium">$18.00</td><td></td></tr>
+            <tr><td class="model-id">claude-opus-4-5</td><td>198K</td><td class="price-val price-premium">$6.00</td><td class="price-val price-premium">$30.00</td><td></td></tr>
+            <tr><td class="model-id">claude-sonnet-4-5</td><td>198K</td><td class="price-val price-high">$3.75</td><td class="price-val price-premium">$18.75</td><td></td></tr>
+            <tr><td class="model-id">openai-gpt-54-pro</td><td>1M</td><td class="price-val price-premium">$37.50</td><td class="price-val price-premium">$225.00</td><td></td></tr>
+            <tr><td class="model-id">openai-gpt-54</td><td>1M</td><td class="price-val price-high">$3.13</td><td class="price-val price-premium">$18.80</td><td></td></tr>
+            <tr><td class="model-id">openai-gpt-4o-2024-11-20</td><td>128K</td><td class="price-val price-high">$3.125</td><td class="price-val price-high">$12.50</td><td></td></tr>
+            <tr><td class="model-id">gemini-3-1-pro-preview</td><td>1M</td><td class="price-val price-mid">$2.50</td><td class="price-val price-premium">$15.00</td><td></td></tr>
+            <tr><td class="model-id">gemini-3-flash-preview</td><td>256K</td><td class="price-val price-low">$0.70</td><td class="price-val price-mid">$3.75</td><td></td></tr>
+            <tr><td class="model-id">qwen-3-6-plus</td><td>1M</td><td class="price-val price-low">$0.625</td><td class="price-val price-mid">$3.75</td><td></td></tr>
+            <tr><td class="model-id">qwen3-235b-a22b-thinking-2507</td><td>128K</td><td class="price-val price-low">$0.45</td><td class="price-val price-mid">$3.50</td><td><span class="badge badge-reasoning">Reasoning</span></td></tr>
+            <tr><td class="model-id">qwen3-coder-480b-a35b-instruct</td><td>256K</td><td class="price-val price-low">$0.75</td><td class="price-val price-mid">$3.00</td><td></td></tr>
+            <tr><td class="model-id">qwen3-5-397b-a17b</td><td>128K</td><td class="price-val price-low">$0.75</td><td class="price-val price-high">$4.50</td><td></td></tr>
+            <tr><td class="model-id">kimi-k2-thinking</td><td>256K</td><td class="price-val price-low">$0.75</td><td class="price-val price-mid">$3.20</td><td><span class="badge badge-reasoning">Reasoning</span></td></tr>
+            <tr><td class="model-id">deepseek-v3.2</td><td>160K</td><td class="price-val price-low">$0.33</td><td class="price-val price-low">$0.48</td><td></td></tr>
+            <tr><td class="model-id">llama-3.3-70b</td><td>128K</td><td class="price-val price-low">$0.70</td><td class="price-val price-mid">$2.80</td><td></td></tr>
+            <tr><td class="model-id">mistral-small-3-2-24b-instruct</td><td>256K</td><td class="price-val price-low">$0.09</td><td class="price-val price-low">$0.25</td><td><span class="badge badge-vision">Vision</span></td></tr>
+            <tr><td class="model-id">venice-uncensored</td><td>32K</td><td class="price-val price-low">$0.20</td><td class="price-val price-low">$0.90</td><td></td></tr>
+            <tr><td class="model-id">nvidia-nemotron-3-nano-30b-a3b</td><td>128K</td><td class="price-val price-low">$0.075</td><td class="price-val price-low">$0.30</td><td></td></tr>
+            <tr><td class="model-id">qwen3-5-9b</td><td>256K</td><td class="price-val price-low">$0.05</td><td class="price-val price-low">$0.15</td><td><span class="badge badge-fast">Cheapest</span></td></tr>
+            <tr><td class="model-id">e2ee-venice-uncensored-24b-p</td><td>32K</td><td class="price-val price-low">$0.25</td><td class="price-val price-low">$1.15</td><td><span class="badge badge-e2ee">E2EE</span></td></tr>
+            <tr><td class="model-id">e2ee-glm-4-7-p</td><td>128K</td><td class="price-val price-mid">$1.10</td><td class="price-val price-high">$4.15</td><td><span class="badge badge-e2ee">E2EE</span></td></tr>
+            <tr><td class="model-id">e2ee-qwen3-5-122b-a10b</td><td>128K</td><td class="price-val price-low">$0.50</td><td class="price-val price-high">$4.00</td><td><span class="badge badge-e2ee">E2EE</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Image Models -->
+      <div class="pricing-table-wrap" style="margin-bottom:20px;">
+        <div class="pricing-table-head"><span class="material-icons">image</span><span>Image Generation Models</span></div>
+        <table class="ptable">
+          <thead><tr><th>Model ID</th><th>Price/Image</th><th>Upscale 2x</th><th>Upscale 4x</th></tr></thead>
+          <tbody>
+            <tr><td class="model-id">nano-banana-pro</td><td class="price-val price-high">$0.18–0.35 (1K–4K)</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">nano-banana-2</td><td class="price-val price-mid">$0.10–0.19 (1K–4K)</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">gpt-image-1-5</td><td class="price-val price-high">$0.26</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">recraft-v4-pro</td><td class="price-val price-high">$0.29</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">flux-2-max</td><td class="price-val price-mid">$0.09</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">hunyuan-image-v3</td><td class="price-val price-mid">$0.09</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">flux-2-pro</td><td class="price-val price-low">$0.04</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">imagineart-1.5-pro</td><td class="price-val price-low">$0.06</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">grok-imagine-image</td><td class="price-val price-low">$0.033</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">seedream-v4 / v5-lite</td><td class="price-val price-low">$0.05</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">recraft-v4</td><td class="price-val price-low">$0.05</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">qwen-image-2</td><td class="price-val price-low">$0.05</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">wan-2-7-text-to-image</td><td class="price-val price-low">$0.038</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+            <tr><td class="model-id">venice-sd35 / hidream / lustify</td><td class="price-val price-low">$0.01</td><td class="price-val">$0.02</td><td class="price-val">$0.08</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Image Edit / Inpaint -->
+      <div class="pricing-table-wrap" style="margin-bottom:20px;">
+        <div class="pricing-table-head"><span class="material-icons">auto_fix_high</span><span>Image Editing / Inpainting</span></div>
+        <table class="ptable">
+          <thead><tr><th>Model ID</th><th>Price/Edit</th></tr></thead>
+          <tbody>
+            <tr><td class="model-id">gpt-image-1-5-edit</td><td class="price-val price-high">$0.36</td></tr>
+            <tr><td class="model-id">nano-banana-pro-edit</td><td class="price-val price-high">$0.18</td></tr>
+            <tr><td class="model-id">flux-2-max-edit</td><td class="price-val price-mid">$0.09</td></tr>
+            <tr><td class="model-id">nano-banana-2-edit</td><td class="price-val price-mid">$0.10</td></tr>
+            <tr><td class="model-id">qwen-image-2-pro-edit</td><td class="price-val price-mid">$0.10</td></tr>
+            <tr><td class="model-id">qwen-image-2-edit / seedream-edit</td><td class="price-val price-low">$0.05</td></tr>
+            <tr><td class="model-id">grok-imagine-edit</td><td class="price-val price-low">$0.03</td></tr>
+            <tr><td class="model-id">qwen-edit / firered-image-edit</td><td class="price-val price-low">$0.04</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Audio / TTS -->
+      <div class="pricing-table-wrap" style="margin-bottom:20px;">
+        <div class="pricing-table-head"><span class="material-icons">record_voice_over</span><span>Audio — TTS, ASR, Music, Sound</span></div>
+        <table class="ptable">
+          <thead><tr><th>Model ID</th><th>Type</th><th>Price</th></tr></thead>
+          <tbody>
+            <tr><td class="model-id">tts-kokoro</td><td>TTS</td><td class="price-val price-low">$3.50/1M chars</td></tr>
+            <tr><td class="model-id">tts-qwen3-0-6b</td><td>TTS</td><td class="price-val price-premium">$87.50/1M chars</td></tr>
+            <tr><td class="model-id">tts-qwen3-1-7b</td><td>TTS</td><td class="price-val price-premium">$112.50/1M chars</td></tr>
+            <tr><td class="model-id">elevenlabs-tts-v3</td><td>TTS</td><td class="price-val price-mid">$0.115/1K chars</td></tr>
+            <tr><td class="model-id">openai/whisper-large-v3</td><td>ASR</td><td class="price-val price-low">$0.0001/audio sec</td></tr>
+            <tr><td class="model-id">nvidia/parakeet-tdt-0.6b-v3</td><td>ASR</td><td class="price-val price-low">$0.0001/audio sec</td></tr>
+            <tr><td class="model-id">ace-step-15</td><td>Music</td><td class="price-val price-low">$0.03–$0.08/track (60–210s)</td></tr>
+            <tr><td class="model-id">minimax-music-v2</td><td>Music</td><td class="price-val price-low">$0.04/gen</td></tr>
+            <tr><td class="model-id">stable-audio-25</td><td>Music</td><td class="price-val price-low">$0.24/gen</td></tr>
+            <tr><td class="model-id">elevenlabs-music</td><td>Music</td><td class="price-val price-premium">$0.87–$8.63/track</td></tr>
+            <tr><td class="model-id">mmaudio-v2-text-to-audio</td><td>SFX</td><td class="price-val price-low">$0.00092/sec</td></tr>
+            <tr><td class="model-id">elevenlabs-sound-effects-v2</td><td>SFX</td><td class="price-val price-low">$0.0023/sec</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Embeddings -->
+      <div class="pricing-table-wrap" style="margin-bottom:20px;">
+        <div class="pricing-table-head"><span class="material-icons">data_object</span><span>Embeddings &amp; Additional Services</span></div>
+        <table class="ptable">
+          <thead><tr><th>Service</th><th>Price</th></tr></thead>
+          <tbody>
+            <tr><td class="model-id">text-embedding-bge-m3 (input)</td><td class="price-val price-low">$0.15/1M tokens</td></tr>
+            <tr><td class="model-id">text-embedding-bge-m3 (output)</td><td class="price-val price-low">$0.60/1M tokens</td></tr>
+            <tr><td>Web Search</td><td class="price-val price-low">$10.00/1,000 requests</td></tr>
+            <tr><td>Web Scraping</td><td class="price-val price-low">$10.00/1,000 URLs</td></tr>
+            <tr><td>X (xAI) Search</td><td class="price-val price-low">$10.00/1,000 results</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SDK QUICKSTART -->
+    <div class="section" id="sdk">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--blue-bg);"><span class="material-icons" style="color:var(--blue);">integration_instructions</span></div>
+        <div><div class="section-title">SDK Quickstart</div><div class="section-sub">Use existing OpenAI SDKs — just change the base URL</div></div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="material-icons">lightbulb</span>
+        <div class="callout-text"><strong>Drop-in replacement:</strong> Venice is OpenAI API-compatible. If you already use the OpenAI Python or JS SDK, just set <span class="inline-code">base_url="https://api.venice.ai/api/v1"</span> and your Venice API key. No other changes needed.</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang"><span class="material-icons">terminal</span>Install</span>
+          <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+        </div>
+        <pre><code># Python
+pip install openai
+
+# Node.js / TypeScript
+npm install openai</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang"><span class="material-icons">code</span>Python — Full Setup</span>
+          <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+        </div>
+        <pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ.get("VENICE_API_KEY"),
+    base_url="https://api.venice.ai/api/v1"
+)
+
+# Chat
+chat = client.chat.completions.create(
+    model="zai-org-glm-4.7",
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+print(chat.choices[0].message.content)
+
+# List models
+models = client.models.list()
+for m in models.data:
+    print(m.id)</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang"><span class="material-icons">javascript</span>TypeScript — Full Setup</span>
+          <button class="copy-btn" onclick="copyCode(this)"><span class="material-icons">content_copy</span>Copy</button>
+        </div>
+        <pre><code>import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: process.env.VENICE_API_KEY,
+  baseURL: 'https://api.venice.ai/api/v1'
+});
+
+async function main() {
+  // Chat
+  const chat = await client.chat.completions.create({
+    model: 'zai-org-glm-4.7',
+    messages: [{ role: 'user', content: 'Hello!' }]
+  });
+  console.log(chat.choices[0].message.content);
+
+  // List models
+  const models = await client.models.list();
+  models.data.forEach(m => console.log(m.id));
+}
+
+main();</code></pre>
+      </div>
+    </div>
+
+    <!-- ERROR REFERENCE -->
+    <div class="section" id="errors">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--red-bg);"><span class="material-icons" style="color:var(--red);">error</span></div>
+        <div><div class="section-title">Error Reference</div><div class="section-sub">HTTP status codes returned by the Venice API</div></div>
+      </div>
+
+      <table class="param-table">
+        <thead><tr><th>Status</th><th>Meaning</th><th>How to handle</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--green);">200</strong></td><td>Success</td><td>Parse response normally</td></tr>
+          <tr><td><strong style="color:var(--amber);">400</strong></td><td>Bad Request — invalid parameters</td><td>Check required fields and value ranges</td></tr>
+          <tr><td><strong style="color:var(--red);">401</strong></td><td>Unauthorized — invalid/missing API key or Pro access required</td><td>Verify API key; upgrade if model requires Pro</td></tr>
+          <tr><td><strong style="color:var(--orange);">402</strong></td><td>Payment Required — insufficient x402 USDC balance</td><td>Top up your x402 wallet balance</td></tr>
+          <tr><td><strong style="color:var(--orange);">429</strong></td><td>Rate Limit Exceeded</td><td>Back off and retry with exponential delay</td></tr>
+          <tr><td><strong style="color:var(--red);">500</strong></td><td>Internal Server Error — inference failed</td><td>Retry the request</td></tr>
+          <tr><td><strong style="color:var(--red);">503</strong></td><td>Service Unavailable — model at capacity</td><td>Retry after a short delay or use an alternate model</td></tr>
+          <tr><td><strong style="color:var(--red);">504</strong></td><td>Gateway Timeout — request took too long</td><td>Use <span class="inline-code">stream: true</span> for long outputs</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-tip">
+        <span class="material-icons">lightbulb</span>
+        <div class="callout-text"><strong>Support:</strong> Email <span class="inline-code">support@venice.ai</span> or join the <strong>#api</strong> channel on the Venice Discord for help.</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    const text = pre.innerText || pre.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.classList.add('copied');
+      btn.innerHTML = '<span class="material-icons">check</span>Copied!';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = '<span class="material-icons">content_copy</span>Copy';
+      }, 2000);
+    });
+  }
+
+  // Active TOC link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const tocLinks = document.querySelectorAll('.toc-list a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`.toc-list a[href="#${entry.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-60px 0px -80% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

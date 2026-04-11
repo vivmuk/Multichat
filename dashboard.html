@@ -239,7 +239,7 @@
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl);
       overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 24px;
     }
-    .table-scroll { overflow-x: auto; max-height: calc(100vh - 360px); overflow-y: auto; }
+    .table-scroll { overflow-x: auto; }
     .model-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .model-table thead { position: sticky; top: 0; z-index: 10; }
     .model-table thead tr { background: var(--primary); }
@@ -507,6 +507,9 @@
       <button class="nav-btn secondary" onclick="refreshData()">
         <span class="material-icons">refresh</span><span>Refresh</span>
       </button>
+      <a href="api-guide.html" class="nav-btn secondary">
+        <span class="material-icons">menu_book</span><span>API Guide</span>
+      </a>
       <a href="index.html" class="nav-btn primary">
         <span class="material-icons">chat</span><span>Back to Chat</span>
       </a>
