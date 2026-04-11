@@ -7,9 +7,10 @@ import Paper from '@mui/material/Paper';
 
 interface PromptInputProps {
   onSubmit: (prompt: string) => void;
+  disabled?: boolean;
 }
 
-const PromptInput: React.FC<PromptInputProps> = ({ onSubmit }) => {
+const PromptInput: React.FC<PromptInputProps> = ({ onSubmit, disabled = false }) => {
   const [prompt, setPrompt] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -36,22 +37,23 @@ const PromptInput: React.FC<PromptInputProps> = ({ onSubmit }) => {
         multiline
         minRows={1}
         maxRows={4}
-        placeholder="Enter your prompt here..."
+        placeholder={disabled ? 'Add an API key in Settings to send queries…' : 'Enter your prompt here...'}
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
+        disabled={disabled}
         variant="outlined"
         sx={{ mr: 2 }}
         InputProps={{
           sx: { borderRadius: 2, fontSize: '0.9rem' }
         }}
       />
-      <Button 
-        type="submit" 
-        variant="contained" 
-        color="primary" 
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
         endIcon={<SendIcon />}
-        disabled={!prompt.trim()}
-        sx={{ 
+        disabled={disabled || !prompt.trim()}
+        sx={{
           height: 40,
           minWidth: 100
         }}

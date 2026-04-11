@@ -1836,8 +1836,8 @@
             <span class="material-icons">menu_book</span>
             API Guide
           </a>
-          <button id="logoutButton" class="button" title="Sign out" style="background: #6b7280;">
-            <span class="material-icons">logout</span>
+          <button id="settingsButton" class="button" title="API Key Settings" style="background: #6b7280;">
+            <span class="material-icons">settings</span>
           </button>
         </div>
       </div>
@@ -1916,29 +1916,10 @@
       <div class="auth-header">
         <span class="material-icons" style="font-size: 48px; color: #e63946;">smart_toy</span>
         <h2>Venice AI Multi-Chat</h2>
-        <p>Choose how you want to connect</p>
+        <p id="authModalSubtitle">Enter your Venice AI API key to get started</p>
       </div>
       <div class="auth-form">
-        <div class="auth-tabs">
-          <button class="auth-tab active" data-tab="password">Member Access</button>
-          <button class="auth-tab" data-tab="apikey">Use Your API Key</button>
-        </div>
-        <div class="auth-tab-content" id="passwordTab">
-          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">For authorized members with shared access</p>
-          <div class="auth-input-group">
-            <label for="passwordInput">Enter Password</label>
-            <input type="password" id="passwordInput" placeholder="Enter member password..." autocomplete="current-password">
-          </div>
-          <label class="auth-checkbox">
-            <input type="checkbox" id="rememberPassword" checked>
-            <span>Remember me on this device</span>
-          </label>
-          <button class="auth-submit" id="passwordSubmit">
-            <span class="material-icons">lock_open</span>
-            Unlock
-          </button>
-        </div>
-        <div class="auth-tab-content" id="apikeyTab" style="display: none;">
+        <div class="auth-tab-content" id="apikeyTab">
           <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Connect with your own Venice AI API key</p>
           <div class="auth-input-group">
             <label for="apiKeyInput">Your Venice API Key</label>
@@ -1952,7 +1933,7 @@
             <span class="material-icons">vpn_key</span>
             Connect
           </button>
-          <p class="auth-hint">Don't have a key? Get one from <a href="https://venice.ai" target="_blank">venice.ai</a></p>
+          <p class="auth-hint">Don't have a key? Get one from <a href="https://venice.ai" target="_blank">venice.ai</a> or email the site builder to request a key.</p>
         </div>
         <div class="auth-error" id="authError" style="display: none;">
           <span class="material-icons">error</span>
@@ -1997,32 +1978,13 @@
   <script src="config.js" onerror="console.warn('config.js not found. Using build-injected API key if available.')"></script>
   <script>
     // Authentication System
-    const CORRECT_PASSWORD = 'surat';
     const BASE_URL = 'https://api.venice.ai/api/v1';
-
-    // Get the backend API key (from Netlify build injection or localStorage)
-    function getBackendApiKey() {
-      // First try Netlify-injected key (from build.js)
-      if (window.VENICE_API_KEY && window.VENICE_API_KEY !== 'your-venice-api-key-here') {
-        return window.VENICE_API_KEY;
-      }
-      // Fall back to localStorage (for local development)
-      return localStorage.getItem('venice_backend_api_key') || '';
-    }
 
     // Check if user is authenticated
     function checkAuthentication() {
-      const savedPassword = localStorage.getItem('venice_password');
       const savedUserKey = localStorage.getItem('venice_user_api_key');
-      const backendKey = getBackendApiKey();
-
-      // Password users get the backend key (Netlify-injected or localStorage)
-      if (savedPassword === CORRECT_PASSWORD && backendKey) {
-        return { authenticated: true, useBackendKey: true, apiKey: backendKey };
-      }
-      // Direct API key users
       if (savedUserKey) {
-        return { authenticated: true, useBackendKey: false, apiKey: savedUserKey };
+        return { authenticated: true, apiKey: savedUserKey };
       }
       return { authenticated: false };
     }
@@ -2041,153 +2003,52 @@
     // Authentication Modal Logic
     function initAuthModal() {
       const authModal = document.getElementById('authModal');
-      const passwordTab = document.getElementById('passwordTab');
-      const apikeyTab = document.getElementById('apikeyTab');
-      const authTabs = document.querySelectorAll('.auth-tab');
-      const passwordInput = document.getElementById('passwordInput');
       const apiKeyInput = document.getElementById('apiKeyInput');
-      const passwordSubmit = document.getElementById('passwordSubmit');
       const apiKeySubmit = document.getElementById('apiKeySubmit');
-      const rememberPassword = document.getElementById('rememberPassword');
       const rememberApiKey = document.getElementById('rememberApiKey');
       const authError = document.getElementById('authError');
       const authErrorText = document.getElementById('authErrorText');
 
-      // Tab switching
-      authTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          authTabs.forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          if (tab.dataset.tab === 'password') {
-            passwordTab.style.display = 'block';
-            apikeyTab.style.display = 'none';
-          } else {
-            passwordTab.style.display = 'none';
-            apikeyTab.style.display = 'block';
-          }
-          authError.style.display = 'none';
-        });
-      });
-
-      // Password submit
-      passwordSubmit.addEventListener('click', async () => {
-        const password = passwordInput.value.trim();
-        if (password === CORRECT_PASSWORD) {
-          // Get backend API key (Netlify-injected first, then localStorage)
-          let backendKey = getBackendApiKey();
-
-          // If no backend key available (local development without config)
-          if (!backendKey) {
-            const inputKey = prompt('Password correct! Enter your Venice API key (one-time setup for local dev):');
-            if (!inputKey || !inputKey.trim()) {
-              authError.style.display = 'flex';
-              authErrorText.textContent = 'API key is required for first-time setup.';
-              return;
-            }
-
-            // Validate the API key
-            try {
-              passwordSubmit.disabled = true;
-              passwordSubmit.innerHTML = '<span class="material-icons spin">refresh</span> Validating...';
-
-              const response = await fetch(`${BASE_URL}/models?type=text`, {
-                headers: { 'Authorization': `Bearer ${inputKey.trim()}` }
-              });
-
-              if (!response.ok) {
-                authError.style.display = 'flex';
-                authErrorText.textContent = 'Invalid API key. Please try again.';
-                passwordSubmit.disabled = false;
-                passwordSubmit.innerHTML = '<span class="material-icons">lock_open</span> Unlock';
-                return;
-              }
-
-              backendKey = inputKey.trim();
-              localStorage.setItem('venice_backend_api_key', backendKey);
-            } catch (error) {
-              authError.style.display = 'flex';
-              authErrorText.textContent = 'Connection error. Please try again.';
-              passwordSubmit.disabled = false;
-              passwordSubmit.innerHTML = '<span class="material-icons">lock_open</span> Unlock';
-              return;
-            }
-          }
-
-          if (rememberPassword.checked) {
-            localStorage.setItem('venice_password', password);
-          }
-
-          API_KEY = backendKey;
-          authModal.classList.remove('show');
-          passwordSubmit.disabled = false;
-          passwordSubmit.innerHTML = '<span class="material-icons">lock_open</span> Unlock';
-          fetchVeniceModels();
-        } else {
-          authError.style.display = 'flex';
-          authErrorText.textContent = 'Invalid password. Please try again.';
-          passwordInput.value = '';
-          passwordInput.focus();
-        }
-      });
-
-      // API Key submit
-      apiKeySubmit.addEventListener('click', async () => {
+      // API Key submit — save immediately and let fetchVeniceModels validate
+      apiKeySubmit.addEventListener('click', () => {
         const apiKey = apiKeyInput.value.trim();
         if (!apiKey) {
           authError.style.display = 'flex';
           authErrorText.textContent = 'Please enter an API key.';
           return;
         }
-
-        // Validate API key by making a test request
-        try {
-          apiKeySubmit.disabled = true;
-          apiKeySubmit.innerHTML = '<span class="material-icons spin">refresh</span> Validating...';
-
-          const response = await fetch(`${BASE_URL}/models?type=text`, {
-            headers: { 'Authorization': `Bearer ${apiKey}` }
-          });
-
-          if (response.ok) {
-            if (rememberApiKey.checked) {
-              localStorage.setItem('venice_user_api_key', apiKey);
-            }
-            API_KEY = apiKey;
-            authModal.classList.remove('show');
-            fetchVeniceModels();
-          } else {
-            authError.style.display = 'flex';
-            authErrorText.textContent = 'Invalid API key. Please check and try again.';
-          }
-        } catch (error) {
-          authError.style.display = 'flex';
-          authErrorText.textContent = 'Connection error. Please try again.';
-        } finally {
-          apiKeySubmit.disabled = false;
-          apiKeySubmit.innerHTML = '<span class="material-icons">vpn_key</span> Connect';
+        if (rememberApiKey.checked) {
+          localStorage.setItem('venice_user_api_key', apiKey);
         }
+        API_KEY = apiKey;
+        authModal.classList.remove('show');
+        fetchVeniceModels();
       });
 
       // Enter key support
-      passwordInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') passwordSubmit.click();
-      });
       apiKeyInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') apiKeySubmit.click();
       });
     }
 
-    function showAuthModal() {
+    function showAuthModal(prefillKey) {
       const authModal = document.getElementById('authModal');
+      const input = document.getElementById('apiKeyInput');
+      const subtitle = document.getElementById('authModalSubtitle');
+      if (prefillKey) {
+        input.value = prefillKey;
+        if (subtitle) subtitle.textContent = 'Update your Venice AI API key';
+      } else {
+        input.value = '';
+        if (subtitle) subtitle.textContent = 'Enter your Venice AI API key to get started';
+      }
       authModal.classList.add('show');
-      document.getElementById('passwordInput').focus();
+      input.focus();
     }
 
     // Logout function
     window.veniceLogout = function() {
-      localStorage.removeItem('venice_password');
       localStorage.removeItem('venice_user_api_key');
-      localStorage.removeItem('venice_backend_api_key');
       location.reload();
     };
 
@@ -2262,6 +2123,16 @@
 
     function formatPriceBadge(model) {
       const pricing = model.model_spec?.pricing || {};
+      const type = model.modelType || 'text';
+      if (type === 'image') {
+        const p = pricing.per_image?.usd ?? pricing.per_generation?.usd ?? pricing.inference?.usd ?? pricing.usd ?? null;
+        return p !== null ? `$${p}/img` : '—';
+      }
+      if (type === 'video') {
+        const p = pricing.per_second?.usd ?? pricing.per_video?.usd ?? null;
+        return p !== null ? `$${p}/s` : '—';
+      }
+      // text
       const inputPrice = pricing.input?.usd;
       const outputPrice = pricing.output?.usd;
       if (inputPrice !== undefined && outputPrice !== undefined) {
@@ -2286,11 +2157,12 @@
       item.classList.add('drawer-item');
       item.dataset.modelId = model.id;
       const priceText = formatPriceBadge(model);
+      const type = model.modelType || 'text';
+      const typeColors = { text: '#2a9d8f', image: '#6366f1', video: '#e63946' };
+      const typeBadge = `<span style="font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;text-transform:uppercase;background:${typeColors[type] || '#555'};color:#fff;margin-right:5px;vertical-align:middle;">${type}</span>`;
       item.innerHTML = `
         <div class="drawer-top">
-          <div class="drawer-name">
-            ${model.id}
-          </div>
+          <div class="drawer-name">${typeBadge}${model.id}</div>
           <div class="drawer-meta">
             <div class="price-badge">${priceText}</div>
             <div class="drawer-time model-item-time" data-time="">—</div>
@@ -2593,64 +2465,54 @@
       if (modelRail) modelRail.innerHTML = '';
       if (modelDrawerList) modelDrawerList.innerHTML = '<div class="empty-state"><div class="loading">Loading models...</div></div>';
       if (modelSelectMobile) modelSelectMobile.innerHTML = '';
-      
+
       try {
-        const response = await fetch(`${BASE_URL}/models?type=text`, {
-          headers: { 'Authorization': `Bearer ${API_KEY}` }
-        });
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        if (data && data.data && Array.isArray(data.data)) {
-          
-          const filteredModels = data.data.filter(model => {
-            // Only exclude offline models or models without an ID
-            const isOffline = model.model_spec?.offline;
-            if (!model.id || isOffline) {
-              return false;
-            }
+        const headers = { 'Authorization': `Bearer ${API_KEY}` };
 
-            // Only filter out models that explicitly have "coder" in their ID
-            // Allow all other models including those with optimizedForCode capability
-            const isCoderModel = model.id.toLowerCase().includes('coder');
-            
-            return !isCoderModel;
+        const fetchType = async (type) => {
+          const r = await fetch(`${BASE_URL}/models?type=${type}`, { headers });
+          if (!r.ok) throw new Error(`API error ${r.status} for type=${type}`);
+          const d = await r.json();
+          return (d.data || [])
+            .filter(m => m.id && !m.model_spec?.offline)
+            .map(m => ({ ...m, modelType: type }));
+        };
+
+        const textModels = await fetchType('text');
+
+        const isReasoningModel = (m) => {
+          const traits = m.model_spec?.traits || [];
+          return traits.includes('default_reasoning') || m.id.toLowerCase().includes('reasoning');
+        };
+
+        const sortedText = textModels
+          .filter(m => !m.id.toLowerCase().includes('coder'))
+          .sort((a, b) => {
+            const aR = isReasoningModel(a), bR = isReasoningModel(b);
+            if (aR !== bR) return aR ? 1 : -1;
+            return (a.model_spec?.availableContextTokens || 0) - (b.model_spec?.availableContextTokens || 0);
           });
 
-          const isReasoningModel = (model) => {
-            const traits = model.model_spec?.traits || [];
-            return traits.includes('default_reasoning') || model.id.toLowerCase().includes('reasoning');
-          };
-
-          availableModels = filteredModels.sort((a, b) => {
-            const aIsReasoning = isReasoningModel(a);
-            const bIsReasoning = isReasoningModel(b);
-
-            if (aIsReasoning !== bIsReasoning) {
-              return aIsReasoning ? 1 : -1;
-            }
-            
-            const contextA = a.model_spec?.availableContextTokens || 0;
-            const contextB = b.model_spec?.availableContextTokens || 0;
-            return contextA - contextB;
-          });
-          
-          console.log('Fetched and sorted models:', availableModels);
-        } else {
-          throw new Error('Unexpected API response format for models.');
-        }
+        availableModels = [...sortedText];
+        console.log(`Loaded text models: ${sortedText.length}`);
         renderModelList();
       } catch (error) {
         console.error('Failed to fetch models:', error);
+        availableModels = [];
         if (modelDrawerList) {
           modelDrawerList.innerHTML = `<div class="error"><span class="material-icons">error</span>Failed to load models: ${error.message}</div>`;
         }
-        availableModels = [];
+        // Key likely invalid — clear it and re-show auth
+        localStorage.removeItem('venice_user_api_key');
+        API_KEY = '';
+        const authError = document.getElementById('authError');
+        const authErrorText = document.getElementById('authErrorText');
+        if (authError) { authError.style.display = 'flex'; authErrorText.textContent = 'Invalid API key or connection error. Please try again.'; }
+        showAuthModal();
       } finally {
         refreshModelsButton.disabled = false;
         if (refreshModelsButton.querySelector('.material-icons.spin')) {
-            refreshModelsButton.querySelector('.material-icons').classList.remove('spin');
+          refreshModelsButton.querySelector('.material-icons').classList.remove('spin');
         }
       }
     }
@@ -3134,9 +2996,10 @@
       const prompt = promptTextarea.value;
       const webSearch = webSearchCheckbox.checked;
       
-      if (!prompt.trim() || availableModels.length === 0) {
-        if (availableModels.length === 0) {
-          alert("No models loaded. Please refresh models first.");
+      const textModelsAvailable = availableModels.filter(m => !m.modelType || m.modelType === 'text');
+      if (!prompt.trim() || textModelsAvailable.length === 0) {
+        if (textModelsAvailable.length === 0) {
+          alert("No text models loaded. Please refresh models first.");
         }
         return;
       }
@@ -3157,9 +3020,10 @@
         updateModelStatus(model.id, 'loading');
       });
       
-      // Start streaming for all models simultaneously
+      // Start streaming for text models only (image/video models are listed for reference)
       const disableReasoning = disableReasoningCheckbox.checked;
-      const promises = availableModels.map(model => queryModelStreaming(model, prompt, webSearch, disableReasoning));
+      const textModels = availableModels.filter(m => !m.modelType || m.modelType === 'text');
+      const promises = textModels.map(model => queryModelStreaming(model, prompt, webSearch, disableReasoning));
       
       try {
         await Promise.all(promises);
@@ -3514,11 +3378,9 @@
       window.location.href = 'dashboard.html';
     });
 
-    // Logout button
-    document.getElementById('logoutButton').addEventListener('click', () => {
-      if (confirm('Are you sure you want to sign out?')) {
-        veniceLogout();
-      }
+    // Settings button — opens the API key modal with the current key pre-filled
+    document.getElementById('settingsButton').addEventListener('click', () => {
+      showAuthModal(API_KEY);
     });
 
     // Analysis button and modal
