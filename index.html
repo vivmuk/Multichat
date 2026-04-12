@@ -2855,6 +2855,8 @@
           });
 
         availableModels = [...sortedText];
+        window.availableModels = availableModels;
+        if (typeof window.estimateCost === 'function') window.estimateCost();
         console.log(`Loaded text models: ${sortedText.length}`);
         renderModelList();
       } catch (error) {
@@ -3785,7 +3787,7 @@
       `;
       analysisFooter.style.display = 'none';
 
-      // Collect all responses
+      // ── Collect responses ──────────────────────────────────
       const responses = [];
       const prompt = promptTextarea.value.trim();
 
@@ -3793,7 +3795,9 @@
         if (data.content && data.content !== 'Waiting for prompt...' && !data.content.includes('Loading...')) {
           responses.push({
             model: modelId,
-            content: data.content.substring(0, 3000) // Limit content length
+            content: data.content, // full response — Grok 4.20 has 2M input context
+            responseTime: data.responseTime || null,
+            tokenCount: data.tokenCount || null
           });
         }
       }
@@ -3809,121 +3813,191 @@
         return;
       }
 
-      // Build the analysis prompt
-      const analysisPrompt = `You are an expert analyst comparing AI model responses. Analyze these ${responses.length} model responses to the same prompt and provide a structured analysis.
+      // ── Helper: robust API call with JSON repair ─────────
+      async function aiJson(systemMsg, userMsg, retries = 2) {
+        for (let attempt = 0; attempt <= retries; attempt++) {
+          try {
+            const r = await fetch(`${BASE_URL}/chat/completions`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+              body: JSON.stringify({
+                model: 'grok-4-20',
+                messages: [
+                  { role: 'system', content: systemMsg },
+                  { role: 'user', content: userMsg }
+                ],
+                max_tokens: 131072,
+                temperature: 0.2
+              })
+            });
+            if (!r.ok) throw new Error(`API ${r.status}`);
+            const d = await r.json();
+            let raw = d.choices[0]?.message?.content || '';
+            raw = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+            const m = raw.match(/\{[\s\S]*\}/);
+            if (!m) throw new Error('No JSON object');
+            let js = m[0].replace(/,(\s*[}\]])/g, '$1');
+            // Attempt parse
+            try { return JSON.parse(js); } catch (_) {
+              // Auto-close truncated JSON
+              let fixed = js;
+              const opens  = (fixed.match(/\[/g) || []).length;
+              const closes = (fixed.match(/\]/g) || []).length;
+              for (let i = 0; i < opens - closes; i++) fixed += ']';
+              const openB  = (fixed.match(/\{/g) || []).length;
+              const closeB = (fixed.match(/\}/g) || []).length;
+              for (let i = 0; i < openB - closeB; i++) fixed += '}';
+              // Remove any dangling string or comma
+              fixed = fixed.replace(/,\s*$/, '');
+              fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
+              return JSON.parse(fixed);
+            }
+          } catch (e) {
+            console.warn(`aiJson attempt ${attempt + 1} failed:`, e.message);
+            if (attempt === retries) throw e;
+          }
+        }
+      }
 
-ORIGINAL PROMPT: "${prompt}"
+      // ── Build full model digest — no truncation (2M input context) ──
+      const digest = responses.map(r => {
+        const text = r.content.replace(/\n{4,}/g, '\n\n\n').trim();
+        return `[${r.model}]\n${text}`;
+      }).join('\n\n---\n\n');
 
-MODEL RESPONSES:
-${responses.map(r => `--- ${r.model} ---\n${r.content}\n`).join('\n')}
+      const sysRole = `You are a world-class analyst comparing AI model responses. You produce ONLY valid JSON. Never use markdown fences. Keep model names exactly as given.`;
 
-Provide your analysis in the following JSON format (respond ONLY with valid JSON, no markdown):
-{
-  "summary": {
-    "totalModels": ${responses.length},
-    "consensusLevel": "high/medium/low",
-    "diversityScore": 1-10
-  },
-  "commonThemes": [
-    {
-      "theme": "Description of common point",
-      "models": ["model1", "model2"]
-    }
-  ],
-  "uniqueInsights": [
-    {
-      "insight": "Description of unique point",
-      "model": "model name",
-      "significance": "Why this is notable"
-    }
-  ],
-  "mostUnique": [
-    {
-      "rank": 1,
-      "model": "model name",
-      "reason": "Why this model was most unique"
-    },
-    {
-      "rank": 2,
-      "model": "model name",
-      "reason": "Why this model was second most unique"
-    },
-    {
-      "rank": 3,
-      "model": "model name",
-      "reason": "Why this model was third most unique"
-    }
-  ],
-  "mostSimilar": [
-    {
-      "rank": 1,
-      "model": "model name",
-      "reason": "Why this model had most common answers"
-    },
-    {
-      "rank": 2,
-      "model": "model name",
-      "reason": "Why this model had second most common answers"
-    },
-    {
-      "rank": 3,
-      "model": "model name",
-      "reason": "Why this model had third most common answers"
-    }
-  ],
-  "overallAnalysis": "A 2-3 sentence summary of the comparison"
-}`;
+      // ── Progress helper ──────────────────────────────────
+      const totalPasses = 3;
+      let passNum = 0;
+      function updateProgress(label) {
+        passNum++;
+        analysisBody.innerHTML = `
+          <div class="analysis-loading">
+            <div class="analysis-spinner"></div>
+            <p>${label}</p>
+            <p class="analysis-hint">Pass ${passNum} of ${totalPasses} · ${responses.length} models</p>
+            <div style="margin-top:16px;width:200px;height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;">
+              <div style="height:100%;width:${Math.round(passNum/totalPasses*100)}%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:2px;transition:width 0.4s;"></div>
+            </div>
+          </div>`;
+      }
 
       try {
-        const response = await fetch(`${BASE_URL}/chat/completions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${API_KEY}`
+        // ═══════════════════════════════════════════════════
+        //  PASS 1: Core analysis — themes, consensus, overall
+        // ═══════════════════════════════════════════════════
+        updateProgress('Identifying themes & consensus…');
+
+        const pass1 = await aiJson(sysRole, `Analyze these ${responses.length} AI model responses to the prompt: "${prompt}"
+
+${digest}
+
+Return JSON:
+{
+  "overallAnalysis": "4-6 sentence executive summary: what the models collectively say, where they agree/disagree, and the overall quality",
+  "consensusLevel": "high" | "medium" | "low",
+  "diversityScore": number 1-10,
+  "commonThemes": [
+    {"theme":"short title","description":"2-3 sentence explanation","modelCount":number,"models":["model1","model2",...],"strength":"strong|moderate|weak"}
+  ],
+  "disagreements": [
+    {"topic":"what they disagree on","sides":[{"position":"view A","models":["m1"]},{"position":"view B","models":["m2"]}]}
+  ],
+  "qualityTiers": {
+    "exceptional": ["models with best answers"],
+    "strong": ["solid answers"],
+    "adequate": ["acceptable"],
+    "weak": ["poor or very short answers"]
+  }
+}`);
+
+        // ═══════════════════════════════════════════════════
+        //  PASS 2: Unique insights, rankings, model grades
+        // ═══════════════════════════════════════════════════
+        updateProgress('Ranking models & extracting insights…');
+
+        const pass2 = await aiJson(sysRole, `Continue analyzing the same ${responses.length} model responses to: "${prompt}"
+
+${digest}
+
+Return JSON:
+{
+  "uniqueInsights": [
+    {"insight":"the specific unique point","model":"model name","significance":"why it matters","category":"practical|creative|contrarian|deep-dive|meta"}
+  ],
+  "mostUnique": [
+    {"rank":1,"model":"name","score":number 1-100,"reason":"why most unique"},
+    {"rank":2,"model":"name","score":number,"reason":"why"},
+    {"rank":3,"model":"name","score":number,"reason":"why"},
+    {"rank":4,"model":"name","score":number,"reason":"why"},
+    {"rank":5,"model":"name","score":number,"reason":"why"}
+  ],
+  "mostSimilar": [
+    {"rank":1,"model":"name","reason":"most consensus-aligned"},
+    {"rank":2,"model":"name","reason":"why"},
+    {"rank":3,"model":"name","reason":"why"}
+  ],
+  "bestForUseCase": [
+    {"useCase":"quick overview","model":"name","why":"short explanation"},
+    {"useCase":"deep research","model":"name","why":"short"},
+    {"useCase":"creative/lateral thinking","model":"name","why":"short"},
+    {"useCase":"practical advice","model":"name","why":"short"},
+    {"useCase":"balanced perspective","model":"name","why":"short"}
+  ],
+  "modelGrades": [
+    {"model":"name","grade":"A+|A|A-|B+|B|B-|C+|C|D|F","oneLiner":"one sentence verdict"}
+  ]
+}`);
+
+        // ═══════════════════════════════════════════════════
+        //  PASS 3: Meta-analysis, actionable synthesis
+        // ═══════════════════════════════════════════════════
+        updateProgress('Synthesizing actionable takeaways…');
+
+        const pass3 = await aiJson(sysRole, `Final analysis pass on the same ${responses.length} model responses to: "${prompt}"
+
+${digest}
+
+Return JSON:
+{
+  "actionableTakeaways": [
+    {"takeaway":"specific actionable point synthesized from all models","confidence":"high|medium|low","supportingModels":number}
+  ],
+  "blindSpots": ["things no model mentioned that would be worth considering"],
+  "bestQuote": {"quote":"the single most insightful sentence from any response (exact quote)","model":"who said it","why":"why it stands out"},
+  "responsePatterns": {
+    "avgLength": "short|medium|long",
+    "structureTypes": {"listicle":number,"essay":number,"stepByStep":number,"mixed":number},
+    "toneSpread": {"professional":number,"conversational":number,"academic":number,"creative":number}
+  },
+  "followUpQuestions": ["3-5 questions the user should ask next based on gaps in the responses"]
+}`);
+
+        // ═══════════════════════════════════════════════════
+        //  Merge all passes into a single analysis object
+        // ═══════════════════════════════════════════════════
+        const analysis = {
+          summary: {
+            totalModels: responses.length,
+            consensusLevel: pass1.consensusLevel || 'medium',
+            diversityScore: pass1.diversityScore || 5
           },
-          body: JSON.stringify({
-            model: 'gemini-3-flash-preview',
-            messages: [{ role: 'user', content: analysisPrompt }],
-            max_tokens: 4000,
-            temperature: 0.3
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        const analysisText = data.choices[0]?.message?.content || '';
-
-        // Parse JSON from response with robust handling
-        let analysis;
-        try {
-          // Clean up the response - remove markdown code blocks
-          let cleanedText = analysisText
-            .replace(/```json\s*/gi, '')
-            .replace(/```\s*/g, '')
-            .trim();
-
-          // Try to extract JSON from the response
-          const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
-          if (!jsonMatch) {
-            throw new Error('No JSON found in response');
-          }
-
-          let jsonStr = jsonMatch[0];
-
-          // Fix common JSON issues from AI responses
-          // Remove trailing commas before ] or }
-          jsonStr = jsonStr.replace(/,(\s*[}\]])/g, '$1');
-
-          // Try parsing
-          analysis = JSON.parse(jsonStr);
-        } catch (parseError) {
-          console.error('Failed to parse analysis:', parseError);
-          console.error('Raw response:', analysisText);
-          throw new Error('Failed to parse analysis results');
-        }
+          overallAnalysis: pass1.overallAnalysis || '',
+          commonThemes: pass1.commonThemes || [],
+          disagreements: pass1.disagreements || [],
+          qualityTiers: pass1.qualityTiers || {},
+          uniqueInsights: pass2.uniqueInsights || [],
+          mostUnique: pass2.mostUnique || [],
+          mostSimilar: pass2.mostSimilar || [],
+          bestForUseCase: pass2.bestForUseCase || [],
+          modelGrades: pass2.modelGrades || [],
+          actionableTakeaways: pass3.actionableTakeaways || [],
+          blindSpots: pass3.blindSpots || [],
+          bestQuote: pass3.bestQuote || null,
+          responsePatterns: pass3.responsePatterns || {},
+          followUpQuestions: pass3.followUpQuestions || []
+        };
 
         lastAnalysisResult = { analysis, prompt, responses };
         displayAnalysisResults(analysis);
@@ -3935,98 +4009,154 @@ Provide your analysis in the following JSON format (respond ONLY with valid JSON
           <div class="analysis-loading">
             <span class="material-icons" style="font-size: 48px; color: var(--red); margin-bottom: 16px;">error</span>
             <p>Analysis failed</p>
-            <p class="analysis-hint">${error.message}</p>
+            <p class="analysis-hint">${error.message}<br>Try again — the AI response may have been truncated.</p>
           </div>
         `;
       }
     }
 
-    function displayAnalysisResults(analysis) {
-      const { summary, commonThemes, uniqueInsights, mostUnique, mostSimilar, overallAnalysis } = analysis;
+    // ═══════════════════════════════════════════════════════
+    //  DISPLAY — rich visual analysis report
+    // ═══════════════════════════════════════════════════════
+    function displayAnalysisResults(a) {
+      const { summary, overallAnalysis, commonThemes, disagreements, qualityTiers,
+              uniqueInsights, mostUnique, mostSimilar, bestForUseCase, modelGrades,
+              actionableTakeaways, blindSpots, bestQuote, responsePatterns, followUpQuestions } = a;
+
+      const consensusColor = summary.consensusLevel === 'high' ? '#22c55e' : summary.consensusLevel === 'medium' ? '#f59e0b' : '#ef4444';
+      const diversityPct = (summary.diversityScore || 5) * 10;
+
+      // Grade color helper
+      const gradeColor = g => {
+        if (!g) return '#94a3b8';
+        if (g.startsWith('A')) return '#22c55e';
+        if (g.startsWith('B')) return '#3b82f6';
+        if (g.startsWith('C')) return '#f59e0b';
+        return '#ef4444';
+      };
+
+      // Quality tier counts
+      const tierData = [
+        { label: 'Exceptional', key: 'exceptional', color: '#22c55e', icon: 'emoji_events' },
+        { label: 'Strong',      key: 'strong',      color: '#3b82f6', icon: 'thumb_up' },
+        { label: 'Adequate',    key: 'adequate',     color: '#f59e0b', icon: 'horizontal_rule' },
+        { label: 'Weak',        key: 'weak',         color: '#ef4444', icon: 'thumb_down' }
+      ];
 
       analysisBody.innerHTML = `
-        <!-- Summary Stats -->
-        <div class="summary-stats">
+        <!-- ── HERO STATS ─────────────────────────────── -->
+        <div class="summary-stats" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;">
           <div class="stat-card">
             <div class="stat-value">${summary.totalModels}</div>
             <div class="stat-label">Models Analyzed</div>
           </div>
           <div class="stat-card">
-            <div class="stat-value" style="color: ${summary.consensusLevel === 'high' ? '#22c55e' : summary.consensusLevel === 'medium' ? '#f59e0b' : '#ef4444'};">${summary.consensusLevel}</div>
-            <div class="stat-label">Consensus Level</div>
+            <div class="stat-value" style="color:${consensusColor};text-transform:uppercase;">${summary.consensusLevel}</div>
+            <div class="stat-label">Consensus</div>
           </div>
           <div class="stat-card">
             <div class="stat-value">${summary.diversityScore}/10</div>
-            <div class="stat-label">Diversity Score</div>
+            <div style="height:4px;background:#e2e8f0;border-radius:2px;margin-top:6px;overflow:hidden;">
+              <div style="height:100%;width:${diversityPct}%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:2px;"></div>
+            </div>
+            <div class="stat-label">Diversity</div>
           </div>
           <div class="stat-card">
             <div class="stat-value">${commonThemes?.length || 0}</div>
-            <div class="stat-label">Common Themes</div>
+            <div class="stat-label">Themes Found</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${uniqueInsights?.length || 0}</div>
+            <div class="stat-label">Unique Insights</div>
           </div>
         </div>
 
-        <!-- Overall Analysis -->
+        <!-- ── EXECUTIVE SUMMARY ──────────────────────── -->
         <div class="analysis-section">
-          <div class="analysis-section-title">
-            <span class="material-icons">summarize</span>
-            Overall Analysis
+          <div class="analysis-section-title"><span class="material-icons">summarize</span> Executive Summary</div>
+          <div class="common-themes"><p style="color:var(--text-color);line-height:1.8;margin:0;font-size:14px;">${overallAnalysis}</p></div>
+        </div>
+
+        <!-- ── BEST QUOTE ─────────────────────────────── -->
+        ${bestQuote?.quote ? `
+        <div class="analysis-section" style="background:linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%);border:1px solid rgba(139,92,246,0.2);">
+          <div class="analysis-section-title"><span class="material-icons" style="color:#8b5cf6;">format_quote</span> Best Quote</div>
+          <blockquote style="margin:0;padding:16px 20px;border-left:4px solid #8b5cf6;font-style:italic;color:#374151;line-height:1.8;font-size:15px;">
+            "${bestQuote.quote}"
+          </blockquote>
+          <div style="margin-top:8px;font-size:12px;color:#7c3aed;font-weight:600;">— ${bestQuote.model}</div>
+          ${bestQuote.why ? `<div style="margin-top:4px;font-size:12px;color:#6b7280;">${bestQuote.why}</div>` : ''}
+        </div>
+        ` : ''}
+
+        <!-- ── QUALITY TIERS ──────────────────────────── -->
+        ${qualityTiers && Object.keys(qualityTiers).length ? `
+        <div class="analysis-section">
+          <div class="analysis-section-title"><span class="material-icons">leaderboard</span> Response Quality Tiers</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+            ${tierData.map(t => {
+              const models = qualityTiers[t.key] || [];
+              return `<div style="background:${t.color}10;border:1px solid ${t.color}30;border-radius:12px;padding:14px;text-align:center;">
+                <span class="material-icons" style="color:${t.color};font-size:24px;">${t.icon}</span>
+                <div style="font-size:20px;font-weight:700;color:${t.color};margin:4px 0;">${models.length}</div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:${t.color};">${t.label}</div>
+                <div style="font-size:10px;color:#94a3b8;margin-top:6px;line-height:1.5;">${models.slice(0,4).join(', ')}${models.length > 4 ? ` +${models.length-4}` : ''}</div>
+              </div>`;
+            }).join('')}
           </div>
-          <div class="common-themes">
-            <p style="color: var(--text-color); line-height: 1.7; margin: 0;">${overallAnalysis}</p>
+        </div>
+        ` : ''}
+
+        <!-- ── TOP 5 MOST UNIQUE ──────────────────────── -->
+        <div class="analysis-section">
+          <div class="analysis-section-title"><span class="material-icons">star</span> Top 5 Most Unique Responses</div>
+          <div class="ranking-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+            ${(mostUnique || []).slice(0, 5).map((item, i) => {
+              const medals = ['gold','silver','bronze','',''];
+              const mColors = ['#fbbf24','#9ca3af','#d97706','#6366f1','#6366f1'];
+              return `<div class="ranking-card ${medals[i]}" style="padding:16px;border-radius:12px;border:2px solid ${mColors[i]}30;position:relative;">
+                <div class="ranking-badge" style="background:${mColors[i]};position:absolute;top:-10px;right:12px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:13px;">${i+1}</div>
+                ${item.score ? `<div style="font-size:24px;font-weight:800;color:${mColors[i]};font-family:'Space Grotesk';">${item.score}</div>` : ''}
+                <div style="font-weight:700;font-size:13px;margin:4px 0;color:#0f172a;">${item.model}</div>
+                <div style="font-size:12px;color:#64748b;line-height:1.5;">${item.reason}</div>
+              </div>`;
+            }).join('') || '<p>No data</p>'}
           </div>
         </div>
 
-        <!-- Most Unique Models -->
+        <!-- ── BEST FOR USE CASE ──────────────────────── -->
+        ${bestForUseCase && bestForUseCase.length ? `
         <div class="analysis-section">
-          <div class="analysis-section-title">
-            <span class="material-icons">star</span>
-            Top 3 Most Unique Responses
-          </div>
-          <div class="ranking-cards">
-            ${mostUnique?.slice(0, 3).map((item, i) => `
-              <div class="ranking-card ${i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}">
-                <div class="ranking-badge">${i + 1}</div>
-                <div class="ranking-model-name">${item.model}</div>
-                <div class="ranking-description">${item.reason}</div>
+          <div class="analysis-section-title"><span class="material-icons">recommend</span> Best Model by Use Case</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;">
+            ${bestForUseCase.map(u => `
+              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px;">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#6366f1;margin-bottom:6px;">${u.useCase}</div>
+                <div style="font-weight:700;font-size:14px;color:#0f172a;">${u.model}</div>
+                <div style="font-size:12px;color:#64748b;margin-top:4px;line-height:1.4;">${u.why}</div>
               </div>
-            `).join('') || '<p>No data available</p>'}
+            `).join('')}
           </div>
         </div>
+        ` : ''}
 
-        <!-- Most Similar Models -->
+        <!-- ── COMMON THEMES ──────────────────────────── -->
+        ${commonThemes && commonThemes.length ? `
         <div class="analysis-section">
-          <div class="analysis-section-title">
-            <span class="material-icons">groups</span>
-            Top 3 Most Consensus-Aligned
-          </div>
-          <div class="ranking-cards">
-            ${mostSimilar?.slice(0, 3).map((item, i) => `
-              <div class="ranking-card ${i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}">
-                <div class="ranking-badge">${i + 1}</div>
-                <div class="ranking-model-name">${item.model}</div>
-                <div class="ranking-description">${item.reason}</div>
-              </div>
-            `).join('') || '<p>No data available</p>'}
-          </div>
-        </div>
-
-        <!-- Common Themes -->
-        ${commonThemes && commonThemes.length > 0 ? `
-        <div class="analysis-section">
-          <div class="analysis-section-title">
-            <span class="material-icons">hub</span>
-            Common Themes Across Models
-          </div>
+          <div class="analysis-section-title"><span class="material-icons">hub</span> Common Themes (${commonThemes.length})</div>
           <div class="common-themes">
-            ${commonThemes.map(theme => `
-              <div class="theme-item">
-                <div class="theme-icon">
-                  <span class="material-icons">check_circle</span>
+            ${commonThemes.map((theme, i) => `
+              <div class="theme-item" style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #f1f5f9;">
+                <div style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${theme.strength==='strong'?'#dcfce7':theme.strength==='moderate'?'#fef3c7':'#f1f5f9'};color:${theme.strength==='strong'?'#16a34a':theme.strength==='moderate'?'#d97706':'#94a3b8'};">
+                  <span class="material-icons" style="font-size:18px;">check_circle</span>
                 </div>
-                <div class="theme-content">
-                  <div class="theme-title">${theme.theme}</div>
-                  <div class="theme-models">
-                    ${theme.models?.map(m => `<span>${m}</span>`).join('') || ''}
+                <div style="flex:1;min-width:0;">
+                  <div style="font-weight:600;font-size:14px;color:#0f172a;margin-bottom:4px;">${theme.theme}</div>
+                  ${theme.description ? `<div style="font-size:13px;color:#475569;line-height:1.6;margin-bottom:6px;">${theme.description}</div>` : ''}
+                  <div class="theme-models" style="display:flex;flex-wrap:wrap;gap:4px;font-size:11px;">
+                    <span style="color:#6366f1;font-weight:600;margin-right:4px;">${theme.modelCount || theme.models?.length || '?'} models</span>
+                    ${(theme.models || []).slice(0,5).map(m => `<span style="background:rgba(99,102,241,0.08);color:#6366f1;padding:1px 8px;border-radius:999px;">${m}</span>`).join('')}
+                    ${(theme.models || []).length > 5 ? `<span style="color:#94a3b8;">+${theme.models.length - 5} more</span>` : ''}
                   </div>
                 </div>
               </div>
@@ -4035,25 +4165,147 @@ Provide your analysis in the following JSON format (respond ONLY with valid JSON
         </div>
         ` : ''}
 
-        <!-- Unique Insights -->
-        ${uniqueInsights && uniqueInsights.length > 0 ? `
+        <!-- ── DISAGREEMENTS ──────────────────────────── -->
+        ${disagreements && disagreements.length ? `
         <div class="analysis-section">
-          <div class="analysis-section-title">
-            <span class="material-icons">lightbulb</span>
-            Unique Insights
-          </div>
-          <div class="unique-insights">
-            ${uniqueInsights.slice(0, 5).map(insight => `
-              <div class="insight-item">
-                <div class="insight-icon">
-                  <span class="material-icons">auto_awesome</span>
-                </div>
-                <div class="insight-content">
-                  <div class="insight-title">${insight.insight}</div>
-                  <div class="insight-model">
-                    <span>${insight.model}</span> ${insight.significance || ''}
+          <div class="analysis-section-title"><span class="material-icons" style="color:#ef4444;">compare_arrows</span> Key Disagreements</div>
+          ${disagreements.map(d => `
+            <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px;margin-bottom:10px;">
+              <div style="font-weight:700;font-size:14px;color:#991b1b;margin-bottom:8px;">${d.topic}</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                ${(d.sides || []).map((s, si) => `
+                  <div style="flex:1;min-width:180px;background:white;border-radius:8px;padding:10px;border:1px solid #fecaca;">
+                    <div style="font-size:12px;font-weight:700;color:${si===0?'#2563eb':'#dc2626'};margin-bottom:4px;">Side ${si+1}</div>
+                    <div style="font-size:13px;color:#374151;margin-bottom:6px;">${s.position}</div>
+                    <div style="font-size:11px;color:#94a3b8;">${(s.models||[]).join(', ')}</div>
                   </div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        ` : ''}
+
+        <!-- ── UNIQUE INSIGHTS ────────────────────────── -->
+        ${uniqueInsights && uniqueInsights.length ? `
+        <div class="analysis-section">
+          <div class="analysis-section-title"><span class="material-icons">lightbulb</span> Unique Insights (${uniqueInsights.length})</div>
+          <div class="unique-insights">
+            ${uniqueInsights.map(ins => {
+              const catColors = {practical:'#10b981',creative:'#8b5cf6',contrarian:'#ef4444','deep-dive':'#3b82f6',meta:'#f59e0b'};
+              const cc = catColors[ins.category] || '#6366f1';
+              return `
+              <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+                <div style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${cc}15;color:${cc};">
+                  <span class="material-icons" style="font-size:16px;">auto_awesome</span>
                 </div>
+                <div style="flex:1;">
+                  <div style="font-weight:600;font-size:13px;color:#0f172a;">${ins.insight}</div>
+                  <div style="display:flex;gap:8px;align-items:center;margin-top:4px;">
+                    <span style="font-size:11px;font-weight:600;color:${cc};background:${cc}10;padding:1px 8px;border-radius:999px;">${ins.model}</span>
+                    ${ins.category ? `<span style="font-size:10px;text-transform:uppercase;font-weight:700;letter-spacing:0.4px;color:${cc};">${ins.category}</span>` : ''}
+                  </div>
+                  ${ins.significance ? `<div style="font-size:12px;color:#64748b;margin-top:4px;line-height:1.5;">${ins.significance}</div>` : ''}
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+        ` : ''}
+
+        <!-- ── ACTIONABLE TAKEAWAYS ───────────────────── -->
+        ${actionableTakeaways && actionableTakeaways.length ? `
+        <div class="analysis-section" style="background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%);border:1px solid rgba(34,197,94,0.2);">
+          <div class="analysis-section-title"><span class="material-icons" style="color:#16a34a;">task_alt</span> Actionable Takeaways</div>
+          ${actionableTakeaways.map((t, i) => `
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;${i < actionableTakeaways.length - 1 ? 'border-bottom:1px solid rgba(34,197,94,0.15);' : ''}">
+              <div style="width:24px;height:24px;border-radius:6px;background:#16a34a;color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:700;">${i+1}</div>
+              <div>
+                <div style="font-size:14px;font-weight:600;color:#0f172a;line-height:1.5;">${t.takeaway}</div>
+                <div style="font-size:11px;color:#16a34a;margin-top:4px;font-weight:600;">
+                  ${t.confidence ? `Confidence: ${t.confidence}` : ''} ${t.supportingModels ? `· ${t.supportingModels} models agree` : ''}
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        ` : ''}
+
+        <!-- ── MODEL GRADES ───────────────────────────── -->
+        ${modelGrades && modelGrades.length ? `
+        <div class="analysis-section">
+          <div class="analysis-section-title"><span class="material-icons">grading</span> Model Report Card (${modelGrades.length} graded)</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;">
+            ${modelGrades.sort((a,b)=>(a.grade||'Z').localeCompare(b.grade||'Z')).map(g => `
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">
+                <div style="font-size:18px;font-weight:800;color:${gradeColor(g.grade)};font-family:'Space Grotesk';min-width:32px;">${g.grade}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:12px;font-weight:600;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.model}</div>
+                  <div style="font-size:11px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.oneLiner}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        ` : ''}
+
+        <!-- ── BLIND SPOTS ────────────────────────────── -->
+        ${blindSpots && blindSpots.length ? `
+        <div class="analysis-section" style="background:#fffbeb;border:1px solid rgba(245,158,11,0.2);">
+          <div class="analysis-section-title"><span class="material-icons" style="color:#f59e0b;">visibility_off</span> Blind Spots — What No Model Mentioned</div>
+          <ul style="margin:0;padding-left:20px;">
+            ${blindSpots.map(b => `<li style="font-size:13px;color:#92400e;line-height:1.8;">${b}</li>`).join('')}
+          </ul>
+        </div>
+        ` : ''}
+
+        <!-- ── RESPONSE PATTERNS ──────────────────────── -->
+        ${responsePatterns && responsePatterns.structureTypes ? `
+        <div class="analysis-section">
+          <div class="analysis-section-title"><span class="material-icons">insights</span> Response Patterns</div>
+          <div style="display:flex;gap:20px;flex-wrap:wrap;">
+            ${responsePatterns.avgLength ? `<div style="text-align:center;"><div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">Avg Length</div><div style="font-size:16px;font-weight:700;color:#0f172a;text-transform:capitalize;">${responsePatterns.avgLength}</div></div>` : ''}
+            ${Object.entries(responsePatterns.structureTypes || {}).map(([k,v]) => `
+              <div style="text-align:center;">
+                <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">${k.replace(/([A-Z])/g,' $1').trim()}</div>
+                <div style="font-size:16px;font-weight:700;color:#6366f1;">${v}</div>
+              </div>
+            `).join('')}
+            ${Object.entries(responsePatterns.toneSpread || {}).map(([k,v]) => `
+              <div style="text-align:center;">
+                <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">${k}</div>
+                <div style="font-size:16px;font-weight:700;color:#8b5cf6;">${v}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        ` : ''}
+
+        <!-- ── FOLLOW-UP QUESTIONS ────────────────────── -->
+        ${followUpQuestions && followUpQuestions.length ? `
+        <div class="analysis-section">
+          <div class="analysis-section-title"><span class="material-icons">help_outline</span> Suggested Follow-Up Questions</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            ${followUpQuestions.map(q => `
+              <div style="display:flex;gap:10px;align-items:center;padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#6366f1';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc'" onclick="document.getElementById('prompt').value=this.querySelector('.fq-text').textContent;document.getElementById('prompt').focus();if(window.estimateCost)window.estimateCost();">
+                <span class="material-icons" style="font-size:16px;color:#6366f1;">arrow_forward</span>
+                <span class="fq-text" style="font-size:13px;color:#374151;">${q}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        ` : ''}
+
+        <!-- ── CONSENSUS-ALIGNED ──────────────────────── -->
+        ${mostSimilar && mostSimilar.length ? `
+        <div class="analysis-section">
+          <div class="analysis-section-title"><span class="material-icons">groups</span> Most Consensus-Aligned</div>
+          <div class="ranking-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            ${mostSimilar.slice(0, 3).map((item, i) => `
+              <div class="ranking-card ${['gold','silver','bronze'][i]}" style="padding:16px;border-radius:12px;position:relative;">
+                <div class="ranking-badge" style="position:absolute;top:-10px;right:12px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:13px;">${i+1}</div>
+                <div style="font-weight:700;font-size:13px;margin-bottom:4px;">${item.model}</div>
+                <div style="font-size:12px;color:#64748b;line-height:1.5;">${item.reason}</div>
               </div>
             `).join('')}
           </div>
@@ -4065,7 +4317,10 @@ Provide your analysis in the following JSON format (respond ONLY with valid JSON
     function downloadAnalysisAsReport(data) {
       const { analysis, prompt, responses } = data;
       const timestamp = new Date().toLocaleString();
-      const { summary, commonThemes, uniqueInsights, mostUnique, mostSimilar, overallAnalysis } = analysis;
+      const rpt = analysis;
+      const { summary } = rpt;
+      const consensusColor = summary.consensusLevel === 'high' ? '#22c55e' : summary.consensusLevel === 'medium' ? '#f59e0b' : '#ef4444';
+      const gradeColor = g => { if (!g) return '#94a3b8'; if (g.startsWith('A')) return '#22c55e'; if (g.startsWith('B')) return '#3b82f6'; if (g.startsWith('C')) return '#f59e0b'; return '#ef4444'; };
 
       const htmlContent = `<!DOCTYPE html>
 <html lang="en">
@@ -4076,305 +4331,181 @@ Provide your analysis in the following JSON format (respond ONLY with valid JSON
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #1a1a2e;
-      --primary-light: #16213e;
-      --accent: #6366f1;
-      --accent-light: #818cf8;
-      --success: #22c55e;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --background: #f8f9fc;
-      --surface: #ffffff;
-      --text-primary: #1a1a2e;
-      --text-secondary: #6b7280;
-      --border: #e5e7eb;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--background);
-      color: var(--text-primary);
-      line-height: 1.6;
-    }
-    .report-container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
-    .report-header {
-      background: linear-gradient(135deg, var(--primary) 0%, #0f3460 100%);
-      color: white;
-      padding: 48px 40px;
-      border-radius: 20px;
-      margin-bottom: 32px;
-      text-align: center;
-    }
-    .report-header h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 32px;
-      margin-bottom: 8px;
-    }
-    .report-header p { opacity: 0.8; font-size: 14px; }
-    .report-header .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255,255,255,0.15);
-      padding: 8px 16px;
-      border-radius: 20px;
-      margin-top: 16px;
-      font-size: 13px;
-    }
-    .section {
-      background: var(--surface);
-      border-radius: 16px;
-      padding: 28px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    }
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--border);
-    }
-    .section-title .material-icons { color: var(--accent); font-size: 24px; }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .stat-card {
-      background: var(--background);
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-    }
-    .stat-value {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-    .stat-label {
-      font-size: 12px;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 4px;
-    }
-    .ranking-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .ranking-card {
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      position: relative;
-    }
-    .ranking-card.gold { border-color: #fbbf24; background: linear-gradient(to bottom, #fef3c7, white); }
-    .ranking-card.silver { border-color: #9ca3af; background: linear-gradient(to bottom, #f3f4f6, white); }
-    .ranking-card.bronze { border-color: #d97706; background: linear-gradient(to bottom, #fef3c7, white); }
-    .ranking-badge {
-      position: absolute;
-      top: -12px;
-      right: 16px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      color: white;
-    }
-    .ranking-card.gold .ranking-badge { background: #fbbf24; }
-    .ranking-card.silver .ranking-badge { background: #9ca3af; }
-    .ranking-card.bronze .ranking-badge { background: #d97706; }
-    .ranking-model { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
-    .ranking-reason { font-size: 13px; color: var(--text-secondary); }
-    .theme-list { background: var(--background); border-radius: 12px; padding: 16px; }
-    .theme-item {
-      display: flex;
-      gap: 16px;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .theme-item:last-child { border-bottom: none; }
-    .theme-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background: rgba(34, 197, 94, 0.15);
-      color: var(--success);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .theme-title { font-weight: 600; margin-bottom: 4px; }
-    .theme-models { font-size: 12px; color: var(--text-secondary); }
-    .theme-models span {
-      background: rgba(99, 102, 241, 0.1);
-      color: var(--accent);
-      padding: 2px 10px;
-      border-radius: 12px;
-      margin-right: 6px;
-      font-weight: 500;
-    }
-    .prompt-box {
-      background: var(--background);
-      border-left: 4px solid var(--accent);
-      padding: 16px 20px;
-      border-radius: 0 12px 12px 0;
-      font-style: italic;
-      color: var(--text-secondary);
-    }
-    .footer {
-      text-align: center;
-      padding: 32px;
-      color: var(--text-secondary);
-      font-size: 13px;
-    }
-    .footer a { color: var(--accent); text-decoration: none; }
-    @media (max-width: 768px) {
-      .stats-grid, .ranking-grid { grid-template-columns: 1fr; }
-    }
-    @media print {
-      body { background: white; }
-      .section { box-shadow: none; border: 1px solid var(--border); }
-    }
+    :root{--primary:#1a1a2e;--accent:#6366f1;--accent-light:#818cf8;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--bg:#f8f9fc;--surface:#fff;--text:#1a1a2e;--text2:#6b7280;--border:#e5e7eb;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+    .rc{max-width:1000px;margin:0 auto;padding:40px 20px;}
+    .hdr{background:linear-gradient(135deg,var(--primary),#0f3460);color:#fff;padding:48px 40px;border-radius:20px;margin-bottom:32px;text-align:center;}
+    .hdr h1{font-family:'Space Grotesk';font-size:32px;margin-bottom:8px;}.hdr p{opacity:.8;font-size:14px;}
+    .hdr .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);padding:8px 16px;border-radius:20px;margin-top:16px;font-size:13px;}
+    .sec{background:var(--surface);border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1);}
+    .sec-t{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:600;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border);}
+    .sec-t .material-icons{color:var(--accent);font-size:24px;}
+    .sg{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
+    .sc{background:var(--bg);padding:20px;border-radius:12px;text-align:center;}
+    .sv{font-family:'Space Grotesk';font-size:28px;font-weight:700;color:var(--accent);}
+    .sl{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-top:4px;}
+    .rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;}
+    .rcard{border:2px solid var(--border);border-radius:12px;padding:16px;position:relative;}
+    .rcard.g{border-color:#fbbf24;background:linear-gradient(to bottom,#fef3c7,#fff);}
+    .rcard.s{border-color:#9ca3af;background:linear-gradient(to bottom,#f3f4f6,#fff);}
+    .rcard.b{border-color:#d97706;background:linear-gradient(to bottom,#fef3c7,#fff);}
+    .rbadge{position:absolute;top:-10px;right:12px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px;}
+    .rm{font-weight:700;font-size:13px;margin-bottom:4px;}.rr{font-size:12px;color:var(--text2);line-height:1.5;}
+    .tl{background:var(--bg);border-radius:12px;padding:16px;}.ti{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+    .ti:last-child{border-bottom:none;}
+    .ticon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .tt{font-weight:600;font-size:14px;margin-bottom:4px;}.tm{font-size:11px;color:var(--text2);}
+    .tm span{background:rgba(99,102,241,.1);color:var(--accent);padding:1px 8px;border-radius:999px;margin-right:4px;font-weight:500;}
+    .pb{background:var(--bg);border-left:4px solid var(--accent);padding:16px 20px;border-radius:0 12px 12px 0;font-style:italic;color:var(--text2);}
+    .bq{margin:0;padding:16px 20px;border-left:4px solid #8b5cf6;font-style:italic;color:#374151;line-height:1.8;font-size:15px;background:#f5f3ff;border-radius:0 10px 10px 0;}
+    .gc{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;}
+    .gci{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);}
+    .gcg{font-size:18px;font-weight:800;font-family:'Space Grotesk';min-width:30px;}
+    .ft{text-align:center;padding:32px;color:var(--text2);font-size:13px;}.ft a{color:var(--accent);text-decoration:none;}
+    @media(max-width:768px){.sg,.rg{grid-template-columns:1fr;}}
+    @media print{body{background:#fff;}.sec{box-shadow:none;border:1px solid var(--border);}}
   </style>
 </head>
 <body>
-  <div class="report-container">
-    <div class="report-header">
+  <div class="rc">
+    <div class="hdr">
       <h1>Response Analysis Report</h1>
-      <p>Venice AI Multi-Model Comparison</p>
-      <div class="badge">
-        <span class="material-icons" style="font-size: 16px;">schedule</span>
-        Generated: ${timestamp}
+      <p>Venice AI Multi-Model Comparison &middot; ${summary.totalModels} models analyzed</p>
+      <div class="badge"><span class="material-icons" style="font-size:16px;">schedule</span> ${timestamp}</div>
+    </div>
+
+    <div class="sec"><div class="sec-t"><span class="material-icons">chat</span> Original Prompt</div><div class="pb">${prompt}</div></div>
+
+    <div class="sg">
+      <div class="sc"><div class="sv">${summary.totalModels}</div><div class="sl">Models</div></div>
+      <div class="sc"><div class="sv" style="color:${consensusColor};text-transform:uppercase;">${summary.consensusLevel}</div><div class="sl">Consensus</div></div>
+      <div class="sc"><div class="sv">${summary.diversityScore}/10</div><div class="sl">Diversity</div></div>
+      <div class="sc"><div class="sv">${rpt.commonThemes?.length||0}</div><div class="sl">Themes</div></div>
+      <div class="sc"><div class="sv">${rpt.uniqueInsights?.length||0}</div><div class="sl">Insights</div></div>
+    </div>
+
+    <div class="sec"><div class="sec-t"><span class="material-icons">summarize</span> Executive Summary</div><p style="line-height:1.8;font-size:14px;">${rpt.overallAnalysis}</p></div>
+
+    ${rpt.bestQuote?.quote ? `
+    <div class="sec" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid rgba(139,92,246,.2);">
+      <div class="sec-t"><span class="material-icons" style="color:#8b5cf6;">format_quote</span> Best Quote</div>
+      <blockquote class="bq">"${rpt.bestQuote.quote}"</blockquote>
+      <div style="margin-top:8px;font-size:12px;color:#7c3aed;font-weight:600;">— ${rpt.bestQuote.model}</div>
+      ${rpt.bestQuote.why?`<div style="margin-top:4px;font-size:12px;color:#6b7280;">${rpt.bestQuote.why}</div>`:''}
+    </div>` : ''}
+
+    ${rpt.qualityTiers && Object.keys(rpt.qualityTiers).length ? `
+    <div class="sec">
+      <div class="sec-t"><span class="material-icons">leaderboard</span> Quality Tiers</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        ${[{l:'Exceptional',k:'exceptional',c:'#22c55e',i:'emoji_events'},{l:'Strong',k:'strong',c:'#3b82f6',i:'thumb_up'},{l:'Adequate',k:'adequate',c:'#f59e0b',i:'horizontal_rule'},{l:'Weak',k:'weak',c:'#ef4444',i:'thumb_down'}].map(t=>{
+          const ms=rpt.qualityTiers[t.k]||[];
+          return `<div style="background:${t.c}10;border:1px solid ${t.c}30;border-radius:12px;padding:14px;text-align:center;">
+            <span class="material-icons" style="color:${t.c};font-size:24px;">${t.i}</span>
+            <div style="font-size:20px;font-weight:700;color:${t.c};margin:4px 0;">${ms.length}</div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:${t.c};">${t.l}</div>
+            <div style="font-size:10px;color:#94a3b8;margin-top:6px;">${ms.slice(0,4).join(', ')}${ms.length>4?' +' +(ms.length-4):''}</div>
+          </div>`;}).join('')}
+      </div>
+    </div>` : ''}
+
+    <div class="sec">
+      <div class="sec-t"><span class="material-icons">star</span> Top 5 Most Unique</div>
+      <div class="rg">
+        ${(rpt.mostUnique||[]).slice(0,5).map((it,i)=>{const c=['#fbbf24','#9ca3af','#d97706','#6366f1','#6366f1'][i];const cls=['g','s','b','',''][i];
+          return `<div class="rcard ${cls}" style="padding:16px;"><div class="rbadge" style="background:${c};">${i+1}</div>
+          ${it.score?`<div style="font-size:22px;font-weight:800;color:${c};font-family:'Space Grotesk';">${it.score}</div>`:''}
+          <div class="rm">${it.model}</div><div class="rr">${it.reason}</div></div>`;}).join('')}
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-title">
-        <span class="material-icons">chat</span>
-        Original Prompt
+    ${rpt.bestForUseCase?.length ? `
+    <div class="sec">
+      <div class="sec-t"><span class="material-icons">recommend</span> Best Model by Use Case</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">
+        ${rpt.bestForUseCase.map(u=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:6px;">${u.useCase}</div>
+          <div style="font-weight:700;font-size:14px;">${u.model}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:4px;">${u.why}</div>
+        </div>`).join('')}
       </div>
-      <div class="prompt-box">${prompt}</div>
+    </div>` : ''}
+
+    ${rpt.commonThemes?.length ? `
+    <div class="sec">
+      <div class="sec-t"><span class="material-icons">hub</span> Common Themes (${rpt.commonThemes.length})</div>
+      <div class="tl">
+        ${rpt.commonThemes.map(t=>`<div class="ti"><div class="ticon" style="background:rgba(34,197,94,.15);color:#22c55e;"><span class="material-icons">check_circle</span></div>
+          <div><div class="tt">${t.theme}</div>${t.description?`<div style="font-size:13px;color:#475569;line-height:1.6;margin-bottom:4px;">${t.description}</div>`:''}<div class="tm">${(t.models||[]).slice(0,6).map(m=>`<span>${m}</span>`).join('')}${(t.models||[]).length>6?` +${t.models.length-6}`:''}</div></div></div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${rpt.disagreements?.length ? `
+    <div class="sec" style="border-left:4px solid #ef4444;">
+      <div class="sec-t"><span class="material-icons" style="color:#ef4444;">compare_arrows</span> Key Disagreements</div>
+      ${rpt.disagreements.map(d=>`<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px;margin-bottom:10px;">
+        <div style="font-weight:700;color:#991b1b;margin-bottom:8px;">${d.topic}</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">${(d.sides||[]).map((s,si)=>`<div style="flex:1;min-width:160px;background:#fff;border-radius:8px;padding:10px;border:1px solid #fecaca;">
+          <div style="font-size:12px;font-weight:700;color:${si===0?'#2563eb':'#dc2626'};margin-bottom:4px;">Side ${si+1}</div>
+          <div style="font-size:13px;color:#374151;margin-bottom:6px;">${s.position}</div>
+          <div style="font-size:11px;color:#94a3b8;">${(s.models||[]).join(', ')}</div>
+        </div>`).join('')}</div></div>`).join('')}
+    </div>` : ''}
+
+    ${rpt.uniqueInsights?.length ? `
+    <div class="sec">
+      <div class="sec-t"><span class="material-icons">lightbulb</span> Unique Insights (${rpt.uniqueInsights.length})</div>
+      <div class="tl">
+        ${rpt.uniqueInsights.map(ins=>`<div class="ti"><div class="ticon" style="background:rgba(99,102,241,.15);color:var(--accent);"><span class="material-icons">auto_awesome</span></div>
+          <div><div class="tt">${ins.insight}</div><div class="tm"><span>${ins.model}</span> ${ins.category?`<em style="font-size:10px;text-transform:uppercase;color:#8b5cf6;">${ins.category}</em>`:''} ${ins.significance||''}</div></div></div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${rpt.actionableTakeaways?.length ? `
+    <div class="sec" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid rgba(34,197,94,.2);">
+      <div class="sec-t"><span class="material-icons" style="color:#16a34a;">task_alt</span> Actionable Takeaways</div>
+      ${rpt.actionableTakeaways.map((t,i)=>`<div style="display:flex;gap:12px;padding:10px 0;${i<rpt.actionableTakeaways.length-1?'border-bottom:1px solid rgba(34,197,94,.15);':''}">
+        <div style="width:24px;height:24px;border-radius:6px;background:#16a34a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">${i+1}</div>
+        <div><div style="font-size:14px;font-weight:600;line-height:1.5;">${t.takeaway}</div><div style="font-size:11px;color:#16a34a;font-weight:600;margin-top:4px;">${t.confidence?'Confidence: '+t.confidence:''} ${t.supportingModels?'&middot; '+t.supportingModels+' models agree':''}</div></div>
+      </div>`).join('')}
+    </div>` : ''}
+
+    ${rpt.modelGrades?.length ? `
+    <div class="sec">
+      <div class="sec-t"><span class="material-icons">grading</span> Model Report Card (${rpt.modelGrades.length})</div>
+      <div class="gc">
+        ${rpt.modelGrades.sort((x,y)=>(x.grade||'Z').localeCompare(y.grade||'Z')).map(g=>`<div class="gci">
+          <div class="gcg" style="color:${gradeColor(g.grade)};">${g.grade}</div>
+          <div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g.model}</div><div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g.oneLiner}</div></div>
+        </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${rpt.blindSpots?.length ? `
+    <div class="sec" style="background:#fffbeb;border:1px solid rgba(245,158,11,.2);">
+      <div class="sec-t"><span class="material-icons" style="color:#f59e0b;">visibility_off</span> Blind Spots</div>
+      <ul style="margin:0;padding-left:20px;">${rpt.blindSpots.map(b=>`<li style="font-size:13px;color:#92400e;line-height:1.8;">${b}</li>`).join('')}</ul>
+    </div>` : ''}
+
+    ${rpt.followUpQuestions?.length ? `
+    <div class="sec">
+      <div class="sec-t"><span class="material-icons">help_outline</span> Suggested Follow-Up Questions</div>
+      ${rpt.followUpQuestions.map(q=>`<div style="padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;font-size:13px;color:#374151;">&#8594; ${q}</div>`).join('')}
+    </div>` : ''}
+
+    <div class="sec">
+      <div class="sec-t"><span class="material-icons">groups</span> Consensus-Aligned</div>
+      <div class="rg" style="grid-template-columns:repeat(3,1fr);">
+        ${(rpt.mostSimilar||[]).slice(0,3).map((it,i)=>{const cls=['g','s','b'][i];const c=['#fbbf24','#9ca3af','#d97706'][i];
+          return `<div class="rcard ${cls}"><div class="rbadge" style="background:${c};">${i+1}</div>
+          <div class="rm">${it.model}</div><div class="rr">${it.reason}</div></div>`;}).join('')}
+      </div>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value">${summary.totalModels}</div>
-        <div class="stat-label">Models Analyzed</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" style="color: ${summary.consensusLevel === 'high' ? 'var(--success)' : summary.consensusLevel === 'medium' ? 'var(--warning)' : 'var(--danger)'};">${summary.consensusLevel}</div>
-        <div class="stat-label">Consensus Level</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">${summary.diversityScore}/10</div>
-        <div class="stat-label">Diversity Score</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">${commonThemes?.length || 0}</div>
-        <div class="stat-label">Common Themes</div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">
-        <span class="material-icons">summarize</span>
-        Executive Summary
-      </div>
-      <p style="line-height: 1.8;">${overallAnalysis}</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">
-        <span class="material-icons">star</span>
-        Top 3 Most Unique Responses
-      </div>
-      <div class="ranking-grid">
-        ${mostUnique?.slice(0, 3).map((item, i) => `
-          <div class="ranking-card ${i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}">
-            <div class="ranking-badge">${i + 1}</div>
-            <div class="ranking-model">${item.model}</div>
-            <div class="ranking-reason">${item.reason}</div>
-          </div>
-        `).join('') || ''}
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">
-        <span class="material-icons">groups</span>
-        Top 3 Consensus-Aligned Responses
-      </div>
-      <div class="ranking-grid">
-        ${mostSimilar?.slice(0, 3).map((item, i) => `
-          <div class="ranking-card ${i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}">
-            <div class="ranking-badge">${i + 1}</div>
-            <div class="ranking-model">${item.model}</div>
-            <div class="ranking-reason">${item.reason}</div>
-          </div>
-        `).join('') || ''}
-      </div>
-    </div>
-
-    ${commonThemes && commonThemes.length > 0 ? `
-    <div class="section">
-      <div class="section-title">
-        <span class="material-icons">hub</span>
-        Common Themes Identified
-      </div>
-      <div class="theme-list">
-        ${commonThemes.map(theme => `
-          <div class="theme-item">
-            <div class="theme-icon">
-              <span class="material-icons">check_circle</span>
-            </div>
-            <div>
-              <div class="theme-title">${theme.theme}</div>
-              <div class="theme-models">
-                ${theme.models?.map(m => `<span>${m}</span>`).join('') || ''}
-              </div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-    ` : ''}
-
-    ${uniqueInsights && uniqueInsights.length > 0 ? `
-    <div class="section">
-      <div class="section-title">
-        <span class="material-icons">lightbulb</span>
-        Unique Insights by Model
-      </div>
-      <div class="theme-list">
-        ${uniqueInsights.map(insight => `
-          <div class="theme-item">
-            <div class="theme-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--accent);">
-              <span class="material-icons">auto_awesome</span>
-            </div>
-            <div>
-              <div class="theme-title">${insight.insight}</div>
-              <div class="theme-models">
-                <span>${insight.model}</span> ${insight.significance || ''}
-              </div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-    ` : ''}
-
-    <div class="footer">
+    <div class="ft">
       <p>Generated by <a href="https://venice.ai" target="_blank">Venice AI</a> Multi-Chat Analysis</p>
-      <p style="margin-top: 8px;">Analysis powered by Gemini 3 Flash Preview</p>
+      <p style="margin-top:8px;">Analysis powered by Grok 4.20 (2M context · 128K output) &middot; ${summary.totalModels} models &middot; full responses · 3-pass deep analysis</p>
     </div>
   </div>
 </body>
@@ -4559,32 +4690,38 @@ Provide your analysis in the following JSON format (respond ONLY with valid JSON
     window.updateSessionTracker = updateSessionTracker;
 
     // ── LIVE COST ESTIMATOR ─────────────────────────────────
-    // Rough pricing fallbacks: $0.20/1M tokens input
+    // Fallback: $0.20/1M input tokens
     const FALLBACK_INPUT_PRICE = 0.20 / 1e6;
-
-    function getActivePricing() {
-      // Try to read from the app's currently selected model data
-      try {
-        const models = window.allModels || [];
-        const activeId = window.activeModel || qs('.rail-pill.active')?.dataset?.model;
-        const m = models.find(x => x.id === activeId);
-        if (m?.pricing?.input?.usd) return m.pricing.input.usd;
-      } catch (_) {}
-      return FALLBACK_INPUT_PRICE;
-    }
 
     function estimateCost() {
       const textarea = $('prompt');
       if (!textarea) return;
       const text = textarea.value;
       const tokens = Math.ceil(text.length / 4);
-      const pricePerToken = getActivePricing();
-      const cost = tokens * pricePerToken;
-      const cbTokens = $('cbTokens');
-      const cbCost = $('cbCost');
-      if (cbTokens) cbTokens.textContent = tokens > 0 ? tokens.toLocaleString() : '—';
-      if (cbCost) cbCost.textContent = tokens > 0 ? fmtCost(cost) : '—';
+
+      // All text models that will receive the prompt
+      const textModels = (window.availableModels || [])
+        .filter(m => !m.modelType || m.modelType === 'text');
+
+      const modelCount = textModels.length;
+
+      // Sum cost across every model
+      let totalCost = 0;
+      textModels.forEach(m => {
+        const inputPrice = m?.pricing?.input?.usd || FALLBACK_INPUT_PRICE;
+        totalCost += tokens * inputPrice;
+      });
+
+      const cbTokens  = $('cbTokens');
+      const cbCost    = $('cbCost');
+      const cbModelEl = $('cbModelName');
+
+      if (cbTokens)  cbTokens.textContent  = tokens > 0 ? tokens.toLocaleString() + ' / model' : '—';
+      if (cbCost)    cbCost.textContent     = tokens > 0 ? fmtCost(totalCost) + ' total' : '—';
+      if (cbModelEl) cbModelEl.textContent  = modelCount > 0 ? `${modelCount} models` : '';
     }
+
+    window.estimateCost = estimateCost;
 
     document.addEventListener('DOMContentLoaded', () => {
       const ta = $('prompt');
@@ -4658,15 +4795,15 @@ Provide your analysis in the following JSON format (respond ONLY with valid JSON
     // ── COMMAND PALETTE ─────────────────────────────────────
     const CMD_COMMANDS = [
       { icon: 'send',            label: 'Send Prompt',              hint: '⌘↵',  action: () => $('sendButton')?.click() },
-      { icon: 'history',         label: 'Open Prompt History',      hint: '',    action: openHistory },
-      { icon: 'batch_prediction',label: 'Open Batch Runner',        hint: '',    action: openBatch },
-      { icon: 'image',           label: 'Open Image Playground',    hint: '',    action: openImgPlayground },
+      { icon: 'history',         label: 'Open Prompt History',      hint: '',    action: () => openHistory() },
+      { icon: 'batch_prediction',label: 'Open Batch Runner',        hint: '',    action: () => openBatch() },
+      { icon: 'image',           label: 'Open Image Playground',    hint: '',    action: () => openImgPlayground() },
       { icon: 'refresh',         label: 'Refresh Models',           hint: '',    action: () => $('refreshModelsButton')?.click() },
       { icon: 'analytics',       label: 'Go to Analytics Dashboard',hint: '',    action: () => { window.location.href = 'dashboard.html'; } },
       { icon: 'menu_book',       label: 'Open API Guide',           hint: '',    action: () => { window.open('api-guide.html'); } },
       { icon: 'settings',        label: 'Open Settings',            hint: '',    action: () => $('settingsButton')?.click() },
       { icon: 'download',        label: 'Download Responses',       hint: '',    action: () => $('downloadButton')?.click() },
-      { icon: 'delete_sweep',    label: 'Clear Prompt History',     hint: '',    action: clearHistory },
+      { icon: 'delete_sweep',    label: 'Clear Prompt History',     hint: '',    action: () => window.clearHistory?.() },
     ];
 
     let cmdIdx = 0;
@@ -4693,7 +4830,7 @@ Provide your analysis in the following JSON format (respond ONLY with valid JSON
       if (q) items = items.filter(c => c.label.toLowerCase().includes(q));
 
       // Also search models
-      const models = window.allModels || [];
+      const models = window.availableModels || [];
       const modelMatches = q
         ? models.filter(m => m.id.toLowerCase().includes(q)).slice(0, 6)
         : [];
@@ -4897,15 +5034,27 @@ Provide your analysis in the following JSON format (respond ONLY with valid JSON
       const m = $('batchModal');
       if (!m) return;
       m.classList.add('open');
-      // Populate model select from loaded models
+      // Populate model select from loaded text models
       const sel = $('batchModel');
       if (sel && sel.options.length <= 1) {
-        const models = (window.allModels || []).filter(x => !x.type || x.type === 'text');
+        const models = window.availableModels || [];
         models.forEach(x => {
           const o = document.createElement('option');
           o.value = x.id; o.textContent = x.id;
           sel.appendChild(o);
         });
+        // If no models loaded yet, try again after a tick
+        if (!models.length) {
+          setTimeout(() => {
+            const ms = window.availableModels || [];
+            ms.forEach(x => {
+              if ([...sel.options].some(o => o.value === x.id)) return;
+              const o = document.createElement('option');
+              o.value = x.id; o.textContent = x.id;
+              sel.appendChild(o);
+            });
+          }, 1500);
+        }
       }
     }
     function closeBatch() { $('batchModal')?.classList.remove('open'); }
@@ -4978,19 +5127,40 @@ Provide your analysis in the following JSON format (respond ONLY with valid JSON
     };
 
     // ── IMAGE PLAYGROUND ─────────────────────────────────────
-    function openImgPlayground() {
+    async function openImgPlayground() {
       const m = $('imgModal');
       if (!m) return;
       m.classList.add('open');
-      // Populate image models
+      // Fetch image models from API on first open
       const sel = $('imgModel');
       if (sel && sel.options.length <= 1) {
-        const models = (window.allModels || []).filter(x => x.type === 'image');
-        models.forEach(x => {
-          const o = document.createElement('option');
-          o.value = x.id; o.textContent = x.id;
-          sel.appendChild(o);
-        });
+        try {
+          const apiKey = window.getApiKey ? window.getApiKey() : (localStorage.getItem('venice_user_api_key') || '');
+          const resp = await fetch('https://api.venice.ai/api/v1/models?type=image', {
+            headers: { 'Authorization': `Bearer ${apiKey}` }
+          });
+          const data = await resp.json();
+          const imgModels = data.data || [];
+          // Clear default and repopulate
+          sel.innerHTML = '';
+          imgModels.forEach(x => {
+            const o = document.createElement('option');
+            o.value = x.id; o.textContent = x.id;
+            sel.appendChild(o);
+          });
+          if (!imgModels.length) {
+            const o = document.createElement('option');
+            o.value = 'fluently-xl'; o.textContent = 'fluently-xl';
+            sel.appendChild(o);
+          }
+        } catch {
+          // fallback
+          if (sel.options.length === 0) {
+            const o = document.createElement('option');
+            o.value = 'fluently-xl'; o.textContent = 'fluently-xl';
+            sel.appendChild(o);
+          }
+        }
       }
     }
     function closeImgPlayground() { $('imgModal')?.classList.remove('open'); }
@@ -5112,7 +5282,7 @@ Provide your analysis in the following JSON format (respond ONLY with valid JSON
               // Update session tracker from usage
               if (parsed?.usage) {
                 const usage = parsed.usage;
-                const models = window.allModels || [];
+                const models = window.availableModels || [];
                 const m = models.find(x => x.id === reqBody.model);
                 const inputPrice  = m?.pricing?.input?.usd || 0.20 / 1e6;
                 const outputPrice = m?.pricing?.output?.usd || 0.60 / 1e6;
