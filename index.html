@@ -1949,6 +1949,16 @@
     .img-result-meta{font-size:12px;color:#64748b;text-align:center;}
     .img-download-btn{background:#10b981;color:white;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
 
+    /* ===== DOWNLOAD DROPDOWN ===== */
+    .dl-dropdown{position:relative;display:inline-flex;}
+    .dl-main{display:flex;align-items:center;gap:4px;}
+    .dl-menu{position:absolute;top:calc(100% + 4px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:150px;z-index:500;display:none;overflow:hidden;}
+    .dl-menu.open{display:block;}
+    .dl-item{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:13px;font-weight:500;cursor:pointer;color:#374151;transition:background 0.1s;}
+    .dl-item:hover{background:#f5f3ff;color:#6366f1;}
+    .dl-item .material-icons{font-size:16px;color:#94a3b8;}
+    .dl-item:hover .material-icons{color:#6366f1;}
+
     /* ===== SPIN ANIMATION ===== */
     @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     .spin{animation:spin 1s linear infinite;}
@@ -2063,10 +2073,18 @@
               <span class="material-icons">send</span>
               Send
             </button>
-            <button id="downloadButton" class="button" title="Download all responses as HTML">
-              <span class="material-icons">download</span>
-              Download Responses
-            </button>
+            <div class="dl-dropdown" id="responsesDropdownWrap">
+              <button class="button dl-main" id="downloadButton" title="Download responses" onclick="toggleDlDropdown('responsesDropdown')">
+                <span class="material-icons">download</span>
+                Download
+                <span class="material-icons" style="font-size:16px;margin-left:2px;">arrow_drop_down</span>
+              </button>
+              <div class="dl-menu" id="responsesDropdown">
+                <div class="dl-item" onclick="downloadAllResponses('html')"><span class="material-icons">code</span> HTML</div>
+                <div class="dl-item" onclick="downloadAllResponses('md')"><span class="material-icons">description</span> Markdown</div>
+                <div class="dl-item" onclick="downloadAllResponses('pdf')"><span class="material-icons">picture_as_pdf</span> PDF</div>
+              </div>
+            </div>
             <button id="analyzeButton" class="button" title="Analyze and compare all responses" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); display: none;">
               <span class="material-icons">insights</span>
               Analyze
@@ -2103,7 +2121,10 @@
         </div>
         <div class="insp-toolbar">
           <span class="insp-label" id="inspLabel">No request yet</span>
-          <button class="insp-copy" id="inspCopyBtn" onclick="inspCopy()">Copy</button>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button class="insp-copy" id="inspCopyBtn" onclick="inspCopy()">Copy</button>
+            <button class="insp-copy" onclick="document.getElementById('inspectorPanel').classList.remove('open')" title="Hide panel" style="padding:3px 8px;">✕ Hide</button>
+          </div>
         </div>
         <div class="insp-body" id="inspBody">// Open a chat and send a message to inspect the API call</div>
       </div>
@@ -2324,10 +2345,18 @@
         </div>
       </div>
       <div class="analysis-footer" id="analysisFooter" style="display: none;">
-        <button id="downloadAnalysisReport" class="button" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
-          <span class="material-icons">download</span>
-          Download Report
-        </button>
+        <div class="dl-dropdown" id="reportDropdownWrap">
+          <button class="button dl-main" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);" onclick="toggleDlDropdown('reportDropdown')">
+            <span class="material-icons">download</span>
+            Download Report
+            <span class="material-icons" style="font-size:16px;margin-left:2px;">arrow_drop_down</span>
+          </button>
+          <div class="dl-menu" id="reportDropdown" style="bottom:44px;top:auto;">
+            <div class="dl-item" onclick="triggerReportDownload('html')"><span class="material-icons">code</span> HTML</div>
+            <div class="dl-item" onclick="triggerReportDownload('md')"><span class="material-icons">description</span> Markdown</div>
+            <div class="dl-item" onclick="triggerReportDownload('pdf')"><span class="material-icons">picture_as_pdf</span> PDF</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -3400,7 +3429,9 @@
       }
     }
 
-    function downloadAllResponses() {
+    function downloadAllResponses(fmt = 'html') {
+      if (fmt === 'md')  { downloadResponsesMd(); return; }
+      if (fmt === 'pdf') { downloadResponsesPdf(); return; }
       const prompt = promptTextarea.value || 'No prompt provided';
       const timestamp = new Date().toLocaleString();
       const slug = (() => {
@@ -3731,10 +3762,185 @@
       URL.revokeObjectURL(url);
     }
 
+    // ── Shared helpers ─────────────────────────────────────
+    function getResponsesData() {
+      const prompt = promptTextarea.value || 'No prompt provided';
+      const slug = prompt.toLowerCase().slice(0,60).replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') || 'responses';
+      const date = new Date().toISOString().split('T')[0];
+      const models = availableModels.filter(m => {
+        const r = modelResponses[m.id];
+        return r && r.content && r.content.trim();
+      });
+      return { prompt, slug, date, models };
+    }
+
+    // ── Responses → Markdown ──────────────────────────────
+    function downloadResponsesMd() {
+      const { prompt, slug, date, models } = getResponsesData();
+      if (!models.length) { alert('No responses to download.'); return; }
+      let md = `# Venice AI Multi-Chat Responses\n\n`;
+      md += `**Prompt:** ${prompt}\n\n`;
+      md += `**Date:** ${date} · **Models:** ${models.length}\n\n---\n\n`;
+      models.forEach((m, i) => {
+        const r = modelResponses[m.id];
+        const meta = [r.time, r.tokensPerSecond?.trim(), r.tokenSummary, r.costSummary].filter(Boolean).join(' · ');
+        md += `## ${i+1}. ${m.id}\n`;
+        if (meta) md += `*${meta}*\n\n`;
+        md += `${r.content}\n\n---\n\n`;
+      });
+      triggerDownload(md, `venice-responses-${slug}-${date}.md`, 'text/markdown');
+    }
+
+    // ── Responses → PDF (via print) ───────────────────────
+    function downloadResponsesPdf() {
+      const { prompt, slug, date, models } = getResponsesData();
+      if (!models.length) { alert('No responses to download.'); return; }
+      const sections = models.map((m, i) => {
+        const r = modelResponses[m.id];
+        const meta = [r.time, r.tokensPerSecond?.trim(), r.tokenSummary, r.costSummary].filter(Boolean).join(' · ');
+        const content = (r.content || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+        return `<div style="page-break-inside:avoid;margin-bottom:32px;padding:20px;border:1px solid #e2e8f0;border-radius:8px;">
+          <h2 style="margin:0 0 4px;font-size:16px;color:#0f172a;">${i+1}. ${m.id}</h2>
+          ${meta ? `<div style="font-size:11px;color:#94a3b8;margin-bottom:12px;">${meta}</div>` : ''}
+          <div style="font-size:13px;line-height:1.7;color:#374151;">${content}</div>
+        </div>`;
+      }).join('');
+      openPrintWindow(
+        `Venice AI Responses — ${prompt.slice(0,60)}`,
+        `<h1 style="font-size:22px;margin:0 0 8px;">Venice AI Multi-Chat Responses</h1>
+         <div style="color:#64748b;font-size:13px;margin-bottom:4px;"><strong>Prompt:</strong> ${prompt.replace(/</g,'&lt;')}</div>
+         <div style="color:#64748b;font-size:12px;margin-bottom:24px;">${date} · ${models.length} models</div>
+         ${sections}`
+      );
+    }
+
+    // ── Analysis Report → Markdown ────────────────────────
+    function downloadReportMd(data) {
+      const { analysis: a, prompt } = data;
+      const date = new Date().toISOString().split('T')[0];
+      let md = `# Venice AI Response Analysis Report\n\n`;
+      md += `**Prompt:** ${prompt}\n**Date:** ${date} · **Models:** ${a.summary.totalModels} · **Consensus:** ${a.summary.consensusLevel} · **Diversity:** ${a.summary.diversityScore}/10\n\n---\n\n`;
+      md += `## Executive Summary\n\n${a.overallAnalysis}\n\n`;
+      if (a.bestQuote?.quote) {
+        md += `## Best Quote\n\n> "${a.bestQuote.quote}"\n>\n> — *${a.bestQuote.model}*\n>\n> ${a.bestQuote.why || ''}\n\n`;
+      }
+      if (a.commonThemes?.length) {
+        md += `## Common Themes\n\n`;
+        a.commonThemes.forEach((t,i) => {
+          md += `### ${i+1}. ${t.theme}\n${t.description||''}\n**Models:** ${(t.models||[]).join(', ')}\n\n`;
+        });
+      }
+      if (a.uniqueInsights?.length) {
+        md += `## Unique Insights\n\n`;
+        a.uniqueInsights.forEach(ins => {
+          md += `- **${ins.insight}**\n  *${ins.model}* — ${ins.significance||''}\n\n`;
+        });
+      }
+      if (a.actionableTakeaways?.length) {
+        md += `## Actionable Takeaways\n\n`;
+        a.actionableTakeaways.forEach((t,i) => {
+          md += `${i+1}. **${t.takeaway}**  \n   Confidence: ${t.confidence||'—'} · ${t.supportingModels||0} models agree\n\n`;
+        });
+      }
+      if (a.modelGrades?.length) {
+        md += `## Model Report Card\n\n| Model | Grade | Verdict |\n|-------|-------|---------|\n`;
+        a.modelGrades.sort((x,y)=>(x.grade||'Z').localeCompare(y.grade||'Z')).forEach(g => {
+          md += `| ${g.model} | **${g.grade}** | ${g.oneLiner} |\n`;
+        });
+        md += '\n';
+      }
+      if (a.blindSpots?.length) {
+        md += `## Blind Spots\n\n${a.blindSpots.map(b=>`- ${b}`).join('\n')}\n\n`;
+      }
+      if (a.followUpQuestions?.length) {
+        md += `## Suggested Follow-Up Questions\n\n${a.followUpQuestions.map(q=>`- ${q}`).join('\n')}\n\n`;
+      }
+      if (a.mostUnique?.length) {
+        md += `## Top 5 Most Unique Models\n\n`;
+        a.mostUnique.slice(0,5).forEach(u => {
+          md += `${u.rank}. **${u.model}**${u.score ? ` (${u.score}/100)` : ''} — ${u.reason}\n`;
+        });
+        md += '\n';
+      }
+      if (a.disagreements?.length) {
+        md += `## Key Disagreements\n\n`;
+        a.disagreements.forEach(d => {
+          md += `### ${d.topic}\n`;
+          (d.sides||[]).forEach((s,si) => {
+            md += `- **Side ${si+1}:** ${s.position} *(${(s.models||[]).join(', ')})*\n`;
+          });
+          md += '\n';
+        });
+      }
+      md += `---\n*Analysis powered by Grok 4.20 (2M context) · Venice AI*\n`;
+      triggerDownload(md, `venice-analysis-${date}.md`, 'text/markdown');
+    }
+
+    // ── Analysis Report → PDF (via print) ─────────────────
+    function downloadReportPdf(data) {
+      // Grab the rendered analysis HTML from the modal and print it
+      const body = document.getElementById('analysisBody');
+      if (!body) return;
+      const { analysis: a, prompt } = data;
+      const date = new Date().toLocaleString();
+      openPrintWindow(
+        'Venice AI Analysis Report',
+        `<div style="font-family:Inter,sans-serif;max-width:900px;margin:0 auto;">
+          <h1 style="font-size:26px;font-weight:700;margin:0 0 8px;">Response Analysis Report</h1>
+          <p style="color:#64748b;font-size:13px;margin-bottom:4px;"><strong>Prompt:</strong> ${prompt.replace(/</g,'&lt;')}</p>
+          <p style="color:#64748b;font-size:12px;margin-bottom:24px;">Generated ${date} · ${a.summary.totalModels} models · Grok 4.20</p>
+          ${body.innerHTML}
+        </div>`
+      );
+    }
+
+    // ── Shared print/PDF helper ───────────────────────────
+    function openPrintWindow(title, bodyHtml) {
+      const win = window.open('', '_blank', 'width=900,height=700');
+      win.document.write(`<!DOCTYPE html><html><head>
+        <meta charset="UTF-8"><title>${title}</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+        <style>
+          *{box-sizing:border-box;margin:0;padding:0;}
+          body{font-family:'Inter',sans-serif;background:#fff;color:#0f172a;padding:32px;line-height:1.6;}
+          h1,h2,h3{font-family:'Space Grotesk',sans-serif;}
+          @media print{body{padding:0;}@page{margin:20mm;}}
+        </style>
+      </head><body>${bodyHtml}
+      <script>setTimeout(()=>{window.print();},600);<\/script>
+      </body></html>`);
+      win.document.close();
+    }
+
+    // ── Shared blob download ──────────────────────────────
+    function triggerDownload(content, filename, mime) {
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // ── Analysis report dispatcher ────────────────────────
+    window.triggerReportDownload = function(fmt) {
+      closeDlDropdown();
+      if (!lastAnalysisResult) { alert('Run the analysis first.'); return; }
+      if (fmt === 'html') downloadAnalysisAsReport(lastAnalysisResult);
+      if (fmt === 'md')   downloadReportMd(lastAnalysisResult);
+      if (fmt === 'pdf')  downloadReportPdf(lastAnalysisResult);
+    };
+
     // Event listeners
     sendButton.addEventListener('click', sendPrompt);
     refreshModelsButton.addEventListener('click', fetchVeniceModels);
-    downloadButton.addEventListener('click', downloadAllResponses);
+    // downloadButton is now a dropdown trigger — handled via inline onclick
+    // Keep a direct click fallback for the main button area (not the caret)
+    downloadButton.addEventListener('click', (e) => {
+      // dropdown toggle is handled by onclick; this just closes other dropdowns
+    });
 
     // Dashboard button now opens separate page
     dashboardButton.addEventListener('click', () => {
@@ -3770,11 +3976,7 @@
       }
     });
 
-    downloadAnalysisReport.addEventListener('click', () => {
-      if (lastAnalysisResult) {
-        downloadAnalysisAsReport(lastAnalysisResult);
-      }
-    });
+    // Report download is now handled via dropdown (triggerReportDownload)
 
     async function analyzeResponses() {
       // Reset modal state
@@ -4720,6 +4922,25 @@ Return JSON:
       if (cbCost)    cbCost.textContent     = tokens > 0 ? fmtCost(totalCost) + ' total' : '—';
       if (cbModelEl) cbModelEl.textContent  = modelCount > 0 ? `${modelCount} models` : '';
     }
+
+    // ── Download dropdowns ────────────────────────────────
+    window.toggleDlDropdown = function(id) {
+      const menu = document.getElementById(id);
+      if (!menu) return;
+      const isOpen = menu.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.dl-menu').forEach(m => m.classList.remove('open'));
+      if (!isOpen) menu.classList.add('open');
+    };
+    window.closeDlDropdown = function() {
+      document.querySelectorAll('.dl-menu').forEach(m => m.classList.remove('open'));
+    };
+    // Close on outside click
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.dl-dropdown')) {
+        document.querySelectorAll('.dl-menu').forEach(m => m.classList.remove('open'));
+      }
+    });
 
     window.estimateCost = estimateCost;
 
