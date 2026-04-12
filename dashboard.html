@@ -387,6 +387,18 @@
     .head-image { background: var(--blue-bg); color: var(--blue); }
     .head-edit { background: var(--purple-bg); color: var(--purple); }
     .head-audio { background: var(--green-bg); color: var(--green); }
+    /* Non-text full-width table sections */
+    .nt-section { border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 0 20px; }
+    .nt-section-head { padding: 13px 20px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+    .nt-section-head .material-icons { font-size: 18px; }
+    .nt-count { margin-left: auto; font-size: 11px; font-weight: 600; opacity: 0.7; background: rgba(0,0,0,0.06); padding: 2px 8px; border-radius: 999px; }
+    .nt-section .table-container { box-shadow: none; border: none; border-radius: 0; margin-bottom: 0; }
+    .nt-price-low { color: var(--green); font-family: 'JetBrains Mono'; font-weight: 600; font-size: 12px; }
+    .nt-price-mid { color: var(--amber); font-family: 'JetBrains Mono'; font-weight: 600; font-size: 12px; }
+    .nt-price-high { color: var(--orange); font-family: 'JetBrains Mono'; font-weight: 600; font-size: 12px; }
+    .nt-price-premium { color: var(--red); font-family: 'JetBrains Mono'; font-weight: 600; font-size: 12px; }
+    .nt-price-na { color: var(--text-muted); font-size: 12px; }
+    .nt-type-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; }
     .static-table { width: 100%; border-collapse: collapse; font-size: 12px; }
     .static-table th { padding: 8px 12px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); background: var(--background); border-top: 1px solid var(--border-light); }
     .static-table td { padding: 9px 12px; border-top: 1px solid var(--border-light); font-size: 12px; }
@@ -679,61 +691,176 @@
     </div>
 
     <!-- Non-Text Model Pricing (dynamically populated from API) -->
-    <div class="collapsible-section">
+    <div class="collapsible-section" id="nonTextSection">
       <div class="collapsible-header open" onclick="toggleCollapsible(this)">
         <h3><span class="material-icons">palette</span> Image, Audio & Other Model Pricing</h3>
         <span class="material-icons toggle-icon">expand_more</span>
       </div>
-      <div class="collapsible-body open">
-        <div class="static-tables-grid">
-          <div class="static-table-card">
-            <div class="static-table-head head-image"><span class="material-icons">image</span> Image Generation</div>
-            <table class="static-table">
-              <thead><tr><th>Model</th><th>Price/Gen</th><th>Max @ $48</th></tr></thead>
-              <tbody id="imageModelsBody">
-                <tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Loading...</td></tr>
-              </tbody>
-            </table>
+      <div class="collapsible-body open" style="padding:0 0 20px 0;">
+
+        <!-- IMAGE GENERATION -->
+        <div class="nt-section">
+          <div class="nt-section-head" style="background:var(--blue-bg);color:var(--blue);">
+            <span class="material-icons">image</span>
+            <span>Image Generation</span>
+            <span class="nt-count" id="imageCount"></span>
           </div>
-          <div class="static-table-card">
-            <div class="static-table-head head-edit"><span class="material-icons">auto_fix_high</span> Image Editing / Upscaling</div>
-            <table class="static-table">
-              <thead><tr><th>Task</th><th>Price</th><th>Max @ $48</th></tr></thead>
-              <tbody id="upscaleModelsBody">
-                <tr><td class="s-name">Upscale 2x</td><td class="s-price low">$0.02</td><td>2,400</td></tr>
-                <tr><td class="s-name">Upscale 4x</td><td class="s-price mid">$0.08</td><td>600</td></tr>
-                <tr><td class="s-name">Image Editing</td><td class="s-price mid">$0.04</td><td>1,200</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="static-table-card">
-            <div class="static-table-head head-audio"><span class="material-icons">record_voice_over</span> Audio / TTS Models</div>
-            <table class="static-table">
-              <thead><tr><th>Model</th><th>Price/1M Chars</th><th>Max @ $48</th></tr></thead>
-              <tbody id="audioModelsBody">
-                <tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Loading...</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- Embedding models — shown when API returns results -->
-          <div class="static-table-card" id="embeddingModelsCard" style="display:none;">
-            <div class="static-table-head" style="background:var(--teal-bg);color:var(--teal);"><span class="material-icons">hub</span> Embedding Models</div>
-            <table class="static-table">
-              <thead><tr><th>Model</th><th>Price/1M Tokens</th><th>Max @ $48</th></tr></thead>
-              <tbody id="embeddingModelsBody"></tbody>
-            </table>
-          </div>
-          <!-- Video models — shown when API returns results -->
-          <div class="static-table-card" id="videoModelsCard" style="display:none;">
-            <div class="static-table-head" style="background:var(--rose-bg);color:var(--rose);"><span class="material-icons">videocam</span> Video Models</div>
-            <table class="static-table">
-              <thead><tr><th>Model</th><th>Price/Sec</th><th>Max Secs @ $48</th></tr></thead>
-              <tbody id="videoModelsBody"></tbody>
-            </table>
+          <div class="table-container" style="margin:0;border-radius:0;border-left:none;border-right:none;border-top:none;">
+            <div class="table-scroll">
+              <table class="model-table">
+                <thead><tr>
+                  <th style="min-width:260px;">Model</th>
+                  <th style="text-align:right;">Price / Gen</th>
+                  <th style="text-align:right;">Max @ $48</th>
+                  <th style="text-align:right;">Upscale 2x</th>
+                  <th style="text-align:right;">Upscale 4x</th>
+                  <th>Tags</th>
+                </tr></thead>
+                <tbody id="imageModelsBody">
+                  <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:20px;">Loading image models...</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-        <!-- Legacy wrapper div — kept for backward compat, no longer needed -->
-        <div id="videoModelsSection" style="display:none;"></div>
+
+        <!-- IMAGE EDITING / INPAINT -->
+        <div class="nt-section" style="margin-top:16px;">
+          <div class="nt-section-head" style="background:var(--violet-bg);color:var(--violet);">
+            <span class="material-icons">auto_fix_high</span>
+            <span>Image Editing / Inpainting</span>
+            <span class="nt-count" id="inpaintCount"></span>
+          </div>
+          <div class="table-container" style="margin:0;border-radius:0;border-left:none;border-right:none;border-top:none;">
+            <div class="table-scroll">
+              <table class="model-table">
+                <thead><tr>
+                  <th style="min-width:260px;">Model</th>
+                  <th style="text-align:right;">Price / Edit</th>
+                  <th style="text-align:right;">Max @ $48</th>
+                  <th>Tags</th>
+                </tr></thead>
+                <tbody id="upscaleModelsBody">
+                  <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:20px;">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- AUDIO / TTS -->
+        <div class="nt-section" style="margin-top:16px;">
+          <div class="nt-section-head" style="background:var(--green-bg);color:var(--green);">
+            <span class="material-icons">record_voice_over</span>
+            <span>Audio / TTS Models</span>
+            <span class="nt-count" id="audioCount"></span>
+          </div>
+          <div class="table-container" style="margin:0;border-radius:0;border-left:none;border-right:none;border-top:none;">
+            <div class="table-scroll">
+              <table class="model-table">
+                <thead><tr>
+                  <th style="min-width:260px;">Model</th>
+                  <th style="text-align:right;">Price</th>
+                  <th style="text-align:right;">Unit</th>
+                  <th style="text-align:right;">Max @ $48</th>
+                  <th>Tags</th>
+                </tr></thead>
+                <tbody id="audioModelsBody">
+                  <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px;">Loading audio models...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- MUSIC GENERATION -->
+        <div class="nt-section" style="margin-top:16px;" id="musicSection" style="display:none;">
+          <div class="nt-section-head" style="background:var(--rose-bg);color:var(--rose);">
+            <span class="material-icons">music_note</span>
+            <span>Music Generation</span>
+            <span class="nt-count" id="musicCount"></span>
+          </div>
+          <div class="table-container" style="margin:0;border-radius:0;border-left:none;border-right:none;border-top:none;">
+            <div class="table-scroll">
+              <table class="model-table">
+                <thead><tr>
+                  <th style="min-width:260px;">Model</th>
+                  <th style="text-align:right;">Price</th>
+                  <th style="text-align:right;">Unit</th>
+                  <th style="text-align:right;">Max @ $48</th>
+                </tr></thead>
+                <tbody id="musicModelsBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- EMBEDDING MODELS -->
+        <div class="nt-section" style="margin-top:16px;" id="embeddingModelsCard">
+          <div class="nt-section-head" style="background:var(--teal-bg);color:var(--teal);">
+            <span class="material-icons">hub</span>
+            <span>Embedding Models</span>
+            <span class="nt-count" id="embeddingCount"></span>
+          </div>
+          <div class="table-container" style="margin:0;border-radius:0;border-left:none;border-right:none;border-top:none;">
+            <div class="table-scroll">
+              <table class="model-table">
+                <thead><tr>
+                  <th style="min-width:260px;">Model</th>
+                  <th style="text-align:right;">Input $/1M Tokens</th>
+                  <th style="text-align:right;">Max @ $48</th>
+                  <th>Tags</th>
+                </tr></thead>
+                <tbody id="embeddingModelsBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ASR / SPEECH-TO-TEXT -->
+        <div class="nt-section" style="margin-top:16px;" id="asrSection">
+          <div class="nt-section-head" style="background:var(--amber-bg);color:var(--amber);">
+            <span class="material-icons">mic</span>
+            <span>Speech-to-Text (ASR)</span>
+            <span class="nt-count" id="asrCount"></span>
+          </div>
+          <div class="table-container" style="margin:0;border-radius:0;border-left:none;border-right:none;border-top:none;">
+            <div class="table-scroll">
+              <table class="model-table">
+                <thead><tr>
+                  <th style="min-width:260px;">Model</th>
+                  <th style="text-align:right;">Price / Audio Second</th>
+                  <th style="text-align:right;">Max Hours @ $48</th>
+                  <th>Tags</th>
+                </tr></thead>
+                <tbody id="asrModelsBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIDEO MODELS -->
+        <div class="nt-section" style="margin-top:16px;" id="videoModelsCard">
+          <div class="nt-section-head" style="background:var(--orange-bg);color:var(--orange);">
+            <span class="material-icons">videocam</span>
+            <span>Video Generation</span>
+            <span class="nt-count" id="videoCount"></span>
+          </div>
+          <div class="table-container" style="margin:0;border-radius:0;border-left:none;border-right:none;border-top:none;">
+            <div class="table-scroll">
+              <table class="model-table">
+                <thead><tr>
+                  <th style="min-width:260px;">Model</th>
+                  <th style="text-align:right;">Price</th>
+                  <th style="text-align:right;">Type</th>
+                  <th>Tags</th>
+                </tr></thead>
+                <tbody id="videoModelsBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -754,6 +881,8 @@
     let allUpscaleModels = [];
     let allVideoModels = [];
     let allEmbeddingModels = [];
+    let allMusicModels = [];
+    let allAsrModels = [];
     let activeFilters = new Set();
     let currentSort = { column: 'name', direction: 'asc' };
     let expandedRow = null;
@@ -877,10 +1006,11 @@
           }
         };
 
-        const [textModels, imageModels, ttsModels, inpaintModels, embeddingModels, videoModels] =
+        const [textModels, imageModels, ttsModels, inpaintModels, embeddingModels, videoModels, musicModels, asrModels] =
           await Promise.all([
             fetchType('text'), fetchType('image'), fetchType('tts'),
-            fetchType('inpaint'), fetchType('embedding'), fetchType('video')
+            fetchType('inpaint'), fetchType('embedding'), fetchType('video'),
+            fetchType('music'), fetchType('asr')
           ]);
 
         availableModels = textModels.sort((a, b) => {
@@ -894,6 +1024,8 @@
         allUpscaleModels = inpaintModels;
         allEmbeddingModels = embeddingModels;
         allVideoModels = videoModels;
+        allMusicModels = musicModels;
+        allAsrModels = asrModels;
 
         const sorted = availableModels.map(m => ({ id: m.id, bt: getModelData(m).budgetTokens })).filter(x => x.bt > 0).sort((a,b) => b.bt - a.bt);
         bestValueIds = new Set(sorted.slice(0, 3).map(x => x.id));
@@ -911,20 +1043,22 @@
       }
     }
 
-    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); renderImageModels(); renderUpscaleModels(); renderAudioModels(); renderVideoModels(); renderEmbeddingModels(); }
+    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); renderImageModels(); renderUpscaleModels(); renderAudioModels(); renderMusicModels(); renderVideoModels(); renderEmbeddingModels(); renderAsrModels(); }
 
     // ===== KPIs =====
     function updateKPIs() {
-      const totalAll = availableModels.length + allImageModels.length + allAudioModels.length + allUpscaleModels.length + allVideoModels.length + allEmbeddingModels.length;
+      const totalAll = availableModels.length + allImageModels.length + allAudioModels.length + allUpscaleModels.length + allVideoModels.length + allEmbeddingModels.length + allMusicModels.length + allAsrModels.length;
       document.getElementById('totalModels').textContent = totalAll;
       const breakdownEl = document.getElementById('modelsBreakdown');
       if (breakdownEl) {
         const parts = [];
         if (availableModels.length) parts.push(`${availableModels.length} text`);
         if (allImageModels.length) parts.push(`${allImageModels.length} image`);
-        if (allAudioModels.length) parts.push(`${allAudioModels.length} audio`);
+        if (allAudioModels.length) parts.push(`${allAudioModels.length} tts`);
+        if (allMusicModels.length) parts.push(`${allMusicModels.length} music`);
+        if (allAsrModels.length) parts.push(`${allAsrModels.length} asr`);
         if (allVideoModels.length) parts.push(`${allVideoModels.length} video`);
-        if (allUpscaleModels.length) parts.push(`${allUpscaleModels.length} upscale`);
+        if (allUpscaleModels.length) parts.push(`${allUpscaleModels.length} inpaint`);
         if (allEmbeddingModels.length) parts.push(`${allEmbeddingModels.length} embedding`);
         breakdownEl.textContent = parts.join(' · ');
       }
@@ -1159,136 +1293,255 @@
     }
 
     // ===== NON-TEXT MODEL RENDERERS =====
-    function getImagePriceClass(p) {
-      if (p <= 0) return 'low';
-      if (p <= 0.02) return 'low';
-      if (p <= 0.08) return 'mid';
-      return 'high';
+    function ntPriceClass(p) {
+      if (p <= 0) return 'nt-price-na';
+      if (p <= 0.05) return 'nt-price-low';
+      if (p <= 0.15) return 'nt-price-mid';
+      if (p <= 0.50) return 'nt-price-high';
+      return 'nt-price-premium';
     }
+    function fmtP(p, decimals = 4) { return p > 0 ? `$${p.toFixed(decimals)}` : '<span class="nt-price-na">—</span>'; }
+    function fmtMax(p) { return p > 0 ? Math.floor(DIEM_BUDGET / p).toLocaleString() : '—'; }
+    function modelTags(m) {
+      const spec = m.model_spec || {};
+      let t = '';
+      if (spec.betaModel) t += '<span class="mini-tag tag-beta">BETA</span>';
+      if ((spec.model_sets||[]).includes('venice_recommendations')) t += '<span class="mini-tag tag-recommended">REC</span>';
+      return t;
+    }
+    function copyBtn(id) { return `<button class="copy-btn" onclick="copyModelId(event,'${id}')" title="Copy: ${id}"><span class="material-icons">content_copy</span></button>`; }
 
     function renderImageModels() {
       const tbody = document.getElementById('imageModelsBody');
+      const countEl = document.getElementById('imageCount');
       if (!tbody) return;
-      if (allImageModels.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No image generation models available from API</td></tr>';
+      if (!allImageModels.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:20px;">No image models found</td></tr>';
         return;
       }
+      if (countEl) countEl.textContent = allImageModels.length + ' models';
       tbody.innerHTML = allImageModels
-        .sort((a, b) => (a.model_spec?.name || a.id).localeCompare(b.model_spec?.name || b.id))
+        .sort((a,b) => (a.model_spec?.name||a.id).localeCompare(b.model_spec?.name||b.id))
         .map(m => {
           const spec = m.model_spec || {};
-          const pricing = spec.pricing || {};
+          const p = spec.pricing || {};
           const name = spec.name || m.id;
-          // Try every pricing field Venice uses for image generation
-          const pricePerImage =
-            pricing.per_image?.usd ??
-            pricing.per_generation?.usd ??
-            pricing.inference?.usd ??
-            pricing.usd ??
-            pricing.amount ??
-            0;
-          const maxAtBudget = pricePerImage > 0 ? Math.floor(DIEM_BUDGET / pricePerImage).toLocaleString() : '—';
-          const priceStr = pricePerImage > 0 ? `$${pricePerImage.toFixed(3)}` : '—';
-          const pClass = getImagePriceClass(pricePerImage);
-          const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
-          const recTag = (spec.model_sets || []).includes('venice_recommendations') ? ' <span class="mini-tag tag-recommended">REC</span>' : '';
-          return `<tr><td class="s-name">${escHtml(name)}${betaTag}${recTag}<button class="copy-btn" onclick="copyModelId(event,'${m.id}')" title="Copy model ID: ${m.id}"><span class="material-icons">content_copy</span></button></td><td class="s-price ${pClass}">${priceStr}</td><td>${maxAtBudget}</td></tr>`;
+          // Real API field: pricing.generation.usd  (also check legacy paths)
+          const price = p.generation?.usd ?? p.per_image?.usd ?? p.per_generation?.usd ?? p.inference?.usd ?? p.usd ?? 0;
+          // Resolution-based (nano-banana): pick cheapest listed
+          const resPrices = p.resolutions ? Object.values(p.resolutions).map(r=>r.usd) : [];
+          const resolvedPrice = price > 0 ? price : (resPrices.length ? Math.min(...resPrices) : 0);
+          const up2x = p.upscale?.['2x']?.usd ?? 0.02;
+          const up4x = p.upscale?.['4x']?.usd ?? 0.08;
+          const priceDisplay = resolvedPrice > 0
+            ? `<span class="${ntPriceClass(resolvedPrice)}">${fmtP(resolvedPrice, 3)}</span>`
+            : '<span class="nt-price-na">—</span>';
+          return `<tr>
+            <td><div style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px;">${escHtml(name)}${modelTags(m)}${copyBtn(m.id)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono';">${m.id}</div></td>
+            <td style="text-align:right;">${priceDisplay}</td>
+            <td style="text-align:right;font-family:'JetBrains Mono';font-size:12px;">${resolvedPrice > 0 ? fmtMax(resolvedPrice) : '—'}</td>
+            <td style="text-align:right;font-family:'JetBrains Mono';font-size:12px;color:var(--green);">$${up2x.toFixed(2)}</td>
+            <td style="text-align:right;font-family:'JetBrains Mono';font-size:12px;color:var(--amber);">$${up4x.toFixed(2)}</td>
+            <td>${modelTags(m)}</td>
+          </tr>`;
         }).join('');
     }
 
     function renderUpscaleModels() {
       const tbody = document.getElementById('upscaleModelsBody');
+      const countEl = document.getElementById('inpaintCount');
       if (!tbody) return;
-      // If the API returns upscale/editing models, show them; otherwise keep static rows visible
-      if (allUpscaleModels.length === 0) return; // keep static fallback rows
+      if (!allUpscaleModels.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:20px;">No inpaint/edit models found</td></tr>';
+        return;
+      }
+      if (countEl) countEl.textContent = allUpscaleModels.length + ' models';
       tbody.innerHTML = allUpscaleModels
+        .sort((a,b) => (a.model_spec?.name||a.id).localeCompare(b.model_spec?.name||b.id))
         .map(m => {
           const spec = m.model_spec || {};
-          const pricing = spec.pricing || {};
+          const p = spec.pricing || {};
           const name = spec.name || m.id;
-          const pricePerOp = pricing.per_image?.usd || pricing.per_operation?.usd || 0;
-          const maxAtBudget = pricePerOp > 0 ? Math.floor(DIEM_BUDGET / pricePerOp).toLocaleString() : 'N/A';
-          const priceStr = pricePerOp > 0 ? `$${pricePerOp.toFixed(2)}` : 'N/A';
-          const pClass = getImagePriceClass(pricePerOp);
-          return `<tr><td class="s-name">${escHtml(name)}<button class="copy-btn" onclick="copyModelId(event,'${m.id}')" title="Copy model ID: ${m.id}"><span class="material-icons">content_copy</span></button></td><td class="s-price ${pClass}">${priceStr}</td><td>${maxAtBudget}</td></tr>`;
+          // Real API field: pricing.inpaint.usd
+          const price = p.inpaint?.usd ?? p.per_image?.usd ?? p.per_operation?.usd ?? p.generation?.usd ?? 0;
+          const priceDisplay = price > 0
+            ? `<span class="${ntPriceClass(price)}">${fmtP(price, 3)}</span>`
+            : '<span class="nt-price-na">—</span>';
+          return `<tr>
+            <td><div style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px;">${escHtml(name)}${modelTags(m)}${copyBtn(m.id)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono';">${m.id}</div></td>
+            <td style="text-align:right;">${priceDisplay}</td>
+            <td style="text-align:right;font-family:'JetBrains Mono';font-size:12px;">${price > 0 ? fmtMax(price) : '—'}</td>
+            <td>${modelTags(m)}</td>
+          </tr>`;
         }).join('');
     }
 
     function renderAudioModels() {
       const tbody = document.getElementById('audioModelsBody');
+      const countEl = document.getElementById('audioCount');
       if (!tbody) return;
-      if (allAudioModels.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">No audio / TTS models available from API</td></tr>';
+      if (!allAudioModels.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px;">No TTS models found</td></tr>';
         return;
       }
+      if (countEl) countEl.textContent = allAudioModels.length + ' models';
       tbody.innerHTML = allAudioModels
-        .sort((a, b) => (a.model_spec?.name || a.id).localeCompare(b.model_spec?.name || b.id))
+        .sort((a,b) => (a.model_spec?.name||a.id).localeCompare(b.model_spec?.name||b.id))
         .map(m => {
           const spec = m.model_spec || {};
-          const pricing = spec.pricing || {};
+          const p = spec.pricing || {};
           const name = spec.name || m.id;
-          // Try every pricing field Venice uses for TTS
-          const pricePerChar =
-            pricing.per_character?.usd ??
-            pricing.per_char?.usd ??
-            0;
-          const pricePerMChar = pricePerChar > 0
-            ? pricePerChar * 1e6
-            : (pricing.per_million_characters?.usd ??
-               pricing.per_1m_characters?.usd ??
-               pricing.inference?.usd ??
-               pricing.usd ??
-               0);
-          const maxCharsAtBudget = pricePerMChar > 0
-            ? formatTokens(Math.floor((DIEM_BUDGET / pricePerMChar) * 1e6)) + ' chars'
-            : '—';
-          const priceStr = pricePerMChar > 0 ? `$${pricePerMChar.toFixed(2)}/1M` : '—';
-          const pClass = pricePerMChar <= 5 ? 'low' : pricePerMChar <= 20 ? 'mid' : 'high';
-          const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
-          return `<tr><td class="s-name">${escHtml(name)}${betaTag}<button class="copy-btn" onclick="copyModelId(event,'${m.id}')" title="Copy model ID: ${m.id}"><span class="material-icons">content_copy</span></button></td><td class="s-price ${pClass}">${priceStr}</td><td>${maxCharsAtBudget}</td></tr>`;
+          // Real API field: pricing.input.usd = price per 1M characters
+          // Also: pricing.per_thousand_characters.usd (ElevenLabs) → multiply by 1000
+          // Also: pricing.per_second.usd (sound effects)
+          let price = 0, unit = '', maxStr = '—';
+          if (p.input?.usd > 0) {
+            price = p.input.usd; unit = '/1M chars';
+            maxStr = formatTokens(Math.floor((DIEM_BUDGET / price) * 1e6)) + ' chars';
+          } else if (p.per_thousand_characters?.usd > 0) {
+            price = p.per_thousand_characters.usd * 1000; unit = '/1M chars';
+            maxStr = formatTokens(Math.floor((DIEM_BUDGET / price) * 1e6)) + ' chars';
+          } else if (p.per_second?.usd > 0) {
+            price = p.per_second.usd; unit = '/sec';
+            maxStr = formatTokens(Math.floor(DIEM_BUDGET / price)) + ' secs';
+          }
+          const priceDisplay = price > 0
+            ? `<span class="${ntPriceClass(price > 1 ? price/100 : price)}">${fmtP(price, 2)}</span>`
+            : '<span class="nt-price-na">—</span>';
+          return `<tr>
+            <td><div style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px;">${escHtml(name)}${modelTags(m)}${copyBtn(m.id)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono';">${m.id}</div></td>
+            <td style="text-align:right;">${priceDisplay}</td>
+            <td style="text-align:right;font-size:11px;color:var(--text-muted);">${unit}</td>
+            <td style="text-align:right;font-family:'JetBrains Mono';font-size:12px;">${maxStr}</td>
+            <td>${modelTags(m)}</td>
+          </tr>`;
+        }).join('');
+    }
+
+    function renderMusicModels() {
+      const section = document.getElementById('musicSection');
+      const tbody = document.getElementById('musicModelsBody');
+      const countEl = document.getElementById('musicCount');
+      if (!section || !tbody) return;
+      if (!allMusicModels.length) { section.style.display = 'none'; return; }
+      section.style.display = '';
+      if (countEl) countEl.textContent = allMusicModels.length + ' models';
+      tbody.innerHTML = allMusicModels
+        .sort((a,b) => (a.model_spec?.name||a.id).localeCompare(b.model_spec?.name||b.id))
+        .map(m => {
+          const spec = m.model_spec || {};
+          const p = spec.pricing || {};
+          const name = spec.name || m.id;
+          // pricing.generation.usd OR pricing.durations (keyed by duration) OR pricing.per_second.usd
+          let price = 0, unit = '', maxStr = '—';
+          if (p.generation?.usd > 0) {
+            price = p.generation.usd; unit = '/gen';
+            maxStr = fmtMax(price) + ' gens';
+          } else if (p.durations) {
+            const vals = Object.values(p.durations);
+            price = vals[0]?.usd || 0; unit = '/track (60s)';
+            maxStr = price > 0 ? fmtMax(price) + ' tracks' : '—';
+          } else if (p.per_second?.usd > 0) {
+            price = p.per_second.usd; unit = '/sec';
+            maxStr = formatTokens(Math.floor(DIEM_BUDGET / price)) + ' secs';
+          }
+          const priceDisplay = price > 0
+            ? `<span class="${ntPriceClass(price)}">${fmtP(price, 3)}</span>`
+            : '<span class="nt-price-na">—</span>';
+          return `<tr>
+            <td><div style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px;">${escHtml(name)}${modelTags(m)}${copyBtn(m.id)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono';">${m.id}</div></td>
+            <td style="text-align:right;">${priceDisplay}</td>
+            <td style="text-align:right;font-size:11px;color:var(--text-muted);">${unit}</td>
+            <td style="text-align:right;font-family:'JetBrains Mono';font-size:12px;">${maxStr}</td>
+          </tr>`;
         }).join('');
     }
 
     function renderVideoModels() {
-      const card = document.getElementById('videoModelsCard');
-      if (!card) return;
-      if (allVideoModels.length === 0) { card.style.display = 'none'; return; }
-      card.style.display = '';
+      const section = document.getElementById('videoModelsCard');
       const tbody = document.getElementById('videoModelsBody');
-      if (!tbody) return;
+      const countEl = document.getElementById('videoCount');
+      if (!section || !tbody) return;
+      if (!allVideoModels.length) { section.style.display = 'none'; return; }
+      section.style.display = '';
+      if (countEl) countEl.textContent = allVideoModels.length + ' models';
       tbody.innerHTML = allVideoModels
+        .sort((a,b) => (a.model_spec?.name||a.id).localeCompare(b.model_spec?.name||b.id))
         .map(m => {
           const spec = m.model_spec || {};
-          const pricing = spec.pricing || {};
+          const p = spec.pricing || {};
           const name = spec.name || m.id;
-          const pricePerSec = pricing.per_second?.usd || pricing.per_video?.usd || 0;
-          const priceStr = pricePerSec > 0 ? `$${pricePerSec.toFixed(3)}` : 'N/A';
-          const maxAtBudget = pricePerSec > 0 ? Math.floor(DIEM_BUDGET / pricePerSec).toLocaleString() : 'N/A';
-          const pClass = pricePerSec <= 0.1 ? 'low' : pricePerSec <= 0.5 ? 'mid' : 'high';
-          const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
-          return `<tr><td class="s-name">${escHtml(name)}${betaTag}<button class="copy-btn" onclick="copyModelId(event,'${m.id}')" title="Copy model ID: ${m.id}"><span class="material-icons">content_copy</span></button></td><td class="s-price ${pClass}">${priceStr}</td><td>${maxAtBudget}</td></tr>`;
+          // Video type detection from ID
+          const idL = m.id.toLowerCase();
+          const type = idL.includes('image-to') ? 'img→vid' : idL.includes('reference') ? 'ref→vid' : 'txt→vid';
+          // Price — most video models currently have empty pricing objects
+          const price = p.per_second?.usd ?? p.per_video?.usd ?? p.generation?.usd ?? 0;
+          const priceDisplay = price > 0
+            ? `<span class="${ntPriceClass(price)}">${fmtP(price, 4)}/sec</span>`
+            : '<span class="nt-price-na">Contact</span>';
+          return `<tr>
+            <td><div style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px;">${escHtml(name)}${modelTags(m)}${copyBtn(m.id)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono';">${m.id}</div></td>
+            <td style="text-align:right;">${priceDisplay}</td>
+            <td style="text-align:right;"><span class="mini-tag" style="background:var(--cyan-bg);color:var(--cyan);">${type}</span></td>
+            <td>${modelTags(m)}</td>
+          </tr>`;
         }).join('');
     }
 
     function renderEmbeddingModels() {
-      const card = document.getElementById('embeddingModelsCard');
-      if (!card) return;
-      if (allEmbeddingModels.length === 0) { card.style.display = 'none'; return; }
-      card.style.display = '';
+      const section = document.getElementById('embeddingModelsCard');
       const tbody = document.getElementById('embeddingModelsBody');
-      if (!tbody) return;
+      const countEl = document.getElementById('embeddingCount');
+      if (!section || !tbody) return;
+      if (!allEmbeddingModels.length) { section.style.display = 'none'; return; }
+      section.style.display = '';
+      if (countEl) countEl.textContent = allEmbeddingModels.length + ' models';
       tbody.innerHTML = allEmbeddingModels
-        .sort((a, b) => (a.model_spec?.name || a.id).localeCompare(b.model_spec?.name || b.id))
+        .sort((a,b) => (a.model_spec?.name||a.id).localeCompare(b.model_spec?.name||b.id))
         .map(m => {
           const spec = m.model_spec || {};
-          const pricing = spec.pricing || {};
+          const p = spec.pricing || {};
           const name = spec.name || m.id;
-          const pricePerMTok = pricing.input?.usd || pricing.per_million_tokens?.usd || 0;
-          const maxAtBudget = pricePerMTok > 0 ? formatTokens(Math.floor((DIEM_BUDGET / pricePerMTok) * 1e6)) : 'N/A';
-          const priceStr = pricePerMTok > 0 ? `$${pricePerMTok.toFixed(3)}` : 'N/A';
-          const pClass = pricePerMTok <= 0.1 ? 'low' : pricePerMTok <= 0.5 ? 'mid' : 'high';
-          const betaTag = spec.betaModel ? ' <span class="mini-tag tag-beta">BETA</span>' : '';
-          return `<tr><td class="s-name">${escHtml(name)}${betaTag}<button class="copy-btn" onclick="copyModelId(event,'${m.id}')" title="Copy model ID: ${m.id}"><span class="material-icons">content_copy</span></button></td><td class="s-price ${pClass}">${priceStr}</td><td>${maxAtBudget}</td></tr>`;
+          // Real field: pricing.input.usd = per 1M tokens
+          const price = p.input?.usd ?? p.per_million_tokens?.usd ?? 0;
+          const priceDisplay = price > 0
+            ? `<span class="${ntPriceClass(price)}">${fmtP(price, 4)}/1M</span>`
+            : '<span class="nt-price-na">—</span>';
+          return `<tr>
+            <td><div style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px;">${escHtml(name)}${modelTags(m)}${copyBtn(m.id)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono';">${m.id}</div></td>
+            <td style="text-align:right;">${priceDisplay}</td>
+            <td style="text-align:right;font-family:'JetBrains Mono';font-size:12px;">${price > 0 ? formatTokens(Math.floor((DIEM_BUDGET/price)*1e6)) : '—'}</td>
+            <td>${modelTags(m)}</td>
+          </tr>`;
+        }).join('');
+    }
+
+    function renderAsrModels() {
+      const section = document.getElementById('asrSection');
+      const tbody = document.getElementById('asrModelsBody');
+      const countEl = document.getElementById('asrCount');
+      if (!section || !tbody) return;
+      if (!allAsrModels.length) { section.style.display = 'none'; return; }
+      section.style.display = '';
+      if (countEl) countEl.textContent = allAsrModels.length + ' models';
+      tbody.innerHTML = allAsrModels
+        .sort((a,b) => (a.model_spec?.name||a.id).localeCompare(b.model_spec?.name||b.id))
+        .map(m => {
+          const spec = m.model_spec || {};
+          const p = spec.pricing || {};
+          const name = spec.name || m.id;
+          // Real field: pricing.per_audio_second.usd
+          const price = p.per_audio_second?.usd ?? p.per_second?.usd ?? 0;
+          const maxHours = price > 0 ? (DIEM_BUDGET / price / 3600).toFixed(1) + ' hrs' : '—';
+          const priceDisplay = price > 0
+            ? `<span class="nt-price-low">${fmtP(price, 5)}</span>`
+            : '<span class="nt-price-na">—</span>';
+          return `<tr>
+            <td><div style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px;">${escHtml(name)}${modelTags(m)}${copyBtn(m.id)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono';">${m.id}</div></td>
+            <td style="text-align:right;">${priceDisplay}</td>
+            <td style="text-align:right;font-family:'JetBrains Mono';font-size:12px;">${maxHours}</td>
+            <td>${modelTags(m)}</td>
+          </tr>`;
         }).join('');
     }
 

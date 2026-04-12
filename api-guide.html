@@ -64,6 +64,7 @@
     .nav-btn.primary:hover{background:var(--accent-light);}
     .nav-btn.secondary{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.1);}
     .nav-btn.secondary:hover{background:rgba(255,255,255,0.12);}
+    .nav-btn.copied{background:rgba(16,185,129,0.2)!important;border-color:rgba(16,185,129,0.4)!important;color:#6ee7b7!important;}
 
     /* LAYOUT */
     .page-wrap{display:flex;max-width:1400px;margin:0 auto;padding:32px 32px 80px;}
@@ -216,6 +217,12 @@
     <div><h1>Venice AI</h1><span>API Guide</span></div>
   </div>
   <div class="nav-actions">
+    <button class="nav-btn secondary" id="downloadMdBtn" onclick="downloadMarkdown()">
+      <span class="material-icons">download</span><span>Download .md</span>
+    </button>
+    <button class="nav-btn secondary" id="copyAllBtn" onclick="copyAll()">
+      <span class="material-icons">content_copy</span><span>Copy All</span>
+    </button>
     <a href="dashboard.html" class="nav-btn secondary">
       <span class="material-icons">bar_chart</span><span>Analytics</span>
     </a>
@@ -1298,6 +1305,122 @@ main();</code></pre>
         btn.innerHTML = '<span class="material-icons">content_copy</span>Copy';
       }, 2000);
     });
+  }
+
+  // ── Copy All ──────────────────────────────────────────────────────────
+  function copyAll() {
+    const btn = document.getElementById('copyAllBtn');
+    const content = document.querySelector('.content');
+    // Walk the DOM and extract human-readable text, preserving code blocks
+    let text = '';
+    function walk(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        text += node.textContent;
+        return;
+      }
+      if (node.nodeType !== Node.ELEMENT_NODE) return;
+      const tag = node.tagName.toLowerCase();
+      // Skip hidden / decorative
+      if (['script','style','svg','noscript'].includes(tag)) return;
+      if (tag === 'pre') {
+        text += '\n```\n' + (node.innerText || node.textContent).trim() + '\n```\n';
+        return;
+      }
+      if (['h1','h2','h3','h4','h5','h6'].includes(tag)) {
+        const lvl = parseInt(tag[1]);
+        text += '\n' + '#'.repeat(lvl) + ' ';
+        node.childNodes.forEach(walk);
+        text += '\n';
+        return;
+      }
+      if (tag === 'li') { text += '\n- '; node.childNodes.forEach(walk); return; }
+      if (tag === 'tr') { text += '\n'; node.childNodes.forEach(walk); return; }
+      if (['td','th']) { text += ' | '; node.childNodes.forEach(walk); return; }
+      if (tag === 'br') { text += '\n'; return; }
+      if (tag === 'hr') { text += '\n---\n'; return; }
+      if (['p','div','section','article','header','footer','main','aside','blockquote'].includes(tag)) {
+        node.childNodes.forEach(walk);
+        text += '\n';
+        return;
+      }
+      node.childNodes.forEach(walk);
+    }
+    walk(content);
+    // Clean up excessive blank lines
+    text = text.replace(/\n{4,}/g, '\n\n\n').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      btn.classList.add('copied');
+      btn.innerHTML = '<span class="material-icons">check</span><span>Copied!</span>';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = '<span class="material-icons">content_copy</span><span>Copy All</span>';
+      }, 2500);
+    }).catch(() => alert('Clipboard copy failed. Try a browser that supports the Clipboard API.'));
+  }
+
+  // ── Download Markdown ─────────────────────────────────────────────────
+  function downloadMarkdown() {
+    const btn = document.getElementById('downloadMdBtn');
+    btn.innerHTML = '<span class="material-icons">hourglass_top</span><span>Building…</span>';
+
+    const sections = document.querySelectorAll('.section, .hero');
+    let md = '# Venice AI — Complete API Guide\n\n';
+    md += '> Base URL: `https://api.venice.ai/api/v1`  \n';
+    md += '> Privacy-first, no data retention. OpenAI-compatible.\n\n---\n\n';
+
+    sections.forEach(sec => {
+      // Section heading
+      const titleEl = sec.querySelector('.section-title, h2');
+      if (titleEl) md += `## ${titleEl.innerText.trim()}\n\n`;
+
+      const subEl = sec.querySelector('.section-sub');
+      if (subEl) md += `_${subEl.innerText.trim()}_\n\n`;
+
+      // Callouts
+      sec.querySelectorAll('.callout').forEach(c => {
+        md += `> **Note:** ${c.querySelector('.callout-text')?.innerText.trim() || ''}\n\n`;
+      });
+
+      // Paragraphs (direct children only to avoid dups)
+      sec.querySelectorAll(':scope > p, .endpoint-body > p').forEach(p => {
+        md += p.innerText.trim() + '\n\n';
+      });
+
+      // Code blocks
+      sec.querySelectorAll('.code-block').forEach(cb => {
+        const lang = cb.querySelector('.code-lang')?.innerText.trim().split('\n')[0].toLowerCase().replace(/\s+/g,'') || '';
+        const code = cb.querySelector('pre')?.innerText.trim() || '';
+        md += `\`\`\`${lang}\n${code}\n\`\`\`\n\n`;
+      });
+
+      // Tables
+      sec.querySelectorAll('table').forEach(tbl => {
+        const rows = tbl.querySelectorAll('tr');
+        rows.forEach((row, ri) => {
+          const cells = row.querySelectorAll('th,td');
+          md += '| ' + Array.from(cells).map(c => c.innerText.trim().replace(/\|/g,'\\|')).join(' | ') + ' |\n';
+          if (ri === 0) md += '| ' + Array.from(cells).map(() => '---').join(' | ') + ' |\n';
+        });
+        md += '\n';
+      });
+    });
+
+    md += '\n---\n_Generated from Venice AI API Guide_\n';
+
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'venice-api-guide.md';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    btn.innerHTML = '<span class="material-icons">check</span><span>Downloaded!</span>';
+    setTimeout(() => {
+      btn.innerHTML = '<span class="material-icons">download</span><span>Download .md</span>';
+    }, 2500);
   }
 
   // Active TOC link on scroll

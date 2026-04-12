@@ -1795,6 +1795,171 @@
         justify-content: center;
       }
     }
+
+    /* ===== TOAST SYSTEM ===== */
+    #toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+    .toast{display:flex;align-items:center;gap:10px;background:#1e293b;color:#f1f5f9;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.25);min-width:260px;max-width:380px;animation:toast-in 0.25s ease;pointer-events:all;border-left:3px solid #6366f1;}
+    .toast.success{border-left-color:#10b981;}.toast.error{border-left-color:#ef4444;}.toast.warn{border-left-color:#f59e0b;}
+    .toast .material-icons{font-size:18px;flex-shrink:0;color:#a5b4fc;}
+    .toast.success .material-icons{color:#6ee7b7;}.toast.error .material-icons{color:#fca5a5;}.toast.warn .material-icons{color:#fcd34d;}
+    .toast.fade-out{animation:toast-out 0.3s ease forwards;}
+    @keyframes toast-in{from{opacity:0;transform:translateY(12px) scale(0.96)}to{opacity:1;transform:none}}
+    @keyframes toast-out{to{opacity:0;transform:translateY(8px) scale(0.95)}}
+
+    /* ===== COMMAND PALETTE ===== */
+    #cmdOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:8000;display:none;align-items:flex-start;justify-content:center;padding-top:120px;backdrop-filter:blur(4px);}
+    #cmdOverlay.open{display:flex;}
+    #cmdPalette{background:#fff;border-radius:16px;width:100%;max-width:600px;box-shadow:0 24px 60px rgba(0,0,0,0.25);overflow:hidden;}
+    .cmd-header{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid #e2e8f0;}
+    .cmd-header .material-icons{color:#94a3b8;font-size:22px;}
+    #cmdInput{flex:1;border:none;outline:none;font-size:15px;font-family:inherit;color:#0f172a;background:transparent;}
+    #cmdInput::placeholder{color:#94a3b8;}
+    .cmd-hint{font-size:11px;color:#cbd5e1;font-weight:600;padding:2px 6px;border:1px solid #e2e8f0;border-radius:4px;white-space:nowrap;}
+    #cmdResults{max-height:360px;overflow-y:auto;}
+    .cmd-group-label{padding:8px 20px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#94a3b8;}
+    .cmd-item{display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;transition:background 0.1s;}
+    .cmd-item:hover,.cmd-item.selected{background:#f1f5f9;}
+    .cmd-item .material-icons{font-size:18px;color:#64748b;}
+    .cmd-item-label{font-size:14px;color:#0f172a;font-weight:500;flex:1;}
+    .cmd-item-hint{font-size:11px;color:#94a3b8;}
+    .cmd-empty{padding:32px 20px;text-align:center;color:#94a3b8;font-size:14px;}
+    .cmd-footer{padding:8px 16px;border-top:1px solid #f1f5f9;display:flex;gap:16px;}
+    .cmd-footer-hint{font-size:11px;color:#94a3b8;display:flex;align-items:center;gap:4px;}
+    .cmd-footer-hint kbd{font-size:10px;padding:1px 5px;border:1px solid #e2e8f0;border-radius:3px;background:#f8fafc;}
+
+    /* ===== LIVE COST ESTIMATOR ===== */
+    #costEstimator{margin-top:6px;}
+    .cost-bar{display:flex;align-items:center;gap:12px;padding:6px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;color:#64748b;flex-wrap:wrap;}
+    .cost-bar .cb-item{display:flex;align-items:center;gap:4px;}
+    .cost-bar .cb-item strong{color:#0f172a;font-family:'JetBrains Mono',monospace;}
+    .cost-bar .material-icons{font-size:14px;color:#6366f1;}
+
+    /* ===== SESSION TRACKER ===== */
+    #sessionTracker{display:flex;align-items:center;gap:6px;padding:5px 12px;background:#0f1419;border-radius:8px;font-size:12px;color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.1);cursor:pointer;white-space:nowrap;}
+    #sessionTracker .material-icons{font-size:14px;color:#a5b4fc;}
+    #sessionTracker strong{color:#a5b4fc;font-family:'JetBrains Mono',monospace;}
+    #sessionTracker:hover{background:#1e293b;}
+
+    /* ===== STAR RATINGS ===== */
+    .star-rating{display:flex;align-items:center;gap:4px;}
+    .star-rating .star{font-size:18px;cursor:pointer;color:#e2e8f0;transition:color 0.1s;user-select:none;line-height:1;}
+    .star-rating .star:hover,.star-rating .star.filled{color:#f59e0b;}
+    .rating-label{font-size:11px;color:#64748b;margin-left:4px;}
+
+    /* ===== PROMPT HISTORY PANEL ===== */
+    #historyPanel{position:fixed;right:0;top:0;bottom:0;width:380px;background:#fff;box-shadow:-4px 0 24px rgba(0,0,0,0.15);z-index:7000;transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;}
+    #historyPanel.open{transform:none;}
+    .hp-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #e2e8f0;background:#0f172a;color:white;}
+    .hp-header h3{margin:0;font-family:'Space Grotesk';font-size:16px;display:flex;align-items:center;gap:8px;}
+    .hp-close{background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;padding:4px;border-radius:6px;display:flex;align-items:center;}
+    .hp-close:hover{background:rgba(255,255,255,0.1);color:white;}
+    .hp-search{padding:12px 16px;border-bottom:1px solid #e2e8f0;}
+    .hp-search input{width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;font-family:inherit;}
+    .hp-search input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.1);}
+    .hp-list{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
+    .hp-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;cursor:pointer;transition:all 0.15s;}
+    .hp-item:hover{border-color:#6366f1;background:#f5f3ff;}
+    .hp-item-prompt{font-size:13px;color:#0f172a;font-weight:500;line-height:1.5;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .hp-item-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#94a3b8;}
+    .hp-item-actions{display:flex;gap:4px;margin-top:8px;}
+    .hp-btn{padding:3px 8px;border-radius:5px;border:1px solid #e2e8f0;background:#fff;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:3px;transition:all 0.1s;color:#64748b;}
+    .hp-btn:hover{border-color:#6366f1;color:#6366f1;background:#f5f3ff;}
+    .hp-btn .material-icons{font-size:12px;}
+    .hp-empty{text-align:center;padding:40px 20px;color:#94a3b8;font-size:14px;}
+    .hp-footer{padding:12px 16px;border-top:1px solid #e2e8f0;display:flex;gap:8px;}
+    .hp-save-btn{flex:1;padding:8px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;background:#6366f1;color:white;}
+    .hp-save-btn:hover{background:#4f46e5;}
+    .hp-clear-btn{flex:1;padding:8px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;background:#f1f5f9;color:#64748b;}
+    .hp-clear-btn:hover{background:#fee2e2;color:#ef4444;}
+
+    /* ===== API INSPECTOR ===== */
+    #inspectorPanel{background:#0d1117;border-top:2px solid #6366f1;color:#e6edf3;font-family:'JetBrains Mono',monospace;font-size:12px;max-height:320px;overflow-y:auto;display:none;flex-shrink:0;}
+    #inspectorPanel.open{display:block;}
+    .insp-tabs{display:flex;background:#161b22;border-bottom:1px solid #30363d;}
+    .insp-tab{padding:8px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;color:#8b949e;border-bottom:2px solid transparent;transition:all 0.15s;}
+    .insp-tab.active{color:#e6edf3;border-bottom-color:#6366f1;}
+    .insp-body{padding:16px;white-space:pre-wrap;word-break:break-all;line-height:1.7;}
+    .insp-toolbar{display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:#161b22;border-bottom:1px solid #30363d;}
+    .insp-label{font-size:11px;color:#8b949e;}
+    .insp-copy{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:3px 8px;font-size:11px;color:rgba(255,255,255,0.7);cursor:pointer;font-family:inherit;}
+    .insp-copy:hover{background:rgba(255,255,255,0.15);color:white;}
+    .inspect-toggle-btn{display:flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;color:#6366f1;transition:all 0.15s;}
+    .inspect-toggle-btn:hover{background:rgba(99,102,241,0.15);}
+    .inspect-toggle-btn .material-icons{font-size:14px;}
+
+    /* ===== TTS PLAYER ===== */
+    .tts-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;margin-top:8px;flex-wrap:wrap;}
+    .tts-btn{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:6px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+    .tts-play{background:#10b981;color:white;}.tts-play:hover{background:#059669;}
+    .tts-stop{background:#ef4444;color:white;display:none;}
+    .tts-voice-select{padding:5px 8px;border-radius:6px;border:1px solid #bbf7d0;background:#fff;font-size:12px;font-family:inherit;outline:none;}
+    .tts-speed{width:56px;font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid #bbf7d0;font-family:inherit;outline:none;}
+    .tts-cost{font-size:11px;color:#059669;margin-left:auto;}
+
+    /* ===== BATCH RUNNER ===== */
+    #batchModal{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:7500;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+    #batchModal.open{display:flex;}
+    .batch-content{background:#fff;border-radius:20px;width:100%;max-width:760px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.3);}
+    .batch-header{padding:20px 24px;border-bottom:1px solid #e2e8f0;background:#0f172a;color:white;display:flex;align-items:center;justify-content:space-between;}
+    .batch-header h3{margin:0;font-family:'Space Grotesk';font-size:18px;display:flex;align-items:center;gap:8px;}
+    .batch-header h3 .material-icons{color:#a5b4fc;}
+    .batch-body{padding:24px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
+    .batch-body label{font-size:13px;font-weight:600;color:#374151;margin-bottom:4px;display:block;}
+    .batch-body textarea{width:100%;height:160px;padding:12px;border:2px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:'JetBrains Mono',monospace;resize:vertical;outline:none;line-height:1.7;}
+    .batch-body textarea:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.1);}
+    .batch-model-row{display:flex;gap:10px;align-items:center;}
+    .batch-model-row select{flex:1;padding:9px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;outline:none;}
+    .batch-model-row select:focus{border-color:#6366f1;}
+    .batch-footer{padding:16px 24px;border-top:1px solid #e2e8f0;display:flex;gap:10px;justify-content:flex-end;}
+    .batch-results{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;}
+    .batch-results-header{padding:10px 16px;background:#1e293b;color:white;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:space-between;}
+    .batch-result-row{padding:12px 16px;border-bottom:1px solid #e2e8f0;font-size:13px;}
+    .batch-result-row:last-child{border-bottom:none;}
+    .batch-result-prompt{font-weight:600;color:#0f172a;margin-bottom:4px;font-size:12px;font-family:'JetBrains Mono',monospace;}
+    .batch-result-response{color:#374151;line-height:1.6;max-height:80px;overflow:hidden;}
+    .batch-result-meta{font-size:11px;color:#94a3b8;margin-top:4px;display:flex;gap:12px;}
+    .batch-progress{height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;}
+    .batch-progress-fill{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:2px;transition:width 0.3s;}
+
+    /* ===== IMAGE PLAYGROUND ===== */
+    #imgModal{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:7600;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+    #imgModal.open{display:flex;}
+    .img-content{background:#fff;border-radius:20px;width:100%;max-width:960px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.3);}
+    .img-header{padding:18px 24px;border-bottom:1px solid #e2e8f0;background:#0f172a;color:white;display:flex;align-items:center;justify-content:space-between;}
+    .img-header h3{margin:0;font-family:'Space Grotesk';font-size:18px;display:flex;align-items:center;gap:8px;}
+    .img-header h3 .material-icons{color:#a78bfa;}
+    .img-body{display:flex;flex:1;overflow:hidden;min-height:0;}
+    .img-controls{width:300px;flex-shrink:0;padding:20px;overflow-y:auto;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;gap:14px;}
+    .img-preview{flex:1;padding:20px;display:flex;align-items:center;justify-content:center;background:#f8fafc;overflow:auto;flex-direction:column;gap:16px;}
+    .img-preview-placeholder{text-align:center;color:#94a3b8;}
+    .img-preview-placeholder .material-icons{font-size:64px;margin-bottom:12px;display:block;}
+    .img-preview img{max-width:100%;max-height:calc(92vh - 200px);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.15);}
+    .img-ctrl-group{display:flex;flex-direction:column;gap:6px;}
+    .img-ctrl-label{font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.4px;}
+    .img-ctrl-label span{color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;}
+    .img-ctrl-group select,.img-ctrl-group input[type=text],.img-ctrl-group textarea{width:100%;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;outline:none;}
+    .img-ctrl-group select:focus,.img-ctrl-group input:focus,.img-ctrl-group textarea:focus{border-color:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,0.1);}
+    .img-ctrl-group textarea{height:80px;resize:none;}
+    .img-slider-row{display:flex;align-items:center;gap:8px;}
+    .img-slider-row input[type=range]{flex:1;}
+    .img-slider-val{font-size:12px;font-family:'JetBrains Mono',monospace;color:#6366f1;font-weight:600;min-width:28px;text-align:right;}
+    .img-generate-btn{background:linear-gradient(135deg,#8b5cf6,#6366f1);color:white;border:none;padding:12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;width:100%;}
+    .img-generate-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(99,102,241,0.4);}
+    .img-generate-btn:disabled{opacity:0.6;transform:none;cursor:wait;}
+    .img-result-meta{font-size:12px;color:#64748b;text-align:center;}
+    .img-download-btn{background:#10b981;color:white;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
+
+    /* ===== SPIN ANIMATION ===== */
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    .spin{animation:spin 1s linear infinite;}
+
+    /* ===== RESPONSE CARD BADGES ===== */
+    .response-badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px;}
+    .rb{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;}
+    .rb-time{background:#f1f5f9;color:#475569;}.rb-tokens{background:#ede9fe;color:#7c3aed;}
+    .rb-cost{background:#dcfce7;color:#166534;}.rb-speed{background:#fff7ed;color:#c2410c;}
+    .rb .material-icons{font-size:12px;}
+
   </style>
 </head>
 <body>
@@ -1827,7 +1992,25 @@
           <span class="material-icons">smart_toy</span>
           <h1>Venice AI Multi-Chat</h1>
         </div>
-        <div style="display: flex; gap: 10px;">
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <div id="sessionTracker" title="Session spend tracker">
+            <span class="material-icons">account_balance_wallet</span>
+            <span>Session:</span>
+            <strong id="sessionCost">$0.0000</strong>
+            <span id="sessionTokens" style="opacity:0.6;font-size:11px;"></span>
+          </div>
+          <button id="historyBtn" class="button" title="Prompt History & Library" style="background:#1e293b;">
+            <span class="material-icons">history</span>
+            History
+          </button>
+          <button id="batchBtn" class="button" title="Batch Prompt Runner" style="background:#1e293b;">
+            <span class="material-icons">batch_prediction</span>
+            Batch
+          </button>
+          <button id="imgPlayBtn" class="button" title="Image Generation Playground" style="background:#1e293b;">
+            <span class="material-icons">image</span>
+            Images
+          </button>
           <button id="dashboardButton" class="button" title="View Cost Analytics Dashboard">
             <span class="material-icons">analytics</span>
             Analytics
@@ -1850,6 +2033,14 @@
       
       <div class="prompt-section">
         <textarea id="prompt" placeholder="Enter your prompt here..."></textarea>
+        <div id="costEstimator">
+          <div class="cost-bar">
+            <span class="material-icons">calculate</span>
+            <div class="cb-item"><span>Tokens (est):</span> <strong id="cbTokens">—</strong></div>
+            <div class="cb-item"><span>Est. cost:</span> <strong id="cbCost">—</strong></div>
+            <div class="cb-item" id="cbModelName" style="margin-left:auto;color:#6366f1;font-weight:600;font-size:11px;"></div>
+          </div>
+        </div>
         <div class="controls">
           <div style="display: flex; gap: 20px; align-items: center;">
             <label for="webSearch" class="web-search-toggle">
@@ -1899,6 +2090,176 @@
             <p style="color: #94a3b8; text-align: center; padding: 40px;">
               Choose a model from the left panel to view its response
             </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Inspector Panel -->
+      <div id="inspectorPanel">
+        <div class="insp-tabs">
+          <div class="insp-tab active" data-tab="request">Request</div>
+          <div class="insp-tab" data-tab="response">Response</div>
+          <div class="insp-tab" data-tab="raw">Raw JSON</div>
+        </div>
+        <div class="insp-toolbar">
+          <span class="insp-label" id="inspLabel">No request yet</span>
+          <button class="insp-copy" id="inspCopyBtn" onclick="inspCopy()">Copy</button>
+        </div>
+        <div class="insp-body" id="inspBody">// Open a chat and send a message to inspect the API call</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Command Palette -->
+  <div id="cmdOverlay" onclick="if(event.target===this)closeCmdPalette()">
+    <div id="cmdPalette">
+      <div class="cmd-header">
+        <span class="material-icons">search</span>
+        <input id="cmdInput" placeholder="Search commands, models, actions…" autocomplete="off" />
+        <span class="cmd-hint">ESC</span>
+      </div>
+      <div id="cmdResults"></div>
+      <div class="cmd-footer">
+        <span class="cmd-footer-hint"><kbd>↑↓</kbd> Navigate</span>
+        <span class="cmd-footer-hint"><kbd>Enter</kbd> Select</span>
+        <span class="cmd-footer-hint"><kbd>Esc</kbd> Close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prompt History Panel -->
+  <div id="historyPanel">
+    <div class="hp-header">
+      <h3><span class="material-icons">history</span> Prompt Library</h3>
+      <button class="hp-close" onclick="closeHistory()"><span class="material-icons">close</span></button>
+    </div>
+    <div class="hp-search">
+      <input id="hpSearch" placeholder="Search saved prompts…" oninput="renderHistory()" />
+    </div>
+    <div class="hp-list" id="hpList">
+      <div class="hp-empty">No saved prompts yet.<br>Send a message to start building your library.</div>
+    </div>
+    <div class="hp-footer">
+      <button class="hp-save-btn" onclick="saveCurrentPrompt()">
+        <span class="material-icons" style="font-size:15px;">bookmark_add</span> Save Current
+      </button>
+      <button class="hp-clear-btn" onclick="clearHistory()">
+        <span class="material-icons" style="font-size:15px;">delete_sweep</span> Clear All
+      </button>
+    </div>
+  </div>
+
+  <!-- Batch Prompt Runner Modal -->
+  <div id="batchModal">
+    <div class="batch-content">
+      <div class="batch-header">
+        <h3><span class="material-icons">batch_prediction</span> Batch Prompt Runner</h3>
+        <button class="hp-close" onclick="closeBatch()"><span class="material-icons">close</span></button>
+      </div>
+      <div class="batch-body">
+        <div>
+          <label>Prompts (one per line)</label>
+          <textarea id="batchPrompts" placeholder="What is AI?&#10;Explain quantum computing&#10;Write a haiku about the ocean"></textarea>
+        </div>
+        <div class="batch-model-row">
+          <label style="white-space:nowrap;margin:0;">Model:</label>
+          <select id="batchModel"><option value="">— select model —</option></select>
+        </div>
+        <div id="batchProgressWrap" style="display:none;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:6px;">
+            <span id="batchProgressLabel">Running…</span>
+            <span id="batchProgressPct">0%</span>
+          </div>
+          <div class="batch-progress"><div class="batch-progress-fill" id="batchProgressFill" style="width:0%"></div></div>
+        </div>
+        <div id="batchResults"></div>
+      </div>
+      <div class="batch-footer">
+        <button class="button" onclick="closeBatch()" style="background:#e2e8f0;color:#374151;">Cancel</button>
+        <button class="button" id="batchRunBtn" onclick="runBatch()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">
+          <span class="material-icons">play_arrow</span> Run Batch
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Generation Playground Modal -->
+  <div id="imgModal">
+    <div class="img-content">
+      <div class="img-header">
+        <h3><span class="material-icons">image</span> Image Generation Playground</h3>
+        <button class="hp-close" onclick="closeImgPlayground()"><span class="material-icons">close</span></button>
+      </div>
+      <div class="img-body">
+        <div class="img-controls">
+          <div class="img-ctrl-group">
+            <div class="img-ctrl-label">Model</div>
+            <select id="imgModel"><option value="fluently-xl">fluently-xl</option></select>
+          </div>
+          <div class="img-ctrl-group">
+            <div class="img-ctrl-label">Prompt</div>
+            <textarea id="imgPrompt" placeholder="A photorealistic portrait of a futuristic city at sunset…"></textarea>
+          </div>
+          <div class="img-ctrl-group">
+            <div class="img-ctrl-label">Negative Prompt <span>(optional)</span></div>
+            <input type="text" id="imgNegPrompt" placeholder="blurry, low quality, watermark…" />
+          </div>
+          <div class="img-ctrl-group">
+            <div class="img-ctrl-label">Style</div>
+            <select id="imgStyle">
+              <option value="">None</option>
+              <option value="3d-model">3D Model</option>
+              <option value="analog-film">Analog Film</option>
+              <option value="anime">Anime</option>
+              <option value="cinematic">Cinematic</option>
+              <option value="comic-book">Comic Book</option>
+              <option value="digital-art">Digital Art</option>
+              <option value="enhance">Enhance</option>
+              <option value="fantasy-art">Fantasy Art</option>
+              <option value="isometric">Isometric</option>
+              <option value="line-art">Line Art</option>
+              <option value="neon-punk">Neon Punk</option>
+              <option value="origami">Origami</option>
+              <option value="photographic">Photographic</option>
+              <option value="pixel-art">Pixel Art</option>
+              <option value="tile-texture">Tile Texture</option>
+            </select>
+          </div>
+          <div class="img-ctrl-group">
+            <div class="img-ctrl-label">Steps <span id="imgStepsVal">20</span></div>
+            <div class="img-slider-row">
+              <input type="range" id="imgSteps" min="10" max="50" value="20" oninput="document.getElementById('imgStepsVal').textContent=this.value" />
+              <span class="img-slider-val" id="imgStepsDisp">20</span>
+            </div>
+          </div>
+          <div class="img-ctrl-group">
+            <div class="img-ctrl-label">CFG Scale <span id="imgCfgVal">7</span></div>
+            <div class="img-slider-row">
+              <input type="range" id="imgCfg" min="1" max="20" value="7" step="0.5" oninput="document.getElementById('imgCfgVal').textContent=this.value" />
+              <span class="img-slider-val" id="imgCfgDisp">7</span>
+            </div>
+          </div>
+          <div class="img-ctrl-group">
+            <div class="img-ctrl-label">Size</div>
+            <select id="imgSize">
+              <option value="1024x1024">1024 × 1024 (Square)</option>
+              <option value="1344x768">1344 × 768 (Wide)</option>
+              <option value="768x1344">768 × 1344 (Portrait)</option>
+              <option value="1920x1088">1920 × 1088 (Cinematic)</option>
+            </select>
+          </div>
+          <button class="img-generate-btn" id="imgGenBtn" onclick="generateImage()">
+            <span class="material-icons">auto_awesome</span> Generate
+          </button>
+        </div>
+        <div class="img-preview" id="imgPreview">
+          <div class="img-preview-placeholder">
+            <span class="material-icons">image_search</span>
+            <p>Your image will appear here</p>
+            <p style="font-size:12px;margin-top:4px;">Configure settings and click Generate</p>
           </div>
         </div>
       </div>
@@ -4146,6 +4507,628 @@ Provide your analysis in the following JSON format (respond ONLY with valid JSON
           });
         }
     });
+  </script>
+
+  <!-- ======================================================
+       FEATURE LAYER: Toast · Cmd Palette · Cost Calc ·
+       Session Tracker · Prompt History · API Inspector ·
+       TTS · Batch Runner · Image Playground · Shortcuts
+  ====================================================== -->
+  <script>
+  (function () {
+    'use strict';
+
+    // ── helpers ────────────────────────────────────────────
+    const $ = id => document.getElementById(id);
+    const qs = sel => document.querySelector(sel);
+    function fmtCost(n) {
+      if (n === null || n === undefined || isNaN(n)) return '—';
+      if (n < 0.000001) return '$0.00';
+      if (n < 0.001)    return '$' + n.toFixed(6);
+      if (n < 0.01)     return '$' + n.toFixed(5);
+      return '$' + n.toFixed(4);
+    }
+
+    // ── TOAST ───────────────────────────────────────────────
+    function showToast(msg, type = 'info', duration = 3500) {
+      const icons = { success: 'check_circle', error: 'error', warn: 'warning', info: 'info' };
+      const c = $('toast-container');
+      if (!c) return;
+      const t = document.createElement('div');
+      t.className = 'toast ' + type;
+      t.innerHTML = `<span class="material-icons">${icons[type] || 'info'}</span>${msg}`;
+      c.appendChild(t);
+      setTimeout(() => {
+        t.classList.add('fade-out');
+        t.addEventListener('animationend', () => t.remove());
+      }, duration);
+    }
+    window.showToast = showToast;
+
+    // ── SESSION TRACKER ─────────────────────────────────────
+    let sessionSpend = 0;
+    let sessionTokens = 0;
+    function updateSessionTracker(cost, tokens) {
+      if (!isNaN(cost)) sessionSpend += cost;
+      if (!isNaN(tokens)) sessionTokens += tokens;
+      const el = $('sessionCost');
+      const te = $('sessionTokens');
+      if (el) el.textContent = fmtCost(sessionSpend);
+      if (te) te.textContent = sessionTokens > 0 ? `· ${sessionTokens.toLocaleString()} tok` : '';
+    }
+    window.updateSessionTracker = updateSessionTracker;
+
+    // ── LIVE COST ESTIMATOR ─────────────────────────────────
+    // Rough pricing fallbacks: $0.20/1M tokens input
+    const FALLBACK_INPUT_PRICE = 0.20 / 1e6;
+
+    function getActivePricing() {
+      // Try to read from the app's currently selected model data
+      try {
+        const models = window.allModels || [];
+        const activeId = window.activeModel || qs('.rail-pill.active')?.dataset?.model;
+        const m = models.find(x => x.id === activeId);
+        if (m?.pricing?.input?.usd) return m.pricing.input.usd;
+      } catch (_) {}
+      return FALLBACK_INPUT_PRICE;
+    }
+
+    function estimateCost() {
+      const textarea = $('prompt');
+      if (!textarea) return;
+      const text = textarea.value;
+      const tokens = Math.ceil(text.length / 4);
+      const pricePerToken = getActivePricing();
+      const cost = tokens * pricePerToken;
+      const cbTokens = $('cbTokens');
+      const cbCost = $('cbCost');
+      if (cbTokens) cbTokens.textContent = tokens > 0 ? tokens.toLocaleString() : '—';
+      if (cbCost) cbCost.textContent = tokens > 0 ? fmtCost(cost) : '—';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const ta = $('prompt');
+      if (ta) {
+        ta.addEventListener('input', estimateCost);
+        ta.addEventListener('keydown', e => {
+          // Ctrl/Cmd+Enter → send
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            const btn = $('sendButton');
+            if (btn) btn.click();
+          }
+        });
+      }
+
+      // ── Keyboard shortcuts ────────────────────────────────
+      document.addEventListener('keydown', e => {
+        // Cmd/Ctrl+K → command palette
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          openCmdPalette();
+          return;
+        }
+        // Escape
+        if (e.key === 'Escape') {
+          closeCmdPalette();
+          closeHistory();
+          closeBatch();
+          closeImgPlayground();
+        }
+      });
+
+      // ── Hook into send to record history + session ────────
+      const sendBtn = $('sendButton');
+      if (sendBtn) {
+        sendBtn.addEventListener('click', () => {
+          const p = $('prompt')?.value?.trim();
+          if (p) savePromptToHistory(p);
+        }, true); // capture phase so it runs before other listeners
+      }
+
+      // ── History button ────────────────────────────────────
+      const hBtn = $('historyBtn');
+      if (hBtn) hBtn.addEventListener('click', openHistory);
+
+      // ── Batch button ──────────────────────────────────────
+      const bBtn = $('batchBtn');
+      if (bBtn) bBtn.addEventListener('click', openBatch);
+
+      // ── Image playground button ───────────────────────────
+      const iBtn = $('imgPlayBtn');
+      if (iBtn) iBtn.addEventListener('click', openImgPlayground);
+
+      // ── Inspector tabs ────────────────────────────────────
+      document.querySelectorAll('.insp-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.insp-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          renderInspectorTab(tab.dataset.tab);
+        });
+      });
+
+      // ── Cmd palette navigation ────────────────────────────
+      const cmdInput = $('cmdInput');
+      if (cmdInput) {
+        cmdInput.addEventListener('input', renderCmdResults);
+        cmdInput.addEventListener('keydown', handleCmdNav);
+      }
+    });
+
+    // ── COMMAND PALETTE ─────────────────────────────────────
+    const CMD_COMMANDS = [
+      { icon: 'send',            label: 'Send Prompt',              hint: '⌘↵',  action: () => $('sendButton')?.click() },
+      { icon: 'history',         label: 'Open Prompt History',      hint: '',    action: openHistory },
+      { icon: 'batch_prediction',label: 'Open Batch Runner',        hint: '',    action: openBatch },
+      { icon: 'image',           label: 'Open Image Playground',    hint: '',    action: openImgPlayground },
+      { icon: 'refresh',         label: 'Refresh Models',           hint: '',    action: () => $('refreshModelsButton')?.click() },
+      { icon: 'analytics',       label: 'Go to Analytics Dashboard',hint: '',    action: () => { window.location.href = 'dashboard.html'; } },
+      { icon: 'menu_book',       label: 'Open API Guide',           hint: '',    action: () => { window.open('api-guide.html'); } },
+      { icon: 'settings',        label: 'Open Settings',            hint: '',    action: () => $('settingsButton')?.click() },
+      { icon: 'download',        label: 'Download Responses',       hint: '',    action: () => $('downloadButton')?.click() },
+      { icon: 'delete_sweep',    label: 'Clear Prompt History',     hint: '',    action: clearHistory },
+    ];
+
+    let cmdIdx = 0;
+
+    function openCmdPalette() {
+      const o = $('cmdOverlay');
+      if (!o) return;
+      o.classList.add('open');
+      const inp = $('cmdInput');
+      if (inp) { inp.value = ''; inp.focus(); }
+      renderCmdResults();
+    }
+    function closeCmdPalette() {
+      $('cmdOverlay')?.classList.remove('open');
+    }
+    window.closeCmdPalette = closeCmdPalette;
+
+    function renderCmdResults() {
+      const q = ($('cmdInput')?.value || '').toLowerCase();
+      const res = $('cmdResults');
+      if (!res) return;
+
+      let items = CMD_COMMANDS;
+      if (q) items = items.filter(c => c.label.toLowerCase().includes(q));
+
+      // Also search models
+      const models = window.allModels || [];
+      const modelMatches = q
+        ? models.filter(m => m.id.toLowerCase().includes(q)).slice(0, 6)
+        : [];
+
+      if (!items.length && !modelMatches.length) {
+        res.innerHTML = '<div class="cmd-empty">No results for "' + q + '"</div>';
+        return;
+      }
+
+      let html = '';
+      if (items.length) {
+        html += '<div class="cmd-group-label">Actions</div>';
+        html += items.map((c, i) =>
+          `<div class="cmd-item" data-idx="${i}" onclick="execCmd(${i})">
+            <span class="material-icons">${c.icon}</span>
+            <span class="cmd-item-label">${c.label}</span>
+            ${c.hint ? `<span class="cmd-item-hint">${c.hint}</span>` : ''}
+          </div>`
+        ).join('');
+      }
+      if (modelMatches.length) {
+        html += '<div class="cmd-group-label">Models</div>';
+        html += modelMatches.map(m =>
+          `<div class="cmd-item" onclick="selectModelFromCmd('${m.id.replace(/'/g,"\\'")}')">
+            <span class="material-icons">smart_toy</span>
+            <span class="cmd-item-label">${m.id}</span>
+            <span class="cmd-item-hint">${m.type || 'text'}</span>
+          </div>`
+        ).join('');
+      }
+      res.innerHTML = html;
+      cmdIdx = 0;
+      highlightCmd(0);
+    }
+
+    function highlightCmd(idx) {
+      const items = $('cmdResults')?.querySelectorAll('.cmd-item') || [];
+      items.forEach((el, i) => el.classList.toggle('selected', i === idx));
+      cmdIdx = idx;
+    }
+
+    function handleCmdNav(e) {
+      const items = $('cmdResults')?.querySelectorAll('.cmd-item') || [];
+      if (e.key === 'ArrowDown') { e.preventDefault(); highlightCmd((cmdIdx + 1) % items.length); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); highlightCmd((cmdIdx - 1 + items.length) % items.length); }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        items[cmdIdx]?.click();
+        closeCmdPalette();
+      }
+    }
+
+    function execCmd(idx) {
+      closeCmdPalette();
+      CMD_COMMANDS[idx]?.action?.();
+    }
+    window.execCmd = execCmd;
+
+    function selectModelFromCmd(id) {
+      closeCmdPalette();
+      if (typeof window.selectModel === 'function') window.selectModel(id);
+    }
+    window.selectModelFromCmd = selectModelFromCmd;
+
+    // ── PROMPT HISTORY ───────────────────────────────────────
+    const HISTORY_KEY = 'venice_prompt_history';
+    function loadHistory() {
+      try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
+    }
+    function saveHistory(arr) {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(0, 200)));
+    }
+    function savePromptToHistory(prompt) {
+      if (!prompt) return;
+      const arr = loadHistory();
+      const existing = arr.findIndex(h => h.prompt === prompt);
+      if (existing > -1) {
+        arr[existing].count = (arr[existing].count || 1) + 1;
+        arr[existing].updatedAt = Date.now();
+        arr.unshift(arr.splice(existing, 1)[0]);
+      } else {
+        arr.unshift({ id: Date.now(), prompt, count: 1, createdAt: Date.now(), updatedAt: Date.now() });
+      }
+      saveHistory(arr);
+      renderHistory();
+    }
+    window.saveCurrentPrompt = function () {
+      const p = $('prompt')?.value?.trim();
+      if (!p) { showToast('Type a prompt first', 'warn'); return; }
+      savePromptToHistory(p);
+      showToast('Prompt saved to library', 'success');
+    };
+    window.clearHistory = function () {
+      if (!confirm('Clear all saved prompts?')) return;
+      localStorage.removeItem(HISTORY_KEY);
+      renderHistory();
+      showToast('Prompt history cleared', 'info');
+    };
+
+    function renderHistory() {
+      const list = $('hpList');
+      if (!list) return;
+      const q = ($('hpSearch')?.value || '').toLowerCase();
+      let arr = loadHistory();
+      if (q) arr = arr.filter(h => h.prompt.toLowerCase().includes(q));
+      if (!arr.length) {
+        list.innerHTML = '<div class="hp-empty">No saved prompts yet.<br>Send a message to start building your library.</div>';
+        return;
+      }
+      list.innerHTML = arr.map(h => {
+        const d = new Date(h.updatedAt || h.createdAt);
+        const dateStr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        return `
+        <div class="hp-item">
+          <div class="hp-item-prompt">${escHtml(h.prompt)}</div>
+          <div class="hp-item-meta">
+            <span>${dateStr}</span>
+            <span>${h.count > 1 ? `used ${h.count}×` : ''}</span>
+          </div>
+          <div class="hp-item-actions">
+            <button class="hp-btn" onclick="recallPrompt(${h.id})" title="Load into textarea">
+              <span class="material-icons">arrow_upward</span> Use
+            </button>
+            <button class="hp-btn" onclick="copyHistoryItem(${h.id})" title="Copy">
+              <span class="material-icons">content_copy</span> Copy
+            </button>
+            <button class="hp-btn" onclick="deleteHistoryItem(${h.id})" title="Delete" style="color:#ef4444;">
+              <span class="material-icons">delete</span>
+            </button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    window.recallPrompt = function (id) {
+      const h = loadHistory().find(x => x.id === id);
+      if (!h) return;
+      const ta = $('prompt');
+      if (ta) { ta.value = h.prompt; ta.focus(); estimateCost(); }
+      closeHistory();
+      showToast('Prompt loaded', 'success');
+    };
+    window.copyHistoryItem = function (id) {
+      const h = loadHistory().find(x => x.id === id);
+      if (!h) return;
+      navigator.clipboard.writeText(h.prompt).then(() => showToast('Copied!', 'success'));
+    };
+    window.deleteHistoryItem = function (id) {
+      saveHistory(loadHistory().filter(x => x.id !== id));
+      renderHistory();
+    };
+
+    function openHistory()  { $('historyPanel')?.classList.add('open'); renderHistory(); }
+    function closeHistory() { $('historyPanel')?.classList.remove('open'); }
+    window.openHistory = openHistory;
+    window.closeHistory = closeHistory;
+
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── API INSPECTOR ────────────────────────────────────────
+    let _lastRequest = null, _lastResponse = null, _lastRaw = null;
+
+    window.recordInspector = function(req, res, raw) {
+      _lastRequest = req;
+      _lastResponse = res;
+      _lastRaw = raw;
+      renderInspectorTab(qs('.insp-tab.active')?.dataset?.tab || 'request');
+      const panel = $('inspectorPanel');
+      if (panel) panel.classList.add('open');
+    };
+
+    function renderInspectorTab(tab) {
+      const body = $('inspBody');
+      const label = $('inspLabel');
+      if (!body) return;
+      if (tab === 'request') {
+        if (!_lastRequest) { body.textContent = '// No request recorded yet'; return; }
+        if (label) label.textContent = `POST ${_lastRequest.url || '/chat/completions'}`;
+        body.textContent = JSON.stringify(_lastRequest, null, 2);
+      } else if (tab === 'response') {
+        if (!_lastResponse) { body.textContent = '// No response recorded yet'; return; }
+        if (label) label.textContent = `200 OK — ${_lastResponse.model || ''}`;
+        body.textContent = JSON.stringify(_lastResponse, null, 2);
+      } else {
+        if (label) label.textContent = 'Raw';
+        body.textContent = _lastRaw || '// No raw data';
+      }
+    }
+
+    window.inspCopy = function() {
+      const t = $('inspBody')?.textContent;
+      if (t) navigator.clipboard.writeText(t).then(() => showToast('Copied to clipboard', 'success'));
+    };
+
+    // ── BATCH RUNNER ─────────────────────────────────────────
+    let batchRunning = false;
+
+    function openBatch() {
+      const m = $('batchModal');
+      if (!m) return;
+      m.classList.add('open');
+      // Populate model select from loaded models
+      const sel = $('batchModel');
+      if (sel && sel.options.length <= 1) {
+        const models = (window.allModels || []).filter(x => !x.type || x.type === 'text');
+        models.forEach(x => {
+          const o = document.createElement('option');
+          o.value = x.id; o.textContent = x.id;
+          sel.appendChild(o);
+        });
+      }
+    }
+    function closeBatch() { $('batchModal')?.classList.remove('open'); }
+    window.openBatch  = openBatch;
+    window.closeBatch = closeBatch;
+
+    window.runBatch = async function() {
+      if (batchRunning) return;
+      const raw = $('batchPrompts')?.value?.trim();
+      const modelId = $('batchModel')?.value;
+      if (!raw) { showToast('Enter at least one prompt', 'warn'); return; }
+      if (!modelId) { showToast('Select a model', 'warn'); return; }
+
+      const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+      const resDiv = $('batchResults');
+      const progressWrap = $('batchProgressWrap');
+      const fill = $('batchProgressFill');
+      const pLabel = $('batchProgressLabel');
+      const pPct = $('batchProgressPct');
+      const runBtn = $('batchRunBtn');
+
+      batchRunning = true;
+      if (runBtn) runBtn.disabled = true;
+      if (progressWrap) progressWrap.style.display = 'block';
+      if (resDiv) resDiv.innerHTML = `<div class="batch-results"><div class="batch-results-header"><span>${lines.length} prompts</span></div></div>`;
+
+      const tbody = resDiv?.querySelector('.batch-results');
+
+      for (let i = 0; i < lines.length; i++) {
+        const pct = Math.round((i / lines.length) * 100);
+        if (fill) fill.style.width = pct + '%';
+        if (pLabel) pLabel.textContent = `Running ${i + 1} of ${lines.length}…`;
+        if (pPct) pPct.textContent = pct + '%';
+
+        const startTime = Date.now();
+        let responseText = '', totalTokens = 0;
+        try {
+          const apiKey = window.getApiKey ? window.getApiKey() : (localStorage.getItem('venice_user_api_key') || '');
+          const resp = await fetch('https://api.venice.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({ model: modelId, messages: [{ role: 'user', content: lines[i] }], max_tokens: 512 })
+          });
+          const data = await resp.json();
+          responseText = data.choices?.[0]?.message?.content || data.error?.message || 'No response';
+          totalTokens = data.usage?.total_tokens || 0;
+        } catch (err) {
+          responseText = 'Error: ' + err.message;
+        }
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+
+        const row = document.createElement('div');
+        row.className = 'batch-result-row';
+        row.innerHTML = `
+          <div class="batch-result-prompt">${escHtml(lines[i])}</div>
+          <div class="batch-result-response">${escHtml(responseText)}</div>
+          <div class="batch-result-meta">
+            <span>${elapsed}s</span>
+            ${totalTokens ? `<span>${totalTokens} tokens</span>` : ''}
+          </div>`;
+        tbody?.appendChild(row);
+      }
+
+      if (fill) fill.style.width = '100%';
+      if (pLabel) pLabel.textContent = 'Done!';
+      if (pPct) pPct.textContent = '100%';
+      batchRunning = false;
+      if (runBtn) runBtn.disabled = false;
+      showToast(`Batch complete — ${lines.length} prompts`, 'success');
+    };
+
+    // ── IMAGE PLAYGROUND ─────────────────────────────────────
+    function openImgPlayground() {
+      const m = $('imgModal');
+      if (!m) return;
+      m.classList.add('open');
+      // Populate image models
+      const sel = $('imgModel');
+      if (sel && sel.options.length <= 1) {
+        const models = (window.allModels || []).filter(x => x.type === 'image');
+        models.forEach(x => {
+          const o = document.createElement('option');
+          o.value = x.id; o.textContent = x.id;
+          sel.appendChild(o);
+        });
+      }
+    }
+    function closeImgPlayground() { $('imgModal')?.classList.remove('open'); }
+    window.openImgPlayground  = openImgPlayground;
+    window.closeImgPlayground = closeImgPlayground;
+
+    window.generateImage = async function() {
+      const prompt = $('imgPrompt')?.value?.trim();
+      if (!prompt) { showToast('Enter an image prompt', 'warn'); return; }
+
+      const model  = $('imgModel')?.value || 'fluently-xl';
+      const style  = $('imgStyle')?.value || undefined;
+      const steps  = parseInt($('imgSteps')?.value || '20');
+      const cfg    = parseFloat($('imgCfg')?.value || '7');
+      const size   = ($('imgSize')?.value || '1024x1024').split('x');
+      const negP   = $('imgNegPrompt')?.value?.trim() || undefined;
+
+      const btn = $('imgGenBtn');
+      const preview = $('imgPreview');
+      if (btn) { btn.disabled = true; btn.innerHTML = '<span class="material-icons" class="spin">hourglass_top</span> Generating…'; }
+      if (preview) preview.innerHTML = '<div style="color:#94a3b8;text-align:center;padding:40px;"><span class="material-icons" style="font-size:48px;display:block;margin-bottom:12px;animation:spin 1s linear infinite;">autorenew</span>Generating…</div>';
+
+      try {
+        const apiKey = window.getApiKey ? window.getApiKey() : (localStorage.getItem('venice_user_api_key') || '');
+        const body = {
+          model,
+          prompt,
+          negative_prompt: negP,
+          steps,
+          cfg_scale: cfg,
+          width: parseInt(size[0]),
+          height: parseInt(size[1]),
+          style_preset: style || undefined,
+          return_binary: false
+        };
+        // Remove undefined fields
+        Object.keys(body).forEach(k => body[k] === undefined && delete body[k]);
+
+        const startTime = Date.now();
+        const resp = await fetch('https://api.venice.ai/api/v1/image/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+          body: JSON.stringify(body)
+        });
+        const data = await resp.json();
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+
+        if (data.images?.[0]) {
+          const src = 'data:image/png;base64,' + data.images[0];
+          if (preview) preview.innerHTML = `
+            <img src="${src}" alt="Generated image" />
+            <div class="img-result-meta">Generated in ${elapsed}s · ${size[0]}×${size[1]}</div>
+            <button class="img-download-btn" onclick="downloadGenImg('${src}','venice-img-${Date.now()}.png')">
+              <span class="material-icons">download</span> Download
+            </button>`;
+          showToast('Image generated!', 'success');
+        } else {
+          throw new Error(data.error || 'No image returned');
+        }
+      } catch (err) {
+        if (preview) preview.innerHTML = `<div style="color:#ef4444;text-align:center;padding:40px;"><span class="material-icons" style="font-size:36px;display:block;margin-bottom:8px;">error</span>${escHtml(err.message)}</div>`;
+        showToast('Image generation failed: ' + err.message, 'error');
+      }
+      if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-icons">auto_awesome</span> Generate'; }
+    };
+
+    window.downloadGenImg = function(src, filename) {
+      const a = document.createElement('a');
+      a.href = src; a.download = filename;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    };
+
+    // ── TTS PLAYBACK (on response cards) ─────────────────────
+    // Called by TTS buttons injected into response cards
+    let _ttsAudio = null;
+    window.speakText = async function(text, voiceModel) {
+      if (_ttsAudio) { _ttsAudio.pause(); _ttsAudio = null; }
+      const apiKey = window.getApiKey ? window.getApiKey() : (localStorage.getItem('venice_user_api_key') || '');
+      showToast('Generating speech…', 'info', 2000);
+      try {
+        const resp = await fetch('https://api.venice.ai/api/v1/audio/speech', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+          body: JSON.stringify({ model: voiceModel || 'tts-kokoro', input: text.slice(0, 4000), voice: 'af_sky' })
+        });
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        _ttsAudio = new Audio(url);
+        _ttsAudio.play();
+        showToast('Playing…', 'success', 2000);
+        _ttsAudio.onended = () => { URL.revokeObjectURL(url); _ttsAudio = null; };
+      } catch (err) {
+        showToast('TTS failed: ' + err.message, 'error');
+      }
+    };
+
+    // ── PATCH FETCH to capture API calls for inspector ────────
+    // We wrap the global fetch to intercept Venice API calls
+    (function patchFetch() {
+      const _origFetch = window.fetch;
+      window.fetch = async function(input, init, ...rest) {
+        const url = typeof input === 'string' ? input : input?.url;
+        const isVenice = url && url.includes('api.venice.ai') && url.includes('chat/completions');
+        if (isVenice) {
+          let reqBody = null;
+          try { reqBody = init?.body ? JSON.parse(init.body) : null; } catch {}
+          const result = await _origFetch(input, init, ...rest);
+          // Clone so we don't consume the stream
+          const cloned = result.clone();
+          cloned.text().then(raw => {
+            let parsed = null;
+            try { parsed = JSON.parse(raw); } catch {}
+            if (window.recordInspector && reqBody) {
+              window.recordInspector(
+                { url, ...reqBody },
+                parsed,
+                raw.slice(0, 4000)
+              );
+              // Update session tracker from usage
+              if (parsed?.usage) {
+                const usage = parsed.usage;
+                const models = window.allModels || [];
+                const m = models.find(x => x.id === reqBody.model);
+                const inputPrice  = m?.pricing?.input?.usd || 0.20 / 1e6;
+                const outputPrice = m?.pricing?.output?.usd || 0.60 / 1e6;
+                const cost = (usage.prompt_tokens || 0) * inputPrice +
+                             (usage.completion_tokens || 0) * outputPrice;
+                window.updateSessionTracker(cost, usage.total_tokens || 0);
+              }
+            }
+          }).catch(() => {});
+          return result;
+        }
+        return _origFetch(input, init, ...rest);
+      };
+    })();
+
+  })();
   </script>
 </body>
 </html>

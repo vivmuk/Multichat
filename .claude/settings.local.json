@@ -4,7 +4,8 @@
       "Bash(cd:*)",
       "WebFetch(domain:venice.ai)",
       "WebFetch(domain:docs.venice.ai)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(node -e ':*)"
     ]
   }
 }
