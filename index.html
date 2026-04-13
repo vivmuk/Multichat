@@ -2333,6 +2333,16 @@
           <span class="material-icons">insights</span>
           <h2>Response Analysis</h2>
         </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;margin-right:12px;">
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;white-space:nowrap;">Analysis Model</label>
+          <select id="analysisModelSelect" style="padding:5px 10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-family:inherit;outline:none;background:#f8fafc;color:#0f172a;cursor:pointer;">
+            <option value="grok-4-20">grok-4-20 (2M ctx)</option>
+            <option value="claude-opus-4-6">claude-opus-4-6</option>
+            <option value="qwen3-235b-a22b-thinking-2507">qwen3-235b (thinking)</option>
+            <option value="qwen3-235b-a22b-instruct-2507">qwen3-235b (instruct)</option>
+            <option value="gemini-3-flash-preview">gemini-3-flash</option>
+          </select>
+        </div>
         <button class="close-button" id="closeAnalysis">
           <span class="material-icons">close</span>
         </button>
@@ -3963,6 +3973,24 @@
 
     analyzeButton.addEventListener('click', () => {
       analysisModal.classList.add('show');
+      // Populate analysis model selector with loaded text models (large ones first)
+      const sel = document.getElementById('analysisModelSelect');
+      if (sel && availableModels.length) {
+        const existing = new Set([...sel.options].map(o => o.value));
+        const priority = ['grok-4-20','grok-4-1','claude-opus','qwen3-235','qwen3-30','gemini'];
+        const loaded = availableModels
+          .filter(m => !existing.has(m.id))
+          .sort((a,b) => {
+            const ai = priority.findIndex(p => a.id.includes(p));
+            const bi = priority.findIndex(p => b.id.includes(p));
+            return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+          });
+        loaded.forEach(m => {
+          const o = document.createElement('option');
+          o.value = m.id; o.textContent = m.id;
+          sel.appendChild(o);
+        });
+      }
       analyzeResponses();
     });
 
@@ -4015,50 +4043,93 @@
         return;
       }
 
-      // ── Helper: robust API call with JSON repair ─────────
-      async function aiJson(systemMsg, userMsg, retries = 2) {
-        for (let attempt = 0; attempt <= retries; attempt++) {
-          try {
-            const r = await fetch(`${BASE_URL}/chat/completions`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
-              body: JSON.stringify({
-                model: 'grok-4-20',
-                messages: [
-                  { role: 'system', content: systemMsg },
-                  { role: 'user', content: userMsg }
-                ],
-                max_tokens: 131072,
-                temperature: 0.2
-              })
-            });
-            if (!r.ok) throw new Error(`API ${r.status}`);
-            const d = await r.json();
-            let raw = d.choices[0]?.message?.content || '';
-            raw = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-            const m = raw.match(/\{[\s\S]*\}/);
-            if (!m) throw new Error('No JSON object');
-            let js = m[0].replace(/,(\s*[}\]])/g, '$1');
-            // Attempt parse
-            try { return JSON.parse(js); } catch (_) {
-              // Auto-close truncated JSON
-              let fixed = js;
-              const opens  = (fixed.match(/\[/g) || []).length;
-              const closes = (fixed.match(/\]/g) || []).length;
-              for (let i = 0; i < opens - closes; i++) fixed += ']';
-              const openB  = (fixed.match(/\{/g) || []).length;
-              const closeB = (fixed.match(/\}/g) || []).length;
-              for (let i = 0; i < openB - closeB; i++) fixed += '}';
-              // Remove any dangling string or comma
-              fixed = fixed.replace(/,\s*$/, '');
-              fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
-              return JSON.parse(fixed);
+      // ── Helper: robust API call with JSON repair + 402 fallback ──
+      // Model caps: large-context models get 128K out, others get 32K
+      const MODEL_CAPS = {
+        'grok-4-20': 131072,
+        'grok-4-20-multi-agent': 131072,
+        'claude-opus-4-6': 32000,
+        'qwen3-235b-a22b-thinking-2507': 32000,
+        'qwen3-235b-a22b-instruct-2507': 32000,
+        'gemini-3-flash-preview': 16384,
+      };
+      // Fallback chain tried in order when primary returns 402/403
+      const FALLBACK_CHAIN = [
+        'claude-opus-4-6',
+        'qwen3-235b-a22b-instruct-2507',
+        'qwen3-235b-a22b-thinking-2507',
+        'gemini-3-flash-preview',
+      ];
+
+      let _activeAnalysisModel = (document.getElementById('analysisModelSelect')?.value) || 'claude-opus-4-6';
+
+      async function callModel(model, systemMsg, userMsg) {
+        const maxTok = MODEL_CAPS[model] || 16384;
+        const r = await fetch(`${BASE_URL}/chat/completions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+          body: JSON.stringify({
+            model,
+            messages: [
+              { role: 'system', content: systemMsg },
+              { role: 'user', content: userMsg }
+            ],
+            max_tokens: maxTok,
+            temperature: 0.2
+          })
+        });
+        if (r.status === 402 || r.status === 403) {
+          throw Object.assign(new Error(`API ${r.status} — model "${model}" requires payment or access upgrade`), { status: r.status });
+        }
+        if (!r.ok) throw new Error(`API ${r.status}`);
+        return r;
+      }
+
+      function parseJsonResponse(raw) {
+        raw = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+        const m = raw.match(/\{[\s\S]*\}/);
+        if (!m) throw new Error('No JSON object in response');
+        let js = m[0].replace(/,(\s*[}\]])/g, '$1');
+        try { return JSON.parse(js); } catch (_) {
+          let fixed = js;
+          const opens  = (fixed.match(/\[/g)||[]).length;
+          const closes = (fixed.match(/\]/g)||[]).length;
+          for (let i = 0; i < opens - closes; i++) fixed += ']';
+          const openB  = (fixed.match(/\{/g)||[]).length;
+          const closeB = (fixed.match(/\}/g)||[]).length;
+          for (let i = 0; i < openB - closeB; i++) fixed += '}';
+          fixed = fixed.replace(/,\s*$/, '').replace(/,(\s*[}\]])/g, '$1');
+          return JSON.parse(fixed);
+        }
+      }
+
+      async function aiJson(systemMsg, userMsg, retries = 1) {
+        const primaryModel = _activeAnalysisModel;
+        const modelsToTry = [primaryModel, ...FALLBACK_CHAIN.filter(m => m !== primaryModel)];
+
+        for (const model of modelsToTry) {
+          for (let attempt = 0; attempt <= retries; attempt++) {
+            try {
+              // Update status label if falling back
+              if (model !== primaryModel) {
+                const label = document.getElementById('inspLabel');
+                const sel = document.getElementById('analysisModelSelect');
+                if (sel) sel.value = model;
+                console.warn(`Falling back to ${model}`);
+                if (typeof showToast === 'function') showToast(`Switched to ${model} (primary returned 402)`, 'warn', 5000);
+              }
+              const r = await callModel(model, systemMsg, userMsg);
+              const d = await r.json();
+              const raw = d.choices?.[0]?.message?.content || '';
+              return parseJsonResponse(raw);
+            } catch (e) {
+              console.warn(`aiJson [${model}] attempt ${attempt + 1}:`, e.message);
+              if (e.status === 402 || e.status === 403) break; // try next model immediately
+              if (attempt === retries) break; // retry exhausted, try next model
             }
-          } catch (e) {
-            console.warn(`aiJson attempt ${attempt + 1} failed:`, e.message);
-            if (attempt === retries) throw e;
           }
         }
+        throw new Error('All analysis models failed. Check your API key or try a different model.');
       }
 
       // ── Build full model digest — no truncation (2M input context) ──
