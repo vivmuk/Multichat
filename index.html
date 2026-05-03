@@ -1780,6 +1780,31 @@
       }
     }
 
+    /* ===== GLOBAL MOBILE SMOOTHNESS ===== */
+    /* GPU compositing layers for scroll-heavy elements */
+    .response-container,
+    .model-mobile-select,
+    .mobile-model-tabs,
+    .drawer-list,
+    .model-rail {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      will-change: scroll-position;
+    }
+    /* Prevent text selection flicker on touch */
+    .mobile-model-tab, .rail-item, .drawer-item {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+    /* Smooth animated transitions */
+    .mobile-model-tab {
+      transition: background 0.2s cubic-bezier(0.4,0,0.2,1),
+                  color 0.2s cubic-bezier(0.4,0,0.2,1),
+                  border-color 0.2s cubic-bezier(0.4,0,0.2,1),
+                  transform 0.1s cubic-bezier(0.4,0,0.2,1);
+    }
+    .mobile-model-tab:active { transform: scale(0.95); }
+
     @media (max-width: 768px) {
       body { overflow: hidden; }
 
@@ -1837,13 +1862,16 @@
         display: flex !important;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
         scrollbar-width: none;
         gap: 6px;
-        padding: 6px 12px;
+        padding: 6px 12px 8px;
         background: var(--surface-color);
         border-bottom: 1px solid var(--border-color);
         flex-shrink: 0;
-        scroll-snap-type: x mandatory;
+        scroll-snap-type: x proximity;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
       }
       .mobile-model-tabs::-webkit-scrollbar { display: none; }
       .mobile-model-tab {
@@ -1938,10 +1966,17 @@
         flex: 1;
         min-height: 0;
         overflow-y: auto;
+        overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
-        touch-action: pan-y;
+        overscroll-behavior-y: contain;
+        overscroll-behavior-x: none;
+        touch-action: pan-y pinch-zoom;
         padding: 10px;
+        /* smooth deceleration on iOS */
+        scroll-behavior: auto; /* don't force smooth, let native handle it */
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        will-change: scroll-position;
       }
 
       .model-response {
@@ -4797,6 +4832,69 @@ Return JSON:
       `;
     }
 
+    // ── Inline SVG latency chart for downloadable HTML ─────────────
+    function buildDownloadLatencyChart(responses) {
+      // Gather models that have responses
+      const modelIds = Object.keys(responses || {}).filter(id => responses[id]?.content && responses[id].time);
+      if (!modelIds.length) return '';
+
+      // Estimate latency for each model using same heuristic as dashboard
+      function estimateLat(modelId) {
+        const id = modelId.toLowerCase();
+        const OVERRIDES = {
+          'llama-3.2-3b':{ttft:90,tps:120},'mistral-7b':{ttft:130,tps:110},'gemma-2-9b':{ttft:160,tps:95},
+          'llama-3.1-8b':{ttft:150,tps:100},'llama-3.3-70b':{ttft:500,tps:55},'llama-3.1-70b':{ttft:520,tps:52},
+          'llama-3.1-405b':{ttft:1800,tps:18},'mistral-small':{ttft:200,tps:90},'mixtral-8x7b':{ttft:280,tps:75},
+          'qwen-2.5-7b':{ttft:140,tps:105},'qwen-2.5-32b':{ttft:480,tps:55},'qwen-2.5-72b':{ttft:700,tps:40},
+          'qwen3-30b':{ttft:550,tps:48},'qwen3-235b':{ttft:2200,tps:14},'deepseek-r1':{ttft:3500,tps:22},
+          'deepseek-v3':{ttft:800,tps:38},'grok-3-mini':{ttft:250,tps:80},'grok-3':{ttft:700,tps:42},
+          'gemini-2.0-flash':{ttft:220,tps:88},'gemini-2.5-flash':{ttft:260,tps:82},
+          'venice-uncensored':{ttft:160,tps:95},
+        };
+        for (const [k,v] of Object.entries(OVERRIDES)) { if (id.includes(k)) return v; }
+        // Parse actual response time if available
+        const actualTime = responses[modelId]?.time;
+        if (actualTime) {
+          const ms = parseFloat(actualTime) * 1000;
+          if (!isNaN(ms) && ms > 0) return { ttft: Math.round(ms * 0.3), tps: Math.round(1000 / ms * 60) };
+        }
+        const sz = id.match(/(\d+\.?\d*)b/); const b = sz ? parseFloat(sz[1]) : 30;
+        if (b<=4) return{ttft:100,tps:120}; if(b<=9) return{ttft:160,tps:95}; if(b<=15) return{ttft:280,tps:75};
+        if(b<=35) return{ttft:480,tps:55}; if(b<=80) return{ttft:700,tps:40}; return{ttft:1400,tps:22};
+      }
+
+      const models = modelIds.map(id => ({ id, short: id.split('/').pop().replace(/-\d{8}$/,'').slice(0,22), ...estimateLat(id) }))
+                              .sort((a,b) => a.ttft - b.ttft);
+
+      const W = 700, H = 60 + models.length * 30;
+      const maxTtft = Math.max(...models.map(m => m.ttft));
+      const barW = 320, labelW = 200, valW = 120, PAD = 20;
+      const tierColor = ttft => ttft < 400 ? '#10b981' : ttft < 1200 ? '#f59e0b' : '#ef4444';
+
+      const rows = models.map((m, i) => {
+        const y = 50 + i * 30;
+        const bLen = Math.round((m.ttft / maxTtft) * barW);
+        const c = tierColor(m.ttft);
+        const ttftStr = m.ttft >= 1000 ? (m.ttft/1000).toFixed(1)+'s' : m.ttft+'ms';
+        return `<text x="${PAD}" y="${y+8}" font-size="11" fill="#374151" font-family="Inter,sans-serif">${i+1}. ${escHtml(m.short)}</text>
+          <rect x="${PAD+labelW}" y="${y}" width="${bLen}" height="18" rx="4" fill="${c}" opacity="0.8"/>
+          <text x="${PAD+labelW+bLen+6}" y="${y+13}" font-size="10" fill="#6b7280" font-family="JetBrains Mono,monospace">~${ttftStr} · ${m.tps}t/s</text>`;
+      }).join('');
+
+      const legend = `<text x="${PAD}" y="26" font-size="12" font-weight="600" fill="#1f2937" font-family="Inter,sans-serif">Latency Benchmark — TTFT vs Throughput</text>
+        <circle cx="${PAD+labelW}" cy="22" r="5" fill="#10b981"/><text x="${PAD+labelW+8}" y="26" font-size="10" fill="#374151" font-family="Inter,sans-serif">Fast (&lt;400ms)</text>
+        <circle cx="${PAD+labelW+90}" cy="22" r="5" fill="#f59e0b"/><text x="${PAD+labelW+98}" y="26" font-size="10" fill="#374151" font-family="Inter,sans-serif">Medium</text>
+        <circle cx="${PAD+labelW+155}" cy="22" r="5" fill="#ef4444"/><text x="${PAD+labelW+163}" y="26" font-size="10" fill="#374151" font-family="Inter,sans-serif">Slow (&gt;1200ms)</text>`;
+
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="background:#f9fafb;border-radius:12px;">${legend}${rows}</svg>`;
+
+      return `<div class="sec">
+        <div class="sec-t"><span class="material-icons">speed</span> Latency Benchmark</div>
+        <p style="font-size:12px;color:#6b7280;margin-bottom:16px;">Estimated TTFT (time to first token) and throughput for models used in this analysis. Bar length = relative TTFT.</p>
+        <div style="overflow-x:auto;">${svg}</div>
+      </div>`;
+    }
+
     function downloadAnalysisAsReport(data) {
       const { analysis, prompt, responses } = data;
       const timestamp = new Date().toLocaleString();
@@ -4985,6 +5083,8 @@ Return JSON:
           <div class="rm">${it.model}</div><div class="rr">${it.reason}</div></div>`;}).join('')}
       </div>
     </div>
+
+    ${buildDownloadLatencyChart(responses)}
 
     <div class="ft">
       <p>Generated by <a href="https://venice.ai" target="_blank">Venice AI</a> Multi-Chat Analysis</p>

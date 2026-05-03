@@ -512,6 +512,42 @@
     .table-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     .table-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
+    /* ===== PERFORMANCE CHART ===== */
+    .chart-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); margin-bottom: 16px; overflow: hidden; }
+    .chart-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px; }
+    .chart-header h3 { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .chart-header h3 .material-icons { font-size: 22px; color: var(--accent); }
+    .chart-header-meta { font-size: 12px; color: var(--text-muted); }
+    .chart-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .chart-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 12px; border-radius: var(--radius-full);
+      font-size: 11px; font-weight: 600; cursor: pointer;
+      border: 1.5px solid var(--border); background: var(--background);
+      color: var(--text-secondary); transition: all 0.15s;
+    }
+    .chart-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .chart-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+    .chart-btn .material-icons { font-size: 13px; }
+    .chart-wrap { position: relative; padding: 20px; }
+    .chart-canvas-wrap { position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: var(--background); border: 1px solid var(--border); }
+    #latencyCanvas { display: block; width: 100%; cursor: crosshair; }
+    .chart-tooltip {
+      position: absolute; pointer-events: none; z-index: 50;
+      background: var(--primary); color: #fff; border-radius: var(--radius-md);
+      padding: 10px 14px; font-size: 12px; line-height: 1.6;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25); min-width: 180px;
+      opacity: 0; transition: opacity 0.12s; white-space: nowrap;
+    }
+    .chart-tooltip.visible { opacity: 1; }
+    .chart-tooltip strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+    .chart-tooltip .tt-row { display: flex; justify-content: space-between; gap: 16px; }
+    .chart-tooltip .tt-label { color: rgba(255,255,255,0.6); font-size: 11px; }
+    .chart-tooltip .tt-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 11px; }
+    .chart-legend { display: flex; gap: 16px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+    .chart-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-secondary); }
+    .chart-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
     /* ===== LATENCY BADGES ===== */
     .lat-badge {
       display: inline-flex; align-items: center; gap: 3px;
@@ -541,8 +577,14 @@
       .filter-section { gap: 6px; }
       .filter-chip { font-size: 10px; padding: 4px 8px; }
       .filter-label { min-width: 60px; font-size: 9px; }
-      /* Table scroll on mobile */
-      .table-scroll { -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+      /* Table scroll on mobile - momentum + GPU */
+      .table-scroll {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        will-change: scroll-position;
+      }
       .detail-grid { grid-template-columns: 1fr; }
       .detail-card { padding: 10px 12px; }
       /* Non-text sections */
@@ -551,6 +593,13 @@
       /* Rate cards */
       .rate-card { padding: 10px 12px; }
       .rate-value { font-size: 15px; }
+      /* Chart: switch to bar view on mobile, reduce height */
+      .chart-canvas-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      #latencyCanvas { min-width: 600px; }
+      .chart-header { gap: 6px; }
+      .chart-header-meta { width: 100%; }
+      /* Benchmark: single column on mobile */
+      #latencyBenchmarkBody > div > div:first-child > div:first-child { display: none; }
     }
 
     @media (max-width: 480px) {
@@ -913,6 +962,39 @@
       </div>
     </div>
 
+    <!-- Live Performance Chart -->
+    <div class="chart-section" id="perfChartSection">
+      <div class="chart-header">
+        <h3><span class="material-icons">scatter_plot</span> Live Performance Chart — TTFT vs Throughput</h3>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+          <div class="chart-controls">
+            <button class="chart-btn active" id="chartViewScatter" onclick="setChartView('scatter')"><span class="material-icons">bubble_chart</span> Scatter</button>
+            <button class="chart-btn" id="chartViewBar" onclick="setChartView('bar')"><span class="material-icons">bar_chart</span> Bar</button>
+          </div>
+          <span class="chart-header-meta" id="chartMetaLabel"></span>
+          <button class="chart-btn" onclick="exportChartPNG()" title="Download chart as PNG"><span class="material-icons">download</span> PNG</button>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-canvas-wrap">
+          <canvas id="latencyCanvas" height="460"></canvas>
+          <div class="chart-tooltip" id="chartTooltip">
+            <strong id="ttModelName"></strong>
+            <div class="tt-row"><span class="tt-label">TTFT</span><span class="tt-val" id="ttTtft"></span></div>
+            <div class="tt-row"><span class="tt-label">Throughput</span><span class="tt-val" id="ttTps"></span></div>
+            <div class="tt-row"><span class="tt-label">Tier</span><span class="tt-val" id="ttTier"></span></div>
+            <div class="tt-row"><span class="tt-label">In $/1M</span><span class="tt-val" id="ttPrice"></span></div>
+          </div>
+        </div>
+        <div class="chart-legend">
+          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#10b981;"></div> Fast (&lt;400ms TTFT)</div>
+          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#f59e0b;"></div> Medium (400–1200ms)</div>
+          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#ef4444;"></div> Slow (&gt;1200ms)</div>
+          <div class="chart-legend-item" style="color:var(--text-muted);font-size:10px;">● Dot size = context window · Hover for details</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Latency Benchmark Section -->
     <div class="collapsible-section" id="latencySection">
       <div class="collapsible-header" onclick="toggleCollapsible(this)">
@@ -1192,7 +1274,7 @@
       }
     }
 
-    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); renderImageModels(); renderUpscaleModels(); renderAudioModels(); renderMusicModels(); renderVideoModels(); renderEmbeddingModels(); renderAsrModels(); renderLatencyBenchmark(); }
+    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); renderImageModels(); renderUpscaleModels(); renderAudioModels(); renderMusicModels(); renderVideoModels(); renderEmbeddingModels(); renderAsrModels(); renderLatencyBenchmark(); renderPerfChart(); }
 
     function renderLatencyBenchmark() {
       const container = document.getElementById('latencyBenchmarkBody');
@@ -1328,6 +1410,7 @@
         return true;
       });
       renderTable();
+      renderPerfChart();
       document.getElementById('searchCount').innerHTML = `Showing <strong>${filteredModels.length}</strong> of <strong>${availableModels.length}</strong> models`;
     }
 
@@ -1894,6 +1977,370 @@
       const icon = document.getElementById('darkModeBtn')?.querySelector('.material-icons');
       if (icon) icon.textContent = saved === 'dark' ? 'light_mode' : 'dark_mode';
       fetchModels();
+    });
+
+    // =====================================================================
+    // LIVE PERFORMANCE CHART — Canvas scatter + bar
+    // =====================================================================
+    let chartView = 'scatter';
+    let chartModels = [];   // [{id, displayName, ttft, tps, tier, inputPrice, contextTokens}]
+    let hoveredModel = null;
+
+    function setChartView(view) {
+      chartView = view;
+      document.getElementById('chartViewScatter').classList.toggle('active', view === 'scatter');
+      document.getElementById('chartViewBar').classList.toggle('active', view === 'bar');
+      drawChart();
+    }
+
+    function buildChartModels() {
+      if (!availableModels.length) return [];
+      return availableModels.map(m => {
+        const d  = getModelData(m);
+        const lt = estimateLatency(d.id);
+        return {
+          id: d.id,
+          displayName: d.displayName,
+          ttft: lt.ttft,
+          tps: lt.tps,
+          tier: lt.tier,
+          inputPrice: d.inputPrice,
+          contextTokens: d.contextTokens,
+          recommended: d.recommended,
+        };
+      });
+    }
+
+    function renderPerfChart() {
+      chartModels = buildChartModels();
+      const lbl = document.getElementById('chartMetaLabel');
+      if (lbl) lbl.textContent = `${chartModels.length} LLM models`;
+      drawChart();
+    }
+
+    function drawChart() {
+      const canvas = document.getElementById('latencyCanvas');
+      if (!canvas || !chartModels.length) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const W = rect.width || 800;
+      const H = 460;
+      canvas.width  = W * dpr;
+      canvas.height = H * dpr;
+      canvas.style.width  = W + 'px';
+      canvas.style.height = H + 'px';
+      ctx.scale(dpr, dpr);
+
+      if (chartView === 'scatter') drawScatter(ctx, W, H);
+      else                         drawBar(ctx, W, H);
+    }
+
+    // --- Colour helpers ---
+    const TIER_COLORS = {
+      fast: { fill: '#10b981', stroke: '#059669', label: '#065f46' },
+      med:  { fill: '#f59e0b', stroke: '#d97706', label: '#78350f' },
+      slow: { fill: '#ef4444', stroke: '#dc2626', label: '#7f1d1d' },
+    };
+    function tierColor(t) { return TIER_COLORS[t] || TIER_COLORS.med; }
+
+    function isDark() { return document.documentElement.getAttribute('data-theme') === 'dark'; }
+    function themePalette() {
+      return isDark()
+        ? { bg:'#0f172a', gridLine:'rgba(255,255,255,0.07)', axis:'rgba(255,255,255,0.5)', text:'#94a3b8', textStrong:'#f1f5f9' }
+        : { bg:'#f8fafc', gridLine:'rgba(0,0,0,0.05)',       axis:'rgba(0,0,0,0.35)',      text:'#64748b', textStrong:'#0f172a' };
+    }
+
+    // --- Scatter plot ---
+    function drawScatter(ctx, W, H) {
+      const pal  = themePalette();
+      const PAD  = { top: 24, right: 24, bottom: 64, left: 68 };
+      const pw   = W - PAD.left - PAD.right;
+      const ph   = H - PAD.top  - PAD.bottom;
+
+      // Background
+      ctx.fillStyle = pal.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      if (!chartModels.length) {
+        ctx.fillStyle = pal.text;
+        ctx.font = '14px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Load models to see chart', W / 2, H / 2);
+        return;
+      }
+
+      // Axes ranges
+      const maxTtft  = Math.max(...chartModels.map(m => m.ttft)) * 1.08;
+      const minTtft  = Math.max(0, Math.min(...chartModels.map(m => m.ttft)) * 0.85);
+      const maxTps   = Math.max(...chartModels.map(m => m.tps))  * 1.12;
+
+      // Scale helpers (use sqrt for TTFT for better distribution)
+      const xFrac = t => Math.sqrt((t - minTtft) / (maxTtft - minTtft || 1));
+      const xPos  = t => PAD.left + xFrac(t) * pw;
+      const yPos  = s => PAD.top  + ph - (s / maxTps) * ph;
+
+      // Grid lines — Y (tps)
+      ctx.textAlign = 'right';
+      ctx.font = '10px JetBrains Mono, monospace';
+      const yTicks = 5;
+      for (let i = 0; i <= yTicks; i++) {
+        const s = (maxTps / yTicks) * i;
+        const y = yPos(s);
+        ctx.strokeStyle = pal.gridLine;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(W - PAD.right, y); ctx.stroke();
+        ctx.fillStyle = pal.text;
+        ctx.fillText(Math.round(s) + ' t/s', PAD.left - 6, y + 4);
+      }
+
+      // Grid lines — X (TTFT), use a few representative ms values
+      const xTickValues = [100, 200, 400, 600, 800, 1200, 1800, 2500, 4000].filter(v => v >= minTtft && v <= maxTtft);
+      ctx.textAlign = 'center';
+      for (const v of xTickValues) {
+        const x = xPos(v);
+        ctx.strokeStyle = pal.gridLine;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x, PAD.top); ctx.lineTo(x, H - PAD.bottom); ctx.stroke();
+        ctx.fillStyle = pal.text;
+        const label = v >= 1000 ? (v/1000).toFixed(1)+'s' : v+'ms';
+        ctx.fillText(label, x, H - PAD.bottom + 16);
+      }
+
+      // Axis labels
+      ctx.save();
+      ctx.translate(16, PAD.top + ph / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = pal.axis;
+      ctx.font = '11px Inter, sans-serif';
+      ctx.fillText('Throughput (tok/s)', 0, 0);
+      ctx.restore();
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = pal.axis;
+      ctx.font = '11px Inter, sans-serif';
+      ctx.fillText('Time to First Token — TTFT (√-scaled ms)', PAD.left + pw / 2, H - 8);
+
+      // Axis lines
+      ctx.strokeStyle = pal.axis;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(PAD.left, PAD.top); ctx.lineTo(PAD.left, H - PAD.bottom);
+      ctx.lineTo(W - PAD.right, H - PAD.bottom);
+      ctx.stroke();
+
+      // Draw dots
+      const maxCtx = Math.max(...chartModels.map(m => m.contextTokens)) || 1;
+      const dotRadius = m => 6 + Math.sqrt(m.contextTokens / maxCtx) * 7;
+
+      // Draw in tier order: slow → med → fast (so fast are on top)
+      const tierOrder = ['slow', 'med', 'fast'];
+      for (const tier of tierOrder) {
+        for (const m of chartModels) {
+          if (m.tier !== tier) continue;
+          const x = xPos(m.ttft);
+          const y = yPos(m.tps);
+          const r = dotRadius(m);
+          const c = tierColor(m.tier);
+          const isHovered = hoveredModel?.id === m.id;
+
+          ctx.beginPath();
+          ctx.arc(x, y, isHovered ? r + 3 : r, 0, Math.PI * 2);
+          ctx.fillStyle = isHovered ? c.stroke : c.fill + 'cc'; // 80% opacity normally
+          ctx.strokeStyle = c.stroke;
+          ctx.lineWidth = isHovered ? 2.5 : 1.5;
+          ctx.fill();
+          ctx.stroke();
+
+          // Label recommended or hovered models
+          if (m.recommended || isHovered) {
+            const short = m.displayName.length > 20 ? m.displayName.slice(0, 18) + '…' : m.displayName;
+            ctx.fillStyle = pal.textStrong;
+            ctx.font = (isHovered ? 'bold ' : '') + '10px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            // Position label above dot, avoid edges
+            const labelX = Math.max(40, Math.min(W - 40, x));
+            const labelY = y - r - 5;
+            ctx.fillText(short, labelX, Math.max(12, labelY));
+          }
+        }
+      }
+
+      // Store hit regions for hover detection
+      canvas._hitRegions = chartModels.map(m => ({
+        ...m,
+        cx: xPos(m.ttft),
+        cy: yPos(m.tps),
+        r: dotRadius(m) + 4,
+      }));
+    }
+
+    // --- Bar chart (TTFT ranking) ---
+    function drawBar(ctx, W, H) {
+      const pal = themePalette();
+      const PAD = { top: 16, right: 24, bottom: 16, left: 24 };
+      const models = [...chartModels].sort((a, b) => a.ttft - b.ttft);
+
+      ctx.fillStyle = pal.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      if (!models.length) return;
+
+      const barH    = Math.max(14, Math.min(28, (H - PAD.top - PAD.bottom) / models.length - 4));
+      const gap     = Math.max(2, barH * 0.2);
+      const totalH  = models.length * (barH + gap);
+      // if content exceeds canvas, adjust canvas height
+      const neededH = Math.max(H, totalH + PAD.top + PAD.bottom + 24);
+      if (neededH > H) {
+        const dpr = window.devicePixelRatio || 1;
+        ctx.canvas.height = neededH * dpr;
+        ctx.canvas.style.height = neededH + 'px';
+        ctx.scale(dpr, dpr);
+        ctx.fillStyle = pal.bg;
+        ctx.fillRect(0, 0, W, neededH);
+      }
+
+      const maxTtft = Math.max(...models.map(m => m.ttft));
+      const labelW  = Math.min(W * 0.35, 220);
+      const barW    = W - PAD.left - labelW - PAD.right - 80;
+
+      ctx.font = '11px Inter, sans-serif';
+
+      models.forEach((m, i) => {
+        const y = PAD.top + i * (barH + gap);
+        const barLen = (m.ttft / maxTtft) * barW;
+        const c = tierColor(m.tier);
+        const isHovered = hoveredModel?.id === m.id;
+
+        // Name label
+        const short = m.displayName.length > 28 ? m.displayName.slice(0, 26) + '…' : m.displayName;
+        ctx.textAlign = 'right';
+        ctx.fillStyle = isHovered ? pal.textStrong : pal.text;
+        ctx.font = (isHovered ? 'bold ' : '') + '11px Inter, sans-serif';
+        ctx.fillText(short, PAD.left + labelW - 6, y + barH * 0.72);
+
+        // Bar
+        ctx.beginPath();
+        ctx.roundRect(PAD.left + labelW, y, barLen, barH, 4);
+        ctx.fillStyle = isHovered ? c.stroke : c.fill + 'dd';
+        ctx.fill();
+
+        // Value
+        const ttftStr = m.ttft >= 1000 ? (m.ttft/1000).toFixed(1)+'s' : m.ttft+'ms';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = pal.text;
+        ctx.font = '10px JetBrains Mono, monospace';
+        ctx.fillText(ttftStr + ' · ' + m.tps + 't/s', PAD.left + labelW + barLen + 6, y + barH * 0.72);
+      });
+
+      // Store hit regions
+      ctx.canvas._hitRegions = models.map((m, i) => ({
+        ...m,
+        cx: PAD.left + labelW,
+        cy: PAD.top + i * (barH + gap) + barH / 2,
+        r: barH,
+        barMode: true,
+      }));
+    }
+
+    // --- Hover / tooltip ---
+    function initChartEvents() {
+      const canvas = document.getElementById('latencyCanvas');
+      const tooltip = document.getElementById('chartTooltip');
+      if (!canvas || !tooltip) return;
+
+      canvas.addEventListener('mousemove', e => {
+        if (!canvas._hitRegions) return;
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        let hit = null;
+
+        if (chartView === 'scatter') {
+          for (const reg of canvas._hitRegions) {
+            const dx = mx - reg.cx, dy = my - reg.cy;
+            if (Math.sqrt(dx*dx + dy*dy) <= reg.r) { hit = reg; break; }
+          }
+        } else {
+          // Bar mode: check y band
+          for (const reg of canvas._hitRegions) {
+            if (Math.abs(my - reg.cy) <= reg.r && mx >= reg.cx) { hit = reg; break; }
+          }
+        }
+
+        if (hit) {
+          canvas.style.cursor = 'pointer';
+          hoveredModel = hit;
+          const ttftStr = hit.ttft >= 1000 ? (hit.ttft/1000).toFixed(2)+'s' : hit.ttft+'ms';
+          document.getElementById('ttModelName').textContent = hit.displayName;
+          document.getElementById('ttTtft').textContent = '~' + ttftStr;
+          document.getElementById('ttTps').textContent = hit.tps + ' tok/s';
+          document.getElementById('ttTier').textContent = hit.tier.charAt(0).toUpperCase() + hit.tier.slice(1);
+          document.getElementById('ttPrice').textContent = hit.inputPrice > 0 ? '$' + hit.inputPrice.toFixed(4) : '—';
+
+          // Position tooltip
+          let tx = e.clientX - rect.left + 14;
+          let ty = e.clientY - rect.top  - 10;
+          const tw = 200, th = 110;
+          if (tx + tw > rect.width) tx = mx - tw - 14;
+          if (ty + th > rect.height) ty = my - th - 10;
+          tooltip.style.left = tx + 'px';
+          tooltip.style.top  = ty + 'px';
+          tooltip.classList.add('visible');
+          drawChart();
+        } else {
+          if (hoveredModel) { hoveredModel = null; canvas.style.cursor = 'crosshair'; tooltip.classList.remove('visible'); drawChart(); }
+        }
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        hoveredModel = null;
+        const tooltip = document.getElementById('chartTooltip');
+        if (tooltip) tooltip.classList.remove('visible');
+        drawChart();
+      });
+
+      canvas.addEventListener('click', e => {
+        if (!hoveredModel) return;
+        // Click = try model in chat
+        window.location.href = 'index.html?model=' + encodeURIComponent(hoveredModel.id);
+      });
+    }
+
+    function exportChartPNG() {
+      const canvas = document.getElementById('latencyCanvas');
+      if (!canvas) return;
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = `venice-latency-chart-${new Date().toISOString().split('T')[0]}.png`;
+      a.click();
+    }
+
+    // Expose globally for getChartDataURL() use in exports
+    function getChartDataURL() {
+      const canvas = document.getElementById('latencyCanvas');
+      return canvas ? canvas.toDataURL('image/png') : null;
+    }
+
+    // Resize observer — redraw on container resize
+    (function() {
+      const el = document.querySelector('.chart-canvas-wrap');
+      if (!el) return;
+      if (typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(() => drawChart()).observe(el);
+      } else {
+        window.addEventListener('resize', () => drawChart());
+      }
+    })();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('venice_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+      const icon = document.getElementById('darkModeBtn')?.querySelector('.material-icons');
+      if (icon) icon.textContent = saved === 'dark' ? 'light_mode' : 'dark_mode';
+      fetchModels();
+      initChartEvents();
     });
   </script>
 </body>
