@@ -1759,17 +1759,20 @@
         display: flex;
       }
       .header {
-        padding: 12px 16px;
+        padding: 10px 14px;
+        gap: 8px;
       }
       .prompt-section {
-        padding: 12px 16px;
+        padding: 10px 14px;
         border-bottom: 1px solid var(--border-color);
       }
       .response-container {
-        padding: 12px;
+        padding: 10px;
       }
       textarea {
-        min-height: 120px;
+        min-height: 80px;
+        max-height: 160px;
+        font-size: 16px; /* prevent iOS zoom on focus */
       }
       button, .button {
         width: auto;
@@ -1777,23 +1780,253 @@
       }
     }
 
+    /* ===== GLOBAL MOBILE SMOOTHNESS ===== */
+    /* GPU compositing layers for scroll-heavy elements */
+    .response-container,
+    .model-mobile-select,
+    .mobile-model-tabs,
+    .drawer-list,
+    .model-rail {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      will-change: scroll-position;
+    }
+    /* Prevent text selection flicker on touch */
+    .mobile-model-tab, .rail-item, .drawer-item {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+    /* Smooth animated transitions */
+    .mobile-model-tab {
+      transition: background 0.2s cubic-bezier(0.4,0,0.2,1),
+                  color 0.2s cubic-bezier(0.4,0,0.2,1),
+                  border-color 0.2s cubic-bezier(0.4,0,0.2,1),
+                  transform 0.1s cubic-bezier(0.4,0,0.2,1);
+    }
+    .mobile-model-tab:active { transform: scale(0.95); }
+
     @media (max-width: 768px) {
+      body { overflow: hidden; }
+
       .app-container {
         flex-direction: column;
+        height: 100dvh; /* use dynamic viewport height on mobile */
       }
+
+      /* Header: keep brand + essential actions, hide secondary */
+      .header {
+        padding: 8px 12px;
+        flex-wrap: nowrap;
+        overflow: hidden;
+        min-height: 52px;
+        flex-shrink: 0;
+      }
+      .header-left h1 {
+        font-size: 16px;
+      }
+      .header-left .material-icons { font-size: 20px; }
+
+      /* Hide secondary header buttons on mobile, show only critical ones */
+      #historyBtn, #batchBtn, #imgPlayBtn { display: none !important; }
+      #sessionTracker { padding: 4px 8px; font-size: 11px; }
+      #sessionTracker span:not(.material-icons):not(strong):not(#sessionTokens) { display: none; }
+
+      /* Compact header actions */
+      .header > div:last-child {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        flex-shrink: 0;
+        max-width: calc(100vw - 180px);
+      }
+      .header > div:last-child::-webkit-scrollbar { display: none; }
+
+      /* Mobile model select bar */
+      .model-mobile-select {
+        padding: 8px 12px;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .model-mobile-select select {
+        font-size: 15px;
+        min-height: 40px;
+        padding: 8px 10px;
+      }
+
+      /* Swipeable model tabs */
+      .mobile-model-tabs {
+        display: flex !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+        gap: 6px;
+        padding: 6px 12px 8px;
+        background: var(--surface-color);
+        border-bottom: 1px solid var(--border-color);
+        flex-shrink: 0;
+        scroll-snap-type: x proximity;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+      }
+      .mobile-model-tabs::-webkit-scrollbar { display: none; }
+      .mobile-model-tab {
+        flex-shrink: 0;
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1.5px solid var(--border-color);
+        background: var(--surface-color);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        scroll-snap-align: start;
+        transition: all 0.15s;
+        min-height: 34px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .mobile-model-tab.active {
+        background: var(--text-color);
+        color: #fff;
+        border-color: var(--text-color);
+      }
+      .mobile-model-tab .tab-status {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #9ca3af;
+        flex-shrink: 0;
+      }
+      .mobile-model-tab.tab-complete .tab-status { background: #10b981; }
+      .mobile-model-tab.tab-loading .tab-status { background: #f59e0b; animation: pulse 1s ease-in-out infinite; }
+      .mobile-model-tab.tab-error .tab-status { background: #ef4444; }
+
+      /* Prompt section compact */
+      .prompt-section {
+        padding: 8px 12px;
+        flex-shrink: 0;
+      }
+      textarea {
+        min-height: 64px;
+        max-height: 130px;
+        font-size: 16px;
+        resize: none;
+      }
+      #costEstimator { display: none; }
+
+      /* Controls bar: horizontal scroll */
       .controls {
-        flex-direction: column;
-        gap: 15px;
+        flex-direction: row;
+        gap: 8px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+        align-items: center;
+      }
+      .controls::-webkit-scrollbar { display: none; }
+      .controls > div:first-child {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-shrink: 0;
       }
       .controls > div:last-child {
-        width: 100%;
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+        flex-wrap: nowrap;
+      }
+      /* Web search toggles: compact on mobile */
+      .web-search-toggle span:not(.toggle-slider) { font-size: 12px; }
+
+      button, .button {
+        white-space: nowrap;
+        flex-shrink: 0;
+        min-height: 40px;
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+
+      /* Send button stays prominent */
+      #sendButton {
+        background: var(--text-color) !important;
+        min-width: 72px;
+      }
+
+      /* Response area: full remaining height, touch-scrollable */
+      .response-container {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+        overscroll-behavior-x: none;
+        touch-action: pan-y pinch-zoom;
+        padding: 10px;
+        /* smooth deceleration on iOS */
+        scroll-behavior: auto; /* don't force smooth, let native handle it */
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        will-change: scroll-position;
+      }
+
+      .model-response {
+        max-width: 100%;
+        padding: 14px;
+      }
+      .model-header {
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px;
       }
-      button {
-        width: 100%;
-        justify-content: center;
+      .model-title { font-size: 14px; }
+
+      /* Response content: ensure it scrolls correctly */
+      .response-content {
+        font-size: 14px;
+        line-height: 1.65;
+        touch-action: pan-y;
       }
+
+      /* History panel: full screen on mobile */
+      #historyPanel { width: 100%; }
+
+      /* Batch modal full screen */
+      .batch-content { max-height: 100vh; border-radius: 0; }
+      #batchModal { padding: 0; }
+
+      /* Image playground full screen */
+      .img-content { max-height: 100vh; border-radius: 0; }
+      #imgModal { padding: 0; }
+      .img-body { flex-direction: column; }
+      .img-controls { width: 100%; border-right: none; border-bottom: 1px solid #e2e8f0; }
+
+      /* Toast: bottom-center on mobile */
+      #toast-container { right: 12px; left: 12px; bottom: 16px; }
+      .toast { min-width: unset; max-width: unset; }
+
+      /* Analysis modal full screen */
+      .analysis-content { max-height: 100vh; border-radius: 0; }
+      .analysis-modal { padding: 0; align-items: flex-start; }
+
+      /* Command palette: full width on mobile */
+      #cmdOverlay { padding-top: 60px; padding-left: 0; padding-right: 0; }
+      #cmdPalette { border-radius: 0 0 16px 16px; max-width: 100%; }
+    }
+
+    @media (max-width: 480px) {
+      .header-left h1 { display: none; } /* icon only on very small screens */
+      #refreshModelsButton span:last-of-type { display: none; }
+      #downloadButton span:not(.material-icons):not(.dl-main) { display: none; }
+      .dl-main span:last-child { display: none; } /* hide arrow on tiny */
     }
 
     /* ===== TOAST SYSTEM ===== */
@@ -1872,20 +2105,6 @@
     .hp-clear-btn{flex:1;padding:8px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;background:#f1f5f9;color:#64748b;}
     .hp-clear-btn:hover{background:#fee2e2;color:#ef4444;}
 
-    /* ===== API INSPECTOR ===== */
-    #inspectorPanel{background:#0d1117;border-top:2px solid #6366f1;color:#e6edf3;font-family:'JetBrains Mono',monospace;font-size:12px;max-height:320px;overflow-y:auto;display:none;flex-shrink:0;}
-    #inspectorPanel.open{display:block;}
-    .insp-tabs{display:flex;background:#161b22;border-bottom:1px solid #30363d;}
-    .insp-tab{padding:8px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;color:#8b949e;border-bottom:2px solid transparent;transition:all 0.15s;}
-    .insp-tab.active{color:#e6edf3;border-bottom-color:#6366f1;}
-    .insp-body{padding:16px;white-space:pre-wrap;word-break:break-all;line-height:1.7;}
-    .insp-toolbar{display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:#161b22;border-bottom:1px solid #30363d;}
-    .insp-label{font-size:11px;color:#8b949e;}
-    .insp-copy{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:3px 8px;font-size:11px;color:rgba(255,255,255,0.7);cursor:pointer;font-family:inherit;}
-    .insp-copy:hover{background:rgba(255,255,255,0.15);color:white;}
-    .inspect-toggle-btn{display:flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;color:#6366f1;transition:all 0.15s;}
-    .inspect-toggle-btn:hover{background:rgba(99,102,241,0.15);}
-    .inspect-toggle-btn .material-icons{font-size:14px;}
 
     /* ===== TTS PLAYER ===== */
     .tts-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;margin-top:8px;flex-wrap:wrap;}
@@ -2040,6 +2259,9 @@
         <span class="material-icons" style="color: var(--text-dim);">smart_toy</span>
         <select id="modelSelectMobile"></select>
       </div>
+
+      <!-- Mobile model tabs (shown below the select on mobile for quick switching) -->
+      <div class="mobile-model-tabs" id="mobileModelTabs" style="display:none;"></div>
       
       <div class="prompt-section">
         <textarea id="prompt" placeholder="Enter your prompt here..."></textarea>
@@ -2112,22 +2334,6 @@
         </div>
       </div>
 
-      <!-- API Inspector Panel -->
-      <div id="inspectorPanel">
-        <div class="insp-tabs">
-          <div class="insp-tab active" data-tab="request">Request</div>
-          <div class="insp-tab" data-tab="response">Response</div>
-          <div class="insp-tab" data-tab="raw">Raw JSON</div>
-        </div>
-        <div class="insp-toolbar">
-          <span class="insp-label" id="inspLabel">No request yet</span>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button class="insp-copy" id="inspCopyBtn" onclick="inspCopy()">Copy</button>
-            <button class="insp-copy" onclick="document.getElementById('inspectorPanel').classList.remove('open')" title="Hide panel" style="padding:3px 8px;">✕ Hide</button>
-          </div>
-        </div>
-        <div class="insp-body" id="inspBody">// Open a chat and send a message to inspect the API call</div>
-      </div>
     </div>
   </div>
 
@@ -2575,7 +2781,7 @@
 
     function selectModel(modelId) {
       selectedModelId = modelId;
-      
+
       // Update active state in sidebar
       document.querySelectorAll('.rail-item, .drawer-item').forEach(item => {
         item.classList.toggle('active', item.dataset.modelId === modelId);
@@ -2583,7 +2789,12 @@
       if (modelSelectMobile && modelSelectMobile.value !== modelId) {
         modelSelectMobile.value = modelId;
       }
-      
+
+      // Update mobile tabs active state without re-rendering
+      document.querySelectorAll('.mobile-model-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.title === modelId);
+      });
+
       // Update main response view
       updateResponseView(modelId);
     }
@@ -2610,7 +2821,14 @@
     }
 
     function updateModelStatus(modelId, status) {
-      // status dots removed; keep function no-op
+      // Update mobile tab status indicator
+      const tab = document.querySelector(`.mobile-model-tab[title="${modelId}"]`);
+      if (tab) {
+        tab.classList.remove('tab-loading', 'tab-complete', 'tab-error');
+        if (status === 'loading') tab.classList.add('tab-loading');
+        else if (status === 'complete') tab.classList.add('tab-complete');
+        else if (status === 'error') tab.classList.add('tab-error');
+      }
     }
 
     function updateSidebarModelInfo(modelId, time, tokensPerSecond) {
@@ -2690,11 +2908,38 @@
           modelSelectMobile.value = desired;
         }
       }
-      
+
+      // Mobile model tabs
+      renderMobileTabs(visibleModels);
+
       // Select first model by default
       if (availableModels.length > 0 && !selectedModelId && visibleModels.length > 0) {
         selectModel(visibleModels[0].id);
       }
+    }
+
+    function renderMobileTabs(models) {
+      const tabsBar = document.getElementById('mobileModelTabs');
+      if (!tabsBar) return;
+      if (!models || models.length === 0) { tabsBar.style.display = 'none'; return; }
+      tabsBar.style.display = window.innerWidth <= 1024 ? 'flex' : 'none';
+      tabsBar.innerHTML = models.map(m => {
+        const resp = modelResponses[m.id];
+        let statusClass = '';
+        if (resp?.time === 'Error') statusClass = 'tab-error';
+        else if (resp?.time && resp?.time !== '') statusClass = 'tab-complete';
+        else if (resp?.content === '' || !resp) statusClass = '';
+        const label = m.id.split('/').pop().replace(/-\d{8}$/, '').replace(/-preview$/, '');
+        const shortLabel = label.length > 18 ? label.slice(0, 16) + '…' : label;
+        return `<button class="mobile-model-tab ${statusClass}${selectedModelId === m.id ? ' active' : ''}"
+          onclick="selectModel('${m.id}');renderMobileTabs(window.availableModels||[])"
+          title="${m.id}">
+          <span class="tab-status"></span>${shortLabel}
+        </button>`;
+      }).join('');
+      // Scroll active tab into view
+      const activeTab = tabsBar.querySelector('.mobile-model-tab.active');
+      if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
     }
 
     async function queryModelStreaming(model, prompt, webSearch, disableReasoning) {
@@ -4587,6 +4832,69 @@ Return JSON:
       `;
     }
 
+    // ── Inline SVG latency chart for downloadable HTML ─────────────
+    function buildDownloadLatencyChart(responses) {
+      // Gather models that have responses
+      const modelIds = Object.keys(responses || {}).filter(id => responses[id]?.content && responses[id].time);
+      if (!modelIds.length) return '';
+
+      // Estimate latency for each model using same heuristic as dashboard
+      function estimateLat(modelId) {
+        const id = modelId.toLowerCase();
+        const OVERRIDES = {
+          'llama-3.2-3b':{ttft:90,tps:120},'mistral-7b':{ttft:130,tps:110},'gemma-2-9b':{ttft:160,tps:95},
+          'llama-3.1-8b':{ttft:150,tps:100},'llama-3.3-70b':{ttft:500,tps:55},'llama-3.1-70b':{ttft:520,tps:52},
+          'llama-3.1-405b':{ttft:1800,tps:18},'mistral-small':{ttft:200,tps:90},'mixtral-8x7b':{ttft:280,tps:75},
+          'qwen-2.5-7b':{ttft:140,tps:105},'qwen-2.5-32b':{ttft:480,tps:55},'qwen-2.5-72b':{ttft:700,tps:40},
+          'qwen3-30b':{ttft:550,tps:48},'qwen3-235b':{ttft:2200,tps:14},'deepseek-r1':{ttft:3500,tps:22},
+          'deepseek-v3':{ttft:800,tps:38},'grok-3-mini':{ttft:250,tps:80},'grok-3':{ttft:700,tps:42},
+          'gemini-2.0-flash':{ttft:220,tps:88},'gemini-2.5-flash':{ttft:260,tps:82},
+          'venice-uncensored':{ttft:160,tps:95},
+        };
+        for (const [k,v] of Object.entries(OVERRIDES)) { if (id.includes(k)) return v; }
+        // Parse actual response time if available
+        const actualTime = responses[modelId]?.time;
+        if (actualTime) {
+          const ms = parseFloat(actualTime) * 1000;
+          if (!isNaN(ms) && ms > 0) return { ttft: Math.round(ms * 0.3), tps: Math.round(1000 / ms * 60) };
+        }
+        const sz = id.match(/(\d+\.?\d*)b/); const b = sz ? parseFloat(sz[1]) : 30;
+        if (b<=4) return{ttft:100,tps:120}; if(b<=9) return{ttft:160,tps:95}; if(b<=15) return{ttft:280,tps:75};
+        if(b<=35) return{ttft:480,tps:55}; if(b<=80) return{ttft:700,tps:40}; return{ttft:1400,tps:22};
+      }
+
+      const models = modelIds.map(id => ({ id, short: id.split('/').pop().replace(/-\d{8}$/,'').slice(0,22), ...estimateLat(id) }))
+                              .sort((a,b) => a.ttft - b.ttft);
+
+      const W = 700, H = 60 + models.length * 30;
+      const maxTtft = Math.max(...models.map(m => m.ttft));
+      const barW = 320, labelW = 200, valW = 120, PAD = 20;
+      const tierColor = ttft => ttft < 400 ? '#10b981' : ttft < 1200 ? '#f59e0b' : '#ef4444';
+
+      const rows = models.map((m, i) => {
+        const y = 50 + i * 30;
+        const bLen = Math.round((m.ttft / maxTtft) * barW);
+        const c = tierColor(m.ttft);
+        const ttftStr = m.ttft >= 1000 ? (m.ttft/1000).toFixed(1)+'s' : m.ttft+'ms';
+        return `<text x="${PAD}" y="${y+8}" font-size="11" fill="#374151" font-family="Inter,sans-serif">${i+1}. ${escHtml(m.short)}</text>
+          <rect x="${PAD+labelW}" y="${y}" width="${bLen}" height="18" rx="4" fill="${c}" opacity="0.8"/>
+          <text x="${PAD+labelW+bLen+6}" y="${y+13}" font-size="10" fill="#6b7280" font-family="JetBrains Mono,monospace">~${ttftStr} · ${m.tps}t/s</text>`;
+      }).join('');
+
+      const legend = `<text x="${PAD}" y="26" font-size="12" font-weight="600" fill="#1f2937" font-family="Inter,sans-serif">Latency Benchmark — TTFT vs Throughput</text>
+        <circle cx="${PAD+labelW}" cy="22" r="5" fill="#10b981"/><text x="${PAD+labelW+8}" y="26" font-size="10" fill="#374151" font-family="Inter,sans-serif">Fast (&lt;400ms)</text>
+        <circle cx="${PAD+labelW+90}" cy="22" r="5" fill="#f59e0b"/><text x="${PAD+labelW+98}" y="26" font-size="10" fill="#374151" font-family="Inter,sans-serif">Medium</text>
+        <circle cx="${PAD+labelW+155}" cy="22" r="5" fill="#ef4444"/><text x="${PAD+labelW+163}" y="26" font-size="10" fill="#374151" font-family="Inter,sans-serif">Slow (&gt;1200ms)</text>`;
+
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="background:#f9fafb;border-radius:12px;">${legend}${rows}</svg>`;
+
+      return `<div class="sec">
+        <div class="sec-t"><span class="material-icons">speed</span> Latency Benchmark</div>
+        <p style="font-size:12px;color:#6b7280;margin-bottom:16px;">Estimated TTFT (time to first token) and throughput for models used in this analysis. Bar length = relative TTFT.</p>
+        <div style="overflow-x:auto;">${svg}</div>
+      </div>`;
+    }
+
     function downloadAnalysisAsReport(data) {
       const { analysis, prompt, responses } = data;
       const timestamp = new Date().toLocaleString();
@@ -4775,6 +5083,8 @@ Return JSON:
           <div class="rm">${it.model}</div><div class="rr">${it.reason}</div></div>`;}).join('')}
       </div>
     </div>
+
+    ${buildDownloadLatencyChart(responses)}
 
     <div class="ft">
       <p>Generated by <a href="https://venice.ai" target="_blank">Venice AI</a> Multi-Chat Analysis</p>
@@ -5067,15 +5377,6 @@ Return JSON:
       const iBtn = $('imgPlayBtn');
       if (iBtn) iBtn.addEventListener('click', openImgPlayground);
 
-      // ── Inspector tabs ────────────────────────────────────
-      document.querySelectorAll('.insp-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          document.querySelectorAll('.insp-tab').forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          renderInspectorTab(tab.dataset.tab);
-        });
-      });
-
       // ── Cmd palette navigation ────────────────────────────
       const cmdInput = $('cmdInput');
       if (cmdInput) {
@@ -5284,40 +5585,9 @@ Return JSON:
       return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    // ── API INSPECTOR ────────────────────────────────────────
-    let _lastRequest = null, _lastResponse = null, _lastRaw = null;
-
-    window.recordInspector = function(req, res, raw) {
-      _lastRequest = req;
-      _lastResponse = res;
-      _lastRaw = raw;
-      renderInspectorTab(qs('.insp-tab.active')?.dataset?.tab || 'request');
-      const panel = $('inspectorPanel');
-      if (panel) panel.classList.add('open');
-    };
-
-    function renderInspectorTab(tab) {
-      const body = $('inspBody');
-      const label = $('inspLabel');
-      if (!body) return;
-      if (tab === 'request') {
-        if (!_lastRequest) { body.textContent = '// No request recorded yet'; return; }
-        if (label) label.textContent = `POST ${_lastRequest.url || '/chat/completions'}`;
-        body.textContent = JSON.stringify(_lastRequest, null, 2);
-      } else if (tab === 'response') {
-        if (!_lastResponse) { body.textContent = '// No response recorded yet'; return; }
-        if (label) label.textContent = `200 OK — ${_lastResponse.model || ''}`;
-        body.textContent = JSON.stringify(_lastResponse, null, 2);
-      } else {
-        if (label) label.textContent = 'Raw';
-        body.textContent = _lastRaw || '// No raw data';
-      }
-    }
-
-    window.inspCopy = function() {
-      const t = $('inspBody')?.textContent;
-      if (t) navigator.clipboard.writeText(t).then(() => showToast('Copied to clipboard', 'success'));
-    };
+    // API Inspector removed — recordInspector kept as no-op for compatibility
+    window.recordInspector = function() {};
+    window.inspCopy = function() {};
 
     // ── BATCH RUNNER ─────────────────────────────────────────
     let batchRunning = false;
@@ -5590,6 +5860,70 @@ Return JSON:
       };
     })();
 
+  })();
+  </script>
+
+  <script>
+  // ── MOBILE SWIPE TO NAVIGATE MODELS ─────────────────────────────
+  (function() {
+    let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+    const SWIPE_THRESHOLD = 60;   // px
+    const SWIPE_VELOCITY  = 0.3;  // px/ms
+    const ANGLE_LIMIT     = 40;   // degrees from horizontal
+
+    const responseContainer = document.querySelector('.response-container');
+    if (!responseContainer) return;
+
+    responseContainer.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchStartTime = Date.now();
+    }, { passive: true });
+
+    responseContainer.addEventListener('touchend', e => {
+      if (!window.availableModels?.length) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
+      const dt = Date.now() - touchStartTime;
+      const angle = Math.abs(Math.atan2(Math.abs(dy), Math.abs(dx)) * 180 / Math.PI);
+      const velocity = Math.abs(dx) / dt;
+
+      if (Math.abs(dx) < SWIPE_THRESHOLD || angle > ANGLE_LIMIT || velocity < SWIPE_VELOCITY) return;
+
+      const models = window.availableModels;
+      const currentIdx = models.findIndex(m => m.id === window.selectedModelId);
+      if (currentIdx === -1) return;
+
+      let nextIdx;
+      if (dx < 0) {
+        // Swipe left → next model
+        nextIdx = (currentIdx + 1) % models.length;
+      } else {
+        // Swipe right → previous model
+        nextIdx = (currentIdx - 1 + models.length) % models.length;
+      }
+      const nextModel = models[nextIdx];
+      if (!nextModel) return;
+
+      window.selectModel(nextModel.id);
+
+      // Brief visual hint
+      const hint = document.createElement('div');
+      hint.textContent = nextModel.id.split('/').pop().replace(/-\d{8}$/, '');
+      hint.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,20,25,0.82);color:#fff;padding:10px 20px;border-radius:999px;font-size:14px;font-weight:600;z-index:9999;pointer-events:none;transition:opacity 0.4s;';
+      document.body.appendChild(hint);
+      setTimeout(() => { hint.style.opacity = '0'; }, 600);
+      setTimeout(() => hint.remove(), 1000);
+    }, { passive: true });
+
+    // Show/hide mobile tabs on resize
+    window.addEventListener('resize', () => {
+      const tabs = document.getElementById('mobileModelTabs');
+      if (!tabs) return;
+      tabs.style.display = window.innerWidth <= 1024 ? 'flex' : 'none';
+    });
   })();
   </script>
 </body>
