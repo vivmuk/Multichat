@@ -132,56 +132,10 @@
     /* Rail + Drawer layout */
     .rail-shell {
       display: grid;
-      grid-template-columns: 64px 280px 1fr;
+      grid-template-columns: 280px 1fr;
       width: 100%;
       height: 100%;
     }
-
-    .model-rail {
-      background: var(--surface);
-      border-right: 1px solid var(--border-color);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 0;
-      overflow-y: auto;
-    }
-
-    .rail-item {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: var(--surface-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      cursor: pointer;
-      position: relative;
-      transition: background 0.15s, border-color 0.15s;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .rail-item:hover {
-      background: #f2f3f5;
-      border-color: #d9dbe0;
-    }
-
-    .rail-item.active {
-      background: #0f1419;
-      color: #fff;
-      border-color: #0f1419;
-    }
-
-    .rail-initials {
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: -0.01em;
-    }
-
-    /* status dots removed per request */
 
     .model-drawer {
       background: var(--surface);
@@ -1751,7 +1705,6 @@
       .rail-shell {
         grid-template-columns: 1fr;
       }
-      .model-rail,
       .model-drawer {
         display: none;
       }
@@ -1785,14 +1738,13 @@
     .response-container,
     .model-mobile-select,
     .mobile-model-tabs,
-    .drawer-list,
-    .model-rail {
+    .drawer-list {
       -webkit-transform: translateZ(0);
       transform: translateZ(0);
       will-change: scroll-position;
     }
     /* Prevent text selection flicker on touch */
-    .mobile-model-tab, .rail-item, .drawer-item {
+    .mobile-model-tab, .drawer-item {
       -webkit-tap-highlight-color: transparent;
       -webkit-touch-callout: none;
     }
@@ -2193,10 +2145,7 @@
 </head>
 <body>
   <div class="app-container rail-shell">
-    <!-- Left rail + drawer -->
-    <div class="model-rail" id="modelRail">
-      <!-- rail pills -->
-      </div>
+    <!-- Model drawer -->
     <div class="model-drawer" id="modelDrawer">
       <div class="drawer-search">
         <span class="material-icons">search</span>
@@ -2664,7 +2613,6 @@
     let streamingControllers = {}; // Store AbortControllers for streaming
     let pricingTableSort = { column: null, direction: 'asc' }; // Track sorting state
 
-    const modelRail = document.getElementById('modelRail');
     const modelDrawerList = document.getElementById('modelDrawerList');
     const modelSearchDesktop = document.getElementById('modelSearchDesktop');
     const modelSelectMobile = document.getElementById('modelSelectMobile');
@@ -2720,13 +2668,6 @@
       return text;
     }
 
-    function initialsFromId(id) {
-      const clean = id.replace(/[^a-zA-Z0-9]+/g, ' ').trim();
-      const parts = clean.split(' ').filter(Boolean);
-      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-      return clean.slice(0, 2).toUpperCase();
-    }
-
     function formatPriceBadge(model) {
       const pricing = model.model_spec?.pricing || {};
       const type = model.modelType || 'text';
@@ -2745,17 +2686,6 @@
         return `$${inputPrice}/$${outputPrice}`;
       }
       return '—';
-    }
-
-    function createRailItem(model, index) {
-      const item = document.createElement('div');
-      item.classList.add('rail-item');
-      item.dataset.modelId = model.id;
-      item.innerHTML = `
-        <div class="rail-initials">${initialsFromId(model.id)}</div>
-      `;
-      item.addEventListener('click', () => selectModel(model.id));
-      return item;
     }
 
     function createDrawerItem(model, index) {
@@ -2783,7 +2713,7 @@
       selectedModelId = modelId;
 
       // Update active state in sidebar
-      document.querySelectorAll('.rail-item, .drawer-item').forEach(item => {
+      document.querySelectorAll('.drawer-item').forEach(item => {
         item.classList.toggle('active', item.dataset.modelId === modelId);
       });
       if (modelSelectMobile && modelSelectMobile.value !== modelId) {
@@ -2870,8 +2800,6 @@
         return model.id.toLowerCase().includes(search);
       });
 
-      // Rail and drawer
-      if (modelRail) modelRail.innerHTML = '';
       if (modelDrawerList) modelDrawerList.innerHTML = '';
 
       if (visibleModels.length === 0) {
@@ -2886,9 +2814,7 @@
       }
       
       visibleModels.forEach((model, index) => {
-        const railItem = createRailItem(model, index);
         const drawerItem = createDrawerItem(model, index);
-        modelRail?.appendChild(railItem);
         modelDrawerList?.appendChild(drawerItem);
       });
 
@@ -3107,7 +3033,6 @@
     async function fetchVeniceModels() {
       refreshModelsButton.disabled = true;
       refreshModelsButton.querySelector('.material-icons').classList.add('spin');
-      if (modelRail) modelRail.innerHTML = '';
       if (modelDrawerList) modelDrawerList.innerHTML = '<div class="empty-state"><div class="loading">Loading models...</div></div>';
       if (modelSelectMobile) modelSelectMobile.innerHTML = '';
 
