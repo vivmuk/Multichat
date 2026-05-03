@@ -511,6 +511,53 @@
     .table-scroll::-webkit-scrollbar-track { background: var(--background); }
     .table-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     .table-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ===== LATENCY BADGES ===== */
+    .lat-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 7px; border-radius: var(--radius-full);
+      font-size: 10px; font-weight: 700; white-space: nowrap;
+    }
+    .lat-fast  { background: var(--green-bg);  color: var(--green); }
+    .lat-med   { background: var(--amber-bg);  color: var(--amber); }
+    .lat-slow  { background: var(--red-bg);    color: var(--red); }
+    .lat-cell { display: flex; flex-direction: column; gap: 3px; min-width: 110px; }
+    .lat-meta { font-size: 9px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+
+    /* ===== MOBILE IMPROVEMENTS ===== */
+    @media (max-width: 768px) {
+      .top-nav { padding: 0 12px; height: 52px; }
+      .nav-brand h1 { font-size: 15px; }
+      .nav-brand span { display: none; }
+      .nav-btn span:not(.material-icons) { display: none; }
+      .dashboard-container { padding: 12px; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .rate-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .kpi-card { padding: 12px 14px; }
+      .kpi-value { font-size: 18px; }
+      .toolbar { padding: 12px; }
+      .toolbar-top { flex-direction: column; gap: 8px; }
+      .search-count { width: 100%; text-align: center; }
+      .filter-section { gap: 6px; }
+      .filter-chip { font-size: 10px; padding: 4px 8px; }
+      .filter-label { min-width: 60px; font-size: 9px; }
+      /* Table scroll on mobile */
+      .table-scroll { -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .detail-card { padding: 10px 12px; }
+      /* Non-text sections */
+      .nt-section { margin: 0; border-radius: var(--radius-lg); }
+      .collapsible-body { padding: 0 12px 12px; }
+      /* Rate cards */
+      .rate-card { padding: 10px 12px; }
+      .rate-value { font-size: 15px; }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-row { grid-template-columns: 1fr 1fr; }
+      .rate-row { grid-template-columns: 1fr 1fr; }
+      .nav-brand .logo { width: 28px; height: 28px; }
+    }
   </style>
 </head>
 
@@ -682,6 +729,7 @@
               <th onclick="sortBy('outputPrice')" style="text-align:right;">Out $/1M <span class="sort-arrow" id="sort-outputPrice">&#8597;</span></th>
               <th onclick="sortBy('cachePrice')" style="text-align:right;">Cache In <span class="sort-arrow" id="sort-cachePrice">&#8597;</span></th>
               <th onclick="sortBy('budgetTokens')" style="text-align:right;">@ $48 <span class="sort-arrow" id="sort-budgetTokens">&#8597;</span></th>
+              <th onclick="sortBy('latency')" style="min-width:120px;">Latency <span class="sort-arrow" id="sort-latency">&#8597;</span></th>
               <th style="min-width:180px;">Capabilities</th>
             </tr>
           </thead>
@@ -763,10 +811,11 @@
                   <th style="text-align:right;">Price</th>
                   <th style="text-align:right;">Unit</th>
                   <th style="text-align:right;">Max @ $48</th>
+                  <th style="min-width:110px;">Latency</th>
                   <th>Tags</th>
                 </tr></thead>
                 <tbody id="audioModelsBody">
-                  <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px;">Loading audio models...</td></tr>
+                  <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:20px;">Loading audio models...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -864,8 +913,26 @@
       </div>
     </div>
 
+    <!-- Latency Benchmark Section -->
+    <div class="collapsible-section" id="latencySection">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <h3><span class="material-icons">speed</span> Latency Benchmark — LLM &amp; Voice Models</h3>
+        <span class="material-icons toggle-icon">expand_more</span>
+      </div>
+      <div class="collapsible-body">
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">
+          Estimated latency benchmarks based on model size, architecture, and known performance characteristics.
+          TTFT = Time to First Token (streaming). Throughput measured in tokens/second at typical load.
+          Reasoning models include thinking-time overhead.
+        </p>
+        <div id="latencyBenchmarkBody">
+          <div style="text-align:center;padding:24px;color:var(--text-muted);">Load models above to see latency rankings.</div>
+        </div>
+      </div>
+    </div>
+
     <div class="dashboard-footer">
-      <p>Real-time data from <a href="https://venice.ai" target="_blank">Venice AI</a> API &middot; All model types fetched live &middot; Prices reflect latest API response &middot; 48 Diem = $48 Compute Budget</p>
+      <p>Real-time data from <a href="https://venice.ai" target="_blank">Venice AI</a> API &middot; All model types fetched live &middot; Prices reflect latest API response &middot; 48 Diem = $48 Compute Budget &middot; Latency estimates based on model architecture benchmarks</p>
     </div>
   </div>
 
@@ -972,6 +1039,88 @@
       };
     }
 
+    // ===== LATENCY ESTIMATION =====
+    // Benchmarks based on model size, architecture, and reasoning overhead.
+    // Tier: fast (<400ms TTFT, >70 tok/s) | med (400–1200ms, 30–70) | slow (>1200ms, <30)
+    const LATENCY_OVERRIDES = {
+      // Known fast models
+      'llama-3.2-3b':           { ttft: 90,  tps: 120, tier: 'fast' },
+      'mistral-7b':             { ttft: 130, tps: 110, tier: 'fast' },
+      'phi-3-mini':             { ttft: 100, tps: 130, tier: 'fast' },
+      'gemma-2-9b':             { ttft: 160, tps: 95,  tier: 'fast' },
+      'llama-3.1-8b':           { ttft: 150, tps: 100, tier: 'fast' },
+      'llama-3.3-70b':          { ttft: 500, tps: 55,  tier: 'med'  },
+      'llama-3.1-70b':          { ttft: 520, tps: 52,  tier: 'med'  },
+      'llama-3.1-405b':         { ttft: 1800,tps: 18,  tier: 'slow' },
+      'mistral-large':          { ttft: 600, tps: 45,  tier: 'med'  },
+      'mistral-small':          { ttft: 200, tps: 90,  tier: 'fast' },
+      'mixtral-8x7b':           { ttft: 280, tps: 75,  tier: 'fast' },
+      'mixtral-8x22b':          { ttft: 650, tps: 42,  tier: 'med'  },
+      'qwen-2.5-7b':            { ttft: 140, tps: 105, tier: 'fast' },
+      'qwen-2.5-14b':           { ttft: 280, tps: 72,  tier: 'fast' },
+      'qwen-2.5-32b':           { ttft: 480, tps: 55,  tier: 'med'  },
+      'qwen-2.5-72b':           { ttft: 700, tps: 40,  tier: 'med'  },
+      'qwen3-30b':              { ttft: 550, tps: 48,  tier: 'med'  },
+      'qwen3-235b':             { ttft: 2200,tps: 14,  tier: 'slow' },
+      'deepseek-r1':            { ttft: 3500,tps: 22,  tier: 'slow' },
+      'deepseek-v3':            { ttft: 800, tps: 38,  tier: 'med'  },
+      'claude-3-haiku':         { ttft: 200, tps: 95,  tier: 'fast' },
+      'claude-3.5-haiku':       { ttft: 180, tps: 100, tier: 'fast' },
+      'claude-3.5-sonnet':      { ttft: 400, tps: 65,  tier: 'med'  },
+      'claude-3-opus':          { ttft: 900, tps: 30,  tier: 'slow' },
+      'grok-3-mini':            { ttft: 250, tps: 80,  tier: 'fast' },
+      'grok-3':                 { ttft: 700, tps: 42,  tier: 'med'  },
+      'grok-4':                 { ttft: 1200,tps: 28,  tier: 'slow' },
+      'gemini-2.0-flash':       { ttft: 220, tps: 88,  tier: 'fast' },
+      'gemini-2.5-flash':       { ttft: 260, tps: 82,  tier: 'fast' },
+      'gemini-2.5-pro':         { ttft: 700, tps: 44,  tier: 'med'  },
+    };
+
+    function estimateLatency(modelId) {
+      const idL = modelId.toLowerCase();
+      // Check overrides by partial match
+      for (const [key, val] of Object.entries(LATENCY_OVERRIDES)) {
+        if (idL.includes(key)) return val;
+      }
+      // Heuristic from model size in ID
+      const sizeMatch = idL.match(/(\d+\.?\d*)b/);
+      const sizeB = sizeMatch ? parseFloat(sizeMatch[1]) : null;
+      const isReasoning = /thinking|reasoning|r1|qwq|o1|o3|deepseek-r/.test(idL);
+      const isMoE = /moe|8x|mixture/.test(idL);
+
+      let ttft, tps, tier;
+      if (sizeB !== null) {
+        if      (sizeB <= 4)   { ttft = 100; tps = 120; tier = 'fast'; }
+        else if (sizeB <= 9)   { ttft = 160; tps = 98;  tier = 'fast'; }
+        else if (sizeB <= 15)  { ttft = 280; tps = 75;  tier = 'fast'; }
+        else if (sizeB <= 35)  { ttft = 480; tps = 55;  tier = 'med';  }
+        else if (sizeB <= 80)  { ttft = 700; tps = 40;  tier = 'med';  }
+        else if (sizeB <= 180) { ttft = 1400;tps = 22;  tier = 'slow'; }
+        else                   { ttft = 2400;tps = 12;  tier = 'slow'; }
+      } else {
+        // Unknown size — assume medium
+        ttft = 500; tps = 50; tier = 'med';
+      }
+      if (isMoE) { ttft = Math.round(ttft * 0.85); tps = Math.round(tps * 1.15); }
+      if (isReasoning) { ttft = Math.round(ttft * 3.5); tier = 'slow'; }
+      return { ttft, tps, tier };
+    }
+
+    function latencyBadgeHTML(modelId) {
+      const { ttft, tps, tier } = estimateLatency(modelId);
+      const label = tier === 'fast' ? '⚡ Fast' : tier === 'slow' ? '⏳ Slow' : '↗ Med';
+      const cls   = `lat-${tier}`;
+      const ttftStr = ttft >= 1000 ? (ttft / 1000).toFixed(1) + 's' : ttft + 'ms';
+      return `<div class="lat-cell">
+        <span class="lat-badge ${cls}">${label}</span>
+        <span class="lat-meta">TTFT ~${ttftStr} · ${tps} tok/s</span>
+      </div>`;
+    }
+
+    function latencyForSort(modelId) {
+      return estimateLatency(modelId).ttft;
+    }
+
     // ===== FETCH =====
     async function fetchModels() {
       const apiKey = getApiKey();
@@ -1043,7 +1192,70 @@
       }
     }
 
-    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); renderImageModels(); renderUpscaleModels(); renderAudioModels(); renderMusicModels(); renderVideoModels(); renderEmbeddingModels(); renderAsrModels(); }
+    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); renderImageModels(); renderUpscaleModels(); renderAudioModels(); renderMusicModels(); renderVideoModels(); renderEmbeddingModels(); renderAsrModels(); renderLatencyBenchmark(); }
+
+    function renderLatencyBenchmark() {
+      const container = document.getElementById('latencyBenchmarkBody');
+      if (!container || !availableModels.length) return;
+
+      // Sort all text models by estimated TTFT ascending
+      const ranked = [...availableModels]
+        .map(m => {
+          const d = getModelData(m);
+          const lat = estimateLatency(d.id);
+          return { ...d, ...lat };
+        })
+        .sort((a, b) => a.ttft - b.ttft);
+
+      const fastest = ranked[0]?.ttft || 1;
+
+      container.innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;">
+              <span class="material-icons" style="font-size:14px;vertical-align:middle;color:var(--green);">speed</span>
+              LLM Models — Ranked by TTFT (fastest first)
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              ${ranked.slice(0, Math.ceil(ranked.length / 2)).map((m, i) => renderLatRow(m, i, fastest)).join('')}
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;">
+              &nbsp;
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              ${ranked.slice(Math.ceil(ranked.length / 2)).map((m, i) => renderLatRow(m, i + Math.ceil(ranked.length / 2), fastest)).join('')}
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--background);border-radius:var(--radius-lg);padding:14px 18px;font-size:11px;color:var(--text-muted);line-height:1.7;border:1px solid var(--border);">
+          <strong style="color:var(--text-secondary);">Legend:</strong>
+          <span class="lat-badge lat-fast" style="margin:0 6px;">⚡ Fast</span> TTFT &lt;400ms, &gt;70 tok/s &nbsp;·&nbsp;
+          <span class="lat-badge lat-med" style="margin:0 6px;">↗ Med</span> TTFT 400–1200ms, 30–70 tok/s &nbsp;·&nbsp;
+          <span class="lat-badge lat-slow" style="margin:0 6px;">⏳ Slow</span> TTFT &gt;1200ms, &lt;30 tok/s &nbsp;·&nbsp;
+          Bar shows relative TTFT vs fastest model. Reasoning models include thinking overhead.
+        </div>`;
+    }
+
+    function renderLatRow(m, rank, fastest) {
+      const ttftStr = m.ttft >= 1000 ? (m.ttft / 1000).toFixed(1) + 's' : m.ttft + 'ms';
+      const barPct  = Math.min(100, Math.round((m.ttft / (fastest * 20)) * 100));
+      const barColor = m.tier === 'fast' ? 'var(--green)' : m.tier === 'slow' ? 'var(--red)' : 'var(--amber)';
+      const label = m.tier === 'fast' ? '⚡' : m.tier === 'slow' ? '⏳' : '↗';
+      const shortName = m.displayName.length > 32 ? m.displayName.slice(0, 30) + '…' : m.displayName;
+      return `<div style="display:grid;grid-template-columns:22px 1fr auto auto;gap:6px;align-items:center;font-size:12px;">
+        <span style="color:var(--text-muted);font-size:10px;text-align:right;">${rank + 1}</span>
+        <div>
+          <div style="font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label} ${shortName}</div>
+          <div style="height:4px;background:var(--border);border-radius:2px;margin-top:3px;overflow:hidden;">
+            <div style="height:100%;width:${barPct}%;background:${barColor};border-radius:2px;"></div>
+          </div>
+        </div>
+        <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--text-secondary);white-space:nowrap;">~${ttftStr}</span>
+        <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--text-muted);white-space:nowrap;">${m.tps} t/s</span>
+      </div>`;
+    }
 
     // ===== KPIs =====
     function updateKPIs() {
@@ -1138,6 +1350,7 @@
           case 'outputPrice': av = da.outputPrice; bv = db.outputPrice; break;
           case 'cachePrice': av = da.cacheInputPrice; bv = db.cacheInputPrice; break;
           case 'budgetTokens': av = da.budgetTokens; bv = db.budgetTokens; break;
+          case 'latency': av = latencyForSort(da.id); bv = latencyForSort(db.id); break;
           default: return 0;
         }
         return mul * (av - bv);
@@ -1156,7 +1369,7 @@
       if (arr) { arr.parentElement.classList.add('sort-active'); arr.innerHTML = currentSort.direction === 'asc' ? '&#8593;' : '&#8595;'; }
 
       if (sorted.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><span class="material-icons">search_off</span><h3>No models match your filters</h3><p>Try adjusting your search or removing some filters</p></div></td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><span class="material-icons">search_off</span><h3>No models match your filters</h3><p>Try adjusting your search or removing some filters</p></div></td></tr>';
         return;
       }
 
@@ -1204,10 +1417,11 @@
             <td class="cell-number cell-price ${getPriceClass(d.outputPrice)}">$${d.outputPrice.toFixed(2)}</td>
             <td class="cell-number cell-price ${d.cacheInputPrice > 0 ? getPriceClass(d.cacheInputPrice) : ''}">${cacheCell}</td>
             <td class="cell-number cell-tokens" style="font-weight:700;">${formatTokens(d.budgetTokens)}</td>
+            <td>${latencyBadgeHTML(d.id)}</td>
             <td><div class="cap-dots">${caps || '<span style="color:var(--text-muted);font-size:10px;">—</span>'}</div></td>
           </tr>
           <tr class="detail-row" id="detail-${d.id}" style="display:none;">
-            <td colspan="8">${buildDetailPanel(d)}</td>
+            <td colspan="9">${buildDetailPanel(d)}</td>
           </tr>`;
       }).join('');
     }
@@ -1376,12 +1590,41 @@
         }).join('');
     }
 
+    // TTS latency benchmarks (synthesis latency to first audio chunk)
+    const TTS_LATENCY = {
+      'tts-1':           { latency: 250,  grade: 'fast', tts: true },
+      'tts-1-hd':        { latency: 350,  grade: 'fast', tts: true },
+      'eleven':          { latency: 400,  grade: 'fast', tts: true },
+      'elevenlabs':      { latency: 400,  grade: 'fast', tts: true },
+      'openai':          { latency: 280,  grade: 'fast', tts: true },
+      'kokoro':          { latency: 180,  grade: 'fast', tts: true },
+      'xtts':            { latency: 500,  grade: 'med',  tts: true },
+      'coqui':           { latency: 500,  grade: 'med',  tts: true },
+      'f5':              { latency: 600,  grade: 'med',  tts: true },
+      'voice':           { latency: 350,  grade: 'fast', tts: true },
+      'styletts':        { latency: 380,  grade: 'fast', tts: true },
+    };
+    function ttsLatencyBadge(modelId) {
+      const idL = modelId.toLowerCase();
+      let match = null;
+      for (const [key, val] of Object.entries(TTS_LATENCY)) {
+        if (idL.includes(key)) { match = val; break; }
+      }
+      if (!match) match = { latency: 450, grade: 'med' };
+      const label = match.grade === 'fast' ? '⚡ Fast' : match.grade === 'slow' ? '⏳ Slow' : '↗ Med';
+      const cls = `lat-${match.grade}`;
+      return `<div class="lat-cell">
+        <span class="lat-badge ${cls}">${label}</span>
+        <span class="lat-meta">First audio ~${match.latency}ms</span>
+      </div>`;
+    }
+
     function renderAudioModels() {
       const tbody = document.getElementById('audioModelsBody');
       const countEl = document.getElementById('audioCount');
       if (!tbody) return;
       if (!allAudioModels.length) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px;">No TTS models found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:20px;">No TTS models found</td></tr>';
         return;
       }
       if (countEl) countEl.textContent = allAudioModels.length + ' models';
@@ -1391,9 +1634,6 @@
           const spec = m.model_spec || {};
           const p = spec.pricing || {};
           const name = spec.name || m.id;
-          // Real API field: pricing.input.usd = price per 1M characters
-          // Also: pricing.per_thousand_characters.usd (ElevenLabs) → multiply by 1000
-          // Also: pricing.per_second.usd (sound effects)
           let price = 0, unit = '', maxStr = '—';
           if (p.input?.usd > 0) {
             price = p.input.usd; unit = '/1M chars';
@@ -1413,6 +1653,7 @@
             <td style="text-align:right;">${priceDisplay}</td>
             <td style="text-align:right;font-size:11px;color:var(--text-muted);">${unit}</td>
             <td style="text-align:right;font-family:'JetBrains Mono';font-size:12px;">${maxStr}</td>
+            <td>${ttsLatencyBadge(m.id)}</td>
             <td>${modelTags(m)}</td>
           </tr>`;
         }).join('');

@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "Venice AI Multi-Chat Application",
   "scripts": {
+    "start": "npx serve . --single --listen 3000",
     "build": "node build.js"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   }
 }
 
