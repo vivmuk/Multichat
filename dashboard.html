@@ -2167,8 +2167,8 @@
         }
       }
 
-      // Store hit regions for hover detection
-      canvas._hitRegions = chartModels.map(m => ({
+      // Store hit regions for hover detection (ctx.canvas is the element)
+      ctx.canvas._hitRegions = chartModels.map(m => ({
         ...m,
         cx: xPos(m.ttft),
         cy: yPos(m.tps),
