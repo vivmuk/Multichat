@@ -1039,7 +1039,7 @@
 
     function getApiKey() {
       if (window.VENICE_API_KEY && window.VENICE_API_KEY !== 'your-venice-api-key-here') return window.VENICE_API_KEY;
-      return localStorage.getItem('venice_backend_api_key') || '';
+      return localStorage.getItem('venice_user_api_key') || localStorage.getItem('venice_backend_api_key') || '';
     }
 
     // ===== UTILITIES =====
