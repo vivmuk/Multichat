@@ -1,5 +1,6 @@
 # API Keys - Keep private
-config.js
+# config.js is tracked (it's a keyless placeholder; build.js injects the real key at deploy time)
+config.js.local
 
 # Dependencies
 node_modules/
