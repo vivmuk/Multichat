@@ -3,31 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Venice AI Multi-Chat</title>
+  <title>V's MultiGen AI Chat — Multi-Model AI Evaluation Platform</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="logo.png">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --orange: #e63946;
-      --orange-light: #fdecef;
-      --blue: #0f1419;
-      --blue-light: #1f2933;
-      --magenta: #0f1419;
-      --magenta-light: #f7f7f5;
-      --green: #0f9f77;
-      --green-light: #e6f3ed;
-      --red: #e63946;
-      --red-light: #fdecef;
-      --purple: #0f1419;
-      --purple-light: #f4f4f4;
-      --background-color: #f7f7f5;
-      --surface-color: #ffffff;
-      --text-color: #0f1419;
-      --text-secondary: #4b5563;
-      --border-color: #e2e4e8;
-      --border-radius: 10px;
-      --shadow-sm: 0 1px 3px rgba(15,20,25,0.08);
-      --shadow-md: 0 4px 10px rgba(15,20,25,0.12);
+      /* brand / functional accents — Canvas (cyan primary, no purple) */
+      --orange: #0E7490;        /* repurposed: cyan PRIMARY */
+      --orange-light: #DDF0F3;
+      --blue: #2563EB;          /* secondary data blue */
+      --blue-light: #E6EEFC;
+      --magenta: #15201F;       /* repurposed -> neutral */
+      --magenta-light: #F4FAFA;
+      --green: #0F7A4D;
+      --green-light: #E1F2E9;
+      --red: #C2362F;
+      --red-light: #FBE9E7;
+      --amber: #B45309;
+      --amber-light: #FAF0DD;
+      --purple: #15201F;        /* repurposed -> neutral */
+      --purple-light: #F4FAFA;
+      --background-color: #F2F6F6;
+      --surface-color: #FFFFFF;
+      --surface-2: #F4FAFA;
+      --text-color: #15201F;
+      --text-secondary: #4F5E5B;
+      --border-color: #E0E9E8;
+      /* shape + elevation (Canvas = rounder & softer) */
+      --border-radius: 18px;
+      --radius-sm: 12px;
+      --chip-radius: 999px;
+      --shadow-sm: 0 2px 4px rgba(8,40,45,.05);
+      --shadow-md: 0 2px 4px rgba(8,40,45,.05), 0 14px 30px -12px rgba(8,40,45,.20);
+      /* type */
+      --font-head: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
     }
 
     * {
@@ -367,6 +379,14 @@
       margin: 0;
     }
 
+    .app-logo {
+      height: 38px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+    }
+    @media (max-width: 768px) { .app-logo { height: 30px; } }
+
     .header .material-icons {
       font-size: 26px;
       color: var(--orange);
@@ -437,7 +457,7 @@
     }
 
     input[type="checkbox"]:checked + .toggle-slider {
-      background: linear-gradient(135deg, var(--blue) 0%, var(--magenta) 100%);
+      background: var(--orange);
     }
 
     input[type="checkbox"]:checked + .toggle-slider:before {
@@ -445,11 +465,11 @@
     }
 
     button, .button {
-      background: linear-gradient(135deg, var(--orange) 0%, var(--magenta) 100%);
+      background: var(--orange);
       color: white;
       border: none;
       padding: 10px 20px;
-      border-radius: var(--border-radius);
+      border-radius: var(--radius-sm);
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -462,7 +482,7 @@
     }
 
     button:hover, .button:hover {
-      background: linear-gradient(135deg, var(--magenta) 0%, var(--orange) 100%);
+      background: var(--primary-2);
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
     }
@@ -504,9 +524,10 @@
 
     .model-response {
       background: var(--surface-color);
-      padding: 20px;
+      padding: 22px;
       border-radius: var(--border-radius);
-      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
       max-width: 1000px;
       margin: 0 auto;
     }
@@ -914,7 +935,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 24px 28px;
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      background: #0E7490;
       color: white;
     }
 
@@ -949,7 +970,7 @@
       width: 48px;
       height: 48px;
       border: 4px solid var(--border-color);
-      border-top-color: #6366f1;
+      border-top-color: #0E7490;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin: 0 auto 20px;
@@ -998,9 +1019,35 @@
     }
 
     .analysis-section-title .material-icons {
-      color: #6366f1;
+      color: #0E7490;
       font-size: 22px;
     }
+
+    /* ── Model Comparison Matrix ─────────────────────────── */
+    .cmp-wrap { overflow-x: auto; border: 1px solid var(--border-color); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
+    .cmp-table { width: 100%; border-collapse: collapse; min-width: 760px; font-size: 13px; }
+    .cmp-table thead th {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em;
+      color: var(--text-secondary); text-align: left; padding: 12px 14px; background: var(--surface-2);
+      border-bottom: 2px solid var(--border-color); white-space: nowrap; position: sticky; top: 0;
+    }
+    .cmp-table tbody td { padding: 13px 14px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+    .cmp-table tbody tr:last-child td { border-bottom: none; }
+    .cmp-table tbody tr:hover { background: var(--surface-2); }
+    .cmp-model { display: flex; align-items: center; gap: 9px; font-weight: 600; color: var(--text-color); white-space: nowrap; }
+    .cmp-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+    .cmp-grade { display: inline-grid; place-items: center; min-width: 34px; height: 26px; padding: 0 8px; border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; color: #fff; }
+    .cmp-chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .cmp-bar-wrap { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+    .cmp-bar { flex: 1; height: 8px; border-radius: 5px; background: var(--surface-2); overflow: hidden; }
+    .cmp-bar i { display: block; height: 100%; border-radius: 5px; }
+    .cmp-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-color); white-space: nowrap; }
+    .cmp-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .cmp-strength { color: var(--green); font-weight: 600; }
+    .cmp-watch { color: var(--text-secondary); }
+    .cmp-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; font-size: 11px; color: var(--text-secondary); }
+    .cmp-legend span { display: inline-flex; align-items: center; gap: 5px; }
 
     .ranking-cards {
       display: grid;
@@ -1107,8 +1154,8 @@
     }
 
     .insight-icon {
-      background: rgba(99, 102, 241, 0.15);
-      color: #6366f1;
+      background: rgba(14,116,144, 0.15);
+      color: #0E7490;
     }
 
     .theme-icon .material-icons, .insight-icon .material-icons {
@@ -1132,8 +1179,8 @@
     }
 
     .theme-models span, .insight-model span {
-      background: rgba(99, 102, 241, 0.1);
-      color: #6366f1;
+      background: rgba(14,116,144, 0.1);
+      color: #0E7490;
       padding: 2px 8px;
       border-radius: 12px;
       margin-right: 6px;
@@ -1157,7 +1204,7 @@
     .stat-value {
       font-size: 28px;
       font-weight: 700;
-      color: #6366f1;
+      color: #0E7490;
       margin-bottom: 4px;
     }
 
@@ -1517,25 +1564,28 @@
 
     /* --- Swiss Modern 2025 Theme --- */
     :root {
-      --primary: #e63946;
-      --primary-2: #b61f2f;
-      --accent: #0f1419;
+      --primary: #0E7490;
+      --primary-2: #0b5a6e;
+      --accent: #15201F;
       --surface: #ffffff;
       --surface-strong: #ffffff;
+      --surface-2: #F4FAFA;
       --surface-color: #ffffff;
-      --background-color: #f7f7f5;
-      --border-color: #e2e4e8;
-      --text-color: #0f1419;
-      --text-strong: #0f1419;
+      --background-color: #F2F6F6;
+      --border-color: #E0E9E8;
+      --text-color: #15201F;
+      --text-strong: #15201F;
       --text-mid: #3c4045;
       --text-dim: #6b7280;
-      --radius-lg: 14px;
-      --radius-md: 10px;
-      --shadow-soft: 0 8px 24px rgba(15, 20, 25, 0.08);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 2px 4px rgba(8,40,45,.05), 0 14px 30px -12px rgba(8,40,45,.20);
       --shadow-none: none;
-      --shadow-glow: 0 16px 36px rgba(15, 20, 25, 0.14);
-      --font-body: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --shadow-glow: 0 16px 36px rgba(8,40,45,.18);
+      --font-head: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
+    h1,h2,h3,h4 { font-family: var(--font-head); font-weight: 600; letter-spacing: -0.014em; }
 
     body {
       background: var(--background-color);
@@ -1983,7 +2033,7 @@
 
     /* ===== TOAST SYSTEM ===== */
     #toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
-    .toast{display:flex;align-items:center;gap:10px;background:#1e293b;color:#f1f5f9;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.25);min-width:260px;max-width:380px;animation:toast-in 0.25s ease;pointer-events:all;border-left:3px solid #6366f1;}
+    .toast{display:flex;align-items:center;gap:10px;background:#1e293b;color:#f1f5f9;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.25);min-width:260px;max-width:380px;animation:toast-in 0.25s ease;pointer-events:all;border-left:3px solid #0E7490;}
     .toast.success{border-left-color:#10b981;}.toast.error{border-left-color:#ef4444;}.toast.warn{border-left-color:#f59e0b;}
     .toast .material-icons{font-size:18px;flex-shrink:0;color:#a5b4fc;}
     .toast.success .material-icons{color:#6ee7b7;}.toast.error .material-icons{color:#fca5a5;}.toast.warn .material-icons{color:#fcd34d;}
@@ -2017,13 +2067,13 @@
     .cost-bar{display:flex;align-items:center;gap:12px;padding:6px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;color:#64748b;flex-wrap:wrap;}
     .cost-bar .cb-item{display:flex;align-items:center;gap:4px;}
     .cost-bar .cb-item strong{color:#0f172a;font-family:'JetBrains Mono',monospace;}
-    .cost-bar .material-icons{font-size:14px;color:#6366f1;}
+    .cost-bar .material-icons{font-size:14px;color:#0E7490;}
 
     /* ===== SESSION TRACKER ===== */
-    #sessionTracker{display:flex;align-items:center;gap:6px;padding:5px 12px;background:#0f1419;border-radius:8px;font-size:12px;color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.1);cursor:pointer;white-space:nowrap;}
-    #sessionTracker .material-icons{font-size:14px;color:#a5b4fc;}
-    #sessionTracker strong{color:#a5b4fc;font-family:'JetBrains Mono',monospace;}
-    #sessionTracker:hover{background:#1e293b;}
+    #sessionTracker{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--green-light);border-radius:var(--chip-radius);font-size:12px;color:var(--green);border:1px solid rgba(15,122,77,0.18);cursor:pointer;white-space:nowrap;}
+    #sessionTracker .material-icons{font-size:14px;color:var(--green);}
+    #sessionTracker strong{color:var(--green);font-family:'JetBrains Mono',monospace;}
+    #sessionTracker:hover{background:#d4ecdf;}
 
     /* ===== STAR RATINGS ===== */
     .star-rating{display:flex;align-items:center;gap:4px;}
@@ -2040,19 +2090,19 @@
     .hp-close:hover{background:rgba(255,255,255,0.1);color:white;}
     .hp-search{padding:12px 16px;border-bottom:1px solid #e2e8f0;}
     .hp-search input{width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;font-family:inherit;}
-    .hp-search input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.1);}
+    .hp-search input:focus{border-color:#0E7490;box-shadow:0 0 0 3px rgba(14,116,144,0.1);}
     .hp-list{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
     .hp-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;cursor:pointer;transition:all 0.15s;}
-    .hp-item:hover{border-color:#6366f1;background:#f5f3ff;}
+    .hp-item:hover{border-color:#0E7490;background:#DDF0F3;}
     .hp-item-prompt{font-size:13px;color:#0f172a;font-weight:500;line-height:1.5;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
     .hp-item-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#94a3b8;}
     .hp-item-actions{display:flex;gap:4px;margin-top:8px;}
     .hp-btn{padding:3px 8px;border-radius:5px;border:1px solid #e2e8f0;background:#fff;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:3px;transition:all 0.1s;color:#64748b;}
-    .hp-btn:hover{border-color:#6366f1;color:#6366f1;background:#f5f3ff;}
+    .hp-btn:hover{border-color:#0E7490;color:#0E7490;background:#DDF0F3;}
     .hp-btn .material-icons{font-size:12px;}
     .hp-empty{text-align:center;padding:40px 20px;color:#94a3b8;font-size:14px;}
     .hp-footer{padding:12px 16px;border-top:1px solid #e2e8f0;display:flex;gap:8px;}
-    .hp-save-btn{flex:1;padding:8px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;background:#6366f1;color:white;}
+    .hp-save-btn{flex:1;padding:8px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;background:#0E7490;color:white;}
     .hp-save-btn:hover{background:#4f46e5;}
     .hp-clear-btn{flex:1;padding:8px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;background:#f1f5f9;color:#64748b;}
     .hp-clear-btn:hover{background:#fee2e2;color:#ef4444;}
@@ -2077,10 +2127,10 @@
     .batch-body{padding:24px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
     .batch-body label{font-size:13px;font-weight:600;color:#374151;margin-bottom:4px;display:block;}
     .batch-body textarea{width:100%;height:160px;padding:12px;border:2px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:'JetBrains Mono',monospace;resize:vertical;outline:none;line-height:1.7;}
-    .batch-body textarea:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.1);}
+    .batch-body textarea:focus{border-color:#0E7490;box-shadow:0 0 0 3px rgba(14,116,144,0.1);}
     .batch-model-row{display:flex;gap:10px;align-items:center;}
     .batch-model-row select{flex:1;padding:9px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;outline:none;}
-    .batch-model-row select:focus{border-color:#6366f1;}
+    .batch-model-row select:focus{border-color:#0E7490;}
     .batch-footer{padding:16px 24px;border-top:1px solid #e2e8f0;display:flex;gap:10px;justify-content:flex-end;}
     .batch-results{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;}
     .batch-results-header{padding:10px 16px;background:#1e293b;color:white;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:space-between;}
@@ -2090,7 +2140,7 @@
     .batch-result-response{color:#374151;line-height:1.6;max-height:80px;overflow:hidden;}
     .batch-result-meta{font-size:11px;color:#94a3b8;margin-top:4px;display:flex;gap:12px;}
     .batch-progress{height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;}
-    .batch-progress-fill{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:2px;transition:width 0.3s;}
+    .batch-progress-fill{height:100%;background:linear-gradient(90deg,#0E7490,#0891B2);border-radius:2px;transition:width 0.3s;}
 
     /* ===== IMAGE PLAYGROUND ===== */
     #imgModal{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:7600;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
@@ -2098,7 +2148,7 @@
     .img-content{background:#fff;border-radius:20px;width:100%;max-width:960px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.3);}
     .img-header{padding:18px 24px;border-bottom:1px solid #e2e8f0;background:#0f172a;color:white;display:flex;align-items:center;justify-content:space-between;}
     .img-header h3{margin:0;font-family:'Space Grotesk';font-size:18px;display:flex;align-items:center;gap:8px;}
-    .img-header h3 .material-icons{color:#a78bfa;}
+    .img-header h3 .material-icons{color:#5BA7C9;}
     .img-body{display:flex;flex:1;overflow:hidden;min-height:0;}
     .img-controls{width:300px;flex-shrink:0;padding:20px;overflow-y:auto;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;gap:14px;}
     .img-preview{flex:1;padding:20px;display:flex;align-items:center;justify-content:center;background:#f8fafc;overflow:auto;flex-direction:column;gap:16px;}
@@ -2109,13 +2159,13 @@
     .img-ctrl-label{font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.4px;}
     .img-ctrl-label span{color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;}
     .img-ctrl-group select,.img-ctrl-group input[type=text],.img-ctrl-group textarea{width:100%;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;outline:none;}
-    .img-ctrl-group select:focus,.img-ctrl-group input:focus,.img-ctrl-group textarea:focus{border-color:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,0.1);}
+    .img-ctrl-group select:focus,.img-ctrl-group input:focus,.img-ctrl-group textarea:focus{border-color:#0891B2;box-shadow:0 0 0 3px rgba(8,145,178,0.1);}
     .img-ctrl-group textarea{height:80px;resize:none;}
     .img-slider-row{display:flex;align-items:center;gap:8px;}
     .img-slider-row input[type=range]{flex:1;}
-    .img-slider-val{font-size:12px;font-family:'JetBrains Mono',monospace;color:#6366f1;font-weight:600;min-width:28px;text-align:right;}
-    .img-generate-btn{background:linear-gradient(135deg,#8b5cf6,#6366f1);color:white;border:none;padding:12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;width:100%;}
-    .img-generate-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(99,102,241,0.4);}
+    .img-slider-val{font-size:12px;font-family:'JetBrains Mono',monospace;color:#0E7490;font-weight:600;min-width:28px;text-align:right;}
+    .img-generate-btn{background:#0E7490;color:white;border:none;padding:12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;width:100%;}
+    .img-generate-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(14,116,144,0.4);}
     .img-generate-btn:disabled{opacity:0.6;transform:none;cursor:wait;}
     .img-result-meta{font-size:12px;color:#64748b;text-align:center;}
     .img-download-btn{background:#10b981;color:white;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
@@ -2126,9 +2176,9 @@
     .dl-menu{position:absolute;top:calc(100% + 4px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:150px;z-index:500;display:none;overflow:hidden;}
     .dl-menu.open{display:block;}
     .dl-item{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:13px;font-weight:500;cursor:pointer;color:#374151;transition:background 0.1s;}
-    .dl-item:hover{background:#f5f3ff;color:#6366f1;}
+    .dl-item:hover{background:#DDF0F3;color:#0E7490;}
     .dl-item .material-icons{font-size:16px;color:#94a3b8;}
-    .dl-item:hover .material-icons{color:#6366f1;}
+    .dl-item:hover .material-icons{color:#0E7490;}
 
     /* ===== SPIN ANIMATION ===== */
     @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
@@ -2137,7 +2187,7 @@
     /* ===== RESPONSE CARD BADGES ===== */
     .response-badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px;}
     .rb{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;}
-    .rb-time{background:#f1f5f9;color:#475569;}.rb-tokens{background:#ede9fe;color:#7c3aed;}
+    .rb-time{background:#f1f5f9;color:#475569;}.rb-tokens{background:#DDF0F3;color:#0b5a6e;}
     .rb-cost{background:#dcfce7;color:#166534;}.rb-speed{background:#fff7ed;color:#c2410c;}
     .rb .material-icons{font-size:12px;}
 
@@ -2167,8 +2217,12 @@
             <span class="material-icons">menu</span>
             Menu
           </button>
-          <span class="material-icons">smart_toy</span>
-          <h1>Venice AI Multi-Chat</h1>
+          <img src="logo.png" alt="V's MultiGen AI Chat" class="app-logo"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex';">
+          <span class="brand-fallback" style="display:none;align-items:center;gap:8px;">
+            <span class="material-icons" style="color:var(--orange);">smart_toy</span>
+            <h1>V's MultiGen AI Chat</h1>
+          </span>
         </div>
         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
           <div id="sessionTracker" title="Session spend tracker">
@@ -2177,15 +2231,15 @@
             <strong id="sessionCost">$0.0000</strong>
             <span id="sessionTokens" style="opacity:0.6;font-size:11px;"></span>
           </div>
-          <button id="historyBtn" class="button" title="Prompt History & Library" style="background:#1e293b;">
+          <button id="historyBtn" class="button" title="Prompt History & Library" style="background:var(--surface-2);color:var(--text-color);border:1px solid var(--border-color);">
             <span class="material-icons">history</span>
             History
           </button>
-          <button id="batchBtn" class="button" title="Batch Prompt Runner" style="background:#1e293b;">
+          <button id="batchBtn" class="button" title="Batch Prompt Runner" style="background:var(--surface-2);color:var(--text-color);border:1px solid var(--border-color);">
             <span class="material-icons">batch_prediction</span>
             Batch
           </button>
-          <button id="imgPlayBtn" class="button" title="Image Generation Playground" style="background:#1e293b;">
+          <button id="imgPlayBtn" class="button" title="Image Generation Playground" style="background:var(--surface-2);color:var(--text-color);border:1px solid var(--border-color);">
             <span class="material-icons">image</span>
             Images
           </button>
@@ -2197,7 +2251,7 @@
             <span class="material-icons">menu_book</span>
             API Guide
           </a>
-          <button id="settingsButton" class="button" title="API Key Settings" style="background: #6b7280;">
+          <button id="settingsButton" class="button" title="API Key Settings" style="background:var(--surface-2);color:var(--text-color);border:1px solid var(--border-color);">
             <span class="material-icons">settings</span>
           </button>
         </div>
@@ -2219,7 +2273,7 @@
             <span class="material-icons">calculate</span>
             <div class="cb-item"><span>Tokens (est):</span> <strong id="cbTokens">—</strong></div>
             <div class="cb-item"><span>Est. cost:</span> <strong id="cbCost">—</strong></div>
-            <div class="cb-item" id="cbModelName" style="margin-left:auto;color:#6366f1;font-weight:600;font-size:11px;"></div>
+            <div class="cb-item" id="cbModelName" style="margin-left:auto;color:#0E7490;font-weight:600;font-size:11px;"></div>
           </div>
         </div>
         <div class="controls">
@@ -2256,7 +2310,7 @@
                 <div class="dl-item" onclick="downloadAllResponses('pdf')"><span class="material-icons">picture_as_pdf</span> PDF</div>
               </div>
             </div>
-            <button id="analyzeButton" class="button" title="Analyze and compare all responses" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); display: none;">
+            <button id="analyzeButton" class="button" title="Analyze and compare all responses" style="background: #0E7490; display: none;">
               <span class="material-icons">insights</span>
               Analyze
             </button>
@@ -2355,7 +2409,7 @@
       </div>
       <div class="batch-footer">
         <button class="button" onclick="closeBatch()" style="background:#e2e8f0;color:#374151;">Cancel</button>
-        <button class="button" id="batchRunBtn" onclick="runBatch()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">
+        <button class="button" id="batchRunBtn" onclick="runBatch()" style="background:#0E7490;">
           <span class="material-icons">play_arrow</span> Run Batch
         </button>
       </div>
@@ -2511,7 +2565,7 @@
       </div>
       <div class="analysis-footer" id="analysisFooter" style="display: none;">
         <div class="dl-dropdown" id="reportDropdownWrap">
-          <button class="button dl-main" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);" onclick="toggleDlDropdown('reportDropdown')">
+          <button class="button dl-main" style="background:#0E7490;" onclick="toggleDlDropdown('reportDropdown')">
             <span class="material-icons">download</span>
             Download Report
             <span class="material-icons" style="font-size:16px;margin-left:2px;">arrow_drop_down</span>
@@ -2637,7 +2691,7 @@
         { main: 'var(--magenta)', light: 'var(--magenta-light)' },
         { main: 'var(--green)', light: 'var(--green-light)' },
         { main: 'var(--red)', light: 'var(--red-light)' },
-        { main: 'var(--purple, #8B5CF6)', light: 'var(--purple-light, #DDD6FE)' }
+        { main: 'var(--purple, #0891B2)', light: 'var(--purple-light, #DDD6FE)' }
     ];
 
     function formatTime(ms) {
@@ -2694,7 +2748,7 @@
       item.dataset.modelId = model.id;
       const priceText = formatPriceBadge(model);
       const type = model.modelType || 'text';
-      const typeColors = { text: '#2a9d8f', image: '#6366f1', video: '#e63946' };
+      const typeColors = { text: '#2a9d8f', image: '#0E7490', video: '#e63946' };
       const typeBadge = `<span style="font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;text-transform:uppercase;background:${typeColors[type] || '#555'};color:#fff;margin-right:5px;vertical-align:middle;">${type}</span>`;
       item.innerHTML = `
         <div class="drawer-top">
@@ -4023,11 +4077,29 @@
         });
       }
       if (a.modelGrades?.length) {
-        md += `## Model Report Card\n\n| Model | Grade | Verdict |\n|-------|-------|---------|\n`;
+        const tiers = a.qualityTiers || {};
+        const tierOf = (m) => {
+          for (const k of ['exceptional','strong','adequate','weak']) {
+            if ((tiers[k]||[]).some(x => x===m || (typeof x==='string' && (x.includes(m)||m.includes(x))))) return k.charAt(0).toUpperCase()+k.slice(1);
+          }
+          return '—';
+        };
+        const metricOf = (m) => {
+          const d = (typeof modelResponses!=='undefined' && modelResponses[m]) || {};
+          let cost='—', tps='—';
+          if (d.costSummary){const mm=d.costSummary.match(/\$([\d.]+)/);if(mm)cost='$'+parseFloat(mm[1]).toFixed(4);}
+          if (d.tokensPerSecond){const mm=d.tokensPerSecond.match(/([\d.]+)\s*tokens\/s/);if(mm)tps=mm[1]+' t/s';}
+          return { cost, tps };
+        };
+        const uniqOf = (m) => { const u=(a.mostUnique||[]).find(x=>x.model===m); return u?.score!=null?`${u.score}/100`:'—'; };
+        md += `## Model Comparison Matrix — what each model brings\n\n`;
+        md += `| Model | Grade | Quality Tier | Uniqueness | Speed | Cost | What it brings | Watch out | Best for |\n`;
+        md += `|-------|-------|--------------|-----------|-------|------|----------------|-----------|----------|\n`;
         a.modelGrades.sort((x,y)=>(x.grade||'Z').localeCompare(y.grade||'Z')).forEach(g => {
-          md += `| ${g.model} | **${g.grade}** | ${g.oneLiner} |\n`;
+          const met = metricOf(g.model);
+          md += `| ${g.model} | **${g.grade||'—'}** | ${tierOf(g.model)} | ${uniqOf(g.model)} | ${met.tps} | ${met.cost} | ${g.strength||g.oneLiner||'—'} | ${g.watchOut||'—'} | ${g.bestFor||'—'} |\n`;
         });
-        md += '\n';
+        md += `\n*Uniqueness scored 0–100 · Speed & Cost are actual per-prompt figures.*\n\n`;
       }
       if (a.blindSpots?.length) {
         md += `## Blind Spots\n\n${a.blindSpots.map(b=>`- ${b}`).join('\n')}\n\n`;
@@ -4321,7 +4393,7 @@
             <p>${label}</p>
             <p class="analysis-hint">Pass ${passNum} of ${totalPasses} · ${responses.length} models</p>
             <div style="margin-top:16px;width:200px;height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;">
-              <div style="height:100%;width:${Math.round(passNum/totalPasses*100)}%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:2px;transition:width 0.4s;"></div>
+              <div style="height:100%;width:${Math.round(passNum/totalPasses*100)}%;background:linear-gradient(90deg,#0E7490,#0891B2);border-radius:2px;transition:width 0.4s;"></div>
             </div>
           </div>`;
       }
@@ -4389,7 +4461,7 @@ Return JSON:
     {"useCase":"balanced perspective","model":"name","why":"short"}
   ],
   "modelGrades": [
-    {"model":"name","grade":"A+|A|A-|B+|B|B-|C+|C|D|F","oneLiner":"one sentence verdict"}
+    {"model":"name","grade":"A+|A|A-|B+|B|B-|C+|C|D|F","oneLiner":"one sentence verdict","strength":"the single biggest thing this model brings (3-6 words)","watchOut":"its main weakness/limitation (3-6 words)","bestFor":"ideal use case in 2-4 words"}
   ]
 }`);
 
@@ -4458,6 +4530,109 @@ Return JSON:
       }
     }
 
+    // Categorical model palette for reports (no purple)
+    const REPORT_PALETTE = ['#0E7490','#15803D','#2563EB','#D97706','#0891B2','#0F7A4D','#B45309','#C2362F','#2563EB','#0E7490'];
+    const REPORT_SOFT    = ['#DDF0F3','#E1F2E9','#E6EEFC','#FBEFD9','#DCF1F6','#E1F2E9','#FAF0DD','#FBE9E7','#E6EEFC','#DDF0F3'];
+
+    function gradeColorCanvas(g) {
+      if (!g) return '#94a3b8';
+      if (g.startsWith('A')) return '#0F7A4D';
+      if (g.startsWith('B')) return '#2563EB';
+      if (g.startsWith('C')) return '#B45309';
+      return '#C2362F';
+    }
+
+    // ═══════════════════════════════════════════════════════
+    //  MODEL COMPARISON MATRIX — "what each model brings"
+    // ═══════════════════════════════════════════════════════
+    function buildComparisonMatrix(a) {
+      const grades = a.modelGrades || [];
+      // Establish the model list (prefer graded models, fall back to mostUnique)
+      let names = grades.map(g => g.model).filter(Boolean);
+      if (!names.length) names = (a.mostUnique || []).map(u => u.model).filter(Boolean);
+      names = [...new Set(names)];
+      if (names.length < 2) return '';
+
+      const tiers = a.qualityTiers || {};
+      const tierMeta = {
+        exceptional: { label: 'Exceptional', c: '#0F7A4D', bg: '#E1F2E9' },
+        strong:      { label: 'Strong',      c: '#2563EB', bg: '#E6EEFC' },
+        adequate:    { label: 'Adequate',    c: '#B45309', bg: '#FAF0DD' },
+        weak:        { label: 'Weak',        c: '#C2362F', bg: '#FBE9E7' },
+      };
+      const tierOf = (m) => {
+        for (const k of Object.keys(tierMeta)) {
+          if ((tiers[k] || []).some(x => x === m || (typeof x === 'string' && x.includes(m)) || m.includes(x))) return k;
+        }
+        return null;
+      };
+      const uniqOf = (m) => (a.mostUnique || []).find(u => u.model === m);
+
+      // Pull real per-model metrics from the live response store
+      const metricOf = (m) => {
+        const d = (typeof modelResponses !== 'undefined' && modelResponses[m]) || {};
+        let cost = null, tps = null;
+        if (d.costSummary) { const mm = d.costSummary.match(/\$([\d.]+)/); if (mm) cost = parseFloat(mm[1]); }
+        if (d.tokensPerSecond) { const mm = d.tokensPerSecond.match(/([\d.]+)\s*tokens\/s/); if (mm) tps = parseFloat(mm[1]); }
+        return { cost, tps, time: (d.time || '').trim(), len: (d.content || '').length };
+      };
+
+      const maxTps  = Math.max(1, ...names.map(m => metricOf(m).tps  || 0));
+      const maxLen  = Math.max(1, ...names.map(m => metricOf(m).len  || 0));
+
+      const shortName = (m) => m.split('/').pop().replace(/-\d{8}$/, '');
+
+      const rows = names.map((m, i) => {
+        const c = REPORT_PALETTE[i % REPORT_PALETTE.length];
+        const g = grades.find(x => x.model === m) || {};
+        const u = uniqOf(m);
+        const tk = tierOf(m);
+        const tm = tk ? tierMeta[tk] : null;
+        const met = metricOf(m);
+        const uScore = u?.score != null ? Math.max(0, Math.min(100, u.score)) : null;
+        const tpsPct = met.tps ? Math.round(met.tps / maxTps * 100) : 0;
+
+        return `<tr>
+          <td><div class="cmp-model"><span class="cmp-dot" style="background:${c}"></span>${shortName(m)}</div></td>
+          <td><span class="cmp-grade" style="background:${gradeColorCanvas(g.grade)}">${g.grade || '—'}</span></td>
+          <td>${tm ? `<span class="cmp-chip" style="background:${tm.bg};color:${tm.c}">${tm.label}</span>` : '<span class="cmp-mono">—</span>'}</td>
+          <td>${uScore != null ? `<div class="cmp-bar-wrap"><div class="cmp-bar"><i style="width:${uScore}%;background:${c}"></i></div><span class="cmp-num">${uScore}</span></div>` : '<span class="cmp-mono">—</span>'}</td>
+          <td>${met.tps ? `<div class="cmp-bar-wrap"><div class="cmp-bar"><i style="width:${tpsPct}%;background:${c}"></i></div><span class="cmp-num">${met.tps}t/s</span></div>` : '<span class="cmp-mono">—</span>'}</td>
+          <td>${met.cost != null ? `<span class="cmp-num">$${met.cost.toFixed(4)}</span>` : '<span class="cmp-mono">—</span>'}</td>
+          <td style="min-width:200px;">${g.strength ? `<div class="cmp-strength">${g.strength}</div>` : ''}${g.watchOut ? `<div class="cmp-watch" style="font-size:11.5px;margin-top:3px;">⚠ ${g.watchOut}</div>` : (!g.strength ? '<span class="cmp-mono">—</span>' : '')}</td>
+          <td>${g.bestFor ? `<span class="cmp-chip" style="background:${REPORT_SOFT[i % REPORT_SOFT.length]};color:${c}">${g.bestFor}</span>` : '<span class="cmp-mono">—</span>'}</td>
+        </tr>`;
+      }).join('');
+
+      return `
+          <div class="cmp-wrap">
+            <table class="cmp-table">
+              <thead><tr>
+                <th>Model</th><th>Grade</th><th>Quality tier</th><th>Uniqueness</th>
+                <th>Speed</th><th>Cost</th><th>What it brings</th><th>Best for</th>
+              </tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+          <div class="cmp-legend">
+            <span><span class="cmp-grade" style="background:#0F7A4D;min-width:22px;height:18px;font-size:10px;">A</span> top grade</span>
+            <span><span class="cmp-grade" style="background:#2563EB;min-width:22px;height:18px;font-size:10px;">B</span> solid</span>
+            <span><span class="cmp-grade" style="background:#B45309;min-width:22px;height:18px;font-size:10px;">C</span> adequate</span>
+            <span>Uniqueness &amp; Speed bars are relative across the compared models · Cost is per-prompt actual spend.</span>
+          </div>`;
+    }
+
+    // In-app wrapper (uses analysis-section chrome)
+    function buildComparisonSection(a) {
+      const inner = buildComparisonMatrix(a);
+      if (!inner) return '';
+      return `
+        <div class="analysis-section">
+          <div class="analysis-section-title"><span class="material-icons">table_chart</span> Model Comparison Matrix — what each model brings</div>
+          ${inner}
+        </div>`;
+    }
+
     // ═══════════════════════════════════════════════════════
     //  DISPLAY — rich visual analysis report
     // ═══════════════════════════════════════════════════════
@@ -4500,7 +4675,7 @@ Return JSON:
           <div class="stat-card">
             <div class="stat-value">${summary.diversityScore}/10</div>
             <div style="height:4px;background:#e2e8f0;border-radius:2px;margin-top:6px;overflow:hidden;">
-              <div style="height:100%;width:${diversityPct}%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:2px;"></div>
+              <div style="height:100%;width:${diversityPct}%;background:linear-gradient(90deg,#0E7490,#0891B2);border-radius:2px;"></div>
             </div>
             <div class="stat-label">Diversity</div>
           </div>
@@ -4520,14 +4695,17 @@ Return JSON:
           <div class="common-themes"><p style="color:var(--text-color);line-height:1.8;margin:0;font-size:14px;">${overallAnalysis}</p></div>
         </div>
 
+        <!-- ── MODEL COMPARISON MATRIX ────────────────── -->
+        ${buildComparisonSection(a)}
+
         <!-- ── BEST QUOTE ─────────────────────────────── -->
         ${bestQuote?.quote ? `
-        <div class="analysis-section" style="background:linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%);border:1px solid rgba(139,92,246,0.2);">
-          <div class="analysis-section-title"><span class="material-icons" style="color:#8b5cf6;">format_quote</span> Best Quote</div>
-          <blockquote style="margin:0;padding:16px 20px;border-left:4px solid #8b5cf6;font-style:italic;color:#374151;line-height:1.8;font-size:15px;">
+        <div class="analysis-section" style="background:linear-gradient(135deg,#DDF0F3 0%,#DDF0F3 100%);border:1px solid rgba(8,145,178,0.2);">
+          <div class="analysis-section-title"><span class="material-icons" style="color:#0891B2;">format_quote</span> Best Quote</div>
+          <blockquote style="margin:0;padding:16px 20px;border-left:4px solid #0891B2;font-style:italic;color:#374151;line-height:1.8;font-size:15px;">
             "${bestQuote.quote}"
           </blockquote>
-          <div style="margin-top:8px;font-size:12px;color:#7c3aed;font-weight:600;">— ${bestQuote.model}</div>
+          <div style="margin-top:8px;font-size:12px;color:#0b5a6e;font-weight:600;">— ${bestQuote.model}</div>
           ${bestQuote.why ? `<div style="margin-top:4px;font-size:12px;color:#6b7280;">${bestQuote.why}</div>` : ''}
         </div>
         ` : ''}
@@ -4556,7 +4734,7 @@ Return JSON:
           <div class="ranking-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
             ${(mostUnique || []).slice(0, 5).map((item, i) => {
               const medals = ['gold','silver','bronze','',''];
-              const mColors = ['#fbbf24','#9ca3af','#d97706','#6366f1','#6366f1'];
+              const mColors = ['#fbbf24','#9ca3af','#d97706','#0E7490','#0E7490'];
               return `<div class="ranking-card ${medals[i]}" style="padding:16px;border-radius:12px;border:2px solid ${mColors[i]}30;position:relative;">
                 <div class="ranking-badge" style="background:${mColors[i]};position:absolute;top:-10px;right:12px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:13px;">${i+1}</div>
                 ${item.score ? `<div style="font-size:24px;font-weight:800;color:${mColors[i]};font-family:'Space Grotesk';">${item.score}</div>` : ''}
@@ -4574,7 +4752,7 @@ Return JSON:
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;">
             ${bestForUseCase.map(u => `
               <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px;">
-                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#6366f1;margin-bottom:6px;">${u.useCase}</div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#0E7490;margin-bottom:6px;">${u.useCase}</div>
                 <div style="font-weight:700;font-size:14px;color:#0f172a;">${u.model}</div>
                 <div style="font-size:12px;color:#64748b;margin-top:4px;line-height:1.4;">${u.why}</div>
               </div>
@@ -4597,8 +4775,8 @@ Return JSON:
                   <div style="font-weight:600;font-size:14px;color:#0f172a;margin-bottom:4px;">${theme.theme}</div>
                   ${theme.description ? `<div style="font-size:13px;color:#475569;line-height:1.6;margin-bottom:6px;">${theme.description}</div>` : ''}
                   <div class="theme-models" style="display:flex;flex-wrap:wrap;gap:4px;font-size:11px;">
-                    <span style="color:#6366f1;font-weight:600;margin-right:4px;">${theme.modelCount || theme.models?.length || '?'} models</span>
-                    ${(theme.models || []).slice(0,5).map(m => `<span style="background:rgba(99,102,241,0.08);color:#6366f1;padding:1px 8px;border-radius:999px;">${m}</span>`).join('')}
+                    <span style="color:#0E7490;font-weight:600;margin-right:4px;">${theme.modelCount || theme.models?.length || '?'} models</span>
+                    ${(theme.models || []).slice(0,5).map(m => `<span style="background:rgba(14,116,144,0.08);color:#0E7490;padding:1px 8px;border-radius:999px;">${m}</span>`).join('')}
                     ${(theme.models || []).length > 5 ? `<span style="color:#94a3b8;">+${theme.models.length - 5} more</span>` : ''}
                   </div>
                 </div>
@@ -4635,8 +4813,8 @@ Return JSON:
           <div class="analysis-section-title"><span class="material-icons">lightbulb</span> Unique Insights (${uniqueInsights.length})</div>
           <div class="unique-insights">
             ${uniqueInsights.map(ins => {
-              const catColors = {practical:'#10b981',creative:'#8b5cf6',contrarian:'#ef4444','deep-dive':'#3b82f6',meta:'#f59e0b'};
-              const cc = catColors[ins.category] || '#6366f1';
+              const catColors = {practical:'#10b981',creative:'#0891B2',contrarian:'#ef4444','deep-dive':'#3b82f6',meta:'#f59e0b'};
+              const cc = catColors[ins.category] || '#0E7490';
               return `
               <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9;">
                 <div style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${cc}15;color:${cc};">
@@ -4711,13 +4889,13 @@ Return JSON:
             ${Object.entries(responsePatterns.structureTypes || {}).map(([k,v]) => `
               <div style="text-align:center;">
                 <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">${k.replace(/([A-Z])/g,' $1').trim()}</div>
-                <div style="font-size:16px;font-weight:700;color:#6366f1;">${v}</div>
+                <div style="font-size:16px;font-weight:700;color:#0E7490;">${v}</div>
               </div>
             `).join('')}
             ${Object.entries(responsePatterns.toneSpread || {}).map(([k,v]) => `
               <div style="text-align:center;">
                 <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">${k}</div>
-                <div style="font-size:16px;font-weight:700;color:#8b5cf6;">${v}</div>
+                <div style="font-size:16px;font-weight:700;color:#0891B2;">${v}</div>
               </div>
             `).join('')}
           </div>
@@ -4730,8 +4908,8 @@ Return JSON:
           <div class="analysis-section-title"><span class="material-icons">help_outline</span> Suggested Follow-Up Questions</div>
           <div style="display:flex;flex-direction:column;gap:8px;">
             ${followUpQuestions.map(q => `
-              <div style="display:flex;gap:10px;align-items:center;padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#6366f1';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc'" onclick="document.getElementById('prompt').value=this.querySelector('.fq-text').textContent;document.getElementById('prompt').focus();if(window.estimateCost)window.estimateCost();">
-                <span class="material-icons" style="font-size:16px;color:#6366f1;">arrow_forward</span>
+              <div style="display:flex;gap:10px;align-items:center;padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#0E7490';this.style.background='#DDF0F3'" onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc'" onclick="document.getElementById('prompt').value=this.querySelector('.fq-text').textContent;document.getElementById('prompt').focus();if(window.estimateCost)window.estimateCost();">
+                <span class="material-icons" style="font-size:16px;color:#0E7490;">arrow_forward</span>
                 <span class="fq-text" style="font-size:13px;color:#374151;">${q}</span>
               </div>
             `).join('')}
@@ -4833,16 +5011,17 @@ Return JSON:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Venice AI - Response Analysis Report</title>
+  <title>V's MultiGen AI Chat — Response Analysis Report</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root{--primary:#1a1a2e;--accent:#6366f1;--accent-light:#818cf8;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--bg:#f8f9fc;--surface:#fff;--text:#1a1a2e;--text2:#6b7280;--border:#e5e7eb;}
+    :root{--primary:#15201F;--accent:#0E7490;--accent-light:#5BA7C9;--success:#0F7A4D;--warning:#B45309;--danger:#C2362F;--bg:#F2F6F6;--surface:#fff;--text:#15201F;--text2:#4F5E5B;--border:#E0E9E8;}
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
     .rc{max-width:1000px;margin:0 auto;padding:40px 20px;}
-    .hdr{background:linear-gradient(135deg,var(--primary),#0f3460);color:#fff;padding:48px 40px;border-radius:20px;margin-bottom:32px;text-align:center;}
-    .hdr h1{font-family:'Space Grotesk';font-size:32px;margin-bottom:8px;}.hdr p{opacity:.8;font-size:14px;}
+    .hdr{background:linear-gradient(135deg,#0E7490,#0b5a6e);color:#fff;padding:48px 40px;border-radius:20px;margin-bottom:32px;text-align:center;}
+    .hdr .brand{font-family:'Space Grotesk';font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-bottom:10px;}
+    .hdr h1{font-family:'Space Grotesk';font-size:32px;margin-bottom:8px;}.hdr p{opacity:.85;font-size:14px;}
     .hdr .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);padding:8px 16px;border-radius:20px;margin-top:16px;font-size:13px;}
     .sec{background:var(--surface);border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1);}
     .sec-t{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:600;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border);}
@@ -4862,13 +5041,32 @@ Return JSON:
     .ti:last-child{border-bottom:none;}
     .ticon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     .tt{font-weight:600;font-size:14px;margin-bottom:4px;}.tm{font-size:11px;color:var(--text2);}
-    .tm span{background:rgba(99,102,241,.1);color:var(--accent);padding:1px 8px;border-radius:999px;margin-right:4px;font-weight:500;}
+    .tm span{background:rgba(14,116,144,.1);color:var(--accent);padding:1px 8px;border-radius:999px;margin-right:4px;font-weight:500;}
     .pb{background:var(--bg);border-left:4px solid var(--accent);padding:16px 20px;border-radius:0 12px 12px 0;font-style:italic;color:var(--text2);}
-    .bq{margin:0;padding:16px 20px;border-left:4px solid #8b5cf6;font-style:italic;color:#374151;line-height:1.8;font-size:15px;background:#f5f3ff;border-radius:0 10px 10px 0;}
+    .bq{margin:0;padding:16px 20px;border-left:4px solid #0891B2;font-style:italic;color:#374151;line-height:1.8;font-size:15px;background:#DDF0F3;border-radius:0 10px 10px 0;}
     .gc{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;}
     .gci{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);}
     .gcg{font-size:18px;font-weight:800;font-family:'Space Grotesk';min-width:30px;}
     .ft{text-align:center;padding:32px;color:var(--text2);font-size:13px;}.ft a{color:var(--accent);text-decoration:none;}
+    /* model comparison matrix */
+    .cmp-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;}
+    .cmp-table{width:100%;border-collapse:collapse;min-width:760px;font-size:13px;}
+    .cmp-table thead th{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);text-align:left;padding:12px 14px;background:#F4FAFA;border-bottom:2px solid var(--border);white-space:nowrap;}
+    .cmp-table tbody td{padding:13px 14px;border-bottom:1px solid #eef1f0;vertical-align:middle;}
+    .cmp-table tbody tr:last-child td{border-bottom:none;}
+    .cmp-model{display:flex;align-items:center;gap:9px;font-weight:600;color:var(--text);white-space:nowrap;}
+    .cmp-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+    .cmp-grade{display:inline-grid;place-items:center;min-width:34px;height:26px;padding:0 8px;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#fff;}
+    .cmp-chip{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap;}
+    .cmp-bar-wrap{display:flex;align-items:center;gap:8px;min-width:120px;}
+    .cmp-bar{flex:1;height:8px;border-radius:5px;background:#eef4f4;overflow:hidden;}
+    .cmp-bar i{display:block;height:100%;border-radius:5px;}
+    .cmp-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);white-space:nowrap;}
+    .cmp-mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);}
+    .cmp-strength{color:#0F7A4D;font-weight:600;}
+    .cmp-watch{color:var(--text2);}
+    .cmp-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:11px;color:var(--text2);}
+    .cmp-legend span{display:inline-flex;align-items:center;gap:5px;}
     @media(max-width:768px){.sg,.rg{grid-template-columns:1fr;}}
     @media print{body{background:#fff;}.sec{box-shadow:none;border:1px solid var(--border);}}
   </style>
@@ -4876,8 +5074,9 @@ Return JSON:
 <body>
   <div class="rc">
     <div class="hdr">
+      <div class="brand">V's MultiGen AI Chat</div>
       <h1>Response Analysis Report</h1>
-      <p>Venice AI Multi-Model Comparison &middot; ${summary.totalModels} models analyzed</p>
+      <p>Multi-Model AI Evaluation &middot; ${summary.totalModels} models analyzed</p>
       <div class="badge"><span class="material-icons" style="font-size:16px;">schedule</span> ${timestamp}</div>
     </div>
 
@@ -4893,11 +5092,17 @@ Return JSON:
 
     <div class="sec"><div class="sec-t"><span class="material-icons">summarize</span> Executive Summary</div><p style="line-height:1.8;font-size:14px;">${rpt.overallAnalysis}</p></div>
 
+    ${buildComparisonMatrix(rpt) ? `
+    <div class="sec">
+      <div class="sec-t"><span class="material-icons">table_chart</span> Model Comparison Matrix — what each model brings</div>
+      ${buildComparisonMatrix(rpt)}
+    </div>` : ''}
+
     ${rpt.bestQuote?.quote ? `
-    <div class="sec" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid rgba(139,92,246,.2);">
-      <div class="sec-t"><span class="material-icons" style="color:#8b5cf6;">format_quote</span> Best Quote</div>
+    <div class="sec" style="background:linear-gradient(135deg,#DDF0F3,#DDF0F3);border:1px solid rgba(8,145,178,.2);">
+      <div class="sec-t"><span class="material-icons" style="color:#0891B2;">format_quote</span> Best Quote</div>
       <blockquote class="bq">"${rpt.bestQuote.quote}"</blockquote>
-      <div style="margin-top:8px;font-size:12px;color:#7c3aed;font-weight:600;">— ${rpt.bestQuote.model}</div>
+      <div style="margin-top:8px;font-size:12px;color:#0b5a6e;font-weight:600;">— ${rpt.bestQuote.model}</div>
       ${rpt.bestQuote.why?`<div style="margin-top:4px;font-size:12px;color:#6b7280;">${rpt.bestQuote.why}</div>`:''}
     </div>` : ''}
 
@@ -4919,7 +5124,7 @@ Return JSON:
     <div class="sec">
       <div class="sec-t"><span class="material-icons">star</span> Top 5 Most Unique</div>
       <div class="rg">
-        ${(rpt.mostUnique||[]).slice(0,5).map((it,i)=>{const c=['#fbbf24','#9ca3af','#d97706','#6366f1','#6366f1'][i];const cls=['g','s','b','',''][i];
+        ${(rpt.mostUnique||[]).slice(0,5).map((it,i)=>{const c=['#fbbf24','#9ca3af','#d97706','#0E7490','#0E7490'][i];const cls=['g','s','b','',''][i];
           return `<div class="rcard ${cls}" style="padding:16px;"><div class="rbadge" style="background:${c};">${i+1}</div>
           ${it.score?`<div style="font-size:22px;font-weight:800;color:${c};font-family:'Space Grotesk';">${it.score}</div>`:''}
           <div class="rm">${it.model}</div><div class="rr">${it.reason}</div></div>`;}).join('')}
@@ -4963,8 +5168,8 @@ Return JSON:
     <div class="sec">
       <div class="sec-t"><span class="material-icons">lightbulb</span> Unique Insights (${rpt.uniqueInsights.length})</div>
       <div class="tl">
-        ${rpt.uniqueInsights.map(ins=>`<div class="ti"><div class="ticon" style="background:rgba(99,102,241,.15);color:var(--accent);"><span class="material-icons">auto_awesome</span></div>
-          <div><div class="tt">${ins.insight}</div><div class="tm"><span>${ins.model}</span> ${ins.category?`<em style="font-size:10px;text-transform:uppercase;color:#8b5cf6;">${ins.category}</em>`:''} ${ins.significance||''}</div></div></div>`).join('')}
+        ${rpt.uniqueInsights.map(ins=>`<div class="ti"><div class="ticon" style="background:rgba(14,116,144,.15);color:var(--accent);"><span class="material-icons">auto_awesome</span></div>
+          <div><div class="tt">${ins.insight}</div><div class="tm"><span>${ins.model}</span> ${ins.category?`<em style="font-size:10px;text-transform:uppercase;color:#0891B2;">${ins.category}</em>`:''} ${ins.significance||''}</div></div></div>`).join('')}
       </div>
     </div>` : ''}
 

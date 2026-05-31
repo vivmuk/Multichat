@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Venice AI - Model Explorer Dashboard</title>
+  <title>V's MultiGen AI Chat — Model Explorer Dashboard</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="logo.png">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
@@ -14,9 +16,9 @@
       --primary: #0f172a;
       --primary-light: #1e293b;
       --primary-mid: #334155;
-      --accent: #6366f1;
-      --accent-light: #818cf8;
-      --accent-bg: rgba(99, 102, 241, 0.08);
+      --accent: #0E7490;
+      --accent-light: #5BA7C9;
+      --accent-bg: rgba(14,116,144, 0.08);
       --red: #ef4444;
       --red-bg: rgba(239, 68, 68, 0.1);
       --orange: #f97316;
@@ -31,35 +33,38 @@
       --cyan-bg: rgba(6, 182, 212, 0.1);
       --blue: #3b82f6;
       --blue-bg: rgba(59, 130, 246, 0.1);
-      --indigo: #6366f1;
-      --indigo-bg: rgba(99, 102, 241, 0.1);
-      --violet: #8b5cf6;
-      --violet-bg: rgba(139, 92, 246, 0.1);
-      --purple: #a855f7;
-      --purple-bg: rgba(168, 85, 247, 0.1);
+      --indigo: #0E7490;
+      --indigo-bg: rgba(14,116,144, 0.1);
+      --violet: #0891B2;
+      --violet-bg: rgba(8,145,178, 0.1);
+      --purple: #2563EB;
+      --purple-bg: rgba(37,99,235, 0.1);
       --pink: #ec4899;
       --pink-bg: rgba(236, 72, 153, 0.1);
       --rose: #f43f5e;
       --rose-bg: rgba(244, 63, 94, 0.1);
       --slate: #64748b;
       --slate-bg: rgba(100, 116, 139, 0.1);
-      --background: #f8fafc;
+      --background: #F2F6F6;
       --surface: #ffffff;
-      --surface-hover: #f1f5f9;
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
+      --surface-2: #F4FAFA;
+      --surface-hover: #F4FAFA;
+      --text-primary: #15201F;
+      --text-secondary: #4F5E5B;
       --text-muted: #94a3b8;
-      --border: #e2e8f0;
-      --border-light: #f1f5f9;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
-      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.03);
-      --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.04);
-      --radius-sm: 6px;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-      --radius-xl: 16px;
+      --border: #E0E9E8;
+      --border-light: #F4FAFA;
+      --shadow-sm: 0 2px 4px rgba(8,40,45,.05);
+      --shadow-md: 0 2px 4px rgba(8,40,45,.05), 0 14px 30px -12px rgba(8,40,45,.20);
+      --shadow-lg: 0 10px 15px -3px rgba(8,40,45,.10), 0 4px 6px -4px rgba(8,40,45,.06);
+      --shadow-xl: 0 20px 25px -5px rgba(8,40,45,.12), 0 8px 10px -6px rgba(8,40,45,.06);
+      --radius-sm: 12px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
+      --radius-xl: 22px;
       --radius-full: 9999px;
+      --font-head: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
     }
 
     /* ===== DARK MODE ===== */
@@ -69,7 +74,7 @@
       --border: #334155; --border-light: #1e293b;
       --shadow-sm: 0 1px 2px rgba(0,0,0,0.4); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5);
     }
-    [data-theme="dark"] .model-table tbody tr:hover { background: rgba(99,102,241,0.15); }
+    [data-theme="dark"] .model-table tbody tr:hover { background: rgba(14,116,144,0.15); }
     [data-theme="dark"] .search-box { background: #0f172a; border-color: #334155; }
     [data-theme="dark"] .search-box:focus-within { background: #1e293b; }
     [data-theme="dark"] .loading-overlay { background: rgba(15,23,42,0.97); }
@@ -93,12 +98,15 @@
     }
     .nav-brand { display: flex; align-items: center; gap: 12px; color: white; }
     .nav-brand .logo {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--violet) 100%);
+      width: 38px; height: 38px;
+      background: #fff;
       border-radius: var(--radius-md);
       display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
     }
-    .nav-brand .logo .material-icons { font-size: 20px; color: white; }
+    .nav-brand .logo img { width: 100%; height: 100%; object-fit: contain; }
+    .nav-brand .logo .material-icons { font-size: 20px; color: var(--accent); }
     .nav-brand h1 { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
     .nav-brand span { font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 400; }
     .nav-actions { display: flex; align-items: center; gap: 8px; }
@@ -187,7 +195,7 @@
 
     /* Chip colors */
     .chip-reasoning { background: var(--violet-bg); color: var(--violet); }
-    .chip-reasoning.active { background: var(--violet); color: white; border-color: var(--violet); box-shadow: 0 2px 8px rgba(139,92,246,0.3); }
+    .chip-reasoning.active { background: var(--violet); color: white; border-color: var(--violet); box-shadow: 0 2px 8px rgba(8,145,178,0.3); }
     .chip-reasoning:hover:not(.active) { border-color: var(--violet); }
 
     .chip-vision { background: var(--blue-bg); color: var(--blue); }
@@ -211,7 +219,7 @@
     .chip-schema:hover:not(.active) { border-color: var(--pink); }
 
     .chip-logprobs { background: var(--indigo-bg); color: var(--indigo); }
-    .chip-logprobs.active { background: var(--indigo); color: white; border-color: var(--indigo); box-shadow: 0 2px 8px rgba(99,102,241,0.3); }
+    .chip-logprobs.active { background: var(--indigo); color: white; border-color: var(--indigo); box-shadow: 0 2px 8px rgba(14,116,144,0.3); }
     .chip-logprobs:hover:not(.active) { border-color: var(--indigo); }
 
     .chip-audio { background: var(--teal-bg); color: var(--teal); }
@@ -235,7 +243,7 @@
     .chip-anonymized:hover:not(.active) { border-color: var(--slate); }
 
     .chip-recommended { background: var(--purple-bg); color: var(--purple); }
-    .chip-recommended.active { background: var(--purple); color: white; border-color: var(--purple); box-shadow: 0 2px 8px rgba(168,85,247,0.3); }
+    .chip-recommended.active { background: var(--purple); color: white; border-color: var(--purple); box-shadow: 0 2px 8px rgba(37,99,235,0.3); }
     .chip-recommended:hover:not(.active) { border-color: var(--purple); }
 
     .clear-filters {
@@ -620,8 +628,8 @@
   <!-- Top Nav -->
   <nav class="top-nav">
     <div class="nav-brand">
-      <div class="logo"><span class="material-icons">hub</span></div>
-      <div><h1>Venice AI</h1><span>Model Explorer</span></div>
+      <div class="logo"><img src="logo.png" alt="V's MultiGen AI Chat" onerror="this.parentElement.innerHTML='&lt;span class=&quot;material-icons&quot;&gt;hub&lt;/span&gt;'"></div>
+      <div><h1>V's MultiGen AI Chat</h1><span>Model Explorer</span></div>
     </div>
     <div class="nav-actions">
       <button class="nav-btn secondary" onclick="exportCSV()" title="Export as CSV">
