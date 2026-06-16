@@ -8,3 +8,8 @@
 # Each .html file (index.html, dashboard.html, api-guide.html) is a real route.
 # VENICE_API_KEY is injected at build time via build.js (set in Netlify dashboard).
 
+[[redirects]]
+  from = "/fusion"
+  to = "/?fusion"
+  status = 302
+
