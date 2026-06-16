@@ -2191,6 +2191,163 @@
     .rb-cost{background:#dcfce7;color:#166534;}.rb-speed{background:#fff7ed;color:#c2410c;}
     .rb .material-icons{font-size:12px;}
 
+    /* ═══════════════════════════════════════════════════════════════
+       FUSION OVERLAY — dark sci-fi skin, completely separate design
+       ═══════════════════════════════════════════════════════════════ */
+    .fusion-overlay{display:none;position:fixed;inset:0;z-index:5000;background:#040812;flex-direction:column;font-family:'Space Grotesk',system-ui,sans-serif;color:#e2e8f0;overflow:hidden;}
+    .fusion-overlay.open{display:flex;}
+
+    .fusion-topbar{flex-shrink:0;display:flex;align-items:center;gap:20px;padding:14px 24px;background:rgba(10,15,35,0.97);border-bottom:1px solid rgba(99,102,241,0.25);backdrop-filter:blur(20px);}
+    .fusion-brand{display:flex;align-items:center;gap:12px;min-width:200px;}
+    .fusion-icon-wrap{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#6366f1,#06b6d4);display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(99,102,241,0.45);}
+    .fusion-icon-wrap .material-icons{color:#fff;font-size:22px;}
+    .fusion-title{font-size:20px;font-weight:800;letter-spacing:4px;background:linear-gradient(135deg,#818cf8,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:0;line-height:1;}
+    .fusion-subtitle{font-size:10px;color:#475569;margin:2px 0 0;letter-spacing:1px;text-transform:uppercase;}
+
+    .fusion-presets{display:flex;gap:8px;flex:1;justify-content:center;}
+    .fusion-preset-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 18px;border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#94a3b8;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;transition:all 0.2s;white-space:nowrap;}
+    .fusion-preset-btn:hover{border-color:rgba(99,102,241,0.4);color:#e2e8f0;background:rgba(99,102,241,0.1);}
+    .fusion-preset-btn.active{border-color:#6366f1;color:#fff;background:rgba(99,102,241,0.18);box-shadow:0 0 14px rgba(99,102,241,0.3);}
+    .fusion-preset-btn.dragon.active{border-color:#f59e0b;background:rgba(245,158,11,0.12);box-shadow:0 0 14px rgba(245,158,11,0.28);color:#fbbf24;}
+    .fusion-preset-btn.spark.active{border-color:#10b981;background:rgba(16,185,129,0.12);box-shadow:0 0 14px rgba(16,185,129,0.28);color:#34d399;}
+    .preset-emoji{font-size:16px;line-height:1;}
+    .preset-name{font-size:13px;font-weight:700;}
+    .preset-sub{font-size:10px;font-weight:400;opacity:0.65;}
+
+    .fusion-close-btn{width:36px;height:36px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#64748b;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-left:auto;}
+    .fusion-close-btn:hover{color:#e2e8f0;background:rgba(255,255,255,0.1);}
+    .fusion-close-btn .material-icons{font-size:18px;}
+
+    .fusion-body{flex:1;display:flex;overflow:hidden;}
+
+    /* sidebar */
+    .fusion-sidebar{width:340px;flex-shrink:0;background:#060b18;border-right:1px solid rgba(99,102,241,0.15);overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:18px;}
+    .fusion-sidebar::-webkit-scrollbar{width:3px;} .fusion-sidebar::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.3);border-radius:2px;}
+    .fusion-field-group{display:flex;flex-direction:column;gap:8px;}
+    .fusion-label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#475569;display:flex;align-items:center;gap:8px;margin-bottom:2px;}
+    .fusion-step-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;}
+    .fusion-step-dot.s1{background:linear-gradient(135deg,#6366f1,#818cf8);color:#fff;}
+    .fusion-step-dot.s2{background:linear-gradient(135deg,#d97706,#f59e0b);color:#000;}
+
+    .fusion-textarea{width:100%;min-height:90px;max-height:170px;background:rgba(255,255,255,0.04);border:1px solid rgba(99,102,241,0.2);border-radius:10px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:13px;padding:12px;resize:vertical;outline:none;transition:border-color 0.2s;}
+    .fusion-textarea:focus{border-color:rgba(99,102,241,0.5);box-shadow:0 0 0 3px rgba(99,102,241,0.08);}
+    .fusion-textarea::placeholder{color:#334155;}
+
+    .fusion-model-row{display:flex;align-items:center;gap:8px;}
+    .fusion-model-idx{width:22px;height:22px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:rgba(99,102,241,0.12);color:#818cf8;border:1px solid rgba(99,102,241,0.22);}
+    .fusion-model-idx.ji{background:rgba(245,158,11,0.12);color:#fbbf24;border-color:rgba(245,158,11,0.28);}
+
+    .fusion-select{flex:1;padding:7px 28px 7px 10px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(99,102,241,0.18);color:#e2e8f0;font-family:'Inter',sans-serif;font-size:12px;outline:none;cursor:pointer;transition:border-color 0.2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M5 6L0 0h10z' fill='%236366f1'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
+    .fusion-select:focus{border-color:rgba(99,102,241,0.5);}
+    .fusion-select option{background:#0a0f1e;color:#e2e8f0;}
+
+    .fusion-divider{height:1px;background:rgba(99,102,241,0.1);margin:2px 0;}
+
+    .fusion-toggle-row{display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.025);}
+    .fusion-toggle-row input[type="checkbox"]{accent-color:#6366f1;width:14px;height:14px;}
+    .fusion-toggle-label{font-size:13px;font-weight:500;color:#cbd5e1;}
+    .fusion-toggle-desc{font-size:11px;color:#334155;margin-left:auto;}
+
+    .fusion-run-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#6366f1,#06b6d4);border:none;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.5px;transition:all 0.2s;box-shadow:0 4px 24px rgba(99,102,241,0.4);}
+    .fusion-run-btn:hover{transform:translateY(-1px);box-shadow:0 6px 32px rgba(99,102,241,0.55);}
+    .fusion-run-btn:disabled{opacity:0.45;transform:none;cursor:not-allowed;box-shadow:none;}
+    .fusion-run-btn .material-icons{font-size:18px;}
+
+    /* pipeline */
+    .fusion-pipeline{flex:1;overflow-y:auto;padding:24px;background:#040812;background-image:radial-gradient(ellipse at 20% 50%,rgba(99,102,241,0.04) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,0.04) 0%,transparent 60%);}
+    .fusion-pipeline::-webkit-scrollbar{width:3px;} .fusion-pipeline::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.3);border-radius:2px;}
+
+    .fusion-idle-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:460px;text-align:center;gap:20px;}
+    .fusion-idle-icon{width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(6,182,212,0.15));border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;box-shadow:0 0 50px rgba(99,102,241,0.08);}
+    .fusion-idle-icon .material-icons{font-size:38px;color:#818cf8;}
+    .fusion-idle-state h2{font-size:22px;font-weight:700;color:#e2e8f0;margin:0;}
+    .fusion-idle-state p{font-size:13px;color:#475569;margin:0;max-width:400px;line-height:1.7;}
+    .fusion-idle-steps{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;}
+    .fusion-idle-step{display:flex;flex-direction:column;align-items:center;gap:6px;max-width:120px;}
+    .idle-step-num{width:30px;height:30px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.28);color:#818cf8;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;}
+    .fusion-idle-step span{font-size:11px;color:#334155;text-align:center;line-height:1.4;}
+    .fusion-idle-arrow{color:#1e293b;font-size:18px;font-weight:300;}
+
+    .fusion-output-wrap{display:flex;flex-direction:column;gap:0;}
+
+    .fusion-step-card{background:rgba(10,15,35,0.85);border:1px solid rgba(99,102,241,0.18);border-radius:16px;overflow:hidden;backdrop-filter:blur(10px);}
+    .fusion-final-card{border-color:rgba(16,185,129,0.28);box-shadow:0 0 40px rgba(16,185,129,0.04);}
+
+    .fusion-step-header{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.05);}
+    .sh-1{background:linear-gradient(90deg,rgba(99,102,241,0.12) 0%,transparent 70%);}
+    .sh-2{background:linear-gradient(90deg,rgba(245,158,11,0.12) 0%,transparent 70%);}
+    .sh-3{background:linear-gradient(90deg,rgba(16,185,129,0.12) 0%,transparent 70%);}
+
+    .fusion-step-badge{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;}
+    .fb-1{background:linear-gradient(135deg,#6366f1,#818cf8);color:#fff;box-shadow:0 0 18px rgba(99,102,241,0.45);}
+    .fb-2{background:linear-gradient(135deg,#d97706,#f59e0b);color:#000;box-shadow:0 0 18px rgba(245,158,11,0.38);}
+    .fb-3{background:linear-gradient(135deg,#059669,#10b981);color:#fff;box-shadow:0 0 18px rgba(16,185,129,0.42);}
+
+    .fusion-step-info h3{margin:0;font-size:15px;font-weight:700;color:#e2e8f0;}
+    .fusion-step-desc{font-size:11px;color:#475569;margin-top:1px;}
+    .fusion-step-status{margin-left:auto;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+    @keyframes fsPulse{0%,100%{opacity:1}50%{opacity:0.35}}
+    .fss-running{color:#818cf8;} .fss-running::before{content:'●';animation:fsPulse 1.2s ease infinite;margin-right:3px;}
+    .fss-done{color:#10b981;} .fss-done::before{content:'✓';margin-right:3px;}
+    .fss-error{color:#f87171;} .fss-error::before{content:'✕';margin-right:3px;}
+
+    .fusion-connector{display:flex;flex-direction:column;align-items:center;padding:6px 0;}
+    .fc-line{width:1px;height:22px;background:linear-gradient(to bottom,rgba(99,102,241,0.3),rgba(6,182,212,0.3));}
+    .fc-dot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#06b6d4);box-shadow:0 0 8px rgba(99,102,241,0.6);}
+
+    .fusion-panel-responses{padding:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .fusion-panel-card{background:rgba(255,255,255,0.025);border:1px solid rgba(99,102,241,0.14);border-radius:10px;overflow:hidden;}
+    .fp-card-header{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(99,102,241,0.05);}
+    .fp-model-badge{font-size:10px;font-weight:700;color:#818cf8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:88%;}
+    .fp-status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+    .fp-status-dot.r{background:#818cf8;animation:fsPulse 1.2s ease infinite;}
+    .fp-status-dot.d{background:#10b981;}
+    .fp-status-dot.e{background:#f87171;}
+    .fp-card-body{padding:10px;max-height:200px;overflow-y:auto;}
+    .fp-card-body::-webkit-scrollbar{width:2px;} .fp-card-body::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.3);}
+    .fp-text{font-size:11.5px;color:#64748b;line-height:1.65;}
+    .fp-text p{margin:0 0 6px;} .fp-text p:last-child{margin-bottom:0;}
+    .fp-text h1,.fp-text h2,.fp-text h3{color:#94a3b8;font-size:13px;margin:8px 0 4px;}
+    .fp-text code{background:rgba(99,102,241,0.1);color:#a5b4fc;padding:1px 4px;border-radius:3px;font-size:10px;}
+    .fp-text pre{background:rgba(0,0,0,0.3);padding:8px;border-radius:6px;overflow-x:auto;margin:6px 0;}
+    .fp-text ul,.fp-text ol{padding-left:14px;margin:4px 0;}
+    .fp-text li{margin-bottom:3px;}
+
+    .fusion-judge-output{padding:14px;}
+    .fusion-judge-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .judge-card{border-radius:10px;padding:12px 14px;border:1px solid;}
+    .judge-card-hdr{font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:5px;text-transform:uppercase;}
+    .judge-card ul{margin:0;padding-left:14px;display:flex;flex-direction:column;gap:5px;}
+    .judge-card li{font-size:12px;line-height:1.55;color:#94a3b8;}
+    .judge-card p{font-size:12px;color:#94a3b8;margin:0;line-height:1.6;}
+    .jc-consensus{background:rgba(16,185,129,0.05);border-color:rgba(16,185,129,0.22);} .jc-consensus .judge-card-hdr{color:#34d399;}
+    .jc-contra{background:rgba(245,158,11,0.05);border-color:rgba(245,158,11,0.22);} .jc-contra .judge-card-hdr{color:#fbbf24;}
+    .jc-unique{background:rgba(99,102,241,0.05);border-color:rgba(99,102,241,0.22);} .jc-unique .judge-card-hdr{color:#818cf8;}
+    .jc-blind{background:rgba(239,68,68,0.05);border-color:rgba(239,68,68,0.18);} .jc-blind .judge-card-hdr{color:#f87171;}
+    .jc-notes{background:rgba(6,182,212,0.05);border-color:rgba(6,182,212,0.18);grid-column:1/-1;} .jc-notes .judge-card-hdr{color:#67e8f9;}
+    .j-model-tag{display:inline-block;padding:1px 5px;border-radius:4px;font-size:9px;font-weight:700;background:rgba(99,102,241,0.18);color:#818cf8;border:1px solid rgba(99,102,241,0.28);margin-right:3px;}
+
+    .fusion-synth-output{padding:20px 24px;}
+    .fusion-synth-text{font-size:14px;color:#cbd5e1;line-height:1.8;}
+    .fusion-synth-text p{margin:0 0 12px;} .fusion-synth-text p:last-child{margin-bottom:0;}
+    .fusion-synth-text h1,.fusion-synth-text h2{color:#e2e8f0;font-family:'Space Grotesk',sans-serif;margin:20px 0 10px;font-size:18px;}
+    .fusion-synth-text h3,.fusion-synth-text h4{color:#cbd5e1;margin:14px 0 7px;font-family:'Space Grotesk',sans-serif;}
+    .fusion-synth-text code{background:rgba(99,102,241,0.14);color:#a5b4fc;padding:2px 6px;border-radius:4px;font-size:12.5px;font-family:'JetBrains Mono',monospace;}
+    .fusion-synth-text pre{background:rgba(0,0,0,0.45);border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:16px;overflow-x:auto;margin:12px 0;}
+    .fusion-synth-text pre code{background:none;padding:0;font-size:12px;}
+    .fusion-synth-text ul,.fusion-synth-text ol{margin:8px 0;padding-left:20px;}
+    .fusion-synth-text li{margin-bottom:5px;}
+    .fusion-synth-text strong{color:#e2e8f0;font-weight:600;}
+    .fusion-synth-text blockquote{border-left:3px solid rgba(99,102,241,0.4);margin:12px 0;padding:8px 16px;color:#64748b;background:rgba(99,102,241,0.04);border-radius:0 8px 8px 0;}
+    .fusion-synth-text a{color:#818cf8;text-decoration:none;} .fusion-synth-text a:hover{color:#a5b4fc;}
+
+    .fusion-thinking{display:flex;align-items:center;gap:10px;padding:16px 20px;color:#334155;font-size:13px;}
+    .fusion-thinking .material-icons{font-size:18px;color:#6366f1;}
+
+    .btn-fusion{background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(6,182,212,0.1));border:1px solid rgba(99,102,241,0.3) !important;color:#818cf8 !important;}
+    .btn-fusion:hover{background:linear-gradient(135deg,rgba(99,102,241,0.22),rgba(6,182,212,0.18)) !important;border-color:rgba(99,102,241,0.55) !important;color:#a5b4fc !important;}
+    .btn-fusion .material-icons{color:#818cf8;}
+
   </style>
 </head>
 <body>
@@ -2242,6 +2399,10 @@
           <button id="imgPlayBtn" class="button" title="Image Generation Playground" style="background:var(--surface-2);color:var(--text-color);border:1px solid var(--border-color);">
             <span class="material-icons">image</span>
             Images
+          </button>
+          <button id="fusionBtn" class="button btn-fusion" title="Fusion — Multi-model orchestration into one answer">
+            <span class="material-icons">merge_type</span>
+            Fusion
           </button>
           <button id="dashboardButton" class="button" title="View Cost Analytics Dashboard">
             <span class="material-icons">analytics</span>
@@ -2575,6 +2736,164 @@
             <div class="dl-item" onclick="triggerReportDownload('md')"><span class="material-icons">description</span> Markdown</div>
             <div class="dl-item" onclick="triggerReportDownload('pdf')"><span class="material-icons">picture_as_pdf</span> PDF</div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ FUSION OVERLAY ═══════════ -->
+  <div id="fusionOverlay" class="fusion-overlay">
+    <!-- Top bar -->
+    <div class="fusion-topbar">
+      <div class="fusion-brand">
+        <div class="fusion-icon-wrap"><span class="material-icons">merge_type</span></div>
+        <div>
+          <div class="fusion-title">FUSION</div>
+          <div class="fusion-subtitle">Multi-model orchestration</div>
+        </div>
+      </div>
+      <div class="fusion-presets">
+        <button class="fusion-preset-btn frontier" onclick="applyFusionPreset('frontier')" title="Best of Claude, GPT and Gemini">
+          <span class="preset-emoji">🌐</span>
+          <span class="preset-name">Frontier</span>
+          <span class="preset-sub">Claude · Grok · Gemini</span>
+        </button>
+        <button class="fusion-preset-btn dragon" onclick="applyFusionPreset('dragon')" title="Best Chinese frontier models">
+          <span class="preset-emoji">🐉</span>
+          <span class="preset-name">Dragon</span>
+          <span class="preset-sub">DeepSeek · Qwen · Kimi</span>
+        </button>
+        <button class="fusion-preset-btn spark" onclick="applyFusionPreset('spark')" title="Fast, cheap, good">
+          <span class="preset-emoji">⚡</span>
+          <span class="preset-name">Spark</span>
+          <span class="preset-sub">Fast · Cheap · Good</span>
+        </button>
+      </div>
+      <button class="fusion-close-btn" onclick="closeFusion()"><span class="material-icons">close</span></button>
+    </div>
+
+    <!-- Body -->
+    <div class="fusion-body">
+      <!-- Left: Configuration -->
+      <div class="fusion-sidebar">
+
+        <div class="fusion-field-group">
+          <div class="fusion-label">Prompt</div>
+          <textarea id="fusionPrompt" class="fusion-textarea" placeholder="Ask anything — Fusion will send it to all three models, have a judge analyse the responses, then synthesize the best answer…"></textarea>
+        </div>
+
+        <div class="fusion-field-group">
+          <div class="fusion-label"><span class="fusion-step-dot s1">1</span> Panel Models</div>
+          <div class="fusion-model-row">
+            <span class="fusion-model-idx">A</span>
+            <select class="fusion-select" id="fusionPanel1"></select>
+          </div>
+          <div class="fusion-model-row">
+            <span class="fusion-model-idx">B</span>
+            <select class="fusion-select" id="fusionPanel2"></select>
+          </div>
+          <div class="fusion-model-row">
+            <span class="fusion-model-idx">C</span>
+            <select class="fusion-select" id="fusionPanel3"></select>
+          </div>
+        </div>
+
+        <div class="fusion-divider"></div>
+
+        <div class="fusion-field-group">
+          <div class="fusion-label"><span class="fusion-step-dot s2">J</span> Judge &amp; Synthesizer</div>
+          <div class="fusion-model-row">
+            <span class="fusion-model-idx ji">⚖</span>
+            <select class="fusion-select" id="fusionJudge"></select>
+          </div>
+        </div>
+
+        <div class="fusion-field-group">
+          <label class="fusion-toggle-row">
+            <input type="checkbox" id="fusionWebSearch">
+            <span class="fusion-toggle-label">Web Search</span>
+            <span class="fusion-toggle-desc">For all panel models</span>
+          </label>
+        </div>
+
+        <button class="fusion-run-btn" id="fusionRunBtn" onclick="runFusion()">
+          <span class="material-icons">auto_awesome</span>
+          Run Fusion
+        </button>
+      </div>
+
+      <!-- Right: Pipeline output -->
+      <div class="fusion-pipeline" id="fusionPipeline">
+
+        <!-- Idle state -->
+        <div class="fusion-idle-state" id="fusionIdle">
+          <div class="fusion-idle-icon"><span class="material-icons">merge_type</span></div>
+          <h2>Ready to Fuse</h2>
+          <p>Configure your three panel models and a judge, then hit Run Fusion to orchestrate multiple models into one authoritative answer.</p>
+          <div class="fusion-idle-steps">
+            <div class="fusion-idle-step">
+              <div class="idle-step-num">1</div>
+              <span>Panel models answer in parallel</span>
+            </div>
+            <div class="fusion-idle-arrow">→</div>
+            <div class="fusion-idle-step">
+              <div class="idle-step-num">2</div>
+              <span>Judge finds consensus &amp; gaps</span>
+            </div>
+            <div class="fusion-idle-arrow">→</div>
+            <div class="fusion-idle-step">
+              <div class="idle-step-num">3</div>
+              <span>Synthesizer writes the final answer</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Output (shown when running) -->
+        <div class="fusion-output-wrap" id="fusionOutputWrap" style="display:none;">
+
+          <!-- Step 1 -->
+          <div class="fusion-step-card" id="fusionStepPanel">
+            <div class="fusion-step-header sh-1">
+              <div class="fusion-step-badge fb-1">1</div>
+              <div class="fusion-step-info">
+                <h3>Panel</h3>
+                <div class="fusion-step-desc">Three models answering in parallel</div>
+              </div>
+              <div class="fusion-step-status" id="fusionStatusPanel"></div>
+            </div>
+            <div class="fusion-panel-responses" id="fusionPanelResponses"></div>
+          </div>
+
+          <div class="fusion-connector"><div class="fc-line"></div><div class="fc-dot"></div></div>
+
+          <!-- Step 2 -->
+          <div class="fusion-step-card" id="fusionStepJudge">
+            <div class="fusion-step-header sh-2">
+              <div class="fusion-step-badge fb-2">2</div>
+              <div class="fusion-step-info">
+                <h3>Judge Analysis</h3>
+                <div class="fusion-step-desc">Structured evaluation — consensus, contradictions, blind spots</div>
+              </div>
+              <div class="fusion-step-status" id="fusionStatusJudge"></div>
+            </div>
+            <div class="fusion-judge-output" id="fusionJudgeOutput"></div>
+          </div>
+
+          <div class="fusion-connector"><div class="fc-line"></div><div class="fc-dot"></div></div>
+
+          <!-- Step 3 -->
+          <div class="fusion-step-card fusion-final-card" id="fusionStepSynth">
+            <div class="fusion-step-header sh-3">
+              <div class="fusion-step-badge fb-3">3</div>
+              <div class="fusion-step-info">
+                <h3>Final Answer</h3>
+                <div class="fusion-step-desc">Synthesized by <span id="fusionSynthLabel" style="color:#34d399;font-weight:600;"></span></div>
+              </div>
+              <div class="fusion-step-status" id="fusionStatusSynth"></div>
+            </div>
+            <div class="fusion-synth-output" id="fusionSynthOutput"></div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -4530,6 +4849,392 @@ Return JSON:
       }
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    //  FUSION — Multi-model orchestration
+    // ═══════════════════════════════════════════════════════════════
+
+    const FUSION_PRESETS = {
+      frontier: {
+        panelPatterns: [
+          ['claude-opus','claude-3','claude'],
+          ['grok-4','grok-3','grok'],
+          ['gemini-2','gemini-3','gemini']
+        ],
+        judgePatterns: ['claude-opus','claude-3','claude']
+      },
+      dragon: {
+        panelPatterns: [
+          ['deepseek-r1','deepseek'],
+          ['qwen3-235b','qwen3','qwen'],
+          ['kimi','deepseek-v3','deepseek']
+        ],
+        judgePatterns: ['qwen3-235b','qwen3','qwen','deepseek-r1','deepseek']
+      },
+      spark: {
+        panelPatterns: [
+          ['gemini.*flash','gemini-3-flash','gemini-2-flash','gemini'],
+          ['llama-3.3','llama-3','llama'],
+          ['mistral','deepseek-v3','deepseek']
+        ],
+        judgePatterns: ['gemini.*flash','gemini','qwen3','llama-3.3','llama']
+      }
+    };
+
+    function fusionFindModel(models, patterns) {
+      for (const pat of patterns) {
+        const re = new RegExp(pat, 'i');
+        const m = models.find(x => re.test(x.id));
+        if (m) return m.id;
+      }
+      return models[0]?.id || '';
+    }
+
+    function openFusion() {
+      document.getElementById('fusionOverlay').classList.add('open');
+      populateFusionDropdowns();
+    }
+    window.openFusion = openFusion;
+
+    function closeFusion() {
+      document.getElementById('fusionOverlay').classList.remove('open');
+    }
+    window.closeFusion = closeFusion;
+
+    function populateFusionDropdowns() {
+      const textModels = (window.availableModels || []).filter(m => !m.modelType || m.modelType === 'text');
+      if (!textModels.length) return;
+      const opts = textModels.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
+      ['fusionPanel1','fusionPanel2','fusionPanel3','fusionJudge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const prev = el.value;
+        el.innerHTML = opts;
+        if (prev && textModels.find(m => m.id === prev)) el.value = prev;
+      });
+      // Apply last active preset or default to frontier
+      const active = document.querySelector('.fusion-preset-btn.active');
+      if (!active) applyFusionPreset('frontier');
+    }
+
+    function applyFusionPreset(name) {
+      const preset = FUSION_PRESETS[name];
+      if (!preset) return;
+      const models = (window.availableModels || []).filter(m => !m.modelType || m.modelType === 'text');
+      if (!models.length) return;
+
+      ['fusionPanel1','fusionPanel2','fusionPanel3'].forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const target = fusionFindModel(models, preset.panelPatterns[i] || []);
+        if (target) el.value = target;
+      });
+
+      const judgeEl = document.getElementById('fusionJudge');
+      if (judgeEl) {
+        const target = fusionFindModel(models, preset.judgePatterns);
+        if (target) judgeEl.value = target;
+      }
+
+      document.querySelectorAll('.fusion-preset-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.fusion-preset-btn.${name}`)?.classList.add('active');
+    }
+    window.applyFusionPreset = applyFusionPreset;
+
+    function fusionSetStatus(id, state) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.className = `fusion-step-status fss-${state}`;
+      const labels = { running: 'Running…', done: 'Complete', error: 'Error' };
+      el.textContent = labels[state] || '';
+    }
+
+    function fusionSafeId(modelId) {
+      return modelId.replace(/[^a-zA-Z0-9]/g, '_');
+    }
+
+    function renderFusionPanelCards(modelIds) {
+      const container = document.getElementById('fusionPanelResponses');
+      container.innerHTML = modelIds.map((id, i) => {
+        const sid = fusionSafeId(id);
+        const label = String.fromCharCode(65 + i);
+        const short = id.split('/').pop().replace(/-\d{8}$/, '');
+        return `
+          <div class="fusion-panel-card" id="fpc_${sid}">
+            <div class="fp-card-header">
+              <span class="fp-model-badge" title="${id}">${label}: ${short}</span>
+              <span class="fp-status-dot r" id="fps_${sid}"></span>
+            </div>
+            <div class="fp-card-body" id="fpb_${sid}">
+              <div class="fusion-thinking" style="padding:8px 0;">
+                <span class="material-icons spin" style="font-size:15px;color:#6366f1;">refresh</span>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function updateFusionPanelCard(modelId, text, done) {
+      const sid = fusionSafeId(modelId);
+      const body = document.getElementById(`fpb_${sid}`);
+      if (body) body.innerHTML = `<div class="fp-text">${formatResponse(text)}</div>`;
+      if (done) {
+        const dot = document.getElementById(`fps_${sid}`);
+        if (dot) { dot.classList.remove('r'); dot.classList.add('d'); }
+      }
+    }
+
+    async function streamFusionPanel(modelId, prompt, webSearch, onChunk) {
+      let fullText = '';
+      const controller = new AbortController();
+      try {
+        const resp = await fetch(`${BASE_URL}/chat/completions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+          body: JSON.stringify({
+            model: modelId,
+            messages: [{ role: 'user', content: prompt }],
+            venice_parameters: { enable_web_search: webSearch ? 'on' : 'off' },
+            max_tokens: 3000,
+            temperature: 0.7,
+            stream: true
+          }),
+          signal: controller.signal
+        });
+        if (!resp.ok) throw new Error(`API ${resp.status}`);
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop();
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const raw = line.slice(6);
+            if (raw === '[DONE]') continue;
+            try {
+              const json = JSON.parse(raw);
+              const delta = json.choices?.[0]?.delta?.content;
+              if (delta) { fullText += delta; onChunk(fullText, false); }
+            } catch (_) {}
+          }
+        }
+        onChunk(fullText, true);
+      } catch (e) {
+        const sid = fusionSafeId(modelId);
+        const dot = document.getElementById(`fps_${sid}`);
+        if (dot) { dot.classList.remove('r'); dot.classList.add('e'); }
+        const body = document.getElementById(`fpb_${sid}`);
+        if (body) body.innerHTML = `<div class="fp-text" style="color:#f87171">Error: ${e.message}</div>`;
+      }
+      return fullText;
+    }
+
+    async function callFusionJudge(judgeId, prompt, panelIds, panelResponses) {
+      const responsesBlock = panelIds.map((id, i) => {
+        const label = String.fromCharCode(65 + i);
+        return `--- Response ${label} (${id.split('/').pop().replace(/-\d{8}$/,'')}) ---\n${panelResponses[id] || '(no response)'}`;
+      }).join('\n\n');
+
+      const sysMsg = `You are a rigorous analytical judge. Evaluate multiple AI responses and return ONLY valid JSON — no markdown, no explanation outside the JSON object.`;
+      const userMsg = `Original question: "${prompt}"
+
+${responsesBlock}
+
+Return this exact JSON structure (use the letter labels A/B/C for models):
+{
+  "consensus": ["shared point all or most models agree on"],
+  "contradictions": [{"topic": "...", "positions": {"A": "...", "B": "...", "C": "..."}}],
+  "partial_coverage": ["thing mentioned by only 1-2 models"],
+  "unique_insights": [{"model": "A", "insight": "valuable unique idea"}],
+  "blind_spots": ["important aspect NONE of the models addressed"],
+  "strongest_model": "A",
+  "synthesis_notes": "2-3 sentences of guidance: what to prioritise, how to resolve contradictions, what to add"
+}`;
+
+      const r = await fetch(`${BASE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+        body: JSON.stringify({
+          model: judgeId,
+          messages: [{ role: 'system', content: sysMsg }, { role: 'user', content: userMsg }],
+          max_tokens: 4000,
+          temperature: 0.1
+        })
+      });
+      if (!r.ok) throw new Error(`Judge API ${r.status}`);
+      const data = await r.json();
+      const raw = (data.choices?.[0]?.message?.content || '').replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+      const match = raw.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('Judge returned no JSON');
+      try { return JSON.parse(match[0]); }
+      catch (_) {
+        let fixed = match[0].replace(/,(\s*[}\]])/g,'$1');
+        const oc=(fixed.match(/\{/g)||[]).length, cc=(fixed.match(/\}/g)||[]).length;
+        for(let i=0;i<oc-cc;i++) fixed+='}';
+        return JSON.parse(fixed);
+      }
+    }
+
+    function renderFusionJudgeAnalysis(analysis) {
+      const jmTag = (l) => `<span class="j-model-tag">${l}</span>`;
+
+      const cons = (analysis.consensus||[]).map(p=>`<li>${p}</li>`).join('');
+      const cont = (analysis.contradictions||[]).map(c=>{
+        const pos = Object.entries(c.positions||{}).map(([k,v])=>`${jmTag(k)} ${v}`).join(' &nbsp;·&nbsp; ');
+        return `<li><strong>${c.topic||''}</strong>: ${pos}</li>`;
+      }).join('');
+      const uniq = (analysis.unique_insights||[]).map(u=>`<li>${jmTag(u.model||'?')} ${u.insight||''}</li>`).join('');
+      const blind = (analysis.blind_spots||[]).map(b=>`<li>${b}</li>`).join('');
+      const notes = analysis.synthesis_notes||'';
+
+      document.getElementById('fusionJudgeOutput').innerHTML = `
+        <div class="fusion-judge-grid">
+          ${cons?`<div class="judge-card jc-consensus"><div class="judge-card-hdr">✓ Consensus</div><ul>${cons}</ul></div>`:''}
+          ${cont?`<div class="judge-card jc-contra"><div class="judge-card-hdr">⚡ Contradictions</div><ul>${cont}</ul></div>`:''}
+          ${uniq?`<div class="judge-card jc-unique"><div class="judge-card-hdr">💡 Unique Insights</div><ul>${uniq}</ul></div>`:''}
+          ${blind?`<div class="judge-card jc-blind"><div class="judge-card-hdr">🔍 Blind Spots</div><ul>${blind}</ul></div>`:''}
+          ${notes?`<div class="judge-card jc-notes"><div class="judge-card-hdr">📋 Synthesis Notes</div><p>${notes}</p></div>`:''}
+        </div>`;
+    }
+
+    async function streamFusionSynthesis(judgeId, prompt, analysis, onChunk) {
+      const cons = (analysis.consensus||[]).join('; ') || 'None identified';
+      const cont = (analysis.contradictions||[]).map(c=>`${c.topic}: ${JSON.stringify(c.positions)}`).join('; ') || 'None';
+      const uniq = (analysis.unique_insights||[]).map(u=>u.insight).join('; ') || 'None';
+      const blind = (analysis.blind_spots||[]).join('; ') || 'None';
+      const notes = analysis.synthesis_notes || '';
+
+      const sysMsg = `You are a master synthesizer. You have reviewed structured analysis from a judge who evaluated multiple AI responses to the same question. Write the single best, most comprehensive answer.`;
+      const userMsg = `Question: ${prompt}
+
+JUDGE'S STRUCTURED ANALYSIS:
+• CONSENSUS (treat these as established facts): ${cons}
+• CONTRADICTIONS (resolve each with the most defensible position): ${cont}
+• UNIQUE INSIGHTS (weave these in): ${uniq}
+• BLIND SPOTS (the panel missed these — address them): ${blind}
+• SYNTHESIS GUIDANCE: ${notes}
+
+Write a comprehensive, authoritative response that:
+1. States consensus points as established facts
+2. Resolves each contradiction explicitly
+3. Incorporates unique insights naturally
+4. Addresses every blind spot the panel missed
+5. Is well-structured with clear sections if needed`;
+
+      const resp = await fetch(`${BASE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+        body: JSON.stringify({
+          model: judgeId,
+          messages: [{ role: 'system', content: sysMsg }, { role: 'user', content: userMsg }],
+          max_tokens: 4000,
+          temperature: 0.5,
+          stream: true
+        })
+      });
+      if (!resp.ok) throw new Error(`Synthesis API ${resp.status}`);
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '', fullText = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const raw = line.slice(6);
+          if (raw === '[DONE]') continue;
+          try {
+            const json = JSON.parse(raw);
+            const delta = json.choices?.[0]?.delta?.content;
+            if (delta) { fullText += delta; onChunk(fullText); }
+          } catch (_) {}
+        }
+      }
+    }
+
+    async function runFusion() {
+      const prompt = (document.getElementById('fusionPrompt')?.value || '').trim();
+      if (!prompt) { alert('Please enter a prompt first.'); return; }
+
+      const p1 = document.getElementById('fusionPanel1')?.value;
+      const p2 = document.getElementById('fusionPanel2')?.value;
+      const p3 = document.getElementById('fusionPanel3')?.value;
+      const panelIds = [p1, p2, p3].filter(Boolean);
+      const judgeId = document.getElementById('fusionJudge')?.value;
+      const webSearch = document.getElementById('fusionWebSearch')?.checked || false;
+
+      if (panelIds.length < 2) { alert('Please configure at least 2 panel models.'); return; }
+      if (!judgeId) { alert('Please select a judge model.'); return; }
+
+      // Show pipeline
+      document.getElementById('fusionIdle').style.display = 'none';
+      document.getElementById('fusionOutputWrap').style.display = 'flex';
+      document.getElementById('fusionSynthLabel').textContent = judgeId.split('/').pop().replace(/-\d{8}$/,'');
+
+      const runBtn = document.getElementById('fusionRunBtn');
+      runBtn.disabled = true;
+      runBtn.innerHTML = '<span class="material-icons spin">refresh</span> Running…';
+
+      // Reset step statuses
+      ['fusionStatusPanel','fusionStatusJudge','fusionStatusSynth'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.className = 'fusion-step-status'; el.textContent = ''; }
+      });
+
+      try {
+        // ── STEP 1: Panel ──────────────────────────────────────
+        fusionSetStatus('fusionStatusPanel', 'running');
+        renderFusionPanelCards(panelIds);
+
+        const panelResponses = {};
+        await Promise.all(panelIds.map(id =>
+          streamFusionPanel(id, prompt, webSearch, (text, done) => {
+            panelResponses[id] = text;
+            updateFusionPanelCard(id, text, done);
+          })
+        ));
+        fusionSetStatus('fusionStatusPanel', 'done');
+
+        // ── STEP 2: Judge ──────────────────────────────────────
+        fusionSetStatus('fusionStatusJudge', 'running');
+        document.getElementById('fusionJudgeOutput').innerHTML =
+          `<div class="fusion-thinking"><span class="material-icons spin">psychology</span> Judge is analysing all responses…</div>`;
+
+        const judgeResult = await callFusionJudge(judgeId, prompt, panelIds, panelResponses);
+        renderFusionJudgeAnalysis(judgeResult);
+        fusionSetStatus('fusionStatusJudge', 'done');
+
+        // ── STEP 3: Synthesis ──────────────────────────────────
+        fusionSetStatus('fusionStatusSynth', 'running');
+        document.getElementById('fusionSynthOutput').innerHTML =
+          `<div class="fusion-thinking"><span class="material-icons spin">auto_awesome</span> Synthesizing final answer…</div>`;
+
+        await streamFusionSynthesis(judgeId, prompt, judgeResult, (text) => {
+          document.getElementById('fusionSynthOutput').innerHTML =
+            `<div class="fusion-synth-text">${formatResponse(text)}</div>`;
+        });
+        fusionSetStatus('fusionStatusSynth', 'done');
+
+      } catch (err) {
+        console.error('Fusion error:', err);
+        ['fusionStatusPanel','fusionStatusJudge','fusionStatusSynth'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && el.classList.contains('fss-running')) fusionSetStatus(id, 'error');
+        });
+        if (typeof showToast === 'function') showToast(`Fusion error: ${err.message}`, 'error', 6000);
+      } finally {
+        runBtn.disabled = false;
+        runBtn.innerHTML = '<span class="material-icons">auto_awesome</span> Run Fusion';
+      }
+    }
+    window.runFusion = runFusion;
+
     // Categorical model palette for reports (no purple)
     const REPORT_PALETTE = ['#0E7490','#15803D','#2563EB','#D97706','#0891B2','#0F7A4D','#B45309','#C2362F','#2563EB','#0E7490'];
     const REPORT_SOFT    = ['#DDF0F3','#E1F2E9','#E6EEFC','#FBEFD9','#DCF1F6','#E1F2E9','#FAF0DD','#FBE9E7','#E6EEFC','#DDF0F3'];
@@ -5503,6 +6208,10 @@ Return JSON:
       const bBtn = $('batchBtn');
       if (bBtn) bBtn.addEventListener('click', openBatch);
 
+      // ── Fusion button ─────────────────────────────────────
+      const fBtn = $('fusionBtn');
+      if (fBtn) fBtn.addEventListener('click', openFusion);
+
       // ── Image playground button ───────────────────────────
       const iBtn = $('imgPlayBtn');
       if (iBtn) iBtn.addEventListener('click', openImgPlayground);
@@ -5518,6 +6227,7 @@ Return JSON:
     // ── COMMAND PALETTE ─────────────────────────────────────
     const CMD_COMMANDS = [
       { icon: 'send',            label: 'Send Prompt',              hint: '⌘↵',  action: () => $('sendButton')?.click() },
+      { icon: 'merge_type',      label: 'Open Fusion',              hint: '',    action: () => openFusion() },
       { icon: 'history',         label: 'Open Prompt History',      hint: '',    action: () => openHistory() },
       { icon: 'batch_prediction',label: 'Open Batch Runner',        hint: '',    action: () => openBatch() },
       { icon: 'image',           label: 'Open Image Playground',    hint: '',    action: () => openImgPlayground() },
