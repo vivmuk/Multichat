@@ -2355,6 +2355,132 @@
     .fusion-thinking{display:flex;align-items:center;gap:10px;padding:18px 20px;color:#64748B;font-size:13px;}
     .fusion-thinking .material-icons{font-size:18px;color:#0E7490;}
 
+    /* one-panel Fusion console */
+    .fusion-topbar{height:64px;padding:0 28px;background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);}
+    .fusion-topbar > .fusion-presets{display:none;}
+    .fusion-brand{min-width:auto;}
+    .fusion-icon-wrap{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,#0E7490,#1D4ED8);box-shadow:0 10px 26px rgba(14,116,144,0.18);}
+    .fusion-close-btn{width:38px;height:38px;border-radius:8px;}
+    .fusion-body{display:block;overflow:auto;padding:24px;background:
+      linear-gradient(180deg,rgba(14,116,144,0.04),rgba(248,250,252,0.88) 38%,#F8FAFC),
+      repeating-linear-gradient(90deg,rgba(148,163,184,0.08) 0 1px,transparent 1px 88px),
+      repeating-linear-gradient(0deg,rgba(148,163,184,0.06) 0 1px,transparent 1px 88px);}
+    .fusion-shell{max-width:1180px;margin:0 auto;min-height:calc(100vh - 112px);display:flex;align-items:flex-start;}
+    .fusion-console{width:100%;background:rgba(255,255,255,0.97);border:1px solid #DDE7F0;border-radius:8px;box-shadow:0 18px 55px rgba(15,23,42,0.10);overflow:hidden;display:flex;flex-direction:column;}
+    .fusion-console-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;padding:22px 24px;border-bottom:1px solid #E6EDF4;background:linear-gradient(135deg,#FFFFFF 0%,#F8FBFE 66%,#EEF8FB 100%);}
+    .fusion-console-kicker{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#0E7490;}
+    .fusion-console-kicker .material-icons{font-size:18px;color:#1D4ED8;}
+    .fusion-console-title{margin:0;font-family:'Space Grotesk',sans-serif;font-size:25px;font-weight:800;color:#0F172A;letter-spacing:0;line-height:1.1;}
+    .fusion-console-copy{margin:8px 0 0;max-width:650px;color:#5B6B82;font-size:14px;line-height:1.6;}
+    .fusion-intel-ribbon{display:flex;gap:8px;align-items:stretch;}
+    .fusion-intel-chip{display:flex;align-items:center;gap:8px;min-width:118px;padding:10px 12px;border-radius:8px;border:1px solid #DDE7F0;background:#FFFFFF;box-shadow:0 6px 16px rgba(15,23,42,0.05);}
+    .fusion-intel-chip .material-icons{font-size:19px;color:#0E7490;}
+    .fusion-intel-chip strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:12px;color:#0F172A;line-height:1.1;}
+    .fusion-intel-chip span:last-child{display:block;font-size:10px;color:#7B8AA0;margin-top:2px;white-space:nowrap;}
+
+    .fusion-composer{padding:24px 24px 18px;background:#FFFFFF;}
+    .fusion-console-header{display:none;}
+    .fusion-chat-shell{border:1px solid #D8E5F0;border-radius:8px;background:linear-gradient(180deg,#FFFFFF,#F9FCFF);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 10px 28px rgba(15,23,42,0.06);overflow:hidden;}
+    .fusion-chat-shell,.fusion-composer-actions{max-width:880px;margin-left:auto;margin-right:auto;}
+    .fusion-chat-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid #E6EDF4;color:#64748B;font-size:12px;}
+    .fusion-chat-meta-left{display:flex;align-items:center;gap:8px;font-weight:700;color:#0F172A;}
+    .fusion-chat-meta-left .material-icons{font-size:18px;color:#1D4ED8;}
+    .fusion-chat-meta-right{display:flex;align-items:center;gap:6px;color:#7B8AA0;}
+    .fusion-chat-meta-right .material-icons{font-size:16px;color:#0E7490;}
+    .fusion-textarea{min-height:138px;max-height:260px;border:0;border-radius:0;background:transparent;padding:18px 18px 16px;font-size:16px;line-height:1.65;color:#0F172A;box-shadow:none;resize:vertical;}
+    .fusion-textarea:focus{border-color:transparent;box-shadow:none;}
+    .fusion-composer-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0 0;}
+    .fusion-toggle-row{padding:0;border:0;background:transparent;}
+    .fusion-toggle-label{font-weight:700;color:#1E293B;}
+    .fusion-toggle-desc{margin-left:0;color:#7B8AA0;}
+    .fusion-run-btn{min-width:178px;border-radius:8px;padding:13px 18px;background:linear-gradient(135deg,#0E7490,#1D4ED8);box-shadow:0 12px 26px rgba(14,116,144,0.22);}
+    .fusion-run-btn:hover{background:linear-gradient(135deg,#0C6478,#1E40AF);}
+
+    .fusion-picker-panel{padding:0 24px 14px;background:#FFFFFF;border-bottom:1px solid #E6EDF4;}
+    .fusion-picker-toolbar,.fusion-slot-grid{max-width:1040px;margin-left:auto;margin-right:auto;}
+    .fusion-picker-toolbar{display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:12px;align-items:center;margin-bottom:12px;}
+    .fusion-model-search{position:relative;}
+    .fusion-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:19px;color:#7B8AA0;}
+    .fusion-search-caret{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:20px;color:#7B8AA0;pointer-events:none;transition:transform .15s,color .15s;}
+    .fusion-model-search:focus-within .fusion-search-caret{transform:translateY(-50%) rotate(180deg);color:#0E7490;}
+    .fusion-model-search input{width:100%;height:42px;border:1px solid #D8E5F0;border-radius:8px;background:#F8FAFC;color:#0F172A;font-family:'Inter',sans-serif;font-size:13px;padding:0 40px 0 40px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s;}
+    .fusion-model-search input:focus{border-color:#0E7490;background:#fff;box-shadow:0 0 0 3px rgba(14,116,144,0.10);}
+    .fusion-picker-panel .fusion-presets{flex:0;justify-content:flex-end;gap:8px;}
+    .fusion-picker-panel .fusion-preset-btn{height:64px;min-width:166px;display:grid;grid-template-columns:54px 1fr;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;background:#FFFFFF;text-align:left;overflow:hidden;}
+    .fusion-picker-panel .fusion-preset-btn.active{background:#FFFFFF;}
+    .preset-art{width:54px;height:46px;border-radius:7px;background-image:url("assets/fusion-presets-strip.png");background-size:300% 100%;background-repeat:no-repeat;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),0 6px 14px rgba(15,23,42,.10);}
+    .fusion-preset-btn.frontier .preset-art{background-position:0 50%;}
+    .fusion-preset-btn.dragon .preset-art{background-position:50% 50%;}
+    .fusion-preset-btn.spark .preset-art{background-position:100% 50%;}
+    .preset-copy{min-width:0;display:flex;flex-direction:column;gap:2px;}
+    .fusion-picker-panel .preset-emoji{display:none;}
+    .fusion-picker-panel .preset-name{font-size:13px;line-height:1.1;}
+    .fusion-picker-panel .preset-sub{display:block;font-size:10px;color:#7B8AA0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .fusion-slot-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+    .fusion-model-slot{min-height:52px;border:1px solid #D8E5F0;border-radius:8px;background:#F8FAFC;padding:7px 9px;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s,background .15s;}
+    .fusion-model-slot:hover{transform:translateY(-1px);border-color:#9BC8D6;background:#FFFFFF;box-shadow:0 9px 20px rgba(15,23,42,0.07);}
+    .fusion-model-slot.active{border-color:#0E7490;background:#F0FDFA;box-shadow:0 0 0 3px rgba(14,116,144,0.10);}
+    .fusion-model-slot.judge.active{border-color:#D97706;background:#FFFBEB;box-shadow:0 0 0 3px rgba(217,119,6,0.12);}
+    .fusion-slot-top{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:4px;}
+    .fusion-slot-label{display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:#64748B;}
+    .fusion-slot-icon{width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:#DBEAFE;color:#1D4ED8;border:1px solid #BFDBFE;}
+    .fusion-slot-icon .material-icons{font-size:15px;}
+    .fusion-model-slot.judge .fusion-slot-icon{background:#FEF3C7;color:#B45309;border-color:#FDE68A;}
+    .fusion-slot-chip{height:18px;min-width:18px;padding:0 5px;border-radius:6px;background:#FFFFFF;border:1px solid #D8E5F0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#0F172A;}
+    .fusion-slot-name{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:800;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .fusion-slot-meta{display:none;}
+    .fusion-slot-tags{display:none;}
+    .fusion-mini-tag{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 7px;border-radius:7px;background:#FFFFFF;border:1px solid #D8E5F0;color:#516178;font-size:10px;font-weight:700;}
+    .fusion-mini-tag .material-icons{font-size:13px;}
+    .fusion-native-select{display:none;}
+    .fusion-search-results{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:40;display:none;grid-template-columns:1fr;gap:4px;margin:0;max-height:280px;overflow:auto;padding:6px;background:#FFFFFF;border:1px solid #D8E5F0;border-radius:8px;box-shadow:0 18px 42px rgba(15,23,42,.15);}
+    .fusion-search-results.open{display:grid;}
+    .fusion-search-results::-webkit-scrollbar{width:4px;} .fusion-search-results::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:2px;}
+    .fusion-search-result{display:flex;align-items:center;gap:8px;text-align:left;border:1px solid #E2E8F0;border-radius:8px;background:#FFFFFF;padding:7px 9px;cursor:pointer;color:#0F172A;font-family:'Inter',sans-serif;transition:border-color .15s,background .15s,transform .15s;}
+    .fusion-search-result:hover{border-color:#0E7490;background:#F0FDFA;transform:translateY(-1px);}
+    .fusion-search-result.selected{border-color:#1D4ED8;background:#EFF6FF;}
+    .fusion-result-icon{width:30px;height:30px;border-radius:8px;background:#E0F2FE;color:#0369A1;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .fusion-result-icon .material-icons{font-size:18px;}
+    .fusion-result-main{min-width:0;flex:1;}
+    .fusion-result-name{font-weight:800;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .fusion-result-meta{font-size:10px;color:#7B8AA0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+    .fusion-empty-results{grid-column:1/-1;display:flex;align-items:center;gap:8px;color:#7B8AA0;font-size:12px;padding:12px;border:1px dashed #CBD5E1;border-radius:8px;background:#F8FAFC;}
+    .fusion-empty-results .material-icons{font-size:18px;color:#94A3B8;}
+
+    .fusion-intelligence-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:16px 24px;background:linear-gradient(90deg,#F8FAFC,#FFFFFF);border-bottom:1px solid #E6EDF4;}
+    .fusion-signal{display:flex;align-items:center;gap:11px;min-width:0;padding:12px;border:1px solid #E2E8F0;border-radius:8px;background:#FFFFFF;}
+    .fusion-signal-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .fusion-signal-icon.brain{background:#E0F2FE;color:#0369A1;}
+    .fusion-signal-icon.judge{background:#FEF3C7;color:#B45309;}
+    .fusion-signal-icon.lift{background:#DCFCE7;color:#15803D;}
+    .fusion-signal-icon .material-icons{font-size:20px;}
+    .fusion-signal strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:13px;color:#0F172A;}
+    .fusion-signal span:last-child{display:block;margin-top:2px;font-size:11px;color:#64748B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+    .fusion-pipeline{padding:0;background:#FFFFFF;overflow:visible;}
+    .fusion-idle-state{min-height:330px;padding:42px 24px;background:#F8FBFE;}
+    .fusion-idle-icon{border-radius:8px;background:linear-gradient(135deg,#EFF6FF,#F0FDFA);box-shadow:0 14px 34px rgba(29,78,216,0.10);}
+    .fusion-output-wrap{padding:22px;gap:0;background:#F8FAFC;}
+    .fusion-step-card,.fusion-panel-card,.judge-card{border-radius:8px;}
+
+    @media(max-width:1100px){
+      .fusion-console-header{grid-template-columns:1fr;}
+      .fusion-intel-ribbon{flex-wrap:wrap;}
+      .fusion-slot-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+      .fusion-picker-toolbar{grid-template-columns:1fr;}
+      .fusion-picker-panel .fusion-presets{justify-content:flex-start;flex-wrap:wrap;}
+      .fusion-panel-responses{grid-template-columns:1fr;}
+    }
+    @media(max-width:720px){
+      .fusion-body{padding:12px;}
+      .fusion-console-header,.fusion-composer,.fusion-picker-panel,.fusion-intelligence-strip{padding-left:14px;padding-right:14px;}
+      .fusion-console-title{font-size:21px;}
+      .fusion-composer-actions{align-items:stretch;flex-direction:column;}
+      .fusion-run-btn{width:100%;}
+      .fusion-slot-grid,.fusion-intelligence-strip{grid-template-columns:1fr;}
+      .fusion-chat-meta{align-items:flex-start;flex-direction:column;}
+    }
+
     /* header button */
     .btn-fusion{background:#EFF6FF !important;border:1px solid #BFDBFE !important;color:#1D4ED8 !important;}
     .btn-fusion:hover{background:#DBEAFE !important;border-color:#93C5FD !important;color:#1E40AF !important;}
@@ -2764,152 +2890,224 @@
           <div class="fusion-subtitle">Multi-model orchestration</div>
         </div>
       </div>
-      <div class="fusion-presets">
-        <button class="fusion-preset-btn frontier" onclick="applyFusionPreset('frontier')" title="Best of Claude, GPT and Gemini">
-          <span class="preset-emoji">🌐</span>
-          <span class="preset-name">Frontier</span>
-          <span class="preset-sub">Claude · Grok · Gemini</span>
-        </button>
-        <button class="fusion-preset-btn dragon" onclick="applyFusionPreset('dragon')" title="Best Chinese frontier models">
-          <span class="preset-emoji">🐉</span>
-          <span class="preset-name">Dragon</span>
-          <span class="preset-sub">DeepSeek · Qwen · Kimi</span>
-        </button>
-        <button class="fusion-preset-btn spark" onclick="applyFusionPreset('spark')" title="Fast, cheap, good">
-          <span class="preset-emoji">⚡</span>
-          <span class="preset-name">Spark</span>
-          <span class="preset-sub">Fast · Cheap · Good</span>
-        </button>
-      </div>
       <button class="fusion-close-btn" onclick="closeFusion()"><span class="material-icons">close</span></button>
     </div>
 
     <!-- Body -->
     <div class="fusion-body">
-      <!-- Left: Configuration -->
-      <div class="fusion-sidebar">
-
-        <div class="fusion-field-group">
-          <div class="fusion-label">Prompt</div>
-          <textarea id="fusionPrompt" class="fusion-textarea" placeholder="Ask anything — Fusion will send it to all three models, have a judge analyse the responses, then synthesize the best answer…"></textarea>
-        </div>
-
-        <div class="fusion-field-group">
-          <div class="fusion-label"><span class="fusion-step-dot s1">1</span> Panel Models</div>
-          <div class="fusion-model-row">
-            <span class="fusion-model-idx">A</span>
-            <select class="fusion-select" id="fusionPanel1"></select>
-          </div>
-          <div class="fusion-model-row">
-            <span class="fusion-model-idx">B</span>
-            <select class="fusion-select" id="fusionPanel2"></select>
-          </div>
-          <div class="fusion-model-row">
-            <span class="fusion-model-idx">C</span>
-            <select class="fusion-select" id="fusionPanel3"></select>
-          </div>
-        </div>
-
-        <div class="fusion-divider"></div>
-
-        <div class="fusion-field-group">
-          <div class="fusion-label"><span class="fusion-step-dot s2">J</span> Judge &amp; Synthesizer</div>
-          <div class="fusion-model-row">
-            <span class="fusion-model-idx ji">⚖</span>
-            <select class="fusion-select" id="fusionJudge"></select>
-          </div>
-        </div>
-
-        <div class="fusion-field-group">
-          <label class="fusion-toggle-row">
-            <input type="checkbox" id="fusionWebSearch">
-            <span class="fusion-toggle-label">Web Search</span>
-            <span class="fusion-toggle-desc">For all panel models</span>
-          </label>
-        </div>
-
-        <button class="fusion-run-btn" id="fusionRunBtn" onclick="runFusion()">
-          <span class="material-icons">auto_awesome</span>
-          Run Fusion
-        </button>
-      </div>
-
-      <!-- Right: Pipeline output -->
-      <div class="fusion-pipeline" id="fusionPipeline">
-
-        <!-- Idle state -->
-        <div class="fusion-idle-state" id="fusionIdle">
-          <div class="fusion-idle-icon"><span class="material-icons">merge_type</span></div>
-          <h2>Ready to Fuse</h2>
-          <p>Configure your three panel models and a judge, then hit Run Fusion to orchestrate multiple models into one authoritative answer.</p>
-          <div class="fusion-idle-steps">
-            <div class="fusion-idle-step">
-              <div class="idle-step-num">1</div>
-              <span>Panel models answer in parallel</span>
+      <div class="fusion-shell">
+        <section class="fusion-console" aria-label="Fusion console">
+          <div class="fusion-console-header">
+            <div>
+              <div class="fusion-console-kicker"><span class="material-icons">hub</span> Fusion Console</div>
+              <h2 class="fusion-console-title">Ask once. Compare minds. Ship the strongest answer.</h2>
+              <p class="fusion-console-copy">A refined orchestration panel for multi-model answers, judge review, and synthesis in one focused workspace.</p>
             </div>
-            <div class="fusion-idle-arrow">→</div>
-            <div class="fusion-idle-step">
-              <div class="idle-step-num">2</div>
-              <span>Judge finds consensus &amp; gaps</span>
-            </div>
-            <div class="fusion-idle-arrow">→</div>
-            <div class="fusion-idle-step">
-              <div class="idle-step-num">3</div>
-              <span>Synthesizer writes the final answer</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Output (shown when running) -->
-        <div class="fusion-output-wrap" id="fusionOutputWrap" style="display:none;">
-
-          <!-- Step 1 -->
-          <div class="fusion-step-card" id="fusionStepPanel">
-            <div class="fusion-step-header sh-1">
-              <div class="fusion-step-badge fb-1">1</div>
-              <div class="fusion-step-info">
-                <h3>Panel</h3>
-                <div class="fusion-step-desc">Three models answering in parallel</div>
+            <div class="fusion-intel-ribbon" aria-label="Fusion intelligence signals">
+              <div class="fusion-intel-chip">
+                <span class="material-icons">neurology</span>
+                <div><strong>Panel</strong><span>parallel reasoning</span></div>
               </div>
-              <div class="fusion-step-status" id="fusionStatusPanel"></div>
+              <div class="fusion-intel-chip">
+                <span class="material-icons">balance</span>
+                <div><strong>Judge</strong><span>quality review</span></div>
+              </div>
+              <div class="fusion-intel-chip">
+                <span class="material-icons">auto_awesome</span>
+                <div><strong>Synthesis</strong><span>final lift</span></div>
+              </div>
             </div>
-            <div class="fusion-panel-responses" id="fusionPanelResponses"></div>
           </div>
 
-          <div class="fusion-connector"><div class="fc-line"></div><div class="fc-dot"></div></div>
-
-          <!-- Step 2 -->
-          <div class="fusion-step-card" id="fusionStepJudge">
-            <div class="fusion-step-header sh-2">
-              <div class="fusion-step-badge fb-2">2</div>
-              <div class="fusion-step-info">
-                <h3>Judge Analysis</h3>
-                <div class="fusion-step-desc">Structured evaluation — consensus, contradictions, blind spots</div>
+          <div class="fusion-composer">
+            <div class="fusion-chat-shell">
+              <div class="fusion-chat-meta">
+                <div class="fusion-chat-meta-left">
+                  <span class="material-icons">chat_bubble</span>
+                  Elegant chatbot
+                </div>
+                <div class="fusion-chat-meta-right">
+                  <span class="material-icons">verified</span>
+                  judge-improved synthesis
+                </div>
               </div>
-              <div class="fusion-step-status" id="fusionStatusJudge"></div>
+              <textarea id="fusionPrompt" class="fusion-textarea" placeholder="Ask anything. Fusion will send it to the panel, route the answers through a judge, then synthesize the strongest response."></textarea>
             </div>
-            <div class="fusion-judge-output" id="fusionJudgeOutput"></div>
-          </div>
-
-          <div class="fusion-connector"><div class="fc-line"></div><div class="fc-dot"></div></div>
-
-          <!-- Step 3 -->
-          <div class="fusion-step-card fusion-final-card" id="fusionStepSynth">
-            <div class="fusion-step-header sh-3">
-              <div class="fusion-step-badge fb-3">3</div>
-              <div class="fusion-step-info">
-                <h3>Final Answer</h3>
-                <div class="fusion-step-desc">Synthesized by <span id="fusionSynthLabel" style="color:#047857;font-weight:600;"></span></div>
-              </div>
-              <div class="fusion-step-status" id="fusionStatusSynth"></div>
-              <button id="fusionDownloadBtn" onclick="downloadFusionReport()" style="display:none;margin-left:12px;display:none;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid #A7F3D0;background:#ECFDF5;color:#047857;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;" title="Download full report as HTML">
-                <span class="material-icons" style="font-size:16px;">download</span> Export
+            <div class="fusion-composer-actions">
+              <label class="fusion-toggle-row">
+                <input type="checkbox" id="fusionWebSearch">
+                <span class="fusion-toggle-label">Web Search</span>
+                <span class="fusion-toggle-desc">panel models</span>
+              </label>
+              <button class="fusion-run-btn" id="fusionRunBtn" onclick="runFusion()">
+                <span class="material-icons">auto_awesome</span>
+                Run Fusion
               </button>
             </div>
-            <div class="fusion-synth-output" id="fusionSynthOutput"></div>
           </div>
 
-        </div>
+          <div class="fusion-picker-panel">
+            <div class="fusion-picker-toolbar">
+              <div class="fusion-model-search">
+                <span class="material-icons fusion-search-icon">search</span>
+                <input id="fusionModelSearch" type="text" placeholder="Search models by name, family, reasoning, vision, web..." autocomplete="off">
+                <span class="material-icons fusion-search-caret">expand_more</span>
+                <div class="fusion-search-results" id="fusionModelSearchResults"></div>
+              </div>
+              <div class="fusion-presets">
+                <button class="fusion-preset-btn frontier" onclick="applyFusionPreset('frontier')" title="Best of Claude, Grok and Gemini">
+                  <span class="preset-art" aria-hidden="true"></span>
+                  <span class="preset-copy">
+                    <span class="preset-name">Frontier</span>
+                    <span class="preset-sub">Claude - GPT - Grok</span>
+                  </span>
+                </button>
+                <button class="fusion-preset-btn dragon" onclick="applyFusionPreset('dragon')" title="DeepSeek, MiniMax and Kimi">
+                  <span class="preset-art" aria-hidden="true"></span>
+                  <span class="preset-copy">
+                    <span class="preset-name">Dragon</span>
+                    <span class="preset-sub">DeepSeek - MiniMax - Kimi</span>
+                  </span>
+                </button>
+                <button class="fusion-preset-btn spark" onclick="applyFusionPreset('spark')" title="Fast, cheap and good">
+                  <span class="preset-art" aria-hidden="true"></span>
+                  <span class="preset-copy">
+                    <span class="preset-name">Spark</span>
+                    <span class="preset-sub">Gemma - Trinity - Grok MA</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div class="fusion-slot-grid">
+              <div class="fusion-model-slot active" data-fusion-slot="fusionPanel1" onclick="fusionSetActivePicker('fusionPanel1')" role="button" tabindex="0">
+                <div class="fusion-slot-top">
+                  <div class="fusion-slot-label"><span class="fusion-slot-icon"><span class="material-icons">looks_one</span></span> Panel A</div>
+                  <div class="fusion-slot-chip">A</div>
+                </div>
+                <div class="fusion-slot-name" data-slot-name="fusionPanel1">Select a model</div>
+                <div class="fusion-slot-meta" data-slot-meta="fusionPanel1">Search below to assign</div>
+                <div class="fusion-slot-tags" data-slot-tags="fusionPanel1"></div>
+              </div>
+              <div class="fusion-model-slot" data-fusion-slot="fusionPanel2" onclick="fusionSetActivePicker('fusionPanel2')" role="button" tabindex="0">
+                <div class="fusion-slot-top">
+                  <div class="fusion-slot-label"><span class="fusion-slot-icon"><span class="material-icons">looks_two</span></span> Panel B</div>
+                  <div class="fusion-slot-chip">B</div>
+                </div>
+                <div class="fusion-slot-name" data-slot-name="fusionPanel2">Select a model</div>
+                <div class="fusion-slot-meta" data-slot-meta="fusionPanel2">Search below to assign</div>
+                <div class="fusion-slot-tags" data-slot-tags="fusionPanel2"></div>
+              </div>
+              <div class="fusion-model-slot" data-fusion-slot="fusionPanel3" onclick="fusionSetActivePicker('fusionPanel3')" role="button" tabindex="0">
+                <div class="fusion-slot-top">
+                  <div class="fusion-slot-label"><span class="fusion-slot-icon"><span class="material-icons">looks_3</span></span> Panel C</div>
+                  <div class="fusion-slot-chip">C</div>
+                </div>
+                <div class="fusion-slot-name" data-slot-name="fusionPanel3">Select a model</div>
+                <div class="fusion-slot-meta" data-slot-meta="fusionPanel3">Search below to assign</div>
+                <div class="fusion-slot-tags" data-slot-tags="fusionPanel3"></div>
+              </div>
+              <div class="fusion-model-slot judge" data-fusion-slot="fusionJudge" onclick="fusionSetActivePicker('fusionJudge')" role="button" tabindex="0">
+                <div class="fusion-slot-top">
+                  <div class="fusion-slot-label"><span class="fusion-slot-icon"><span class="material-icons">balance</span></span> Judge &amp; Synthesizer</div>
+                  <div class="fusion-slot-chip">J+S</div>
+                </div>
+                <div class="fusion-slot-name" data-slot-name="fusionJudge">Select a model</div>
+                <div class="fusion-slot-meta" data-slot-meta="fusionJudge">Reviews panel answers, then synthesizes</div>
+                <div class="fusion-slot-tags" data-slot-tags="fusionJudge"></div>
+              </div>
+            </div>
+
+            <select class="fusion-select fusion-native-select" id="fusionPanel1"></select>
+            <select class="fusion-select fusion-native-select" id="fusionPanel2"></select>
+            <select class="fusion-select fusion-native-select" id="fusionPanel3"></select>
+            <select class="fusion-select fusion-native-select" id="fusionJudge"></select>
+          </div>
+
+          <div class="fusion-intelligence-strip">
+            <div class="fusion-signal">
+              <span class="fusion-signal-icon brain"><span class="material-icons">schema</span></span>
+              <div><strong>Parallel Intelligence</strong><span>diverse model perspectives</span></div>
+            </div>
+            <div class="fusion-signal">
+              <span class="fusion-signal-icon judge"><span class="material-icons">fact_check</span></span>
+              <div><strong>Judge Review</strong><span>consensus, conflicts, gaps</span></div>
+            </div>
+            <div class="fusion-signal">
+              <span class="fusion-signal-icon lift"><span class="material-icons">bolt</span></span>
+              <div><strong>Synthesizer</strong><span>writes the stronger final answer</span></div>
+            </div>
+          </div>
+
+          <div class="fusion-pipeline" id="fusionPipeline">
+            <div class="fusion-idle-state" id="fusionIdle">
+              <div class="fusion-idle-icon"><span class="material-icons">merge_type</span></div>
+              <h2>Ready to Fuse</h2>
+              <p>Configure your panel and judge/synthesizer, then run Fusion to turn multiple model responses into one authoritative answer.</p>
+              <div class="fusion-idle-steps">
+                <div class="fusion-idle-step">
+                  <div class="idle-step-num">1</div>
+                  <span>Panel models answer in parallel</span>
+                </div>
+                <div class="fusion-idle-arrow">-&gt;</div>
+                <div class="fusion-idle-step">
+                  <div class="idle-step-num">2</div>
+                  <span>Judge finds consensus and gaps</span>
+                </div>
+                <div class="fusion-idle-arrow">-&gt;</div>
+                <div class="fusion-idle-step">
+                  <div class="idle-step-num">3</div>
+                  <span>Synthesizer writes the final answer</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="fusion-output-wrap" id="fusionOutputWrap" style="display:none;">
+              <div class="fusion-step-card" id="fusionStepPanel">
+                <div class="fusion-step-header sh-1">
+                  <div class="fusion-step-badge fb-1">1</div>
+                  <div class="fusion-step-info">
+                    <h3>Panel</h3>
+                    <div class="fusion-step-desc">Three models answering in parallel</div>
+                  </div>
+                  <div class="fusion-step-status" id="fusionStatusPanel"></div>
+                </div>
+                <div class="fusion-panel-responses" id="fusionPanelResponses"></div>
+              </div>
+
+              <div class="fusion-connector"><div class="fc-line"></div><div class="fc-dot"></div></div>
+
+              <div class="fusion-step-card" id="fusionStepJudge">
+                <div class="fusion-step-header sh-2">
+                  <div class="fusion-step-badge fb-2">2</div>
+                  <div class="fusion-step-info">
+                    <h3>Judge Analysis</h3>
+                    <div class="fusion-step-desc">Structured evaluation: consensus, contradictions, blind spots</div>
+                  </div>
+                  <div class="fusion-step-status" id="fusionStatusJudge"></div>
+                </div>
+                <div class="fusion-judge-output" id="fusionJudgeOutput"></div>
+              </div>
+
+              <div class="fusion-connector"><div class="fc-line"></div><div class="fc-dot"></div></div>
+
+              <div class="fusion-step-card fusion-final-card" id="fusionStepSynth">
+                <div class="fusion-step-header sh-3">
+                  <div class="fusion-step-badge fb-3">3</div>
+                  <div class="fusion-step-info">
+                    <h3>Final Answer</h3>
+                    <div class="fusion-step-desc">Synthesized by <span id="fusionSynthLabel" style="color:#047857;font-weight:600;"></span></div>
+                  </div>
+                  <div class="fusion-step-status" id="fusionStatusSynth"></div>
+                  <button id="fusionDownloadBtn" onclick="downloadFusionReport()" style="display:none;margin-left:12px;display:none;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid #A7F3D0;background:#ECFDF5;color:#047857;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;" title="Download full report as HTML">
+                    <span class="material-icons" style="font-size:16px;">download</span> Export
+                  </button>
+                </div>
+                <div class="fusion-synth-output" id="fusionSynthOutput"></div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   </div>
@@ -3456,7 +3654,13 @@
         if (typeof window.estimateCost === 'function') window.estimateCost();
         console.log(`Loaded text models: ${sortedText.length}`);
         renderModelList();
-        if (location.search.includes('fusion')) { setTimeout(() => openFusion(), 300); }
+        if (document.getElementById('fusionOverlay')?.classList.contains('open')) {
+          populateFusionDropdowns();
+        }
+        const fusionPath = location.pathname.replace(/\/+$/, '');
+        if (location.search.includes('fusion') || fusionPath.endsWith('/fusion')) {
+          setTimeout(() => openFusion(), 300);
+        }
       } catch (error) {
         console.error('Failed to fetch models:', error);
         availableModels = [];
@@ -4872,29 +5076,226 @@ Return JSON:
     const FUSION_PRESETS = {
       frontier: {
         panelPatterns: [
-          ['claude-opus','claude-3','claude'],
-          ['grok-4','grok-3','grok'],
-          ['gemini-2','gemini-3','gemini']
+          ['^claude-opus-4-6$','claude-opus-4-6','claude-opus','claude'],
+          ['^openai-gpt-55$','openai-gpt-55','gpt-5.5','gpt-55','openai.*gpt','gpt'],
+          ['^grok-4-3$','grok-4-3','grok-4','grok']
         ],
-        judgePatterns: ['claude-opus','claude-3','claude']
+        judgePatterns: ['^claude-opus-4-8$','claude-opus-4-8','claude-opus-4-6','claude-opus','claude']
       },
       dragon: {
         panelPatterns: [
-          ['deepseek-r1','deepseek'],
-          ['qwen3-235b','qwen3','qwen'],
-          ['kimi','deepseek-v3','deepseek']
+          ['^deepseek-v4-pro$','deepseek-v4-pro','deepseek-v4','deepseek'],
+          ['^minimax-m3-preview$','minimax-m3-preview','minimax-m3','minimax'],
+          ['^kimi-k2-6$','kimi-k2-6','kimi-k2','kimi']
         ],
-        judgePatterns: ['qwen3-235b','qwen3','qwen','deepseek-r1','deepseek']
+        judgePatterns: ['^zai-org-glm-5-1$','zai-org-glm-5-1','glm-5-1','zai','glm']
       },
       spark: {
         panelPatterns: [
-          ['gemini.*flash','gemini-3-flash','gemini-2-flash','gemini'],
-          ['llama-3.3','llama-3','llama'],
-          ['mistral','deepseek-v3','deepseek']
+          ['^google-gemma-4-31b-it$','google-gemma-4-31b-it','gemma-4-31b','gemma'],
+          ['^arcee-trinity-large-thinking$','arcee-trinity-large-thinking','trinity-large-thinking','arcee-trinity','arcee'],
+          ['^grok-4-20-multi-agent$','grok-4-20-multi-agent','grok-4-20','grok']
         ],
-        judgePatterns: ['gemini.*flash','gemini','qwen3','llama-3.3','llama']
+        judgePatterns: ['^grok-4-3$','grok-4-3','grok-4','grok']
       }
     };
+
+    const FUSION_SLOTS = [
+      { id: 'fusionPanel1', label: 'Panel A', short: 'A' },
+      { id: 'fusionPanel2', label: 'Panel B', short: 'B' },
+      { id: 'fusionPanel3', label: 'Panel C', short: 'C' },
+      { id: 'fusionJudge', label: 'Judge & Synthesizer', short: 'J+S' }
+    ];
+    let fusionActivePicker = 'fusionPanel1';
+    let fusionPickerEventsBound = false;
+    let fusionSearchFocused = false;
+
+    function fusionEscape(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function fusionTextModels() {
+      return (window.availableModels || availableModels || []).filter(m => !m.modelType || m.modelType === 'text');
+    }
+
+    function fusionShortModelName(modelId) {
+      return (modelId || '')
+        .split('/').pop()
+        .replace(/-\d{8}$/, '')
+        .slice(0, 34);
+    }
+
+    function fusionContextLabel(model) {
+      const tokens = model?.model_spec?.availableContextTokens || 0;
+      if (!tokens) return '';
+      if (tokens >= 1000000) return `${(tokens / 1000000).toFixed(tokens >= 2000000 ? 0 : 1)}M ctx`;
+      if (tokens >= 1000) return `${Math.round(tokens / 1000)}K ctx`;
+      return `${tokens} ctx`;
+    }
+
+    function fusionModelTags(model) {
+      const c = model?.model_spec?.capabilities || {};
+      const tags = [];
+      const ctx = fusionContextLabel(model);
+      if (ctx) tags.push({ icon: 'memory', label: ctx });
+      if (c.supportsReasoning) tags.push({ icon: 'psychology', label: 'Reasoning' });
+      if (c.supportsWebSearch) tags.push({ icon: 'travel_explore', label: 'Web' });
+      if (c.supportsVision) tags.push({ icon: 'visibility', label: 'Vision' });
+      if (c.supportsFunctionCalling) tags.push({ icon: 'functions', label: 'Tools' });
+      return tags.slice(0, 3);
+    }
+
+    function fusionModelSearchText(model) {
+      const spec = model?.model_spec || {};
+      const c = spec.capabilities || {};
+      const caps = Object.entries(c).filter(([, value]) => value).map(([key]) => key.replace(/^supports/i, ''));
+      return [
+        model?.id,
+        spec.name,
+        spec.modelSource,
+        ...(spec.traits || []),
+        ...(spec.model_sets || []),
+        ...caps
+      ].filter(Boolean).join(' ').toLowerCase();
+    }
+
+    function fusionSlotLabel(slotId) {
+      return FUSION_SLOTS.find(slot => slot.id === slotId)?.label || 'Model';
+    }
+
+    function fusionSetActivePicker(slotId) {
+      if (!FUSION_SLOTS.some(slot => slot.id === slotId)) return;
+      fusionActivePicker = slotId;
+      renderFusionPicker();
+      renderFusionSearchResults();
+      document.getElementById('fusionModelSearch')?.focus();
+    }
+    window.fusionSetActivePicker = fusionSetActivePicker;
+
+    function fusionSelectActiveModel(modelId) {
+      const select = document.getElementById(fusionActivePicker);
+      if (!select) return;
+      select.value = modelId;
+      const search = document.getElementById('fusionModelSearch');
+      if (search) search.value = '';
+      fusionSearchFocused = false;
+      search?.blur();
+      renderFusionPicker();
+      renderFusionSearchResults();
+    }
+
+    function renderFusionPicker() {
+      const models = fusionTextModels();
+      document.querySelectorAll('.fusion-model-slot').forEach(slot => {
+        const slotId = slot.dataset.fusionSlot;
+        const select = document.getElementById(slotId);
+        const modelId = select?.value || '';
+        const model = models.find(m => m.id === modelId);
+        slot.classList.toggle('active', slotId === fusionActivePicker);
+
+        const nameEl = document.querySelector(`[data-slot-name="${slotId}"]`);
+        const metaEl = document.querySelector(`[data-slot-meta="${slotId}"]`);
+        const tagsEl = document.querySelector(`[data-slot-tags="${slotId}"]`);
+
+        if (nameEl) nameEl.textContent = model ? fusionShortModelName(model.id) : 'Select a model';
+        if (metaEl) {
+          const ctx = fusionContextLabel(model);
+          metaEl.textContent = model ? `${model.id}${ctx ? ' - ' + ctx : ''}` : 'Search below to assign';
+        }
+        if (tagsEl) {
+          tagsEl.innerHTML = model
+            ? fusionModelTags(model).map(tag => `<span class="fusion-mini-tag"><span class="material-icons">${tag.icon}</span>${fusionEscape(tag.label)}</span>`).join('')
+            : '';
+        }
+      });
+    }
+
+    function renderFusionSearchResults() {
+      const resultsEl = document.getElementById('fusionModelSearchResults');
+      if (!resultsEl) return;
+
+      const models = fusionTextModels();
+      const searchInput = document.getElementById('fusionModelSearch');
+      const query = (searchInput?.value || '').trim().toLowerCase();
+      const selectedForActive = document.getElementById(fusionActivePicker)?.value || '';
+      resultsEl.classList.remove('open');
+
+      if (!query && !fusionSearchFocused) {
+        resultsEl.innerHTML = '';
+        return;
+      }
+
+      const visible = (query
+        ? models.filter(model => fusionModelSearchText(model).includes(query))
+        : models
+      ).slice(0, 12);
+
+      if (!models.length) {
+        resultsEl.classList.add('open');
+        resultsEl.innerHTML = `<div class="fusion-empty-results"><span class="material-icons">cloud_off</span>Load models to search and assign the Fusion panel.</div>`;
+        return;
+      }
+
+      if (!visible.length) {
+        resultsEl.classList.add('open');
+        resultsEl.innerHTML = `<div class="fusion-empty-results"><span class="material-icons">search_off</span>No models match "${fusionEscape(query)}".</div>`;
+        return;
+      }
+
+      resultsEl.classList.add('open');
+      resultsEl.innerHTML = visible.map(model => {
+        const tags = fusionModelTags(model).map(tag => tag.label).join(' - ') || fusionSlotLabel(fusionActivePicker);
+        const selected = model.id === selectedForActive ? ' selected' : '';
+        return `
+          <button class="fusion-search-result${selected}" type="button" data-model-id="${fusionEscape(model.id)}" title="${fusionEscape(model.id)}">
+            <span class="fusion-result-icon"><span class="material-icons">${model.id === selectedForActive ? 'check_circle' : 'smart_toy'}</span></span>
+            <span class="fusion-result-main">
+              <span class="fusion-result-name">${fusionEscape(fusionShortModelName(model.id))}</span>
+              <span class="fusion-result-meta">${fusionEscape(tags)} - assign to ${fusionEscape(fusionSlotLabel(fusionActivePicker))}</span>
+            </span>
+          </button>`;
+      }).join('');
+
+      resultsEl.querySelectorAll('[data-model-id]').forEach(button => {
+        button.addEventListener('click', () => fusionSelectActiveModel(button.dataset.modelId));
+      });
+    }
+
+    function bindFusionPickerEvents() {
+      if (fusionPickerEventsBound) return;
+      fusionPickerEventsBound = true;
+      const search = document.getElementById('fusionModelSearch');
+      search?.addEventListener('input', renderFusionSearchResults);
+      search?.addEventListener('focus', () => {
+        fusionSearchFocused = true;
+        renderFusionSearchResults();
+      });
+      search?.addEventListener('blur', () => {
+        setTimeout(() => {
+          fusionSearchFocused = document.activeElement?.closest?.('#fusionModelSearchResults') ? true : false;
+          renderFusionSearchResults();
+        }, 120);
+      });
+      document.addEventListener('click', e => {
+        if (!e.target.closest('.fusion-model-search')) {
+          fusionSearchFocused = false;
+          renderFusionSearchResults();
+        }
+      });
+      document.querySelectorAll('.fusion-model-slot').forEach(slot => {
+        slot.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fusionSetActivePicker(slot.dataset.fusionSlot);
+          }
+        });
+      });
+    }
 
     function fusionFindModel(models, patterns) {
       for (const pat of patterns) {
@@ -4907,7 +5308,10 @@ Return JSON:
 
     function openFusion() {
       document.getElementById('fusionOverlay').classList.add('open');
+      bindFusionPickerEvents();
       populateFusionDropdowns();
+      renderFusionPicker();
+      renderFusionSearchResults();
     }
     window.openFusion = openFusion;
 
@@ -4917,9 +5321,14 @@ Return JSON:
     window.closeFusion = closeFusion;
 
     function populateFusionDropdowns() {
-      const textModels = (window.availableModels || []).filter(m => !m.modelType || m.modelType === 'text');
-      if (!textModels.length) return;
-      const opts = textModels.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
+      bindFusionPickerEvents();
+      const textModels = fusionTextModels();
+      if (!textModels.length) {
+        renderFusionPicker();
+        renderFusionSearchResults();
+        return;
+      }
+      const opts = textModels.map(m => `<option value="${fusionEscape(m.id)}">${fusionEscape(m.id)}</option>`).join('');
       ['fusionPanel1','fusionPanel2','fusionPanel3','fusionJudge'].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
@@ -4930,12 +5339,14 @@ Return JSON:
       // Apply last active preset or default to frontier
       const active = document.querySelector('.fusion-preset-btn.active');
       if (!active) applyFusionPreset('frontier');
+      renderFusionPicker();
+      renderFusionSearchResults();
     }
 
     function applyFusionPreset(name) {
       const preset = FUSION_PRESETS[name];
       if (!preset) return;
-      const models = (window.availableModels || []).filter(m => !m.modelType || m.modelType === 'text');
+      const models = fusionTextModels();
       if (!models.length) return;
 
       ['fusionPanel1','fusionPanel2','fusionPanel3'].forEach((id, i) => {
@@ -4952,7 +5363,9 @@ Return JSON:
       }
 
       document.querySelectorAll('.fusion-preset-btn').forEach(b => b.classList.remove('active'));
-      document.querySelector(`.fusion-preset-btn.${name}`)?.classList.add('active');
+      document.querySelectorAll(`.fusion-preset-btn.${name}`).forEach(b => b.classList.add('active'));
+      renderFusionPicker();
+      renderFusionSearchResults();
     }
     window.applyFusionPreset = applyFusionPreset;
 
@@ -4960,7 +5373,7 @@ Return JSON:
       const el = document.getElementById(id);
       if (!el) return;
       el.className = `fusion-step-status fss-${state}`;
-      const labels = { running: 'Running…', done: 'Complete', error: 'Error' };
+      const labels = { running: 'Running...', done: 'Complete', error: 'Error' };
       el.textContent = labels[state] || '';
     }
 
@@ -4988,7 +5401,7 @@ Return JSON:
             <div class="fp-card-body" id="fpb_${sid}">
               <div class="fusion-thinking" style="padding:8px 0;">
                 <span class="material-icons spin" style="font-size:15px;color:#0E7490;">refresh</span>
-                <span style="color:#94A3B8;font-size:12px;">Waiting…</span>
+                <span style="color:#94A3B8;font-size:12px;">Waiting...</span>
               </div>
             </div>
             <div class="fp-card-footer" id="fpf_${sid}" style="display:none;"></div>
@@ -5219,7 +5632,7 @@ Write a comprehensive, authoritative response that:
 
       const runBtn = document.getElementById('fusionRunBtn');
       runBtn.disabled = true;
-      runBtn.innerHTML = '<span class="material-icons spin">refresh</span> Running…';
+      runBtn.innerHTML = '<span class="material-icons spin">refresh</span> Running...';
 
       // Reset step statuses
       ['fusionStatusPanel','fusionStatusJudge','fusionStatusSynth'].forEach(id => {

@@ -10,6 +10,6 @@
 
 [[redirects]]
   from = "/fusion"
-  to = "/?fusion"
-  status = 302
+  to = "/index.html"
+  status = 200
 

@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/fusion",
+      "destination": "/index.html"
+    }
+  ]
+}
