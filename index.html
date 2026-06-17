@@ -2254,6 +2254,10 @@
     .fusion-run-btn:hover{background:#0C6478;box-shadow:0 1px 3px rgba(14,116,144,0.4),0 6px 16px rgba(14,116,144,0.2);}
     .fusion-run-btn:disabled{opacity:0.5;cursor:not-allowed;box-shadow:none;}
     .fusion-run-btn .material-icons{font-size:18px;}
+    .fusion-improve-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 16px;border-radius:10px;cursor:pointer;background:#fff;border:1px solid #C7D2FE;color:#4338CA;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;letter-spacing:.2px;transition:all 0.15s;box-shadow:0 1px 2px rgba(67,56,202,0.08);}
+    .fusion-improve-btn:hover{background:#EEF2FF;border-color:#A5B4FC;box-shadow:0 2px 8px rgba(67,56,202,0.12);}
+    .fusion-improve-btn:disabled{opacity:0.55;cursor:not-allowed;box-shadow:none;}
+    .fusion-improve-btn .material-icons{font-size:17px;}
 
     /* pipeline */
     .fusion-pipeline{flex:1;overflow-y:auto;padding:24px 28px;background:#F8FAFC;}
@@ -2939,6 +2943,10 @@
                 <span class="fusion-toggle-label">Web Search</span>
                 <span class="fusion-toggle-desc">panel models</span>
               </label>
+              <button class="fusion-improve-btn" id="fusionImproveBtn" onclick="improveFusionPrompt()" title="Rewrite your prompt for clarity and detail using the Gemma 31B model before running">
+                <span class="material-icons">auto_fix_high</span>
+                Improve Prompt
+              </button>
               <button class="fusion-run-btn" id="fusionRunBtn" onclick="runFusion()">
                 <span class="material-icons">auto_awesome</span>
                 Run Fusion
@@ -3660,6 +3668,9 @@
         const fusionPath = location.pathname.replace(/\/+$/, '');
         if (location.search.includes('fusion') || fusionPath.endsWith('/fusion')) {
           setTimeout(() => openFusion(), 300);
+        } else if (currentRouteView()) {
+          // Deep link to an overlay page via hash (#fusion, #image, #batch, #history)
+          setTimeout(() => applyRoute(), 300);
         }
       } catch (error) {
         console.error('Failed to fetch models:', error);
@@ -5306,8 +5317,98 @@ Return JSON:
       return models[0]?.id || '';
     }
 
+    // ── URL ROUTING ─────────────────────────────────────────
+    // Each overlay "page" gets its own shareable URL via the hash
+    // (#fusion, #image, #batch, #history) so deep links and the
+    // browser back/forward buttons work. The legacy /fusion path
+    // (Netlify redirect) keeps working too.
+    const ROUTE_VIEWS = {
+      fusion:  { isOpen: () => document.getElementById('fusionOverlay')?.classList.contains('open'),
+                 open: () => openFusion(),        close: () => closeFusion() },
+      image:   { isOpen: () => document.getElementById('imgModal')?.classList.contains('open'),
+                 open: () => openImgPlayground(), close: () => closeImgPlayground() },
+      batch:   { isOpen: () => document.getElementById('batchModal')?.classList.contains('open'),
+                 open: () => openBatch(),         close: () => closeBatch() },
+      history: { isOpen: () => document.getElementById('historyPanel')?.classList.contains('open'),
+                 open: () => openHistory(),       close: () => closeHistory() },
+    };
+    let _applyingRoute = false;
+    function currentRouteView() { return (location.hash || '').replace(/^#/, ''); }
+    function pushRoute(view) {
+      if (_applyingRoute) return;
+      // Preserve the clean legacy /fusion path URL (don't append a hash to it)
+      if (view === 'fusion' && location.pathname.replace(/\/+$/, '').endsWith('/fusion')) return;
+      if (currentRouteView() === view) return;
+      history.pushState({ view }, '', '#' + view);
+    }
+    function clearRoute(view) {
+      if (_applyingRoute) return;
+      if (currentRouteView() !== view) return;
+      history.replaceState({ view: '' }, '', location.pathname + location.search);
+    }
+    function applyRoute() {
+      _applyingRoute = true;
+      try {
+        const view = currentRouteView();
+        for (const name in ROUTE_VIEWS) {
+          const r = ROUTE_VIEWS[name];
+          if (name === view) { if (!r.isOpen()) r.open(); }
+          else if (r.isOpen()) { r.close(); }
+        }
+      } finally { _applyingRoute = false; }
+    }
+    window.addEventListener('popstate', applyRoute);
+    window.applyRoute = applyRoute;
+
+    // ── IMPROVE PROMPT (Gemma 31B) ──────────────────────────
+    const GEMMA_IMPROVE_MODEL = 'google-gemma-4-31b-it';
+    function resolveGemmaModel() {
+      const list = window.availableModels || [];
+      const found = list.find(m => /gemma/i.test(m.id) && /31b/i.test(m.id))
+                 || list.find(m => /gemma/i.test(m.id));
+      return found?.id || GEMMA_IMPROVE_MODEL;
+    }
+    async function improveFusionPrompt() {
+      const ta = document.getElementById('fusionPrompt');
+      const original = (ta?.value || '').trim();
+      if (!original) { alert('Please enter a prompt to improve first.'); return; }
+      const btn = document.getElementById('fusionImproveBtn');
+      const prevHTML = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.innerHTML = '<span class="material-icons spin">refresh</span> Improving…'; }
+      try {
+        const sysMsg = `You are a prompt-engineering expert. Rewrite the user's prompt so it is clear, specific, and well-structured to get the best possible answer from advanced AI models. Preserve the user's original intent and language. Add helpful structure, context, and explicit requirements where useful, but do NOT answer the prompt and do NOT add any commentary. Return ONLY the improved prompt text — no preamble, no surrounding quotes, no markdown code fences.`;
+        const r = await fetch(`${BASE_URL}/chat/completions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+          body: JSON.stringify({
+            model: resolveGemmaModel(),
+            messages: [{ role: 'system', content: sysMsg }, { role: 'user', content: original }],
+            temperature: 0.4
+          })
+        });
+        if (!r.ok) throw new Error(`Improve API ${r.status}`);
+        const data = await r.json();
+        let improved = (data.choices?.[0]?.message?.content || '').trim();
+        improved = improved.replace(/^```[a-z]*\s*/i, '').replace(/```$/,'').trim();
+        improved = improved.replace(/^["“”'']+|["“”'']+$/g, '').trim();
+        if (!improved) throw new Error('No improved prompt returned');
+        ta.value = improved;
+        ta.focus();
+        ta.dispatchEvent(new Event('input', { bubbles: true }));
+        if (typeof showToast === 'function') showToast('Prompt improved with Gemma 31B', 'success', 3000);
+      } catch (err) {
+        console.error('Improve prompt error:', err);
+        if (typeof showToast === 'function') showToast(`Improve failed: ${err.message}`, 'error', 5000);
+        else alert(`Improve failed: ${err.message}`);
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = prevHTML; }
+      }
+    }
+    window.improveFusionPrompt = improveFusionPrompt;
+
     function openFusion() {
       document.getElementById('fusionOverlay').classList.add('open');
+      pushRoute('fusion');
       bindFusionPickerEvents();
       populateFusionDropdowns();
       renderFusionPicker();
@@ -5317,6 +5418,7 @@ Return JSON:
 
     function closeFusion() {
       document.getElementById('fusionOverlay').classList.remove('open');
+      clearRoute('fusion');
     }
     window.closeFusion = closeFusion;
 
@@ -7141,8 +7243,8 @@ ${appendixSections ? `<!-- Appendix – Source Responses -->
       renderHistory();
     };
 
-    function openHistory()  { $('historyPanel')?.classList.add('open'); renderHistory(); }
-    function closeHistory() { $('historyPanel')?.classList.remove('open'); }
+    function openHistory()  { $('historyPanel')?.classList.add('open'); pushRoute('history'); renderHistory(); }
+    function closeHistory() { $('historyPanel')?.classList.remove('open'); clearRoute('history'); }
     window.openHistory = openHistory;
     window.closeHistory = closeHistory;
 
@@ -7161,6 +7263,7 @@ ${appendixSections ? `<!-- Appendix – Source Responses -->
       const m = $('batchModal');
       if (!m) return;
       m.classList.add('open');
+      pushRoute('batch');
       // Populate model select from loaded text models
       const sel = $('batchModel');
       if (sel && sel.options.length <= 1) {
@@ -7184,7 +7287,7 @@ ${appendixSections ? `<!-- Appendix – Source Responses -->
         }
       }
     }
-    function closeBatch() { $('batchModal')?.classList.remove('open'); }
+    function closeBatch() { $('batchModal')?.classList.remove('open'); clearRoute('batch'); }
     window.openBatch  = openBatch;
     window.closeBatch = closeBatch;
 
@@ -7258,6 +7361,7 @@ ${appendixSections ? `<!-- Appendix – Source Responses -->
       const m = $('imgModal');
       if (!m) return;
       m.classList.add('open');
+      pushRoute('image');
       // Fetch image models from API on first open
       const sel = $('imgModel');
       if (sel && sel.options.length <= 1) {
@@ -7290,7 +7394,7 @@ ${appendixSections ? `<!-- Appendix – Source Responses -->
         }
       }
     }
-    function closeImgPlayground() { $('imgModal')?.classList.remove('open'); }
+    function closeImgPlayground() { $('imgModal')?.classList.remove('open'); clearRoute('image'); }
     window.openImgPlayground  = openImgPlayground;
     window.closeImgPlayground = closeImgPlayground;
 
