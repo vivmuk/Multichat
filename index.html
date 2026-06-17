@@ -742,7 +742,10 @@
       max-width: 420px;
       width: 100%;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
     }
+    #authTrialBanner .material-icons { color: #e63946; font-size: 20px; flex-shrink: 0; }
+    #authCloseBtn:hover { background: var(--bg-color, rgba(255,255,255,0.05)); color: var(--text-primary, #fff); }
 
     .auth-header {
       text-align: center;
@@ -2815,11 +2818,15 @@
   <!-- Authentication Modal -->
   <div class="auth-modal" id="authModal">
     <div class="auth-content">
+      <button id="authCloseBtn" onclick="closeAuthModal()" title="Continue browsing" style="display:none;position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:8px;border:1px solid var(--border,#2a2a3a);background:transparent;color:var(--text-secondary,#9aa0b4);cursor:pointer;align-items:center;justify-content:center;">
+        <span class="material-icons" style="font-size:18px;">close</span>
+      </button>
       <div class="auth-header">
         <span class="material-icons" style="font-size: 48px; color: #e63946;">smart_toy</span>
         <h2>Venice AI Multi-Chat</h2>
         <p id="authModalSubtitle">Enter your Venice AI API key to get started</p>
       </div>
+      <div id="authTrialBanner" style="display:none;align-items:flex-start;gap:10px;background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.3);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;line-height:1.55;color:var(--text-primary,#e8e8ef);"></div>
       <div class="auth-form">
         <div class="auth-tab-content" id="apikeyTab">
           <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Connect with your own Venice AI API key</p>
@@ -2835,7 +2842,7 @@
             <span class="material-icons">vpn_key</span>
             Connect
           </button>
-          <p class="auth-hint">Don't have a key? Get one from <a href="https://venice.ai" target="_blank">venice.ai</a> or email the site builder to request a key.</p>
+          <p class="auth-hint">Don't have a key? <a href="https://venice.ai/chat?ref=yN8qqI" target="_blank" rel="noopener">Create a free Venice AI account</a> to get your own API key and unlock unlimited queries.</p>
         </div>
         <div class="auth-error" id="authError" style="display: none;">
           <span class="material-icons">error</span>
@@ -3149,14 +3156,57 @@
       return { authenticated: false };
     }
 
-    // Get API key based on authentication
+    // Get API key based on authentication.
+    // Falls back to the site/build-injected key so visitors can take a
+    // limited free trial (one query per page) before entering their own.
     function getApiKey() {
       const auth = checkAuthentication();
       if (auth.authenticated && auth.apiKey) {
         return auth.apiKey;
       }
+      if (typeof window !== 'undefined' && window.VENICE_API_KEY) {
+        return String(window.VENICE_API_KEY).trim();
+      }
       return '';
     }
+    window.getApiKey = getApiKey;
+
+    // ── FREE-TRIAL GATING ───────────────────────────────────
+    // Visitors without their own API key get one free query on each
+    // page (Chat, Fusion, Image, Batch) using the site key. After that
+    // they're asked to enter (and we save) their own Venice API key.
+    const VENICE_REFERRAL_URL = 'https://venice.ai/chat?ref=yN8qqI';
+    const FREE_TRIAL_KEY = 'venice_free_trial_used';
+
+    function hasPersonalKey() {
+      return !!localStorage.getItem('venice_user_api_key');
+    }
+    function freeTrialUsed(page) {
+      try { return JSON.parse(localStorage.getItem(FREE_TRIAL_KEY) || '{}')[page] === true; }
+      catch (_) { return false; }
+    }
+    function markFreeTrialUsed(page) {
+      let o = {};
+      try { o = JSON.parse(localStorage.getItem(FREE_TRIAL_KEY) || '{}'); } catch (_) {}
+      o[page] = true;
+      localStorage.setItem(FREE_TRIAL_KEY, JSON.stringify(o));
+    }
+
+    // Returns true if the query may proceed. If the free trial for this
+    // page is exhausted (and no personal key), shows the auth modal and
+    // returns false so the caller can abort.
+    function ensureQueryAllowed(page) {
+      if (hasPersonalKey()) return true;                     // own key → unlimited
+      const siteKey = (window.VENICE_API_KEY ? String(window.VENICE_API_KEY).trim() : '');
+      if (!siteKey) { showAuthModal(null, 'nokey'); return false; }  // nothing to run on
+      if (!freeTrialUsed(page)) {                             // first free query here
+        markFreeTrialUsed(page);
+        return true;
+      }
+      showAuthModal(null, 'trial');                          // free query already used
+      return false;
+    }
+    window.ensureQueryAllowed = ensureQueryAllowed;
 
     let API_KEY = getApiKey();
 
@@ -3191,10 +3241,12 @@
       });
     }
 
-    function showAuthModal(prefillKey) {
+    function showAuthModal(prefillKey, reason) {
       const authModal = document.getElementById('authModal');
       const input = document.getElementById('apiKeyInput');
       const subtitle = document.getElementById('authModalSubtitle');
+      const banner = document.getElementById('authTrialBanner');
+      const closeBtn = document.getElementById('authCloseBtn');
       if (prefillKey) {
         input.value = prefillKey;
         if (subtitle) subtitle.textContent = 'Update your Venice AI API key';
@@ -3202,9 +3254,34 @@
         input.value = '';
         if (subtitle) subtitle.textContent = 'Enter your Venice AI API key to get started';
       }
+      // Trial-exhausted messaging
+      if (banner) {
+        if (reason === 'trial') {
+          banner.style.display = 'flex';
+          banner.innerHTML = `<span class="material-icons">auto_awesome</span>
+            <span>You've used your <strong>free preview query</strong> on this page. Add your own Venice API key to keep going — it's free to create and unlocks unlimited queries across every page.</span>`;
+        } else {
+          banner.style.display = 'none';
+        }
+      }
+      // The modal is dismissable only when a working key (site or personal)
+      // is already available — i.e. the trial gate, not the cold-start case.
+      const dismissable = reason === 'trial' || hasPersonalKey() ||
+        !!(window.VENICE_API_KEY && String(window.VENICE_API_KEY).trim());
+      if (closeBtn) closeBtn.style.display = dismissable ? 'flex' : 'none';
+      authModal.dataset.dismissable = dismissable ? '1' : '0';
       authModal.classList.add('show');
       input.focus();
     }
+    window.showAuthModal = showAuthModal;
+
+    function closeAuthModal() {
+      const authModal = document.getElementById('authModal');
+      if (authModal && authModal.dataset.dismissable === '1') {
+        authModal.classList.remove('show');
+      }
+    }
+    window.closeAuthModal = closeAuthModal;
 
     // Logout function
     window.veniceLogout = function() {
@@ -4275,6 +4352,9 @@
         return;
       }
 
+      // Free-trial gate (one query per page without a personal key)
+      if (!ensureQueryAllowed('chat')) return;
+
       // Cancel any existing streams
       Object.values(streamingControllers).forEach(controller => controller.abort());
       streamingControllers = {};
@@ -4844,9 +4924,10 @@
       window.location.href = 'dashboard.html';
     });
 
-    // Settings button — opens the API key modal with the current key pre-filled
+    // Settings button — opens the API key modal with the user's own key
+    // pre-filled (never the shared site/trial key).
     document.getElementById('settingsButton').addEventListener('click', () => {
-      showAuthModal(API_KEY);
+      showAuthModal(localStorage.getItem('venice_user_api_key') || '');
     });
 
     // Analysis button and modal
@@ -5821,6 +5902,9 @@ Write a comprehensive, authoritative response that:
 
       if (panelIds.length < 2) { alert('Please configure at least 2 panel models.'); return; }
       if (!judgeId) { alert('Please select a judge model.'); return; }
+
+      // Free-trial gate (one query per page without a personal key)
+      if (!ensureQueryAllowed('fusion')) return;
 
       // Show pipeline
       document.getElementById('fusionIdle').style.display = 'none';
@@ -6982,12 +7066,16 @@ function rpCopyAnswer(btn){
         // Initialize authentication modal
         initAuthModal();
 
-        // Check if user is authenticated
+        // Check if user is authenticated. With no personal key we fall back
+        // to the site key so visitors can take a free trial (one query per
+        // page); only force the modal when there's no key to run on at all.
         const auth = checkAuthentication();
-        if (!auth.authenticated) {
-          showAuthModal();
-        } else {
+        const siteKey = (window.VENICE_API_KEY ? String(window.VENICE_API_KEY).trim() : '');
+        if (auth.authenticated || siteKey) {
+          API_KEY = getApiKey();
           fetchVeniceModels();
+        } else {
+          showAuthModal(null, 'nokey');
         }
 
         const style = document.createElement('style');
@@ -7459,6 +7547,7 @@ function rpCopyAnswer(btn){
       const modelId = $('batchModel')?.value;
       if (!raw) { showToast('Enter at least one prompt', 'warn'); return; }
       if (!modelId) { showToast('Select a model', 'warn'); return; }
+      if (!ensureQueryAllowed('batch')) return;
 
       const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
       const resDiv = $('batchResults');
@@ -7563,6 +7652,7 @@ function rpCopyAnswer(btn){
     window.generateImage = async function() {
       const prompt = $('imgPrompt')?.value?.trim();
       if (!prompt) { showToast('Enter an image prompt', 'warn'); return; }
+      if (!ensureQueryAllowed('image')) return;
 
       const model  = $('imgModel')?.value || 'fluently-xl';
       const style  = $('imgStyle')?.value || undefined;
