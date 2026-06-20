@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>V's MultiGen AI Chat — Model Explorer Dashboard</title>
+  <title>V's MultiGen AI Chat — Models</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="logo.png">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -192,6 +192,23 @@
     .filter-chip .material-icons { font-size: 13px; }
     .filter-chip .check-icon { display: none; font-size: 12px; margin-right: -2px; }
     .filter-chip.active .check-icon { display: inline-flex; }
+
+    /* Refine row: dropdowns + toggle */
+    .refine-select {
+      padding: 5px 10px; border-radius: var(--radius-full);
+      font-size: 11px; font-weight: 600; cursor: pointer;
+      border: 2px solid var(--border); background: var(--surface);
+      color: var(--text-primary); font-family: var(--font-body); outline: none;
+      transition: border-color 0.15s;
+    }
+    .refine-select:hover { border-color: var(--accent); }
+    .refine-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+    .refine-toggle {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600; color: var(--text-secondary);
+      cursor: pointer; user-select: none; padding: 4px 8px;
+    }
+    .refine-toggle input { accent-color: var(--accent); cursor: pointer; }
 
     /* Chip colors */
     .chip-reasoning { background: var(--violet-bg); color: var(--violet); }
@@ -629,7 +646,7 @@
   <nav class="top-nav">
     <div class="nav-brand">
       <div class="logo"><img src="logo.png" alt="V's MultiGen AI Chat" onerror="this.parentElement.innerHTML='&lt;span class=&quot;material-icons&quot;&gt;hub&lt;/span&gt;'"></div>
-      <div><h1>V's MultiGen AI Chat</h1><span>Model Explorer</span></div>
+      <div><h1>V's MultiGen AI Chat</h1><span>Models</span></div>
     </div>
     <div class="nav-actions">
       <button class="nav-btn secondary" onclick="exportCSV()" title="Export as CSV">
@@ -750,6 +767,21 @@
         <button class="filter-chip chip-video" data-filter="video" onclick="toggleFilter(this)">
           <span class="material-icons check-icon">check</span><span class="material-icons">videocam</span> Video In
         </button>
+        <button class="filter-chip chip-vision" data-filter="multiImage" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">collections</span> Multi-image
+        </button>
+        <button class="filter-chip chip-websearch" data-filter="xsearch" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">tag</span> X Search
+        </button>
+        <button class="filter-chip chip-reasoning" data-filter="reasoningEffort" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">tune</span> Reasoning Effort
+        </button>
+        <button class="filter-chip chip-schema" data-filter="tee" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">verified_user</span> TEE
+        </button>
+        <button class="filter-chip chip-schema" data-filter="e2ee" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">enhanced_encryption</span> E2EE
+        </button>
       </div>
       <!-- Row 2: Model properties -->
       <div class="filter-section">
@@ -766,10 +798,39 @@
         <button class="filter-chip chip-anonymized" data-filter="anonymized" onclick="toggleFilter(this)">
           <span class="material-icons check-icon">check</span><span class="material-icons">shield</span> Anonymized
         </button>
+        <button class="filter-chip chip-beta" data-filter="deprecated" onclick="toggleFilter(this)">
+          <span class="material-icons check-icon">check</span><span class="material-icons">schedule</span> Deprecated
+        </button>
         <div style="flex:1;"></div>
         <button class="clear-filters" onclick="clearFilters()" id="clearFiltersBtn" style="display:none;">
           <span class="material-icons">close</span> Clear All
         </button>
+      </div>
+      <!-- Row 3: Refine (family / context / price) -->
+      <div class="filter-section">
+        <span class="filter-label">Refine:</span>
+        <select id="familyFilter" class="refine-select" onchange="applyFilters()" title="Model family / series">
+          <option value="">All families</option>
+        </select>
+        <select id="minContextFilter" class="refine-select" onchange="applyFilters()" title="Minimum context window">
+          <option value="0">Any context</option>
+          <option value="32000">≥ 32K</option>
+          <option value="64000">≥ 64K</option>
+          <option value="128000">≥ 128K</option>
+          <option value="200000">≥ 200K</option>
+          <option value="500000">≥ 500K</option>
+          <option value="1000000">≥ 1M</option>
+        </select>
+        <select id="maxPriceFilter" class="refine-select" onchange="applyFilters()" title="Maximum input price ($ / 1M tokens)">
+          <option value="">Any price</option>
+          <option value="0.0001">Free</option>
+          <option value="0.5">≤ $0.50</option>
+          <option value="1">≤ $1</option>
+          <option value="2">≤ $2</option>
+          <option value="5">≤ $5</option>
+          <option value="10">≤ $10</option>
+        </select>
+        <label class="refine-toggle" title="Hide offline / unavailable models"><input type="checkbox" id="hideOffline" onchange="applyFilters()"> Hide offline</label>
       </div>
     </div>
 
@@ -787,6 +848,7 @@
               <th onclick="sortBy('cachePrice')" style="text-align:right;">Cache In <span class="sort-arrow" id="sort-cachePrice">&#8597;</span></th>
               <th onclick="sortBy('budgetTokens')" style="text-align:right;">@ $48 <span class="sort-arrow" id="sort-budgetTokens">&#8597;</span></th>
               <th onclick="sortBy('latency')" style="min-width:120px;">Latency <span class="sort-arrow" id="sort-latency">&#8597;</span></th>
+              <th onclick="sortBy('created')" style="text-align:right;">Added <span class="sort-arrow" id="sort-created">&#8597;</span></th>
               <th style="min-width:180px;">Capabilities</th>
             </tr>
           </thead>
@@ -1097,6 +1159,9 @@
       const maxOutputTokens = spec.maxCompletionTokens || Math.floor(contextTokens * 0.25);
       const budgetTokens = outputPrice > 0 ? (DIEM_BUDGET / outputPrice) * 1e6 : 0;
       const extended = pricing.extended || null;
+      const constraints = spec.constraints || {};
+      const regionRestrictions = spec.regionRestrictions || spec.region_restrictions || [];
+      const deprecationDate = spec.deprecation?.date || spec.deprecation || null;
 
       return {
         id: model.id,
@@ -1107,26 +1172,56 @@
         quantization: caps.quantization || 'N/A',
         traits: spec.traits || [],
         modelSets: spec.model_sets || [],
-        beta: !!spec.betaModel,
+        beta: !!(spec.betaModel || spec.beta),
+        offline: !!spec.offline,
         created: model.created || 0,
         ownedBy: model.owned_by || '',
         contextTokens, maxOutputTokens,
         inputPrice, outputPrice, cacheInputPrice, cacheWritePrice,
+        // DIEM-denominated pricing (Venice native token), when present
+        inputDiem: pricing.input?.diem || 0,
+        outputDiem: pricing.output?.diem || 0,
         budgetTokens, extended,
-        // Capabilities
+        constraints,
+        regionRestrictions,
+        deprecationDate,
+        // Capabilities (all flags exposed by the Venice /models API)
         reasoning: !!caps.supportsReasoning,
+        reasoningEffort: !!caps.supportsReasoningEffort,
         vision: !!caps.supportsVision,
+        multiImage: !!caps.supportsMultipleImages,
+        maxImages: caps.maxImages || 0,
         code: !!caps.optimizedForCode,
         websearch: !!caps.supportsWebSearch,
+        xsearch: !!caps.supportsXSearch,
         functions: !!caps.supportsFunctionCalling,
         schema: !!caps.supportsResponseSchema,
         logprobs: !!caps.supportsLogProbs,
         audioInput: !!caps.supportsAudioInput,
         videoInput: !!caps.supportsVideoInput,
+        tee: !!caps.supportsTeeAttestation,
+        e2ee: !!caps.supportsE2EE,
         // Derived
         recommended: (spec.model_sets || []).includes('venice_recommendations'),
+        family: modelFamily(model.id, spec.name),
         model: model
       };
+    }
+
+    // Group models into families/series for filtering (OpenRouter-style)
+    function modelFamily(id, name) {
+      const s = ((id || '') + ' ' + (name || '')).toLowerCase();
+      const families = [
+        ['Claude', /claude|anthropic/], ['GPT', /gpt|openai|o1|o3|o4/],
+        ['Gemini', /gemini|google/], ['Grok', /grok|xai/],
+        ['Llama', /llama|meta-/], ['Qwen', /qwen|qwq/],
+        ['DeepSeek', /deepseek/], ['Mistral', /mistral|mixtral|ministral|magistral/],
+        ['Gemma', /gemma/], ['Kimi', /kimi|moonshot/], ['MiniMax', /minimax/],
+        ['GLM', /glm|zhipu|zai/], ['Phi', /phi-/], ['Nous', /nous|hermes/],
+        ['Dolphin', /dolphin/], ['Arcee', /arcee|trinity/],
+      ];
+      for (const [label, re] of families) { if (re.test(s)) return label; }
+      return 'Other';
     }
 
     // ===== LATENCY ESTIMATION =====
@@ -1282,7 +1377,7 @@
       }
     }
 
-    function renderAll() { updateKPIs(); applyFilters(); fetchRateLimits(); renderImageModels(); renderUpscaleModels(); renderAudioModels(); renderMusicModels(); renderVideoModels(); renderEmbeddingModels(); renderAsrModels(); renderLatencyBenchmark(); renderPerfChart(); }
+    function renderAll() { updateKPIs(); populateFamilyFilter(); applyFilters(); fetchRateLimits(); renderImageModels(); renderUpscaleModels(); renderAudioModels(); renderMusicModels(); renderVideoModels(); renderEmbeddingModels(); renderAsrModels(); renderLatencyBenchmark(); renderPerfChart(); }
 
     function renderLatencyBenchmark() {
       const container = document.getElementById('latencyBenchmarkBody');
@@ -1392,34 +1487,67 @@
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
       document.getElementById('clearFiltersBtn').style.display = 'none';
       document.getElementById('searchInput').value = '';
+      ['familyFilter', 'minContextFilter', 'maxPriceFilter'].forEach(id => { const el = document.getElementById(id); if (el) el.selectedIndex = 0; });
+      const ho = document.getElementById('hideOffline'); if (ho) ho.checked = false;
       applyFilters();
     }
     function applyFilters() {
       const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+      const family = document.getElementById('familyFilter')?.value || '';
+      const minContext = parseInt(document.getElementById('minContextFilter')?.value || '0', 10);
+      const maxPriceRaw = document.getElementById('maxPriceFilter')?.value || '';
+      const maxPrice = maxPriceRaw === '' ? null : parseFloat(maxPriceRaw);
+      const hideOffline = !!document.getElementById('hideOffline')?.checked;
       filteredModels = availableModels.filter(model => {
         const d = getModelData(model);
         // Search matches ID or display name
         if (search && !d.id.toLowerCase().includes(search) && !d.displayName.toLowerCase().includes(search)) return false;
+        if (family && d.family !== family) return false;
+        if (minContext && d.contextTokens < minContext) return false;
+        if (maxPrice !== null && !(d.inputPrice <= maxPrice)) return false;
+        if (hideOffline && d.offline) return false;
         for (const f of activeFilters) {
           if (f === 'reasoning' && !d.reasoning) return false;
+          if (f === 'reasoningEffort' && !d.reasoningEffort) return false;
           if (f === 'vision' && !d.vision) return false;
+          if (f === 'multiImage' && !d.multiImage) return false;
           if (f === 'code' && !d.code) return false;
           if (f === 'websearch' && !d.websearch) return false;
+          if (f === 'xsearch' && !d.xsearch) return false;
           if (f === 'functions' && !d.functions) return false;
           if (f === 'schema' && !d.schema) return false;
           if (f === 'logprobs' && !d.logprobs) return false;
           if (f === 'audio' && !d.audioInput) return false;
           if (f === 'video' && !d.videoInput) return false;
+          if (f === 'tee' && !d.tee) return false;
+          if (f === 'e2ee' && !d.e2ee) return false;
           if (f === 'beta' && !d.beta) return false;
           if (f === 'recommended' && !d.recommended) return false;
           if (f === 'private' && d.privacy !== 'private') return false;
           if (f === 'anonymized' && d.privacy !== 'anonymized') return false;
+          if (f === 'deprecated' && !d.deprecationDate) return false;
         }
         return true;
       });
       renderTable();
       renderPerfChart();
+      const refineActive = !!(family || minContext || maxPrice !== null || hideOffline);
+      const clearBtn = document.getElementById('clearFiltersBtn');
+      if (clearBtn && (activeFilters.size > 0 || refineActive)) clearBtn.style.display = 'inline-flex';
       document.getElementById('searchCount').innerHTML = `Showing <strong>${filteredModels.length}</strong> of <strong>${availableModels.length}</strong> models`;
+    }
+
+    // Populate the family/series dropdown from loaded models
+    function populateFamilyFilter() {
+      const sel = document.getElementById('familyFilter');
+      if (!sel) return;
+      const counts = {};
+      availableModels.forEach(m => { const f = getModelData(m).family; counts[f] = (counts[f] || 0) + 1; });
+      const fams = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b));
+      const current = sel.value;
+      sel.innerHTML = '<option value="">All families</option>' +
+        fams.map(f => `<option value="${f}">${f} (${counts[f]})</option>`).join('');
+      sel.value = current;
     }
 
     // ===== SORTING =====
@@ -1442,6 +1570,7 @@
           case 'cachePrice': av = da.cacheInputPrice; bv = db.cacheInputPrice; break;
           case 'budgetTokens': av = da.budgetTokens; bv = db.budgetTokens; break;
           case 'latency': av = latencyForSort(da.id); bv = latencyForSort(db.id); break;
+          case 'created': av = da.created; bv = db.created; break;
           default: return 0;
         }
         return mul * (av - bv);
@@ -1460,7 +1589,7 @@
       if (arr) { arr.parentElement.classList.add('sort-active'); arr.innerHTML = currentSort.direction === 'asc' ? '&#8593;' : '&#8595;'; }
 
       if (sorted.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><span class="material-icons">search_off</span><h3>No models match your filters</h3><p>Try adjusting your search or removing some filters</p></div></td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state"><span class="material-icons">search_off</span><h3>No models match your filters</h3><p>Try adjusting your search or removing some filters</p></div></td></tr>';
         return;
       }
 
@@ -1472,13 +1601,18 @@
         let caps = '';
         if (d.reasoning) caps += '<span class="cap-dot dot-reasoning"><span class="material-icons">psychology</span>Reason</span>';
         if (d.vision) caps += '<span class="cap-dot dot-vision"><span class="material-icons">visibility</span>Vision</span>';
+        if (d.multiImage) caps += `<span class="cap-dot dot-vision"><span class="material-icons">collections</span>Multi-img${d.maxImages ? ' ' + d.maxImages : ''}</span>`;
         if (d.code) caps += '<span class="cap-dot dot-code"><span class="material-icons">code</span>Code</span>';
         if (d.websearch) caps += '<span class="cap-dot dot-websearch"><span class="material-icons">travel_explore</span>Web</span>';
+        if (d.xsearch) caps += '<span class="cap-dot dot-websearch"><span class="material-icons">tag</span>X Search</span>';
         if (d.functions) caps += '<span class="cap-dot dot-functions"><span class="material-icons">functions</span>Func</span>';
         if (d.schema) caps += '<span class="cap-dot dot-schema"><span class="material-icons">schema</span>JSON</span>';
+        if (d.reasoningEffort) caps += '<span class="cap-dot dot-reasoning"><span class="material-icons">tune</span>Effort</span>';
         if (d.logprobs) caps += '<span class="cap-dot dot-logprobs"><span class="material-icons">bar_chart</span>LP</span>';
         if (d.audioInput) caps += '<span class="cap-dot dot-audio"><span class="material-icons">mic</span>Audio</span>';
         if (d.videoInput) caps += '<span class="cap-dot dot-video"><span class="material-icons">videocam</span>Video</span>';
+        if (d.tee) caps += '<span class="cap-dot dot-schema"><span class="material-icons">verified_user</span>TEE</span>';
+        if (d.e2ee) caps += '<span class="cap-dot dot-schema"><span class="material-icons">enhanced_encryption</span>E2EE</span>';
 
         // Tags
         let tags = '';
@@ -1487,6 +1621,8 @@
         if (d.privacy === 'private') tags += '<span class="mini-tag tag-private">PRIVATE</span>';
         else if (d.privacy === 'anonymized') tags += '<span class="mini-tag tag-anonymized">ANON</span>';
         if (d.quantization && d.quantization !== 'N/A' && d.quantization !== 'not-available') tags += `<span class="mini-tag tag-quant">${d.quantization}</span>`;
+        if (d.deprecationDate) tags += '<span class="mini-tag tag-beta" title="Deprecation scheduled">DEPRECATED</span>';
+        if (d.regionRestrictions && d.regionRestrictions.length) tags += `<span class="mini-tag tag-private" title="Region restricted: ${d.regionRestrictions.join(', ')}">GEO</span>`;
 
         const bestTag = bv ? ' <span class="best-value-badge"><span class="material-icons">star</span>VALUE</span>' : '';
         const cacheCell = d.cacheInputPrice > 0 ? `$${d.cacheInputPrice.toFixed(2)}` : '<span style="color:var(--text-muted);">—</span>';
@@ -1509,10 +1645,11 @@
             <td class="cell-number cell-price ${d.cacheInputPrice > 0 ? getPriceClass(d.cacheInputPrice) : ''}">${cacheCell}</td>
             <td class="cell-number cell-tokens" style="font-weight:700;">${formatTokens(d.budgetTokens)}</td>
             <td>${latencyBadgeHTML(d.id)}</td>
+            <td class="cell-number" style="white-space:nowrap;color:var(--text-secondary);font-size:11px;">${d.created ? fmtDate(d.created) : '—'}</td>
             <td><div class="cap-dots">${caps || '<span style="color:var(--text-muted);font-size:10px;">—</span>'}</div></td>
           </tr>
           <tr class="detail-row" id="detail-${d.id}" style="display:none;">
-            <td colspan="9">${buildDetailPanel(d)}</td>
+            <td colspan="10">${buildDetailPanel(d)}</td>
           </tr>`;
       }).join('');
     }
@@ -1583,16 +1720,31 @@
             <div class="detail-card">
               <h5>All Capabilities</h5>
               <div class="detail-stat"><span class="detail-stat-label">Reasoning</span><span class="detail-stat-value">${yesNo(d.reasoning, 'violet')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Reasoning Effort</span><span class="detail-stat-value">${yesNo(d.reasoningEffort, 'violet')}</span></div>
               <div class="detail-stat"><span class="detail-stat-label">Vision</span><span class="detail-stat-value">${yesNo(d.vision, 'blue')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">Multiple Images${d.maxImages ? ' (max ' + d.maxImages + ')' : ''}</span><span class="detail-stat-value">${yesNo(d.multiImage, 'blue')}</span></div>
               <div class="detail-stat"><span class="detail-stat-label">Code Optimized</span><span class="detail-stat-value">${yesNo(d.code, 'green')}</span></div>
               <div class="detail-stat"><span class="detail-stat-label">Web Search</span><span class="detail-stat-value">${yesNo(d.websearch, 'cyan')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">X / Twitter Search</span><span class="detail-stat-value">${yesNo(d.xsearch, 'cyan')}</span></div>
               <div class="detail-stat"><span class="detail-stat-label">Function Calling</span><span class="detail-stat-value">${yesNo(d.functions, 'orange')}</span></div>
               <div class="detail-stat"><span class="detail-stat-label">JSON Schema</span><span class="detail-stat-value">${yesNo(d.schema, 'pink')}</span></div>
               <div class="detail-stat"><span class="detail-stat-label">LogProbs</span><span class="detail-stat-value">${yesNo(d.logprobs, 'indigo')}</span></div>
               <div class="detail-stat"><span class="detail-stat-label">Audio Input</span><span class="detail-stat-value">${yesNo(d.audioInput, 'teal')}</span></div>
               <div class="detail-stat"><span class="detail-stat-label">Video Input</span><span class="detail-stat-value">${yesNo(d.videoInput, 'rose')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">TEE Attestation</span><span class="detail-stat-value">${yesNo(d.tee, 'green')}</span></div>
+              <div class="detail-stat"><span class="detail-stat-label">End-to-End Encryption</span><span class="detail-stat-value">${yesNo(d.e2ee, 'green')}</span></div>
             </div>
           </div>
+          ${(d.deprecationDate || (d.regionRestrictions && d.regionRestrictions.length) || d.offline) ? `
+          <div class="detail-grid" style="margin-top:10px;">
+            <div class="detail-card" style="grid-column:1/-1;border-color:var(--orange);">
+              <h5 style="color:var(--orange);">Availability & Restrictions</h5>
+              ${d.offline ? `<div class="detail-stat"><span class="detail-stat-label">Status</span><span class="detail-stat-value" style="color:var(--red);">Offline / unavailable</span></div>` : ''}
+              ${d.deprecationDate ? `<div class="detail-stat"><span class="detail-stat-label">Deprecation</span><span class="detail-stat-value" style="color:var(--orange);">${typeof d.deprecationDate === 'number' ? fmtDate(d.deprecationDate) : escHtml(String(d.deprecationDate))}</span></div>` : ''}
+              ${d.regionRestrictions && d.regionRestrictions.length ? `<div class="detail-stat"><span class="detail-stat-label">Region restrictions</span><span class="detail-stat-value">${escHtml(d.regionRestrictions.join(', '))}</span></div>` : ''}
+              <div class="detail-stat"><span class="detail-stat-label">Family / Series</span><span class="detail-stat-value">${escHtml(d.family)}</span></div>
+            </div>
+          </div>` : ''}
         </div>
         <div class="detail-footer">*Approx conversations assumes ~2K output tokens per conversation</div>`;
     }
@@ -1936,17 +2088,22 @@
     // ===== EXPORT CSV =====
     function exportCSV() {
       if (filteredModels.length === 0) return;
-      const h = ['ID','Display Name','Context','Max Output','Input $/1M','Output $/1M','Cache Input $/1M','Cache Write $/1M','Tokens @ $48','Quantization','Privacy','Beta','Recommended','Reasoning','Vision','Code','Web Search','Functions','JSON Schema','LogProbs','Audio Input','Video Input','Traits','Description','Model Source','Created'];
+      const h = ['ID','Display Name','Family','Context','Max Output','Input $/1M','Output $/1M','Cache Input $/1M','Cache Write $/1M','Input DIEM/1M','Output DIEM/1M','Tokens @ $48','Quantization','Privacy','Beta','Recommended','Offline','Reasoning','Reasoning Effort','Vision','Multi-image','Max Images','Code','Web Search','X Search','Functions','JSON Schema','LogProbs','Audio Input','Video Input','TEE','E2EE','Deprecation','Region Restrictions','Traits','Description','Model Source','Created'];
       const rows = filteredModels.map(m => {
         const d = getModelData(m);
         return [
-          `"${d.id}"`, `"${d.displayName}"`, d.contextTokens, d.maxOutputTokens,
+          `"${d.id}"`, `"${d.displayName}"`, d.family, d.contextTokens, d.maxOutputTokens,
           d.inputPrice.toFixed(4), d.outputPrice.toFixed(4), d.cacheInputPrice.toFixed(4), d.cacheWritePrice.toFixed(4),
+          d.inputDiem || 0, d.outputDiem || 0,
           Math.round(d.budgetTokens), d.quantization, d.privacy,
-          d.beta?'Yes':'No', d.recommended?'Yes':'No',
-          d.reasoning?'Yes':'No', d.vision?'Yes':'No', d.code?'Yes':'No',
-          d.websearch?'Yes':'No', d.functions?'Yes':'No', d.schema?'Yes':'No',
+          d.beta?'Yes':'No', d.recommended?'Yes':'No', d.offline?'Yes':'No',
+          d.reasoning?'Yes':'No', d.reasoningEffort?'Yes':'No', d.vision?'Yes':'No',
+          d.multiImage?'Yes':'No', d.maxImages || 0, d.code?'Yes':'No',
+          d.websearch?'Yes':'No', d.xsearch?'Yes':'No', d.functions?'Yes':'No', d.schema?'Yes':'No',
           d.logprobs?'Yes':'No', d.audioInput?'Yes':'No', d.videoInput?'Yes':'No',
+          d.tee?'Yes':'No', d.e2ee?'Yes':'No',
+          `"${d.deprecationDate ? (typeof d.deprecationDate==='number'?fmtDate(d.deprecationDate):d.deprecationDate) : ''}"`,
+          `"${(d.regionRestrictions||[]).join(';')}"`,
           `"${d.traits.join(';')}"`, `"${d.description.replace(/"/g,'""')}"`,
           `"${d.modelSource}"`, fmtDate(d.created)
         ].join(',');
