@@ -2557,9 +2557,9 @@
             <span class="material-icons">merge_type</span>
             Fusion
           </button>
-          <button id="dashboardButton" class="button" title="View Cost Analytics Dashboard">
-            <span class="material-icons">analytics</span>
-            Analytics
+          <button id="dashboardButton" class="button" title="Browse all Venice models — specs, pricing, capabilities">
+            <span class="material-icons">view_list</span>
+            Models
           </button>
           <a href="api-guide.html" class="button" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;" title="Venice API Guide">
             <span class="material-icons">menu_book</span>
@@ -7309,7 +7309,7 @@ function rpCopyAnswer(btn){
       { icon: 'batch_prediction',label: 'Open Batch Runner',        hint: '',    action: () => openBatch() },
       { icon: 'image',           label: 'Open Image Playground',    hint: '',    action: () => openImgPlayground() },
       { icon: 'refresh',         label: 'Refresh Models',           hint: '',    action: () => $('refreshModelsButton')?.click() },
-      { icon: 'analytics',       label: 'Go to Analytics Dashboard',hint: '',    action: () => { window.location.href = 'dashboard.html'; } },
+      { icon: 'view_list',       label: 'Browse Models',            hint: '',    action: () => { window.location.href = 'dashboard.html'; } },
       { icon: 'menu_book',       label: 'Open API Guide',           hint: '',    action: () => { window.open('api-guide.html'); } },
       { icon: 'settings',        label: 'Open Settings',            hint: '',    action: () => $('settingsButton')?.click() },
       { icon: 'download',        label: 'Download Responses',       hint: '',    action: () => $('downloadButton')?.click() },
