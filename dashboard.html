@@ -830,7 +830,7 @@
           <option value="5">≤ $5</option>
           <option value="10">≤ $10</option>
         </select>
-        <label class="refine-toggle" title="Hide offline / unavailable models"><input type="checkbox" id="hideOffline" onchange="applyFilters()"> Hide offline</label>
+        <label class="refine-toggle" title="Hide offline / unavailable models"><input type="checkbox" id="hideOffline" checked onchange="applyFilters()"> Hide offline</label>
       </div>
     </div>
 
@@ -1331,7 +1331,10 @@
               return [];
             }
             const d = await r.json();
-            const models = (d.data || []).filter(m => m.model_spec?.offline !== true);
+            // Keep the full catalog (including offline models) so the Models
+            // tab can surface offline status and filter on it. Non-text
+            // sections re-filter to online-only below to preserve behavior.
+            const models = (d.data || []);
             console.log(`[Venice] type=${t} → ${models.length} models`, models.map(m => m.id));
             return models;
           } catch (err) {
@@ -1353,13 +1356,16 @@
             if (aR !== bR) return bR - aR;
             return (b.model_spec?.availableContextTokens || 0) - (a.model_spec?.availableContextTokens || 0);
           });
-        allImageModels = imageModels;
-        allAudioModels = ttsModels;
-        allUpscaleModels = inpaintModels;
-        allEmbeddingModels = embeddingModels;
-        allVideoModels = videoModels;
-        allMusicModels = musicModels;
-        allAsrModels = asrModels;
+        // Non-text sections stay online-only (unchanged behavior); the text
+        // catalog keeps offline models so the Models tab can surface them.
+        const onlineOnly = arr => arr.filter(m => m.model_spec?.offline !== true);
+        allImageModels = onlineOnly(imageModels);
+        allAudioModels = onlineOnly(ttsModels);
+        allUpscaleModels = onlineOnly(inpaintModels);
+        allEmbeddingModels = onlineOnly(embeddingModels);
+        allVideoModels = onlineOnly(videoModels);
+        allMusicModels = onlineOnly(musicModels);
+        allAsrModels = onlineOnly(asrModels);
 
         const sorted = availableModels.map(m => ({ id: m.id, bt: getModelData(m).budgetTokens })).filter(x => x.bt > 0).sort((a,b) => b.bt - a.bt);
         bestValueIds = new Set(sorted.slice(0, 3).map(x => x.id));
@@ -1488,7 +1494,7 @@
       document.getElementById('clearFiltersBtn').style.display = 'none';
       document.getElementById('searchInput').value = '';
       ['familyFilter', 'minContextFilter', 'maxPriceFilter'].forEach(id => { const el = document.getElementById(id); if (el) el.selectedIndex = 0; });
-      const ho = document.getElementById('hideOffline'); if (ho) ho.checked = false;
+      const ho = document.getElementById('hideOffline'); if (ho) ho.checked = true;
       applyFilters();
     }
     function applyFilters() {
@@ -1531,7 +1537,9 @@
       });
       renderTable();
       renderPerfChart();
-      const refineActive = !!(family || minContext || maxPrice !== null || hideOffline);
+      // "Hide offline" is on by default, so showing offline (unchecked) is the
+      // non-default state that warrants a visible Clear All.
+      const refineActive = !!(family || minContext || maxPrice !== null || !hideOffline);
       const clearBtn = document.getElementById('clearFiltersBtn');
       if (clearBtn && (activeFilters.size > 0 || refineActive)) clearBtn.style.display = 'inline-flex';
       document.getElementById('searchCount').innerHTML = `Showing <strong>${filteredModels.length}</strong> of <strong>${availableModels.length}</strong> models`;
