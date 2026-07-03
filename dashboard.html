@@ -223,6 +223,10 @@
     .chip-code.active { background: var(--green); color: white; border-color: var(--green); box-shadow: 0 2px 8px rgba(16,185,129,0.3); }
     .chip-code:hover:not(.active) { border-color: var(--green); }
 
+    .chip-new { background: var(--green-bg); color: var(--green); }
+    .chip-new.active { background: var(--green); color: white; border-color: var(--green); box-shadow: 0 2px 8px rgba(16,185,129,0.3); }
+    .chip-new:hover:not(.active) { border-color: var(--green); }
+
     .chip-websearch { background: var(--cyan-bg); color: var(--cyan); }
     .chip-websearch.active { background: var(--cyan); color: white; border-color: var(--cyan); box-shadow: 0 2px 8px rgba(6,182,212,0.3); }
     .chip-websearch:hover:not(.active) { border-color: var(--cyan); }
@@ -339,6 +343,16 @@
     }
     .tag-beta { background: var(--amber-bg); color: var(--amber); }
     .tag-recommended { background: var(--purple-bg); color: var(--purple); }
+    .tag-new {
+      background: var(--green); color: #fff;
+      animation: newPulse 2s ease-out infinite;
+    }
+    @keyframes newPulse {
+      0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.45); }
+      70% { box-shadow: 0 0 0 5px rgba(16,185,129,0); }
+      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+    .row-new > td { background: rgba(16,185,129,0.05); }
     .tag-private { background: var(--green-bg); color: var(--green); }
     .tag-anonymized { background: var(--slate-bg); color: var(--slate); }
     .tag-quant {
@@ -792,6 +806,9 @@
         <button class="filter-chip chip-recommended" data-filter="recommended" onclick="toggleFilter(this)">
           <span class="material-icons check-icon">check</span><span class="material-icons">verified</span> Recommended
         </button>
+        <button class="filter-chip chip-new" data-filter="new" onclick="toggleFilter(this)" title="Models added to the API in the last 30 days">
+          <span class="material-icons check-icon">check</span><span class="material-icons">fiber_new</span> New
+        </button>
         <button class="filter-chip chip-private" data-filter="private" onclick="toggleFilter(this)">
           <span class="material-icons check-icon">check</span><span class="material-icons">lock</span> Private
         </button>
@@ -848,7 +865,7 @@
               <th onclick="sortBy('cachePrice')" style="text-align:right;">Cache In <span class="sort-arrow" id="sort-cachePrice">&#8597;</span></th>
               <th onclick="sortBy('budgetTokens')" style="text-align:right;">@ $48 <span class="sort-arrow" id="sort-budgetTokens">&#8597;</span></th>
               <th onclick="sortBy('latency')" style="min-width:120px;">Latency <span class="sort-arrow" id="sort-latency">&#8597;</span></th>
-              <th onclick="sortBy('created')" style="text-align:right;">Added <span class="sort-arrow" id="sort-created">&#8597;</span></th>
+              <th onclick="sortBy('created')" style="text-align:right;" title="Date the model was added to the Venice API — click to sort">Added <span class="sort-arrow" id="sort-created">&#8597;</span></th>
               <th style="min-width:180px;">Capabilities</th>
             </tr>
           </thead>
@@ -1146,6 +1163,49 @@
       const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
     }
 
+    // ===== NEW MODEL DETECTION =====
+    // A model is flagged "New" when the API reports it was created recently,
+    // OR when this browser first observed it recently (covers models whose
+    // `created` timestamp is missing/old but that just appeared in the catalog).
+    const NEW_MODEL_WINDOW_DAYS = 30;
+    const SEEN_MODELS_KEY = 'venice_seen_models';
+    let seenModels = {};
+
+    function loadSeenModels() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(SEEN_MODELS_KEY) || 'null');
+        seenModels = (raw && typeof raw === 'object') ? raw : {};
+      } catch { seenModels = {}; }
+    }
+
+    // Record any model IDs we haven't seen before. On the very first run we
+    // baseline the whole catalog to 0 (existing models are NOT "new to you");
+    // models that appear afterwards get stamped with the moment we saw them.
+    function recordSeenModels(models) {
+      const existing = localStorage.getItem(SEEN_MODELS_KEY);
+      const firstRun = existing === null;
+      loadSeenModels();
+      const now = Date.now();
+      let changed = firstRun;
+      (models || []).forEach(m => {
+        if (m && m.id && !(m.id in seenModels)) {
+          seenModels[m.id] = firstRun ? 0 : now;
+          changed = true;
+        }
+      });
+      if (changed) localStorage.setItem(SEEN_MODELS_KEY, JSON.stringify(seenModels));
+    }
+
+    function isNewModel(model) {
+      const now = Date.now();
+      const windowMs = NEW_MODEL_WINDOW_DAYS * 86400000;
+      const created = (model.created || 0) * 1000;
+      if (created && (now - created) <= windowMs) return true;
+      const firstSeen = seenModels[model.id] || 0;
+      if (firstSeen && (now - firstSeen) <= windowMs) return true;
+      return false;
+    }
+
     // ===== MODEL DATA EXTRACTOR =====
     function getModelData(model) {
       const spec = model.model_spec || {};
@@ -1175,6 +1235,7 @@
         beta: !!(spec.betaModel || spec.beta),
         offline: !!spec.offline,
         created: model.created || 0,
+        isNew: isNewModel(model),
         ownedBy: model.owned_by || '',
         contextTokens, maxOutputTokens,
         inputPrice, outputPrice, cacheInputPrice, cacheWritePrice,
@@ -1349,6 +1410,12 @@
             fetchType('inpaint'), fetchType('embedding'), fetchType('video'),
             fetchType('music'), fetchType('asr')
           ]);
+
+        // Track the full catalog so genuinely new arrivals can be flagged "New".
+        recordSeenModels([
+          ...textModels, ...imageModels, ...ttsModels, ...inpaintModels,
+          ...embeddingModels, ...videoModels, ...musicModels, ...asrModels
+        ]);
 
         availableModels = textModels.sort((a, b) => {
             const aR = a.model_spec?.traits?.includes('default_reasoning') ? 1 : 0;
@@ -1529,6 +1596,7 @@
           if (f === 'e2ee' && !d.e2ee) return false;
           if (f === 'beta' && !d.beta) return false;
           if (f === 'recommended' && !d.recommended) return false;
+          if (f === 'new' && !d.isNew) return false;
           if (f === 'private' && d.privacy !== 'private') return false;
           if (f === 'anonymized' && d.privacy !== 'anonymized') return false;
           if (f === 'deprecated' && !d.deprecationDate) return false;
@@ -1624,6 +1692,7 @@
 
         // Tags
         let tags = '';
+        if (d.isNew) tags += '<span class="mini-tag tag-new" title="Added to the API within the last ' + NEW_MODEL_WINDOW_DAYS + ' days">NEW</span>';
         if (d.beta) tags += '<span class="mini-tag tag-beta">BETA</span>';
         if (d.recommended) tags += '<span class="mini-tag tag-recommended">REC</span>';
         if (d.privacy === 'private') tags += '<span class="mini-tag tag-private">PRIVATE</span>';
@@ -1636,7 +1705,7 @@
         const cacheCell = d.cacheInputPrice > 0 ? `$${d.cacheInputPrice.toFixed(2)}` : '<span style="color:var(--text-muted);">—</span>';
 
         return `
-          <tr class="${bv ? 'row-best-value' : ''}" onclick="toggleDetail('${d.id}')" style="cursor:pointer;">
+          <tr class="${bv ? 'row-best-value' : ''}${d.isNew ? ' row-new' : ''}" onclick="toggleDetail('${d.id}')" style="cursor:pointer;">
             <td>
               <div class="cell-model">
                 <div class="model-avatar ${getAvatarClass(model)}">${getInitials(d.id)}</div>

@@ -245,6 +245,25 @@
       gap: 8px;
     }
 
+    .new-badge {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #fff;
+      vertical-align: middle;
+      animation: newBadgePulse 2s ease-out infinite;
+    }
+    @keyframes newBadgePulse {
+      0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+      70% { box-shadow: 0 0 0 5px rgba(16,185,129,0); }
+      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+    .drawer-item.active .new-badge { background: #fff; color: #0f766e; }
+
     .drawer-time {
       font-size: 12px;
       color: var(--text-dim);
@@ -3454,6 +3473,30 @@
       return '—';
     }
 
+    // ===== NEW MODEL DETECTION =====
+    // Flags a model "New" when the API reports it was created recently, or when
+    // this browser first observed it recently. The Models tab (dashboard) owns
+    // the baseline of "seen" IDs; here we only read it so text-only chat never
+    // mis-baselines the image/video models it doesn't fetch.
+    const NEW_MODEL_WINDOW_DAYS = 30;
+    const SEEN_MODELS_KEY = 'venice_seen_models';
+    let seenModels = {};
+    function loadSeenModels() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(SEEN_MODELS_KEY) || 'null');
+        seenModels = (raw && typeof raw === 'object') ? raw : {};
+      } catch { seenModels = {}; }
+    }
+    function isNewModel(model) {
+      const now = Date.now();
+      const windowMs = NEW_MODEL_WINDOW_DAYS * 86400000;
+      const created = (model.created || 0) * 1000;
+      if (created && (now - created) <= windowMs) return true;
+      const firstSeen = seenModels[model.id] || 0;
+      if (firstSeen && (now - firstSeen) <= windowMs) return true;
+      return false;
+    }
+
     function createDrawerItem(model, index) {
       const item = document.createElement('div');
       item.classList.add('drawer-item');
@@ -3462,9 +3505,12 @@
       const type = model.modelType || 'text';
       const typeColors = { text: '#2a9d8f', image: '#0E7490', video: '#e63946' };
       const typeBadge = `<span style="font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;text-transform:uppercase;background:${typeColors[type] || '#555'};color:#fff;margin-right:5px;vertical-align:middle;">${type}</span>`;
+      const newBadge = isNewModel(model)
+        ? `<span class="new-badge" title="Added to the API within the last ${NEW_MODEL_WINDOW_DAYS} days">NEW</span>`
+        : '';
       item.innerHTML = `
         <div class="drawer-top">
-          <div class="drawer-name">${typeBadge}${model.id}</div>
+          <div class="drawer-name">${typeBadge}${model.id}${newBadge}</div>
           <div class="drawer-meta">
             <div class="price-badge">${priceText}</div>
             <div class="drawer-time model-item-time" data-time="">—</div>
@@ -3831,6 +3877,7 @@
 
         availableModels = [...sortedText];
         window.availableModels = availableModels;
+        loadSeenModels();
         if (typeof window.estimateCost === 'function') window.estimateCost();
         console.log(`Loaded text models: ${sortedText.length}`);
         renderModelList();
