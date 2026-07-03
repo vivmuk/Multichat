@@ -1839,6 +1839,7 @@
     function modelTags(m) {
       const spec = m.model_spec || {};
       let t = '';
+      if (isNewModel(m)) t += '<span class="mini-tag tag-new" title="Added to the API within the last ' + NEW_MODEL_WINDOW_DAYS + ' days">NEW</span>';
       if (spec.betaModel) t += '<span class="mini-tag tag-beta">BETA</span>';
       if ((spec.model_sets||[]).includes('venice_recommendations')) t += '<span class="mini-tag tag-recommended">REC</span>';
       return t;
