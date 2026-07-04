@@ -2580,6 +2580,10 @@
             <span class="material-icons">view_list</span>
             Models
           </button>
+          <a href="benchmark.html" class="button" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;" title="Benchmark Lab — pit new vs. old models across design, reasoning, images and video">
+            <span class="material-icons">speed</span>
+            Benchmark
+          </a>
           <a href="api-guide.html" class="button" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;" title="Venice API Guide">
             <span class="material-icons">menu_book</span>
             API Guide
@@ -7357,6 +7361,7 @@ function rpCopyAnswer(btn){
       { icon: 'image',           label: 'Open Image Playground',    hint: '',    action: () => openImgPlayground() },
       { icon: 'refresh',         label: 'Refresh Models',           hint: '',    action: () => $('refreshModelsButton')?.click() },
       { icon: 'view_list',       label: 'Browse Models',            hint: '',    action: () => { window.location.href = 'dashboard.html'; } },
+      { icon: 'speed',           label: 'Open Benchmark Lab',        hint: '',    action: () => { window.location.href = 'benchmark.html'; } },
       { icon: 'menu_book',       label: 'Open API Guide',           hint: '',    action: () => { window.open('api-guide.html'); } },
       { icon: 'settings',        label: 'Open Settings',            hint: '',    action: () => $('settingsButton')?.click() },
       { icon: 'download',        label: 'Download Responses',       hint: '',    action: () => $('downloadButton')?.click() },

@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V's MultiGen AI Chat — Benchmark Lab</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <script src="config.js"></script>
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-light: #1e293b;
+      --accent: #0E7490;
+      --accent-light: #5BA7C9;
+      --accent-bg: rgba(14,116,144, 0.08);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.1);
+      --orange: #f97316;
+      --orange-bg: rgba(249, 115, 22, 0.1);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.1);
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.1);
+      --violet: #7c3aed;
+      --violet-bg: rgba(124,58,237, 0.1);
+      --purple: #2563EB;
+      --purple-bg: rgba(37,99,235, 0.1);
+      --pink: #ec4899;
+      --pink-bg: rgba(236, 72, 153, 0.1);
+      --background: #F2F6F6;
+      --surface: #ffffff;
+      --surface-2: #F4FAFA;
+      --text-primary: #15201F;
+      --text-secondary: #4F5E5B;
+      --text-muted: #94a3b8;
+      --border: #E0E9E8;
+      --shadow-sm: 0 2px 4px rgba(8,40,45,.05);
+      --shadow-md: 0 2px 4px rgba(8,40,45,.05), 0 14px 30px -12px rgba(8,40,45,.20);
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
+      --font-head: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      /* validated dataviz palette — light mode */
+      --chart-1: #2a78d6;   /* blue  — new models / primary */
+      --chart-2: #1baf7a;   /* aqua  — reasoning depth */
+      --chart-3: #eda100;   /* yellow */
+      --chart-grid: #e1e0d9;
+      --chart-ink-muted: #898781;
+    }
+
+    [data-theme="dark"] {
+      --background: #0f172a; --surface: #1e293b; --surface-2: #16233b;
+      --text-primary: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #64748b;
+      --border: #334155;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5);
+      --chart-1: #3987e5; --chart-2: #199e70; --chart-3: #c98500;
+      --chart-grid: #2c2c2a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--background); color: var(--text-primary);
+      min-height: 100vh; line-height: 1.5;
+    }
+
+    /* ===== TOP NAV ===== */
+    .top-nav {
+      background: var(--primary); padding: 0 32px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 12px; color: white; }
+    .nav-brand .logo {
+      width: 38px; height: 38px; background: #fff; border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    }
+    .nav-brand .logo img { width: 100%; height: 100%; object-fit: contain; }
+    .nav-brand .logo .material-icons { font-size: 20px; color: var(--accent); }
+    .nav-brand h1 { font-family: var(--font-head); font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+    .nav-brand span { font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 400; }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+    .nav-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: var(--radius-md);
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: all 0.15s; text-decoration: none; border: none;
+      font-family: var(--font-body);
+    }
+    .nav-btn .material-icons { font-size: 18px; }
+    .nav-btn.primary { background: var(--accent); color: white; }
+    .nav-btn.primary:hover { background: var(--accent-light); }
+    .nav-btn.secondary { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+    .nav-btn.secondary:hover { background: rgba(255,255,255,0.14); }
+
+    /* ===== SUITE TAB BAR ===== */
+    .suite-bar {
+      position: sticky; top: 60px; z-index: 90;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 10px 32px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: thin;
+    }
+    .suite-tab {
+      display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+      padding: 8px 15px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text-secondary); font-size: 13px; font-weight: 600;
+      font-family: var(--font-body); transition: all 0.15s;
+    }
+    .suite-tab .material-icons { font-size: 17px; }
+    .suite-tab:hover { border-color: var(--accent); color: var(--accent); }
+    .suite-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .suite-tab .st-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: none; }
+    .suite-tab.has-results .st-dot { display: inline-block; }
+
+    /* ===== LAYOUT ===== */
+    .page-wrap { max-width: 1500px; margin: 0 auto; padding: 24px 32px 90px; }
+    @media (max-width: 768px) {
+      .top-nav { padding: 0 14px; }
+      .suite-bar { padding: 8px 14px; }
+      .page-wrap { padding: 16px 14px 70px; }
+      .nav-btn span:not(.material-icons) { display: none; }
+      .nav-brand span { display: none; }
+    }
+
+    .suite-panel { display: none; }
+    .suite-panel.active { display: block; animation: fadeUp .25s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* ===== SUITE HERO ===== */
+    .suite-hero { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
+    .suite-hero-icon {
+      width: 52px; height: 52px; border-radius: var(--radius-md); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--accent-bg); color: var(--accent);
+    }
+    .suite-hero-icon .material-icons { font-size: 28px; }
+    .suite-hero h2 { font-family: var(--font-head); font-size: 24px; letter-spacing: -0.4px; }
+    .suite-hero p { color: var(--text-secondary); font-size: 14px; max-width: 900px; margin-top: 2px; }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+      padding: 20px 22px; margin-bottom: 18px;
+    }
+    .card-title {
+      display: flex; align-items: center; gap: 8px; font-family: var(--font-head);
+      font-size: 15px; font-weight: 700; margin-bottom: 12px;
+    }
+    .card-title .material-icons { font-size: 19px; color: var(--accent); }
+    .card-title .ct-hint { font-size: 12px; color: var(--text-muted); font-weight: 400; font-family: var(--font-body); margin-left: auto; }
+
+    /* Challenge config */
+    .preset-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .preset-chip {
+      padding: 7px 13px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+      border: 1px solid var(--border); background: var(--surface-2); color: var(--text-secondary);
+      cursor: pointer; transition: all .15s; font-family: var(--font-body);
+    }
+    .preset-chip:hover { border-color: var(--accent); color: var(--accent); }
+    .preset-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .challenge-textarea {
+      width: 100%; min-height: 130px; resize: vertical;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--surface-2); color: var(--text-primary);
+      padding: 12px 14px; font-size: 13px; line-height: 1.6; font-family: var(--font-body);
+    }
+    .challenge-textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+    .rubric-strip { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .rubric-chip { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--violet-bg); color: var(--violet); letter-spacing: .2px; }
+    .expected-box {
+      margin-top: 10px; padding: 10px 14px; border-radius: var(--radius-sm);
+      background: var(--green-bg); border: 1px dashed var(--green);
+      font-size: 12.5px; color: var(--text-secondary);
+    }
+    .expected-box strong { color: var(--green); }
+
+    /* Model picker */
+    .picker-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .mini-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer;
+      border: 1px solid var(--border); background: var(--surface-2);
+      font-size: 12px; font-weight: 600; color: var(--text-secondary);
+      font-family: var(--font-body); transition: all .15s;
+    }
+    .mini-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .mini-btn .material-icons { font-size: 15px; }
+    .picker-count { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+    .picker-count b { color: var(--accent); font-family: var(--font-mono); }
+    .model-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .model-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 12px; border-radius: var(--radius-sm); cursor: pointer;
+      border: 1.5px solid var(--border); background: var(--surface);
+      font-size: 12.5px; font-weight: 500; color: var(--text-secondary);
+      transition: all .12s; user-select: none;
+    }
+    .model-chip:hover { border-color: var(--accent-light); }
+    .model-chip.selected { border-color: var(--accent); background: var(--accent-bg); color: var(--text-primary); }
+    .model-chip .mc-check { font-size: 15px; color: var(--accent); display: none; }
+    .model-chip.selected .mc-check { display: inline; }
+    .badge-new { font-size: 9.5px; font-weight: 800; letter-spacing: .5px; padding: 2px 6px; border-radius: 999px; background: linear-gradient(135deg, #f97316, #ec4899); color: #fff; }
+    .mc-price { font-size: 10.5px; color: var(--text-muted); font-family: var(--font-mono); }
+
+    .judge-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .judge-row label { font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
+    .judge-select {
+      padding: 7px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+      background: var(--surface-2); color: var(--text-primary); font-size: 12.5px;
+      font-family: var(--font-body); max-width: 340px;
+    }
+    .judge-note { font-size: 11.5px; color: var(--text-muted); }
+
+    /* Run bar */
+    .run-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 16px; }
+    .run-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      color: #fff; border: none; cursor: pointer;
+      padding: 11px 26px; border-radius: var(--radius-md);
+      font-size: 14px; font-weight: 700; font-family: var(--font-head);
+      letter-spacing: .2px; box-shadow: var(--shadow-md); transition: transform .12s, filter .15s;
+    }
+    .run-btn:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.08); }
+    .run-btn:disabled { opacity: .55; cursor: not-allowed; }
+    .run-btn .material-icons { font-size: 19px; }
+    .cost-note { font-size: 12px; color: var(--text-muted); }
+    .cost-note strong { color: var(--text-secondary); font-family: var(--font-mono); }
+    .run-status { font-size: 12.5px; font-weight: 600; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+
+    .spin { animation: spin 1s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== RESULTS GRID ===== */
+    .results-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(430px, 1fr)); }
+    @media (max-width: 960px) { .results-grid { grid-template-columns: 1fr; } }
+
+    .result-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm);
+      display: flex; flex-direction: column;
+    }
+    .result-card.rc-winner { border: 2px solid var(--amber); box-shadow: 0 0 0 4px var(--amber-bg), var(--shadow-md); }
+    .rc-head { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+    .rc-letter {
+      width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--primary); color: #fff; font-weight: 700; font-size: 14px; font-family: var(--font-head);
+    }
+    .rc-name { font-weight: 700; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rc-sub { font-size: 11px; color: var(--text-muted); }
+    .rc-status { margin-left: auto; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .rc-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--text-muted); }
+    .rc-dot.running { background: var(--amber); animation: pulse 1s ease-in-out infinite; }
+    .rc-dot.done { background: var(--green); }
+    .rc-dot.error { background: var(--red); }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+    .rc-trophy { color: var(--amber); font-size: 20px !important; }
+
+    .rc-metrics { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 9px 16px; border-bottom: 1px solid var(--border); font-size: 11.5px; color: var(--text-muted); }
+    .rc-metrics b { color: var(--text-secondary); font-family: var(--font-mono); font-weight: 600; }
+
+    .rc-tabs { display: flex; gap: 2px; padding: 8px 12px 0; flex-wrap: wrap; }
+    .rc-tab {
+      padding: 6px 13px; border-radius: 8px 8px 0 0; font-size: 12px; font-weight: 600;
+      color: var(--text-muted); cursor: pointer; border: 1px solid transparent; border-bottom: none;
+      font-family: var(--font-body); background: transparent;
+    }
+    .rc-tab.active { color: var(--accent); background: var(--surface-2); border-color: var(--border); }
+
+    .rc-body { padding: 14px 16px; flex: 1; min-height: 110px; }
+    .rc-pane { display: none; }
+    .rc-pane.active { display: block; }
+    .rc-text { font-size: 13px; line-height: 1.7; color: var(--text-primary); max-height: 440px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
+    .rc-code { background: #0f172a; color: #cbd5e1; border-radius: var(--radius-sm); padding: 14px; max-height: 440px; overflow: auto; white-space: pre; line-height: 1.55; font-family: var(--font-mono); font-size: 12px; }
+    .rc-reasoning {
+      font-size: 12.5px; line-height: 1.7; color: var(--text-secondary);
+      background: var(--violet-bg); border-left: 3px solid var(--violet);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 12px 14px; max-height: 440px; overflow-y: auto; white-space: pre-wrap; word-break: break-word;
+    }
+    .rc-empty { color: var(--text-muted); font-size: 12.5px; padding: 8px 0; }
+
+    .rc-iframe-wrap { position: relative; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: #fff; }
+    .rc-iframe-wrap iframe { width: 100%; height: 380px; border: none; display: block; background: #fff; }
+    .rc-iframe-tools { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; z-index: 5; }
+    .rc-iframe-tools .mini-btn { background: rgba(15,23,42,.75); color: #fff; border-color: transparent; backdrop-filter: blur(4px); }
+    .rc-iframe-tools .mini-btn:hover { color: #fff; background: rgba(15,23,42,.95); }
+
+    .rc-img { width: 100%; border-radius: var(--radius-sm); cursor: zoom-in; display: block; border: 1px solid var(--border); }
+    .rc-video { width: 100%; border-radius: var(--radius-sm); display: block; background: #000; max-height: 440px; }
+    .rc-poll-log { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 8px; max-height: 90px; overflow-y: auto; }
+
+    /* judge scorecard */
+    .rc-judge { border-top: 1px dashed var(--border); padding: 12px 16px; background: var(--surface-2); }
+    .rc-judge-total { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+    .rc-judge-total .jt-num { font-family: var(--font-head); font-size: 26px; font-weight: 700; color: var(--accent); }
+    .rc-judge-total .jt-outof { font-size: 12px; color: var(--text-muted); }
+    .rc-judge-total .jt-flag { margin-left: auto; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+    .jt-flag.ok { background: var(--green-bg); color: var(--green); }
+    .jt-flag.bad { background: var(--red-bg); color: var(--red); }
+    .crit-row { display: grid; grid-template-columns: 140px 1fr 34px; align-items: center; gap: 8px; margin-bottom: 5px; }
+    .crit-label { font-size: 11px; color: var(--text-secondary); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .crit-meter { height: 7px; border-radius: 4px; background: var(--chart-grid); overflow: hidden; }
+    .crit-fill { height: 100%; border-radius: 4px; background: var(--chart-1); transition: width .6s ease; }
+    .crit-val { font-size: 11px; font-family: var(--font-mono); color: var(--text-secondary); text-align: right; font-variant-numeric: tabular-nums; }
+    .rc-verdict { font-size: 12px; color: var(--text-secondary); font-style: italic; margin-top: 8px; line-height: 1.6; }
+
+    .rc-stars { display: flex; align-items: center; gap: 3px; padding: 10px 16px; border-top: 1px solid var(--border); }
+    .rc-stars .rs-label { font-size: 11.5px; color: var(--text-muted); margin-right: 6px; font-weight: 600; }
+    .star { cursor: pointer; color: var(--border); font-size: 20px !important; transition: color .1s, transform .1s; }
+    .star:hover { transform: scale(1.15); }
+    .star.on { color: var(--amber); }
+
+    /* ===== JUDGE SUMMARY & CHARTS ===== */
+    .verdict-card { border-left: 4px solid var(--accent); }
+    .verdict-summary { font-size: 13.5px; line-height: 1.7; color: var(--text-secondary); }
+    .podium { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 6px; }
+    .podium-slot { display: flex; align-items: center; gap: 9px; padding: 9px 15px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--surface-2); font-size: 13px; font-weight: 600; }
+    .podium-slot .p-medal { font-size: 18px; }
+    .podium-slot.p1 { border-color: var(--amber); background: var(--amber-bg); }
+
+    .chart-title { font-size: 12.5px; font-weight: 700; color: var(--text-secondary); margin: 16px 0 10px; }
+    .chart-legend { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+    .chart-legend .lg-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-secondary); }
+    .chart-legend .lg-swatch { width: 11px; height: 11px; border-radius: 3px; }
+    .hbar-row { display: grid; grid-template-columns: 180px 1fr; gap: 10px; align-items: center; margin-bottom: 9px; }
+    .hbar-label { font-size: 12px; color: var(--text-secondary); font-weight: 600; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hbar-track { position: relative; height: 22px; display: flex; align-items: center; }
+    .hbar-fill { height: 16px; border-radius: 0 4px 4px 0; background: var(--chart-1); transition: width .7s cubic-bezier(.2,.8,.3,1); min-width: 2px; }
+    .hbar-val { font-size: 11.5px; font-family: var(--font-mono); color: var(--text-secondary); margin-left: 8px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    @media (max-width: 640px) { .hbar-row { grid-template-columns: 104px 1fr; } .hbar-label { font-size: 11px; } .crit-row { grid-template-columns: 110px 1fr 30px; } }
+
+    /* ===== VIDEO / IMAGE REF ===== */
+    .ref-zone { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+    .ref-preview {
+      width: 170px; height: 170px; border-radius: var(--radius-md); border: 2px dashed var(--border);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+      background: var(--surface-2); flex-shrink: 0; cursor: pointer;
+    }
+    .ref-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .ref-preview .material-icons { font-size: 40px; color: var(--text-muted); }
+    .ref-controls { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 240px; }
+    .ref-controls .hint { font-size: 12px; color: var(--text-muted); }
+
+    /* ===== LEADERBOARD ===== */
+    .lb-stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; }
+    .stat-tile .st-val { font-family: var(--font-head); font-size: 26px; font-weight: 700; }
+    .stat-tile .st-lbl { font-size: 11.5px; color: var(--text-muted); font-weight: 600; letter-spacing: .3px; }
+    .lb-table-wrap { overflow-x: auto; }
+    table.lb-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .lb-table th { text-align: left; font-size: 10.5px; letter-spacing: .8px; text-transform: uppercase; color: var(--text-muted); padding: 8px 12px; border-bottom: 2px solid var(--border); white-space: nowrap; }
+    .lb-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .lb-table td.num { font-family: var(--font-mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .lb-table tr:hover td { background: var(--accent-bg); }
+    .lb-history-item { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 4px; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+    .lb-history-item .hi-suite { font-weight: 700; color: var(--accent); }
+    .lb-history-item .hi-prompt { color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 420px; }
+    .lb-history-item .hi-winner { margin-left: auto; font-weight: 600; color: var(--amber); display: flex; align-items: center; gap: 4px; }
+
+    /* ===== MISC ===== */
+    .banner-warn {
+      display: flex; align-items: center; gap: 10px; padding: 12px 18px; margin-bottom: 18px;
+      border-radius: var(--radius-md); background: var(--amber-bg); border: 1px solid var(--amber);
+      color: var(--text-primary); font-size: 13px;
+    }
+    .banner-warn .material-icons { color: var(--amber); }
+    .banner-warn a { color: var(--accent); font-weight: 600; }
+
+    .lightbox { position: fixed; inset: 0; z-index: 300; background: rgba(10,15,30,.92); display: none; align-items: center; justify-content: center; padding: 30px; cursor: zoom-out; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 96%; max-height: 92vh; border-radius: 10px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--primary); color: #fff; font-size: 13px; font-weight: 600;
+      padding: 11px 22px; border-radius: 999px; box-shadow: var(--shadow-md);
+      opacity: 0; pointer-events: none; transition: all .25s; z-index: 400; max-width: 90vw; text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .loading-overlay { position: fixed; inset: 0; z-index: 200; background: var(--background); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
+    .loading-overlay .material-icons { font-size: 46px; color: var(--accent); }
+    .loading-overlay p { color: var(--text-secondary); font-size: 14px; }
+  </style>
+</head>
+
+<body>
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <div class="logo">
+        <img src="logo.png" alt="logo" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\'material-icons\'>speed</span>';">
+      </div>
+      <div>
+        <h1>Benchmark Lab</h1>
+        <span>New vs. established Venice models — head to head</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn secondary" onclick="toggleDarkMode()" id="darkModeBtn" title="Toggle dark mode">
+        <span class="material-icons">dark_mode</span>
+      </button>
+      <a href="dashboard.html" class="nav-btn secondary" title="Model catalog"><span class="material-icons">view_list</span><span>Models</span></a>
+      <a href="api-guide.html" class="nav-btn secondary" title="Venice API guide"><span class="material-icons">menu_book</span><span>API Guide</span></a>
+      <a href="index.html" class="nav-btn primary"><span class="material-icons">chat</span><span>Chat</span></a>
+    </div>
+  </nav>
+
+  <div class="suite-bar" id="suiteBar"></div>
+
+  <div class="page-wrap">
+    <div id="apiKeyBanner" class="banner-warn" style="display:none;">
+      <span class="material-icons">vpn_key</span>
+      <div>No Venice API key found. Open the <a href="index.html">Chat page</a> and set your key in Settings first — benchmarks call the Venice API directly from your browser.</div>
+    </div>
+    <div id="suitePanels"></div>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <span class="material-icons spin">refresh</span>
+    <p>Loading the Venice model catalog…</p>
+  </div>
+
+  <div class="lightbox" id="lightbox" onclick="this.classList.remove('open')"><img id="lightboxImg" alt="zoom"></div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    'use strict';
+    const BASE_URL = 'https://api.venice.ai/api/v1';
+    const NEW_WINDOW_DAYS = 45;
+    const SEEN_MODELS_KEY = 'venice_seen_models';   // shared with dashboard.html
+    const HISTORY_KEY = 'venice_bench_history_v1';
+    const MAX_CONTENDERS = 6;
+
+    function getApiKey() {
+      if (window.VENICE_API_KEY && window.VENICE_API_KEY !== 'your-venice-api-key-here') return window.VENICE_API_KEY;
+      return localStorage.getItem('venice_user_api_key') || localStorage.getItem('venice_backend_api_key') || '';
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // SUITE DEFINITIONS
+    // ══════════════════════════════════════════════════════════════════
+    const FRONTEND_APPENDIX = `
+
+HARD REQUIREMENTS:
+- ONE self-contained HTML file: inline ALL CSS and JS. No external libraries, fonts, CDNs, or image files (draw any art with CSS gradients, inline SVG, or canvas).
+- Must be responsive (mobile to desktop) and legible.
+- Aim for something genuinely distinctive — avoid the generic "centered hero + three feature cards" template.
+- Return ONLY the code, in a single \`\`\`html fenced block, nothing else.`;
+
+    const SUITES = [
+      {
+        id: 'frontend', kind: 'text', icon: 'brush', category: 'text',
+        name: 'Frontend Design',
+        tagline: 'Each model builds a complete single-file web page from the same brief. Pages render live below so you can judge beauty and originality with your own eyes — then a vision-capable AI judge scores the design.',
+        rubric: ['Visual impact', 'Originality', 'Typography & color', 'Layout & responsiveness', 'Motion & interactivity', 'Code quality'],
+        renderMode: 'html', judged: true, maxTokens: 14000, temperature: 0.85,
+        presets: [
+          { name: 'Generative-art studio', prompt: `Design and build a complete single-file landing page for "Studio Umbra", a fictional generative-art and creative-coding studio.
+
+It must feel genuinely unique and art-directed: consider an asymmetric editorial grid, oversized display typography, a generative animated background (pure CSS or vanilla-JS canvas), unusual navigation, a custom cursor, and scroll-triggered reveals. Include: a hero, a selected-works section (describe 3 fictional works), a studio manifesto, and a contact footer. Dark, moody, editorial aesthetic.` + FRONTEND_APPENDIX },
+          { name: 'MedTech product hero', prompt: `Design and build a complete single-file landing page for "Meridian Cardiac", a fictional continuous cardiac-monitoring wearable.
+
+It must feel clinical, trustworthy AND beautiful — precision-medical, not startup-generic. Requirements: an animated ECG trace drawn with inline SVG or CSS as the hero centerpiece; a stats strip (99.2% arrhythmia detection sensitivity, 14-day battery, FDA-cleared); a "how it works" section with three steps; a clinician testimonial; a refined restrained palette; superb typographic hierarchy.` + FRONTEND_APPENDIX },
+          { name: 'Interactive trial poster', prompt: `Design and build a single-file interactive "scientific poster" microsite presenting the (fictional) ASCEND-OB phase 3 trial: N=1,214 adults, 72-week treatment, primary endpoint mean weight change −16.2% vs −2.4% placebo (ETD −13.8%, 95% CI −14.9 to −12.7, p<0.001), GI adverse events 44% vs 18%.
+
+Turn a dry academic poster into a stunning scrollytelling or tabbed experience: hand-draw an inline-SVG results chart (bars or curves) that animates into view, big-number stat callouts, a methods section, a limitations section, and proper footnotes. Elegant scientific-editorial art direction (think Nature meets Swiss design).` + FRONTEND_APPENDIX }
+        ]
+      },
+      {
+        id: 'reasoning', kind: 'text', icon: 'psychology', category: 'reasoning',
+        name: 'Reasoning X-Ray',
+        tagline: 'Runs reasoning models on verifiable problems with thinking enabled, captures the full chain of thought, and compares reasoning-token spend, reasoning speed, and correctness side by side.',
+        rubric: ['Correct final answer', 'Rigor of derivation', 'Efficiency (no rambling)', 'Clarity of final answer'],
+        renderMode: 'reasoning', judged: true, reasoningSuite: true, maxTokens: 16000, temperature: 0.2,
+        presets: [
+          { name: 'PK dosing math', expected: 't½ ≈ 8.58 h · infusion rate = 10.5 mg/h · Cmax,ss ≈ 3.10 mg/L · Cmin,ss ≈ 1.18 mg/L · loading dose = 130 mg', prompt: `A 68 kg patient starts IV therapy with drug X, which follows a one-compartment model with first-order elimination. CL = 4.2 L/h, Vd = 52 L.
+
+(a) Compute the elimination half-life.
+(b) Compute the continuous IV infusion rate needed to achieve Css = 2.5 mg/L.
+(c) If instead the patient receives 100 mg IV bolus every 12 h, compute Cmax,ss and Cmin,ss at steady state.
+(d) Compute the loading dose that immediately achieves 2.5 mg/L.
+
+Show your work, then finish with a clearly labeled "FINAL ANSWERS" list giving all four values with units, each rounded to 3 significant figures.` },
+          { name: 'Site-activation logic', expected: 'Aurora = January · Everest = February · Cedar = March · Fairview = April · Beacon = May · Delta = June (unique)', prompt: `Six clinical trial sites — Aurora, Beacon, Cedar, Delta, Everest, Fairview — must each activate in a different month, January through June. Constraints:
+
+1. Cedar activates exactly two months after Aurora.
+2. Everest activates before Beacon, and Beacon activates before Delta.
+3. Fairview activates in a month immediately adjacent to Cedar's month (directly before or after Cedar).
+4. Everest does not activate in January.
+5. Everest activates before Fairview.
+
+Determine the unique activation month for every site and prove no other assignment satisfies all constraints. Finish with a clearly labeled "FINAL ANSWER" table of site → month.` },
+          { name: 'Dialysate Fermi estimate', expected: 'Order of magnitude ~10⁹–10¹⁰ L/yr. Typical build-up: ~450k in-center patients × 3/wk × ~4 h × 500 mL/min ≈ 8–9 billion L/yr', prompt: `Estimate the total annual volume of dialysate (in litres) consumed by all in-center hemodialysis patients in the United States.
+
+State every assumption explicitly (patient count, sessions per week, session length, dialysate flow rate), show the arithmetic step by step, sanity-check the result a second way, and finish with a clearly labeled "FINAL ANSWER" giving a point estimate and a plausible range.` }
+        ]
+      },
+      {
+        id: 'biomed', kind: 'text', icon: 'biotech', category: 'text',
+        name: 'BioMed Engineering',
+        tagline: 'Hard biomedical-engineering design problems that demand quantitative rigor, safety thinking, and regulatory awareness — not just fluent prose. Scored by an AI judge on technical merit.',
+        rubric: ['Technical accuracy', 'Quantitative rigor', 'Safety & regulatory', 'Systems thinking', 'Clarity'],
+        renderMode: 'text', judged: true, maxTokens: 9000, temperature: 0.4,
+        presets: [
+          { name: 'Closed-loop insulin', prompt: `You are the lead systems engineer designing a closed-loop (artificial pancreas) insulin delivery system using a CGM with ~10-minute sensor lag and subcutaneous insulin with ~20-minute absorption delay.
+
+(a) Choose and justify a control strategy (PID vs MPC vs hybrid), referencing how each handles the two delays.
+(b) Explain quantitatively how you compensate for sensor lag and insulin action delay (prediction horizon, insulin-on-board model).
+(c) Define hard safety constraints and a fault-detection scheme covering sensor dropout, infusion-set occlusion, and meal disturbances.
+(d) Map the design to IEC 62304 software safety classification and ISO 14971 risk controls.
+(e) Outline the validation pathway: in-silico (FDA-accepted UVA/Padova simulator), then clinical.
+
+Be concrete and quantitative wherever possible.` },
+          { name: 'ECG lead-off detection', prompt: `Design the analog front end and signal-processing chain for a 3-lead wearable ECG that must reliably detect QRS complexes during motion.
+
+(a) Specify the instrumentation-amplifier stage, target CMRR, input impedance, and how you achieve them.
+(b) Design the filter chain (high-pass, low-pass, notch) with concrete corner frequencies and justify each against ECG bandwidth and artifact sources.
+(c) Describe a lead-off detection scheme and a motion-artifact mitigation approach (e.g., adaptive filtering with an accelerometer reference).
+(d) Choose an ADC resolution and sample rate and justify them from the signal's dynamic range and bandwidth.
+(e) State the dominant noise sources and your quantitative noise budget.` },
+          { name: 'Bioresorbable stent', prompt: `Propose a design for a next-generation bioresorbable coronary stent.
+
+(a) Select a base material (polymer or metal alloy) and justify it in terms of radial strength, resorption timeline, and degradation byproducts.
+(b) Give target mechanical specs (radial strength, recoil %, resorption half-life) and explain how geometry/strut thickness trade against them.
+(c) Address the clinical failure modes of first-generation bioresorbable scaffolds (late scaffold thrombosis, strut fracture) and how your design mitigates them.
+(d) Outline the biocompatibility and mechanical bench testing program and the relevant ISO 25539 / ASTM standards.` }
+        ]
+      },
+      {
+        id: 'medaffairs', kind: 'text', icon: 'clinical_notes', category: 'text',
+        name: 'Medical Affairs',
+        tagline: 'Real medical-affairs deliverables — evidence synthesis, payer value stories, MSL objection handling — scored by an AI judge on accuracy, balance, and compliance discipline.',
+        rubric: ['Scientific accuracy', 'Evidence & data use', 'Balance & fair-balance', 'Compliance awareness', 'Audience fit & clarity'],
+        renderMode: 'text', judged: true, maxTokens: 9000, temperature: 0.5,
+        presets: [
+          { name: 'Evidence-gap analysis', prompt: `Act as a Medical Science Liaison lead. For a (hypothetical) newly approved GLP-1/GIP dual agonist for type 2 diabetes with proven HbA1c and weight benefit, produce a structured EVIDENCE-GAP ANALYSIS to guide the medical strategy.
+
+Cover: (1) current strength of evidence by domain (glycemic, weight, cardiovascular outcomes, renal, MASH); (2) the key unanswered questions a thoughtful KOL would raise; (3) prioritized evidence-generation options (RCT, RWE, registry, ISS) with rationale; (4) how you would sequence them. Maintain fair balance and clearly separate established evidence from hypothesis. Do NOT fabricate specific trial names or numeric results — reason at the level of evidence categories.` },
+          { name: 'Payer value story', prompt: `Draft the skeleton of a payer value story / AMCP-style dossier summary for a novel biologic in severe eosinophilic asthma, aimed at a P&T committee.
+
+Include: burden of illness, unmet need, mechanism, a clear (clearly-labeled illustrative) efficacy/safety evidence summary, comparative effectiveness framing vs standard of care, a budget-impact and cost-offset argument (hospitalizations/exacerbations avoided), and the key limitations/uncertainties. Keep claims evidence-anchored and balanced; explicitly flag anything that would require on-label substantiation. Use illustrative placeholders for any specific numbers rather than inventing precise trial data.` },
+          { name: 'KOL objection handling', prompt: `A skeptical cardiology KOL says: "Your outcomes trial only showed a relative risk reduction — the absolute benefit looks tiny, the number needed to treat is high, and the subgroup you're excited about wasn't pre-specified. Why should I change practice?"
+
+As a field medical/MSL professional, write a scientifically rigorous, compliant response. Correctly explain relative vs absolute risk and NNT, address the pre-specified vs post-hoc subgroup concern honestly, stay balanced and non-promotional, avoid off-label promotion, and demonstrate genuine scientific exchange rather than spin. Note where you would follow up with data on file or refer to the label.` }
+        ]
+      },
+      {
+        id: 'image', kind: 'image', icon: 'insights', category: 'image',
+        name: 'Infographic Images',
+        tagline: 'The toughest test for image models: dense, text-heavy infographics that must render legible typography AND beautiful embedded art. Each model gets the same brief; a vision AI judge scores text accuracy and design.',
+        rubric: ['Text legibility & accuracy', 'Information density', 'Layout & hierarchy', 'Artistic quality', 'Overall usefulness'],
+        renderMode: 'image', judged: true, visionJudge: true, imageOpts: { width: 1024, height: 1280 },
+        presets: [
+          { name: 'Heart anatomy infographic', prompt: `A highly detailed educational infographic poster titled "THE HUMAN HEART" — anatomically accurate cross-section of a human heart in the center rendered as elegant vintage-botanical / scientific-illustration line art with subtle watercolor washes. Around it, clearly legible printed labels and short captions: "Right Atrium", "Left Ventricle", "Aorta", "Pulmonary Artery", "Mitral Valve", plus a small "Cardiac Cycle" panel with 3 numbered steps and a "Did you know? The heart beats ~100,000 times a day" callout box. Clean typographic grid, muted anatomical color palette, crisp readable sans-serif and serif type, poster layout. Text must be sharp and correctly spelled.` },
+          { name: 'Coffee brewing chart', prompt: `A beautiful modern kitchen wall infographic titled "THE ART OF POUR-OVER COFFEE". Include labeled diagram of a pour-over dripper with clearly legible text: water temperature "94°C", ratio "1:16", grind "medium-fine", bloom "30s", total brew time "3:00". Add a small step-by-step numbered guide (4 steps) and a flavor wheel accent with words like "Floral", "Nutty", "Bright". Warm earthy palette, hand-drawn illustrative style with fine ink linework and gentle textured shading, elegant editorial typography. All text must be crisp, correctly spelled and readable.` },
+          { name: 'Clinical trial phases', prompt: `A clean, professional medical infographic titled "PHASES OF A CLINICAL TRIAL". A horizontal timeline with four stages, each a labeled panel: "Phase 1 — Safety (20–100 people)", "Phase 2 — Efficacy (100–300)", "Phase 3 — Confirmation (1,000–3,000)", "Phase 4 — Post-Marketing". Include small tasteful iconographic illustrations (people, flasks, charts) drawn in a refined flat-vector medical style, a soft clinical blue/teal palette, and a short "Did you know?" fact box. Typography must be sharp, correctly spelled, and perfectly legible.` }
+        ]
+      },
+      {
+        id: 'video', kind: 'video', icon: 'movie', category: 'video',
+        name: 'Video Identity',
+        tagline: 'Image-to-video and reference-to-video head-to-head focused on the hard part: keeping facial features and identity stable while producing smooth, high-quality motion. Bring your own reference image; rate identity retention and motion quality.',
+        rubric: ['Identity / facial retention', 'Motion smoothness', 'Video quality & sharpness', 'Prompt adherence', 'Artifact-free'],
+        renderMode: 'video', judged: false, videoOpts: { duration: 5, width: 720, height: 1280 },
+        presets: [
+          { name: 'Portrait — subtle motion', prompt: `The person in the reference image slowly smiles and gives a gentle, natural nod, blinking softly. Keep facial features, identity, skin tone and lighting perfectly consistent. Subtle cinematic camera push-in, shallow depth of field. No distortion or morphing of the face.` },
+          { name: 'Portrait — speaking', prompt: `The person in the reference image talks naturally to the camera as if presenting, with realistic lip movement and expressive but subtle head motion. Preserve exact identity and facial structure throughout. Steady, professional lighting; smooth motion; no warping.` },
+          { name: 'Turnaround', prompt: `The subject from the reference image slowly turns their head from looking slightly left to facing the camera, hair moving naturally. Maintain consistent identity, facial features and proportions across the whole clip. Soft studio lighting, high detail, no morphing artifacts.` }
+        ]
+      }
+    ];
+
+    // Leaderboard is a virtual "suite" tab.
+    const LEADERBOARD = { id: 'leaderboard', icon: 'leaderboard', name: 'Leaderboard' };
+
+    // ══════════════════════════════════════════════════════════════════
+    // GLOBAL STATE
+    // ══════════════════════════════════════════════════════════════════
+    const catalog = { text: [], reasoning: [], image: [], video: [] };
+    const state = {};   // per-suite: { selected:Set, preset:idx, prompt, judge, results:[], refImage:null }
+    let activeSuite = SUITES[0].id;
+    let seenModels = {};
+
+    SUITES.forEach(s => { state[s.id] = { selected: new Set(), preset: 0, prompt: s.presets[0].prompt, judge: null, results: [], refImage: null, running: false }; });
+
+    // ══════════════════════════════════════════════════════════════════
+    // UTILITIES
+    // ══════════════════════════════════════════════════════════════════
+    function escHtml(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+    function shortName(id) { return String(id).split('/').pop().replace(/-\d{8}$/, ''); }
+    function fmtCost(v) { if (!v || v <= 0) return '$0'; return v < 0.0001 ? '<$0.0001' : '$' + v.toFixed(4); }
+    function fmtNum(n) { return (n || 0).toLocaleString(); }
+    function letter(i) { return String.fromCharCode(65 + i); }
+    function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2600); }
+    function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightbox').classList.add('open'); }
+
+    function loadSeen() { try { seenModels = JSON.parse(localStorage.getItem(SEEN_MODELS_KEY) || '{}') || {}; } catch { seenModels = {}; } }
+    function isNew(m) {
+      const now = Date.now(), win = NEW_WINDOW_DAYS * 864e5;
+      if (m.created && (now - m.created * 1000) < win) return true;
+      const seen = seenModels[m.id];
+      return typeof seen === 'number' && seen > 0 && (now - seen) < win;
+    }
+    function modelPrice(m) {
+      const p = m.model_spec?.pricing || {};
+      const out = p.output?.usd, inp = p.input?.usd, per = p.usd;
+      if (typeof out === 'number') return '$' + out + '/M out';
+      if (typeof per === 'number') return '$' + per;
+      if (typeof inp === 'number') return '$' + inp + '/M in';
+      return '';
+    }
+    function priceOf(m) { const p = m.model_spec?.pricing || {}; return { inp: p.input?.usd || 0, out: p.output?.usd || 0, per: p.usd || 0 }; }
+    function findModel(id) { return [...catalog.text, ...catalog.image, ...catalog.video].find(m => m.id === id); }
+
+    // ══════════════════════════════════════════════════════════════════
+    // CATALOG FETCH
+    // ══════════════════════════════════════════════════════════════════
+    async function fetchCatalog() {
+      const apiKey = getApiKey();
+      if (!apiKey) { document.getElementById('apiKeyBanner').style.display = 'flex'; document.getElementById('loadingOverlay').style.display = 'none'; return false; }
+      const headers = { 'Authorization': 'Bearer ' + apiKey };
+      const fetchType = async t => {
+        try { const r = await fetch(BASE_URL + '/models?type=' + t, { headers }); if (!r.ok) return []; const d = await r.json(); return (d.data || []); }
+        catch { return []; }
+      };
+      const [text, image, video] = await Promise.all([fetchType('text'), fetchType('image'), fetchType('video')]);
+      const online = arr => arr.filter(m => m.model_spec?.offline !== true);
+      catalog.text = online(text);
+      catalog.image = online(image);
+      catalog.video = online(video);
+      catalog.reasoning = catalog.text.filter(m => {
+        const c = m.model_spec?.capabilities || {}; const tr = m.model_spec?.traits || [];
+        return c.supportsReasoning || tr.some(x => /reason|think/i.test(x)) || /think|reason|r1|o[0-9]|glm|qwen3|deepseek|kimi/i.test(m.id);
+      });
+      if (!catalog.reasoning.length) catalog.reasoning = catalog.text.slice();
+      // Record newly seen (do not baseline — dashboard owns baselining; only stamp unseen)
+      try {
+        const raw = localStorage.getItem(SEEN_MODELS_KEY);
+        if (raw !== null) {
+          const now = Date.now(); let changed = false;
+          [...catalog.text, ...catalog.image, ...catalog.video].forEach(m => { if (m.id && !(m.id in seenModels)) { seenModels[m.id] = now; changed = true; } });
+          if (changed) localStorage.setItem(SEEN_MODELS_KEY, JSON.stringify(seenModels));
+        }
+      } catch {}
+      return true;
+    }
+
+    function catalogFor(suite) {
+      const list = catalog[suite.category] && catalog[suite.category].length ? catalog[suite.category] : catalog.text;
+      // sort: new first, then reasoning/priciest (proxy for capability), else name
+      return list.slice().sort((a, b) => {
+        const an = isNew(a) ? 1 : 0, bn = isNew(b) ? 1 : 0;
+        if (an !== bn) return bn - an;
+        return String(a.id).localeCompare(String(b.id));
+      });
+    }
+
+    function pickDefaults(suite) {
+      const list = catalogFor(suite);
+      const sel = new Set();
+      list.filter(isNew).slice(0, 3).forEach(m => sel.add(m.id));           // newest few
+      list.filter(m => !isNew(m)).slice(0, Math.max(1, 4 - sel.size)).forEach(m => { if (sel.size < 4) sel.add(m.id); });
+      if (!sel.size && list[0]) sel.add(list[0].id);
+      return sel;
+    }
+    function pickJudge() {
+      const pref = ['glm-5', 'claude', 'gpt-5', 'gemini-3', 'qwen3', 'grok-4'];
+      for (const p of pref) { const m = catalog.text.find(x => x.id.includes(p) && !/flash|mini|fast|lite/i.test(x.id)); if (m) return m.id; }
+      return catalog.text[0]?.id || null;
+    }
+    function pickVisionJudge() {
+      const vis = catalog.text.filter(m => m.model_spec?.capabilities?.supportsVision);
+      const pref = ['gemini', 'gpt', 'claude', 'qwen'];
+      for (const p of pref) { const m = vis.find(x => x.id.includes(p)); if (m) return m.id; }
+      return vis[0]?.id || pickJudge();
+    }
+  </script>
+  <script>
+    // ══════════════════════════════════════════════════════════════════
+    // UI BUILD
+    // ══════════════════════════════════════════════════════════════════
+    function buildSuiteBar() {
+      const bar = document.getElementById('suiteBar');
+      bar.innerHTML = SUITES.map(s =>
+        `<button class="suite-tab${s.id === activeSuite ? ' active' : ''}" data-suite="${s.id}" onclick="switchSuite('${s.id}')">
+           <span class="material-icons">${s.icon}</span>${s.name}<span class="st-dot"></span>
+         </button>`).join('') +
+        `<button class="suite-tab" data-suite="leaderboard" onclick="switchSuite('leaderboard')">
+           <span class="material-icons">${LEADERBOARD.icon}</span>${LEADERBOARD.name}</button>`;
+    }
+
+    function switchSuite(id) {
+      activeSuite = id;
+      document.querySelectorAll('.suite-tab').forEach(t => t.classList.toggle('active', t.dataset.suite === id));
+      document.querySelectorAll('.suite-panel').forEach(p => p.classList.toggle('active', p.dataset.suite === id));
+      if (id === 'leaderboard') renderLeaderboard();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function buildPanels() {
+      const host = document.getElementById('suitePanels');
+      host.innerHTML = SUITES.map(buildSuitePanel).join('') +
+        `<div class="suite-panel" data-suite="leaderboard"><div id="leaderboardHost"></div></div>`;
+      SUITES.forEach(s => { state[s.id].selected = pickDefaults(s); state[s.id].judge = s.visionJudge ? pickVisionJudge() : pickJudge(); renderPicker(s); renderJudgeSelect(s); syncRunCost(s); });
+      document.querySelector(`.suite-panel[data-suite="${activeSuite}"]`)?.classList.add('active');
+    }
+
+    function buildSuitePanel(s) {
+      const presetChips = s.presets.map((p, i) =>
+        `<button class="preset-chip${i === 0 ? ' active' : ''}" onclick="selectPreset('${s.id}',${i})">${escHtml(p.name)}</button>`).join('');
+      const rubric = s.rubric.map(r => `<span class="rubric-chip">${escHtml(r)}</span>`).join('');
+      const expected = s.presets[0].expected ? `<div class="expected-box" id="expected_${s.id}"><strong>Reference answer (auto-checked):</strong> ${escHtml(s.presets[0].expected)}</div>` : '';
+
+      const refBlock = (s.kind === 'video') ? `
+        <div class="card">
+          <div class="card-title"><span class="material-icons">face</span>Reference image <span class="ct-hint">the face/subject to preserve</span></div>
+          <div class="ref-zone">
+            <div class="ref-preview" id="refPreview_${s.id}" onclick="document.getElementById('refInput_${s.id}').click()">
+              <span class="material-icons">add_a_photo</span>
+            </div>
+            <div class="ref-controls">
+              <input type="file" accept="image/*" id="refInput_${s.id}" style="display:none" onchange="onRefUpload('${s.id}', this)">
+              <button class="mini-btn" onclick="document.getElementById('refInput_${s.id}').click()"><span class="material-icons">upload</span> Upload reference image</button>
+              <button class="mini-btn" onclick="generateRefImage('${s.id}')"><span class="material-icons">auto_awesome</span> Or generate a face with an image model</button>
+              <div class="hint">Image-to-video / reference-to-video models will animate this exact subject. Identity retention is the whole game.</div>
+            </div>
+          </div>
+        </div>` : '';
+
+      const judgeBlock = s.judged ? `
+        <div class="judge-row">
+          <label><span class="material-icons" style="font-size:16px;vertical-align:-3px;color:var(--violet)">gavel</span> AI Judge${s.visionJudge ? ' (vision)' : ''}:</label>
+          <select class="judge-select" id="judgeSelect_${s.id}" onchange="state['${s.id}'].judge=this.value"></select>
+          <span class="judge-note">${s.visionJudge ? 'A vision model scores each generated image against the rubric.' : 'A strong model scores every response against the rubric — blind to which model wrote what.'}</span>
+        </div>` : `
+        <div class="judge-row"><span class="judge-note"><span class="material-icons" style="font-size:16px;vertical-align:-3px;color:var(--amber)">star</span> Human-rated: play each clip and rate identity retention & motion with the stars on each card.</span></div>`;
+
+      return `
+      <div class="suite-panel" data-suite="${s.id}">
+        <div class="suite-hero">
+          <div class="suite-hero-icon"><span class="material-icons">${s.icon}</span></div>
+          <div><h2>${escHtml(s.name)}</h2><p>${escHtml(s.tagline)}</p></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="material-icons">tune</span>Challenge <span class="ct-hint">pick a preset or write your own</span></div>
+          <div class="preset-row" id="presetRow_${s.id}">${presetChips}</div>
+          <textarea class="challenge-textarea" id="prompt_${s.id}" oninput="state['${s.id}'].prompt=this.value">${escHtml(s.presets[0].prompt)}</textarea>
+          ${expected}
+          <div class="rubric-strip">${rubric}</div>
+        </div>
+
+        ${refBlock}
+
+        <div class="card">
+          <div class="card-title"><span class="material-icons">smart_toy</span>Contenders <span class="ct-hint">up to ${MAX_CONTENDERS} models</span></div>
+          <div class="picker-tools">
+            <button class="mini-btn" onclick="pickerBulk('${s.id}','new')"><span class="material-icons">auto_awesome</span> New models</button>
+            <button class="mini-btn" onclick="pickerBulk('${s.id}','clear')"><span class="material-icons">clear_all</span> Clear</button>
+            <span class="picker-count">Selected: <b id="pickCount_${s.id}">0</b> / ${MAX_CONTENDERS}</span>
+          </div>
+          <div class="model-chips" id="picker_${s.id}"></div>
+          ${judgeBlock}
+        </div>
+
+        <div class="card">
+          <div class="run-bar">
+            <button class="run-btn" id="runBtn_${s.id}" onclick="runSuite('${s.id}')"><span class="material-icons">play_arrow</span> Run benchmark</button>
+            <span class="cost-note">Est. cost: <strong id="estCost_${s.id}">—</strong></span>
+            <span class="run-status" id="runStatus_${s.id}"></span>
+          </div>
+        </div>
+
+        <div id="verdict_${s.id}"></div>
+        <div class="results-grid" id="results_${s.id}"></div>
+      </div>`;
+    }
+
+    function renderPicker(s) {
+      const host = document.getElementById('picker_' + s.id);
+      if (!host) return;
+      const list = catalogFor(s);
+      host.innerHTML = list.map(m => {
+        const on = state[s.id].selected.has(m.id);
+        const price = modelPrice(m);
+        return `<div class="model-chip${on ? ' selected' : ''}" onclick="toggleModel('${s.id}','${m.id}')" title="${escHtml(m.id)}">
+          <span class="material-icons mc-check">check_circle</span>
+          <span>${escHtml(shortName(m.id))}</span>
+          ${isNew(m) ? '<span class="badge-new">NEW</span>' : ''}
+          ${price ? `<span class="mc-price">${escHtml(price)}</span>` : ''}
+        </div>`;
+      }).join('') || '<div class="rc-empty">No models available in this category.</div>';
+      document.getElementById('pickCount_' + s.id).textContent = state[s.id].selected.size;
+    }
+
+    function renderJudgeSelect(s) {
+      const sel = document.getElementById('judgeSelect_' + s.id);
+      if (!sel) return;
+      const pool = catalog.text.slice().sort((a, b) => String(a.id).localeCompare(String(b.id)));
+      sel.innerHTML = pool.map(m => `<option value="${escHtml(m.id)}"${m.id === state[s.id].judge ? ' selected' : ''}>${escHtml(shortName(m.id))}</option>`).join('');
+    }
+
+    function toggleModel(sid, id) {
+      const set = state[sid].selected;
+      if (set.has(id)) set.delete(id);
+      else { if (set.size >= MAX_CONTENDERS) { toast('Max ' + MAX_CONTENDERS + ' contenders'); return; } set.add(id); }
+      renderPicker(SUITES.find(x => x.id === sid)); syncRunCost(SUITES.find(x => x.id === sid));
+    }
+    function pickerBulk(sid, mode) {
+      const s = SUITES.find(x => x.id === sid);
+      const set = state[sid].selected;
+      if (mode === 'clear') set.clear();
+      if (mode === 'new') { set.clear(); catalogFor(s).filter(isNew).slice(0, MAX_CONTENDERS).forEach(m => set.add(m.id)); if (!set.size) toast('No models flagged NEW in this category'); }
+      renderPicker(s); syncRunCost(s);
+    }
+    function selectPreset(sid, i) {
+      const s = SUITES.find(x => x.id === sid);
+      state[sid].preset = i; state[sid].prompt = s.presets[i].prompt;
+      document.getElementById('prompt_' + sid).value = s.presets[i].prompt;
+      document.querySelectorAll('#presetRow_' + sid + ' .preset-chip').forEach((c, idx) => c.classList.toggle('active', idx === i));
+      const exp = document.getElementById('expected_' + sid);
+      if (exp) exp.innerHTML = s.presets[i].expected ? `<strong>Reference answer (auto-checked):</strong> ${escHtml(s.presets[i].expected)}` : '';
+    }
+
+    function syncRunCost(s) {
+      const el = document.getElementById('estCost_' + s.id);
+      if (!el) return;
+      const n = state[s.id].selected.size;
+      if (!n) { el.textContent = '—'; return; }
+      if (s.kind === 'image') { el.textContent = '~' + n + ' image' + (n > 1 ? 's' : ''); return; }
+      if (s.kind === 'video') { el.textContent = '~' + n + ' video render' + (n > 1 ? 's' : '') + ' (queue)'; return; }
+      let lo = 0, hi = 0;
+      state[s.id].selected.forEach(id => {
+        const m = findModel(id); const p = priceOf(m || {});
+        const outTok = Math.min(s.maxTokens, 4000);
+        lo += (600 * p.inp + outTok * 0.4 * p.out) / 1e6;
+        hi += (900 * p.inp + outTok * p.out) / 1e6;
+      });
+      if (s.judged) { const jm = findModel(state[s.id].judge); const jp = priceOf(jm || {}); hi += (n * 1500 * jp.inp + 1200 * jp.out) / 1e6; }
+      el.textContent = lo > 0 ? '~' + fmtCost(lo) + '–' + fmtCost(hi) : 'free / trial';
+    }
+
+    function toggleDarkMode() {
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('venice_theme', next);
+      document.getElementById('darkModeBtn').querySelector('.material-icons').textContent = next === 'dark' ? 'light_mode' : 'dark_mode';
+    }
+  </script>
+  <script>
+    // ══════════════════════════════════════════════════════════════════
+    // API CALLS
+    // ══════════════════════════════════════════════════════════════════
+    function stripThink(text) { return String(text).replace(/<think>[\s\S]*?<\/think>/gi, '').replace(/<\/?think>/gi, '').trim(); }
+    function extractThink(text) { const m = String(text).match(/<think>([\s\S]*?)<\/think>/i); return m ? m[1].trim() : ''; }
+
+    async function streamChat(modelId, prompt, opts, onProgress) {
+      const started = Date.now();
+      const body = {
+        model: modelId,
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: opts.maxTokens || 4000,
+        temperature: opts.temperature ?? 0.7,
+        stream: true,
+        stream_options: { include_usage: true },
+        venice_parameters: { enable_web_search: 'off', disable_thinking: opts.reasoning ? false : true }
+      };
+      if (opts.reasoning) body.reasoning_effort = 'high';
+      const resp = await fetch(BASE_URL + '/chat/completions', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getApiKey() }, body: JSON.stringify(body)
+      });
+      if (!resp.ok) { let msg = 'HTTP ' + resp.status; try { const e = await resp.json(); msg = e.error?.message || e.error || msg; } catch {} throw new Error(msg); }
+      const reader = resp.body.getReader(); const dec = new TextDecoder();
+      let buf = '', content = '', reasoning = '';
+      let usage = { prompt_tokens: 0, completion_tokens: 0, reasoning_tokens: 0 };
+      let firstTokenAt = 0;
+      while (true) {
+        const { done, value } = await reader.read(); if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split('\n'); buf = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const raw = line.slice(6); if (raw === '[DONE]') continue;
+          try {
+            const j = JSON.parse(raw);
+            const d = j.choices?.[0]?.delta || {};
+            if (d.reasoning_content) { if (!firstTokenAt) firstTokenAt = Date.now(); reasoning += d.reasoning_content; onProgress && onProgress({ content, reasoning }); }
+            if (d.content) { if (!firstTokenAt) firstTokenAt = Date.now(); content += d.content; onProgress && onProgress({ content, reasoning }); }
+            if (j.usage) {
+              usage.prompt_tokens = j.usage.prompt_tokens || usage.prompt_tokens;
+              usage.completion_tokens = j.usage.completion_tokens || usage.completion_tokens;
+              usage.reasoning_tokens = j.usage.completion_tokens_details?.reasoning_tokens || usage.reasoning_tokens;
+            }
+          } catch {}
+        }
+      }
+      // Fallback: reasoning embedded as <think> tags in content
+      if (!reasoning) { const t = extractThink(content); if (t) { reasoning = t; content = stripThink(content); } }
+      const elapsed = Date.now() - started;
+      const m = findModel(modelId); const p = priceOf(m || {});
+      const cost = (usage.prompt_tokens * p.inp + usage.completion_tokens * p.out) / 1e6;
+      return { content: content.trim(), reasoning: reasoning.trim(), usage, elapsed, ttft: firstTokenAt ? firstTokenAt - started : 0, cost };
+    }
+
+    async function generateImage(modelId, prompt, opts) {
+      const started = Date.now();
+      const body = { model: modelId, prompt, width: opts.width || 1024, height: opts.height || 1024, format: 'webp', safe_mode: false };
+      const resp = await fetch(BASE_URL + '/image/generate', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getApiKey() }, body: JSON.stringify(body)
+      });
+      if (!resp.ok) { let msg = 'HTTP ' + resp.status; try { const e = await resp.json(); msg = e.error?.message || e.error || msg; } catch {} throw new Error(msg); }
+      const data = await resp.json();
+      const b64 = (data.images && data.images[0]) || (data.data && data.data[0]?.b64_json) || null;
+      if (!b64) throw new Error('No image returned');
+      const m = findModel(modelId); const p = priceOf(m || {});
+      return { image: 'data:image/webp;base64,' + b64, elapsed: Date.now() - started, cost: p.per || p.out || 0, b64 };
+    }
+
+    async function generateVideo(modelId, prompt, opts, refB64, onLog) {
+      const started = Date.now();
+      const body = { model: modelId, prompt, duration: opts.duration || 5, width: opts.width || 720, height: opts.height || 1280 };
+      if (refB64) body.image = refB64;
+      onLog && onLog('Submitting job…');
+      const resp = await fetch(BASE_URL + '/video/generate', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getApiKey() }, body: JSON.stringify(body)
+      });
+      if (!resp.ok) { let msg = 'HTTP ' + resp.status; try { const e = await resp.json(); msg = e.error?.message || e.error || msg; } catch {} throw new Error(msg); }
+      const sub = await resp.json();
+      const jobId = sub.id || sub.job_id || sub.data?.id;
+      if (!jobId) {
+        const url = sub.url || sub.video || sub.data?.url; const b64v = sub.video_base64 || sub.b64_json;
+        if (url) return { videoUrl: url, elapsed: Date.now() - started };
+        if (b64v) return { videoUrl: 'data:video/mp4;base64,' + b64v, elapsed: Date.now() - started };
+        throw new Error('No job id / video in response');
+      }
+      // poll
+      for (let i = 0; i < 90; i++) {
+        await new Promise(r => setTimeout(r, 4000));
+        const pr = await fetch(BASE_URL + '/video/generate/' + jobId, { headers: { 'Authorization': 'Bearer ' + getApiKey() } });
+        if (!pr.ok) { onLog && onLog('poll HTTP ' + pr.status + '…'); continue; }
+        const ct = pr.headers.get('content-type') || '';
+        if (ct.startsWith('video/')) { const blob = await pr.blob(); return { videoUrl: URL.createObjectURL(blob), elapsed: Date.now() - started }; }
+        const pj = await pr.json().catch(() => ({}));
+        const status = pj.status || pj.state || '';
+        onLog && onLog('status: ' + (status || 'processing') + ' (' + ((Date.now() - started) / 1000 | 0) + 's)');
+        if (/complete|succeed|done|finished/i.test(status) || pj.url || pj.video || pj.output) {
+          const url = pj.url || pj.video || pj.output?.url || pj.data?.url; const b64v = pj.video_base64 || pj.b64_json;
+          if (url) return { videoUrl: url, elapsed: Date.now() - started };
+          if (b64v) return { videoUrl: 'data:video/mp4;base64,' + b64v, elapsed: Date.now() - started };
+        }
+        if (/fail|error/i.test(status)) throw new Error('Job failed: ' + (pj.error || status));
+      }
+      throw new Error('Timed out waiting for video');
+    }
+
+    // ── Judge ──────────────────────────────────────────────────────────
+    async function callJudge(suite, prompt, contenders) {
+      const rubric = suite.rubric;
+      const rubricList = rubric.map((r, i) => `${i + 1}. ${r}`).join('\n');
+      let userMsg, messages;
+
+      if (suite.visionJudge) {
+        const content = [{ type: 'text', text:
+`You are a meticulous design & information-graphics judge. The following ${contenders.length} images were each generated by a different AI model from this identical brief:
+
+"""${prompt}"""
+
+Score EACH image (labeled A, B, C…) from 0-10 on every criterion:
+${rubricList}
+
+Pay special attention to whether printed TEXT in the image is legible, correctly spelled, and matches the brief. Return ONLY JSON.` }];
+        contenders.forEach((c, i) => {
+          content.push({ type: 'text', text: `--- Image ${letter(i)} ---` });
+          if (c.b64) content.push({ type: 'image_url', image_url: { url: 'data:image/webp;base64,' + c.b64 } });
+        });
+        messages = [{ role: 'user', content }];
+      } else {
+        const block = contenders.map((c, i) => {
+          let body = c.content || '(no response)';
+          if (suite.reasoningSuite) body = (c.reasoning ? '[THINKING]\n' + c.reasoning.slice(0, 4000) + '\n\n[ANSWER]\n' : '') + body;
+          return `--- Response ${letter(i)} ---\n${body.slice(0, 9000)}`;
+        }).join('\n\n');
+        const expected = suite.presets[state[suite.id].preset]?.expected;
+        userMsg =
+`You are a rigorous, impartial expert judge. ${contenders.length} AI models answered the SAME task. Score each blind — you do not know which model is which.
+
+TASK:
+"""${prompt}"""
+${expected ? `\nVERIFIED REFERENCE ANSWER (ground truth for correctness scoring):\n${expected}\n` : ''}
+CRITERIA (score each 0-10):
+${rubricList}
+
+${block}
+
+Return ONLY valid JSON, no markdown fences.`;
+        messages = [
+          { role: 'system', content: 'You are a rigorous analytical judge. Return ONLY valid JSON.' },
+          { role: 'user', content: userMsg }
+        ];
+      }
+
+      const schema = `{
+  "scores": [ { "label": "A", "criteria": { ${rubric.map(r => `"${r}": <0-10>`).join(', ')} }, "total": <sum>, "verdict": "one-sentence assessment" } ],
+  "winner": "A",
+  "summary": "2-3 sentence overall comparison naming the standout and why"
+}`;
+      const finalMessages = messages.slice();
+      const last = finalMessages[finalMessages.length - 1];
+      const appendix = `\n\nReturn EXACTLY this JSON shape (one entry per response/image, criteria keys spelled exactly as above):\n${schema}`;
+      if (typeof last.content === 'string') last.content += appendix;
+      else last.content.push({ type: 'text', text: appendix });
+
+      const resp = await fetch(BASE_URL + '/chat/completions', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getApiKey() },
+        body: JSON.stringify({ model: suite.judge || state[suite.id].judge, messages: finalMessages, temperature: 0.1, max_tokens: 3000 })
+      });
+      if (!resp.ok) throw new Error('Judge HTTP ' + resp.status);
+      const data = await resp.json();
+      const raw = (data.choices?.[0]?.message?.content || '').replace(/```json\s*/gi, '').replace(/```/g, '').trim();
+      const match = raw.match(/\{[\s\S]*\}/); if (!match) throw new Error('Judge returned no JSON');
+      let parsed; try { parsed = JSON.parse(match[0]); } catch { let f = match[0].replace(/,(\s*[}\]])/g, '$1'); const o = (f.match(/\{/g) || []).length, c = (f.match(/\}/g) || []).length; for (let i = 0; i < o - c; i++) f += '}'; parsed = JSON.parse(f); }
+      return parsed;
+    }
+  </script>
+  <script>
+    // ══════════════════════════════════════════════════════════════════
+    // ORCHESTRATION
+    // ══════════════════════════════════════════════════════════════════
+    async function runSuite(sid) {
+      const suite = SUITES.find(x => x.id === sid);
+      const st = state[sid];
+      if (st.running) return;
+      if (!getApiKey()) { toast('Set your Venice API key first'); document.getElementById('apiKeyBanner').style.display = 'flex'; return; }
+      const ids = [...st.selected];
+      if (ids.length < 1) { toast('Pick at least one contender'); return; }
+      if (suite.kind === 'video' && !st.refImage) { toast('Upload or generate a reference image first'); return; }
+
+      st.running = true;
+      const runBtn = document.getElementById('runBtn_' + sid);
+      runBtn.disabled = true; runBtn.innerHTML = '<span class="material-icons spin">refresh</span> Running…';
+      const statusEl = document.getElementById('runStatus_' + sid);
+      document.getElementById('verdict_' + sid).innerHTML = '';
+      const prompt = (document.getElementById('prompt_' + sid).value || '').trim();
+
+      const contenders = ids.map((id, i) => ({ id, label: letter(i), status: 'running' }));
+      st.results = contenders;
+      renderResults(suite, contenders);
+
+      let doneCount = 0;
+      statusEl.innerHTML = `<span class="material-icons spin" style="font-size:15px">refresh</span> Generating ${ids.length} responses…`;
+
+      await Promise.all(contenders.map(async c => {
+        try {
+          if (suite.kind === 'text') {
+            const r = await streamChat(c.id, prompt, { maxTokens: suite.maxTokens, temperature: suite.temperature, reasoning: !!suite.reasoningSuite },
+              prog => { c.content = prog.content; c.reasoning = prog.reasoning; updateResultCard(suite, c); });
+            Object.assign(c, r, { status: 'done' });
+            if (suite.renderMode === 'html') c.html = extractHtml(r.content);
+            if (suite.reasoningSuite) c.correct = checkCorrect(suite, c);
+          } else if (suite.kind === 'image') {
+            const r = await generateImage(c.id, prompt, suite.imageOpts);
+            Object.assign(c, r, { status: 'done' });
+          } else if (suite.kind === 'video') {
+            const r = await generateVideo(c.id, prompt, suite.videoOpts, st.refImage.b64, log => { c.pollLog = (c.pollLog || '') + log + '\n'; updateResultCard(suite, c); });
+            Object.assign(c, r, { status: 'done' });
+          }
+        } catch (e) {
+          c.status = 'error'; c.error = e.message;
+        }
+        doneCount++;
+        statusEl.innerHTML = `<span class="material-icons spin" style="font-size:15px">refresh</span> ${doneCount}/${ids.length} complete…`;
+        updateResultCard(suite, c);
+      }));
+
+      // Judge
+      if (suite.judged) {
+        const scored = contenders.filter(c => c.status === 'done' && (c.content || c.b64));
+        if (scored.length >= 1) {
+          statusEl.innerHTML = `<span class="material-icons spin" style="font-size:15px">gavel</span> AI judge scoring ${scored.length}…`;
+          try {
+            const verdict = await callJudge(suite, prompt, scored);
+            applyJudgeScores(suite, contenders, verdict);
+          } catch (e) { toast('Judge failed: ' + e.message); }
+        }
+      }
+
+      st.running = false;
+      runBtn.disabled = false; runBtn.innerHTML = '<span class="material-icons">play_arrow</span> Run benchmark';
+      statusEl.innerHTML = `<span class="material-icons" style="font-size:16px;color:var(--green)">check_circle</span> Done`;
+      document.querySelector(`.suite-tab[data-suite="${sid}"]`)?.classList.add('has-results');
+      renderResults(suite, contenders);
+      renderVerdict(suite, contenders);
+      saveHistory(suite, prompt, contenders);
+      setTimeout(() => { statusEl.innerHTML = ''; }, 4000);
+    }
+
+    function extractHtml(text) {
+      const m = text.match(/```html\s*([\s\S]*?)```/i) || text.match(/```\s*(<!DOCTYPE[\s\S]*?)```/i) || text.match(/(<!DOCTYPE[\s\S]*<\/html>)/i) || text.match(/(<html[\s\S]*<\/html>)/i);
+      let code = m ? m[1] : text;
+      if (!/<html|<!DOCTYPE|<body|<div|<section/i.test(code)) code = text; // fallback: maybe body-only
+      return code.trim();
+    }
+
+    function checkCorrect(suite, c) {
+      const expected = suite.presets[state[suite.id].preset]?.expected;
+      if (!expected) return null;
+      // heuristic: how many numeric tokens from the reference appear in the answer
+      const nums = (expected.match(/\d+(?:\.\d+)?/g) || []).filter(n => n.length > 1);
+      if (!nums.length) return null;
+      const ans = (c.content || '').replace(/,/g, '');
+      const hit = nums.filter(n => ans.includes(n)).length;
+      return hit / nums.length;
+    }
+
+    function applyJudgeScores(suite, contenders, verdict) {
+      const scores = verdict.scores || [];
+      const maxTotal = suite.rubric.length * 10;
+      contenders.forEach(c => {
+        const s = scores.find(x => (x.label || '').toUpperCase() === c.label);
+        if (s) {
+          c.criteria = s.criteria || {};
+          c.total = typeof s.total === 'number' ? s.total : Object.values(c.criteria).reduce((a, b) => a + (+b || 0), 0);
+          c.totalPct = Math.round((c.total / maxTotal) * 100);
+          c.jverdict = s.verdict || '';
+        }
+      });
+      // winner = highest total
+      const ranked = contenders.filter(c => typeof c.total === 'number').sort((a, b) => b.total - a.total);
+      contenders.forEach(c => c.isWinner = false);
+      if (ranked[0]) ranked[0].isWinner = true;
+      suite._summary = verdict.summary || '';
+      suite._maxTotal = maxTotal;
+    }
+  </script>
+  <script>
+    // ══════════════════════════════════════════════════════════════════
+    // RESULT RENDERING
+    // ══════════════════════════════════════════════════════════════════
+    function renderResults(suite, contenders) {
+      const host = document.getElementById('results_' + suite.id);
+      host.innerHTML = contenders.map(c => resultCardHtml(suite, c)).join('');
+      contenders.forEach(c => hydrateCard(suite, c));
+    }
+
+    function resultCardHtml(suite, c) {
+      const sid = suite.id, cid = c.label;
+      const m = findModel(c.id);
+      const badge = m && isNew(m) ? '<span class="badge-new">NEW</span>' : '';
+      const dot = c.status === 'done' ? 'done' : c.status === 'error' ? 'error' : 'running';
+      let tabs = '', panes = '';
+
+      if (suite.renderMode === 'html') {
+        tabs = `<div class="rc-tab active" onclick="rcTab(this,'${sid}_${cid}','preview')">Live preview</div><div class="rc-tab" onclick="rcTab(this,'${sid}_${cid}','code')">Code</div>`;
+        panes = `<div class="rc-pane active" id="pane_${sid}_${cid}_preview"></div><div class="rc-pane" id="pane_${sid}_${cid}_code"></div>`;
+      } else if (suite.renderMode === 'reasoning') {
+        tabs = `<div class="rc-tab active" onclick="rcTab(this,'${sid}_${cid}','answer')">Answer</div><div class="rc-tab" onclick="rcTab(this,'${sid}_${cid}','reasoning')">Reasoning</div>`;
+        panes = `<div class="rc-pane active" id="pane_${sid}_${cid}_answer"></div><div class="rc-pane" id="pane_${sid}_${cid}_reasoning"></div>`;
+      } else if (suite.renderMode === 'image' || suite.renderMode === 'video') {
+        panes = `<div class="rc-pane active" id="pane_${sid}_${cid}_media"></div>`;
+      } else {
+        panes = `<div class="rc-pane active" id="pane_${sid}_${cid}_answer"></div>`;
+      }
+
+      return `
+      <div class="result-card${c.isWinner ? ' rc-winner' : ''}" id="card_${sid}_${cid}">
+        <div class="rc-head">
+          <div class="rc-letter">${cid}</div>
+          <div style="overflow:hidden">
+            <div class="rc-name">${escHtml(shortName(c.id))} ${badge}</div>
+            <div class="rc-sub">${escHtml(c.id)}</div>
+          </div>
+          <div class="rc-status">${c.isWinner ? '<span class="material-icons rc-trophy" title="Top score">emoji_events</span>' : ''}<span class="rc-dot ${dot}" id="dot_${sid}_${cid}"></span></div>
+        </div>
+        <div class="rc-metrics" id="metrics_${sid}_${cid}"></div>
+        ${tabs ? `<div class="rc-tabs">${tabs}</div>` : ''}
+        <div class="rc-body">${panes}</div>
+        <div id="judge_${sid}_${cid}"></div>
+        ${suite.kind === 'video' || !suite.judged ? starsHtml(sid, cid, c) : ''}
+      </div>`;
+    }
+
+    function starsHtml(sid, cid, c) {
+      const val = (c && c.stars) || 0;
+      return `<div class="rc-stars"><span class="rs-label">Your rating:</span>${[1, 2, 3, 4, 5].map(n =>
+        `<span class="material-icons star${n <= val ? ' on' : ''}" onclick="rateStar('${sid}','${cid}',${n})">${n <= val ? 'star' : 'star_border'}</span>`).join('')}</div>`;
+    }
+
+    function hydrateCard(suite, c) { updateResultCard(suite, c); }
+
+    function updateResultCard(suite, c) {
+      const sid = suite.id, cid = c.label;
+      const dot = document.getElementById('dot_' + sid + '_' + cid);
+      if (dot) dot.className = 'rc-dot ' + (c.status === 'done' ? 'done' : c.status === 'error' ? 'error' : 'running');
+
+      const metrics = document.getElementById('metrics_' + sid + '_' + cid);
+      if (metrics) {
+        const parts = [];
+        if (c.elapsed) parts.push(`<span>${(c.elapsed / 1000).toFixed(1)}s</span>`);
+        if (c.usage?.reasoning_tokens) parts.push(`<span>reasoning <b>${fmtNum(c.usage.reasoning_tokens)}</b> tok</span>`);
+        if (c.usage?.completion_tokens) parts.push(`<span>out <b>${fmtNum(c.usage.completion_tokens)}</b></span>`);
+        if (c.usage?.completion_tokens && c.elapsed) parts.push(`<span><b>${(c.usage.completion_tokens / (c.elapsed / 1000)).toFixed(0)}</b> tok/s</span>`);
+        if (typeof c.cost === 'number' && c.cost > 0) parts.push(`<span><b>${fmtCost(c.cost)}</b></span>`);
+        if (c.correct != null) parts.push(`<span title="reference-number match">match <b>${Math.round(c.correct * 100)}%</b></span>`);
+        metrics.innerHTML = parts.join('') || '<span>…</span>';
+      }
+
+      if (c.status === 'error') {
+        const anyPane = document.querySelector('#card_' + sid + '_' + cid + ' .rc-pane.active');
+        if (anyPane) anyPane.innerHTML = `<div class="rc-empty" style="color:var(--red)">Error: ${escHtml(c.error)}</div>`;
+        return;
+      }
+
+      if (suite.renderMode === 'html') {
+        const prev = document.getElementById('pane_' + sid + '_' + cid + '_preview');
+        const code = document.getElementById('pane_' + sid + '_' + cid + '_code');
+        if (code) code.innerHTML = c.content ? `<pre class="rc-code">${escHtml(c.html || c.content)}</pre>` : '<div class="rc-empty">…</div>';
+        if (prev) {
+          if (c.status === 'done' && (c.html || c.content)) {
+            prev.innerHTML = `<div class="rc-iframe-wrap"><div class="rc-iframe-tools"><button class="mini-btn" onclick="openHtmlNewTab('${sid}','${cid}')"><span class="material-icons">open_in_new</span></button></div><iframe sandbox="allow-scripts" id="iframe_${sid}_${cid}"></iframe></div>`;
+            const ifr = document.getElementById('iframe_' + sid + '_' + cid);
+            if (ifr) ifr.srcdoc = c.html || c.content;
+          } else prev.innerHTML = `<div class="rc-empty">${c.content ? 'Generating… ' + c.content.length + ' chars' : 'Waiting…'}</div>`;
+        }
+      } else if (suite.renderMode === 'reasoning') {
+        const ans = document.getElementById('pane_' + sid + '_' + cid + '_answer');
+        const rea = document.getElementById('pane_' + sid + '_' + cid + '_reasoning');
+        if (ans) ans.innerHTML = c.content ? `<div class="rc-text">${escHtml(c.content)}</div>` : '<div class="rc-empty">…thinking…</div>';
+        if (rea) rea.innerHTML = c.reasoning ? `<div class="rc-reasoning">${escHtml(c.reasoning)}</div>` : '<div class="rc-empty">No exposed reasoning tokens for this model.</div>';
+      } else if (suite.renderMode === 'image') {
+        const med = document.getElementById('pane_' + sid + '_' + cid + '_media');
+        if (med) med.innerHTML = c.image ? `<img class="rc-img" src="${c.image}" onclick="openLightbox('${c.image}')" alt="generated">` : `<div class="rc-empty"><span class="material-icons spin" style="font-size:15px">refresh</span> rendering…</div>`;
+      } else if (suite.renderMode === 'video') {
+        const med = document.getElementById('pane_' + sid + '_' + cid + '_media');
+        if (med) {
+          if (c.videoUrl) med.innerHTML = `<video class="rc-video" src="${c.videoUrl}" controls loop muted playsinline></video>`;
+          else med.innerHTML = `<div class="rc-empty"><span class="material-icons spin" style="font-size:15px">refresh</span> rendering…</div><div class="rc-poll-log">${escHtml(c.pollLog || '')}</div>`;
+        }
+      } else {
+        const ans = document.getElementById('pane_' + sid + '_' + cid + '_answer');
+        if (ans) ans.innerHTML = c.content ? `<div class="rc-text">${escHtml(c.content)}</div>` : '<div class="rc-empty">…</div>';
+      }
+    }
+
+    function rcTab(el, key, which) {
+      el.parentElement.querySelectorAll('.rc-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      document.querySelectorAll('#card_' + key + ' .rc-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById('pane_' + key + '_' + which)?.classList.add('active');
+    }
+    function openHtmlNewTab(sid, cid) {
+      const c = state[sid].results.find(x => x.label === cid); if (!c) return;
+      const w = window.open('', '_blank'); w.document.open(); w.document.write(c.html || c.content); w.document.close();
+    }
+    function rateStar(sid, cid, n) {
+      const c = state[sid].results.find(x => x.label === cid); if (!c) return;
+      c.stars = n;
+      document.querySelectorAll('#card_' + sid + '_' + cid + ' .star').forEach((s, i) => { s.classList.toggle('on', i < n); s.textContent = i < n ? 'star' : 'star_border'; });
+      saveHistory(SUITES.find(x => x.id === sid), state[sid].prompt, state[sid].results);
+    }
+
+    function renderJudgeScore(suite, c) {
+      const host = document.getElementById('judge_' + suite.id + '_' + c.label);
+      if (!host || typeof c.total !== 'number') return;
+      const max = suite._maxTotal || suite.rubric.length * 10;
+      const rows = suite.rubric.map(r => {
+        const v = +(c.criteria?.[r] ?? 0);
+        return `<div class="crit-row"><span class="crit-label" title="${escHtml(r)}">${escHtml(r)}</span><div class="crit-meter"><div class="crit-fill" style="width:${v * 10}%"></div></div><span class="crit-val">${v}</span></div>`;
+      }).join('');
+      const pct = Math.round((c.total / max) * 100);
+      host.innerHTML = `<div class="rc-judge">
+        <div class="rc-judge-total"><span class="jt-num">${c.total}</span><span class="jt-outof">/ ${max} · ${pct}%</span>
+          <span class="jt-flag ${pct >= 60 ? 'ok' : 'bad'}">${c.isWinner ? '🏆 Top score' : pct >= 60 ? 'Solid' : 'Weak'}</span></div>
+        ${rows}
+        ${c.jverdict ? `<div class="rc-verdict">"${escHtml(c.jverdict)}"</div>` : ''}
+      </div>`;
+    }
+
+    // ── Verdict summary + charts ────────────────────────────────────────
+    function renderVerdict(suite, contenders) {
+      contenders.forEach(c => renderJudgeScore(suite, c));
+      const host = document.getElementById('verdict_' + suite.id);
+      const done = contenders.filter(c => c.status === 'done');
+      if (!done.length) { host.innerHTML = ''; return; }
+
+      let podium = '', charts = '';
+      const scored = contenders.filter(c => typeof c.total === 'number').sort((a, b) => b.total - a.total);
+      if (scored.length) {
+        const medals = ['🥇', '🥈', '🥉'];
+        podium = `<div class="podium">${scored.slice(0, 3).map((c, i) =>
+          `<div class="podium-slot${i === 0 ? ' p1' : ''}"><span class="p-medal">${medals[i]}</span><span>${escHtml(shortName(c.id))}</span><span style="color:var(--text-muted);font-family:var(--font-mono)">${c.total}/${suite._maxTotal}</span></div>`).join('')}</div>`;
+        charts += hbarChart('Total score', scored.map(c => ({ label: shortName(c.id), value: c.total, max: suite._maxTotal, fmt: v => v + '/' + suite._maxTotal })), 'var(--chart-1)');
+      }
+
+      // reasoning-specific charts
+      if (suite.reasoningSuite) {
+        const withR = done.filter(c => c.usage?.reasoning_tokens).sort((a, b) => b.usage.reasoning_tokens - a.usage.reasoning_tokens);
+        if (withR.length) charts += hbarChart('Reasoning tokens spent', withR.map(c => ({ label: shortName(c.id), value: c.usage.reasoning_tokens, max: Math.max(...withR.map(x => x.usage.reasoning_tokens)), fmt: fmtNum })), 'var(--chart-2)');
+        const spd = done.filter(c => c.usage?.completion_tokens && c.elapsed).sort((a, b) => (b.usage.completion_tokens / b.elapsed) - (a.usage.completion_tokens / a.elapsed));
+        if (spd.length) charts += hbarChart('Output speed (tok/s)', spd.map(c => { const v = c.usage.completion_tokens / (c.elapsed / 1000); return { label: shortName(c.id), value: v, max: Math.max(...spd.map(x => x.usage.completion_tokens / (x.elapsed / 1000))), fmt: v => v.toFixed(0) }; }), 'var(--chart-3)');
+      }
+      // cost chart when we have costs
+      const withCost = done.filter(c => c.cost > 0).sort((a, b) => b.cost - a.cost);
+      if (withCost.length > 1) charts += hbarChart('Cost per run', withCost.map(c => ({ label: shortName(c.id), value: c.cost, max: Math.max(...withCost.map(x => x.cost)), fmt: fmtCost })), 'var(--chart-3)');
+
+      const summary = suite._summary ? `<div class="verdict-summary">${escHtml(suite._summary)}</div>` : '';
+      if (!podium && !charts && !summary) { host.innerHTML = ''; return; }
+      host.innerHTML = `<div class="card verdict-card">
+        <div class="card-title"><span class="material-icons">workspace_premium</span>Verdict
+          <span class="ct-hint"><button class="mini-btn" onclick="exportRun('${suite.id}')"><span class="material-icons">download</span> Export run</button></span></div>
+        ${summary}${podium}${charts}
+      </div>`;
+    }
+
+    function hbarChart(title, rows, color) {
+      const body = rows.map(r => {
+        const pct = r.max > 0 ? (r.value / r.max) * 100 : 0;
+        return `<div class="hbar-row"><span class="hbar-label" title="${escHtml(r.label)}">${escHtml(r.label)}</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:${Math.max(2, pct)}%;background:${color}"></div><span class="hbar-val">${r.fmt(r.value)}</span></div></div>`;
+      }).join('');
+      return `<div class="chart-block"><div class="chart-title">${escHtml(title)}</div>${body}</div>`;
+    }
+  </script>
+  <script>
+    // ══════════════════════════════════════════════════════════════════
+    // REFERENCE IMAGE (video suite)
+    // ══════════════════════════════════════════════════════════════════
+    function onRefUpload(sid, input) {
+      const f = input.files?.[0]; if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result;
+        const b64 = String(dataUrl).split(',')[1];
+        state[sid].refImage = { dataUrl, b64 };
+        document.getElementById('refPreview_' + sid).innerHTML = `<img src="${dataUrl}" alt="ref">`;
+      };
+      reader.readAsDataURL(f);
+    }
+    async function generateRefImage(sid) {
+      const imgModel = catalog.image.find(m => /flux|nano|hidream|qwen|seedream/i.test(m.id)) || catalog.image[0];
+      if (!imgModel) { toast('No image model available'); return; }
+      const prev = document.getElementById('refPreview_' + sid);
+      prev.innerHTML = '<span class="material-icons spin">refresh</span>';
+      try {
+        const r = await generateImage(imgModel.id, 'A photorealistic studio portrait headshot of a friendly professional person, sharp focus, soft cinematic lighting, neutral background, looking at camera', { width: 768, height: 1024 });
+        state[sid].refImage = { dataUrl: r.image, b64: r.b64 };
+        prev.innerHTML = `<img src="${r.image}" alt="ref">`;
+        toast('Reference face generated with ' + shortName(imgModel.id));
+      } catch (e) { prev.innerHTML = '<span class="material-icons">error</span>'; toast('Failed: ' + e.message); }
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // HISTORY / LEADERBOARD
+    // ══════════════════════════════════════════════════════════════════
+    function loadHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; } }
+    function saveHistory(suite, prompt, contenders) {
+      const hist = loadHistory();
+      const entry = {
+        ts: Date.now(), suite: suite.name, suiteId: suite.id, prompt: prompt.slice(0, 200),
+        contenders: contenders.map(c => ({ id: c.id, total: c.total ?? null, stars: c.stars ?? null, elapsed: c.elapsed ?? null, reasoning_tokens: c.usage?.reasoning_tokens ?? null, cost: c.cost ?? null, error: c.status === 'error' })),
+        winner: (contenders.find(c => c.isWinner) || {}).id || null
+      };
+      // replace an entry from the same run (same ts within this session) — dedupe by keeping latest for a suite in last 3s
+      const filtered = hist.filter(h => !(h.suiteId === suite.id && Date.now() - h.ts < 4000));
+      filtered.unshift(entry);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(filtered.slice(0, 200)));
+    }
+
+    function renderLeaderboard() {
+      const host = document.getElementById('leaderboardHost');
+      const hist = loadHistory();
+      const agg = {};
+      hist.forEach(h => h.contenders.forEach(c => {
+        const a = agg[c.id] = agg[c.id] || { id: c.id, runs: 0, wins: 0, totalScore: 0, scoreN: 0, stars: 0, starN: 0, reasoning: 0, reasoningN: 0 };
+        a.runs++;
+        if (h.winner === c.id) a.wins++;
+        if (typeof c.total === 'number') { a.totalScore += c.total; a.scoreN++; }
+        if (typeof c.stars === 'number' && c.stars > 0) { a.stars += c.stars; a.starN++; }
+        if (typeof c.reasoning_tokens === 'number') { a.reasoning += c.reasoning_tokens; a.reasoningN++; }
+      }));
+      const rows = Object.values(agg).sort((a, b) => (b.wins - a.wins) || (b.scoreN ? b.totalScore / b.scoreN : 0) - (a.scoreN ? a.totalScore / a.scoreN : 0));
+
+      const totalRuns = hist.length;
+      const totalModels = rows.length;
+      const topModel = rows[0] ? shortName(rows[0].id) : '—';
+
+      const stats = `<div class="lb-stats-row">
+        <div class="stat-tile"><div class="st-val">${totalRuns}</div><div class="st-lbl">BENCHMARK RUNS</div></div>
+        <div class="stat-tile"><div class="st-val">${totalModels}</div><div class="st-lbl">MODELS TESTED</div></div>
+        <div class="stat-tile"><div class="st-val" style="font-size:20px">${escHtml(topModel)}</div><div class="st-lbl">MOST WINS</div></div>
+        <div class="stat-tile"><div class="st-val">${SUITES.length}</div><div class="st-lbl">BENCHMARK SUITES</div></div>
+      </div>`;
+
+      const table = rows.length ? `<div class="card"><div class="card-title"><span class="material-icons">military_tech</span>Model standings
+        <span class="ct-hint"><button class="mini-btn" onclick="clearHistory()"><span class="material-icons">delete</span> Clear history</button></span></div>
+        <div class="lb-table-wrap"><table class="lb-table">
+        <thead><tr><th>#</th><th>Model</th><th>Wins</th><th>Runs</th><th>Win rate</th><th>Avg judge score</th><th>Avg stars</th><th>Avg reasoning tok</th></tr></thead>
+        <tbody>${rows.map((r, i) => `<tr>
+          <td class="num">${i + 1}</td>
+          <td><b>${escHtml(shortName(r.id))}</b>${findModel(r.id) && isNew(findModel(r.id)) ? ' <span class="badge-new">NEW</span>' : ''}</td>
+          <td class="num">${r.wins}</td>
+          <td class="num">${r.runs}</td>
+          <td class="num">${r.runs ? Math.round(r.wins / r.runs * 100) : 0}%</td>
+          <td class="num">${r.scoreN ? (r.totalScore / r.scoreN).toFixed(1) : '—'}</td>
+          <td class="num">${r.starN ? (r.stars / r.starN).toFixed(1) + '★' : '—'}</td>
+          <td class="num">${r.reasoningN ? fmtNum(Math.round(r.reasoning / r.reasoningN)) : '—'}</td>
+        </tr>`).join('')}</tbody></table></div></div>` : '';
+
+      const recent = hist.slice(0, 25).map(h => {
+        const d = new Date(h.ts);
+        return `<div class="lb-history-item">
+          <span class="hi-suite">${escHtml(h.suite)}</span>
+          <span style="color:var(--text-muted);font-size:11px">${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          <span class="hi-prompt">${escHtml(h.prompt)}</span>
+          ${h.winner ? `<span class="hi-winner"><span class="material-icons" style="font-size:15px">emoji_events</span>${escHtml(shortName(h.winner))}</span>` : ''}
+        </div>`;
+      }).join('');
+
+      host.innerHTML = `
+        <div class="suite-hero"><div class="suite-hero-icon"><span class="material-icons">leaderboard</span></div>
+          <div><h2>Leaderboard</h2><p>Aggregated across every benchmark you've run in this browser. Wins come from AI-judge totals (or your star ratings for video). Nothing leaves your device — history lives in localStorage.</p></div></div>
+        ${stats}${table}
+        ${recent ? `<div class="card"><div class="card-title"><span class="material-icons">history</span>Recent runs</div>${recent}</div>` : '<div class="card"><div class="rc-empty">No runs yet — go run a benchmark and results will accumulate here.</div></div>'}`;
+    }
+    function clearHistory() { if (confirm('Clear all local benchmark history?')) { localStorage.removeItem(HISTORY_KEY); renderLeaderboard(); toast('History cleared'); } }
+
+    // ── Export ─────────────────────────────────────────────────────────
+    function exportRun(sid) {
+      const suite = SUITES.find(x => x.id === sid); const st = state[sid];
+      const data = {
+        exported: new Date().toISOString(), suite: suite.name, prompt: st.prompt, judge: suite.judged ? st.judge : null,
+        summary: suite._summary || null,
+        contenders: st.results.map(c => ({
+          model: c.id, status: c.status, total: c.total ?? null, criteria: c.criteria || null, verdict: c.jverdict || null,
+          stars: c.stars ?? null, elapsed_ms: c.elapsed ?? null, usage: c.usage || null, cost: c.cost ?? null,
+          content: c.content || null, reasoning: c.reasoning || null
+        }))
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = 'benchmark-' + sid + '-' + new Date().toISOString().slice(0, 10) + '.json';
+      a.click(); URL.revokeObjectURL(a.href); toast('Run exported as JSON');
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // BOOT
+    // ══════════════════════════════════════════════════════════════════
+    (async function init() {
+      const theme = localStorage.getItem('venice_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') document.getElementById('darkModeBtn').querySelector('.material-icons').textContent = 'light_mode';
+      loadSeen();
+      buildSuiteBar();
+      const ok = await fetchCatalog();
+      buildPanels();
+      document.getElementById('loadingOverlay').style.display = 'none';
+      if (!ok) toast('Add your Venice API key on the Chat page to run benchmarks');
+    })();
+  </script>
+</body>
+</html>

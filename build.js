@@ -22,7 +22,7 @@ const scriptInjection = apiKey ? `
   </script>` : '';
 
 // HTML files to process
-const htmlFiles = ['index.html', 'dashboard.html'];
+const htmlFiles = ['index.html', 'dashboard.html', 'benchmark.html'];
 
 htmlFiles.forEach(filename => {
   const htmlPath = path.join(__dirname, filename);
