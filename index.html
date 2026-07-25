@@ -10,36 +10,124 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* brand / functional accents — Canvas (cyan primary, no purple) */
-      --orange: #0E7490;        /* repurposed: cyan PRIMARY */
-      --orange-light: #DDF0F3;
-      --blue: #2563EB;          /* secondary data blue */
-      --blue-light: #E6EEFC;
-      --magenta: #15201F;       /* repurposed -> neutral */
-      --magenta-light: #F4FAFA;
-      --green: #0F7A4D;
-      --green-light: #E1F2E9;
-      --red: #C2362F;
-      --red-light: #FBE9E7;
-      --amber: #B45309;
-      --amber-light: #FAF0DD;
-      --purple: #15201F;        /* repurposed -> neutral */
-      --purple-light: #F4FAFA;
-      --background-color: #F2F6F6;
-      --surface-color: #FFFFFF;
-      --surface-2: #F4FAFA;
-      --text-color: #15201F;
-      --text-secondary: #4F5E5B;
-      --border-color: #E0E9E8;
-      /* shape + elevation (Canvas = rounder & softer) */
-      --border-radius: 18px;
+      /* ═══════════════════════════════════════════════════════════
+         STUDIO TOKENS v2 — single light theme, teal primary.
+         Legacy variable names (--orange, --magenta, …) are kept as
+         aliases below so every existing component keeps rendering.
+         ═══════════════════════════════════════════════════════════ */
+
+      /* neutral ramp */
+      --n-0:  #FFFFFF;
+      --n-25: #FAFCFC;
+      --n-50: #F4F8F8;
+      --n-100:#EDF3F3;
+      --n-200:#DFE9E8;
+      --n-300:#C7D6D4;
+      --n-400:#9BAFAC;
+      --n-500:#6E827F;
+      --n-600:#4F5E5B;
+      --n-700:#35433F;
+      --n-800:#22302D;
+      --n-900:#15201F;
+
+      /* primary (teal) */
+      --p-50:  #E8F5F6;
+      --p-100: #D2EBEE;
+      --p-200: #A5D7DD;
+      --p-400: #1C93A8;
+      --p-500: #0E7490;
+      --p-600: #0B5F77;
+      --p-700: #084A5D;
+
+      /* data-viz secondaries — used by charts, matrices, model chips */
+      --viz-1: #0E7490;
+      --viz-2: #2563EB;
+      --viz-3: #7C3AED;
+      --viz-4: #B45309;
+      --viz-5: #0F7A4D;
+      --viz-6: #BE185D;
+
+      /* semantic */
+      --ok:    #0F7A4D;  --ok-bg:    #E1F2E9;
+      --warn:  #B45309;  --warn-bg:  #FAF0DD;
+      --bad:   #C2362F;  --bad-bg:   #FBE9E7;
+      --info:  #2563EB;  --info-bg:  #E6EEFC;
+
+      /* surfaces / text / lines */
+      --background-color: var(--n-50);
+      --surface-color: var(--n-0);
+      --surface-2: var(--n-25);
+      --surface-3: var(--n-100);
+      --text-color: var(--n-900);
+      --text-secondary: var(--n-600);
+      --text-tertiary: var(--n-500);
+      --border-color: var(--n-200);
+      --border-strong: var(--n-300);
+
+      /* legacy aliases — DO NOT REMOVE (used across ~2000 lines of CSS) */
+      --orange: var(--p-500);
+      --orange-light: var(--p-100);
+      --blue: var(--info);
+      --blue-light: var(--info-bg);
+      --magenta: var(--n-900);
+      --magenta-light: var(--n-50);
+      --green: var(--ok);
+      --green-light: var(--ok-bg);
+      --red: var(--bad);
+      --red-light: var(--bad-bg);
+      --amber: var(--warn);
+      --amber-light: var(--warn-bg);
+      --purple: var(--n-900);
+      --purple-light: var(--n-50);
+
+      /* radius scale */
+      --radius-xs: 8px;
       --radius-sm: 12px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-xl: 26px;
+      --border-radius: var(--radius-md);
       --chip-radius: 999px;
-      --shadow-sm: 0 2px 4px rgba(8,40,45,.05);
-      --shadow-md: 0 2px 4px rgba(8,40,45,.05), 0 14px 30px -12px rgba(8,40,45,.20);
+
+      /* elevation — 4 steps */
+      --shadow-xs: 0 1px 2px rgba(8,40,45,.06);
+      --shadow-sm: 0 1px 2px rgba(8,40,45,.05), 0 2px 6px -2px rgba(8,40,45,.08);
+      --shadow-md: 0 2px 4px rgba(8,40,45,.05), 0 12px 24px -12px rgba(8,40,45,.18);
+      --shadow-lg: 0 4px 8px rgba(8,40,45,.06), 0 24px 48px -20px rgba(8,40,45,.26);
+
+      /* motion */
+      --ease: cubic-bezier(.2,.8,.2,1);
+      --dur-fast: 120ms;
+      --dur: 200ms;
+      --dur-slow: 380ms;
+
+      /* focus ring */
+      --focus-ring: 0 0 0 3px var(--p-100), 0 0 0 1px var(--p-500);
+
       /* type */
       --font-head: 'Space Grotesk', system-ui, sans-serif;
       --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+      /* shell metrics */
+      --rail-w: 286px;
+      --appbar-h: 60px;
+    }
+
+    /* Accessible focus for everything interactive */
+    :where(button, a, input, select, textarea, [tabindex]):focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+      border-radius: var(--radius-xs);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+      }
     }
 
     * {
@@ -2520,6 +2608,730 @@
     .btn-fusion:hover{background:#DBEAFE !important;border-color:#93C5FD !important;color:#1E40AF !important;}
     .btn-fusion .material-icons{color:#1D4ED8 !important;}
 
+    /* ═══════════════════════════════════════════════════════════════════
+       STUDIO SHELL — app bar, rail, canvas, insight deck.
+       Appended last so it wins over the legacy rules above.
+       ═══════════════════════════════════════════════════════════════════ */
+
+    body { background: var(--background-color); }
+
+    /* ── App bar ─────────────────────────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      justify-content: flex-start;
+      min-height: var(--appbar-h);
+      padding: 0 18px;
+      background: rgba(255,255,255,.86);
+      backdrop-filter: saturate(1.6) blur(12px);
+      -webkit-backdrop-filter: saturate(1.6) blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+      z-index: 40;
+    }
+    .header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .header .app-logo { height: 30px; }
+
+    .menu-toggle {
+      background: transparent !important;
+      border: 1px solid transparent !important;
+      color: var(--text-secondary) !important;
+      padding: 7px !important;
+      border-radius: var(--radius-xs) !important;
+      box-shadow: none !important;
+    }
+    .menu-toggle:hover { background: var(--surface-3) !important; color: var(--text-color) !important; }
+
+    /* segmented nav replaces the old button row */
+    .appnav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 3px;
+      background: var(--surface-3);
+      border: 1px solid var(--border-color);
+      border-radius: var(--chip-radius);
+      margin-left: 6px;
+    }
+    .appnav-item {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px;
+      border: none !important;
+      background: transparent !important;
+      color: var(--text-secondary) !important;
+      font-size: 13px; font-weight: 600;
+      font-family: var(--font-body);
+      border-radius: var(--chip-radius) !important;
+      cursor: pointer;
+      box-shadow: none !important;
+      transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .appnav-item .material-icons { font-size: 17px !important; color: inherit !important; }
+    .appnav-item:hover { background: var(--n-0) !important; color: var(--text-color) !important; }
+    .appnav-item.active {
+      background: var(--n-0) !important;
+      color: var(--p-500) !important;
+      box-shadow: var(--shadow-xs) !important;
+    }
+
+    .header-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+
+    /* session meter */
+    #sessionTracker {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 12px;
+      background: var(--p-50);
+      border: 1px solid var(--p-100);
+      border-radius: var(--chip-radius);
+      font-size: 12px; color: var(--p-700);
+      font-family: var(--font-mono);
+      white-space: nowrap;
+    }
+    #sessionTracker .material-icons { font-size: 15px !important; color: var(--p-500) !important; }
+
+    /* overflow "More" menu */
+    .more-wrap { position: relative; }
+    .icon-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      background: var(--surface-color) !important;
+      border: 1px solid var(--border-color) !important;
+      color: var(--text-secondary) !important;
+      padding: 8px 10px !important;
+      border-radius: var(--radius-xs) !important;
+      font-size: 13px; font-weight: 600;
+      box-shadow: var(--shadow-xs) !important;
+      cursor: pointer;
+      transition: all var(--dur-fast) var(--ease);
+    }
+    .icon-btn:hover { border-color: var(--border-strong) !important; color: var(--text-color) !important; background: var(--surface-2) !important; }
+    .icon-btn .material-icons { font-size: 18px !important; color: inherit !important; }
+
+    .more-menu {
+      position: absolute; right: 0; top: calc(100% + 8px);
+      min-width: 236px;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      padding: 6px;
+      display: none;
+      z-index: 120;
+    }
+    .more-menu.open { display: block; animation: menuIn var(--dur) var(--ease); }
+    @keyframes menuIn { from { opacity:0; transform: translateY(-6px) } to { opacity:1; transform:none } }
+    .more-menu-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+      color: var(--text-tertiary); padding: 8px 10px 4px;
+    }
+    .more-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius-xs);
+      font-size: 13px; font-weight: 500; color: var(--text-color);
+      cursor: pointer; text-decoration: none;
+      transition: background var(--dur-fast) var(--ease);
+    }
+    .more-item:hover { background: var(--surface-3); }
+    .more-item .material-icons { font-size: 18px; color: var(--text-tertiary); }
+    .more-item small { margin-left: auto; color: var(--text-tertiary); font-size: 11px; font-family: var(--font-mono); }
+    .more-sep { height: 1px; background: var(--border-color); margin: 6px 4px; }
+
+    /* ── Left rail ───────────────────────────────────────────────────── */
+    .rail-shell { grid-template-columns: var(--rail-w) 1fr; }
+    .rail-shell.rail-collapsed { grid-template-columns: 0 1fr; }
+    .rail-shell.rail-collapsed .model-drawer { padding: 0; overflow: hidden; border-right: none; }
+    .rail-shell.rail-collapsed .model-drawer > * { display: none; }
+
+    .model-drawer {
+      background: var(--surface-2);
+      border-right: 1px solid var(--border-color);
+      box-shadow: none;
+      padding: 12px;
+      gap: 8px;
+      transition: padding var(--dur) var(--ease);
+    }
+    .drawer-search {
+      background: var(--surface-color);
+      border-radius: var(--radius-xs);
+      padding: 9px 11px;
+      box-shadow: var(--shadow-xs);
+      transition: box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+    }
+    .drawer-search:focus-within { border-color: var(--p-400); box-shadow: var(--focus-ring); }
+    .drawer-search .material-icons { font-size: 18px; color: var(--text-tertiary); }
+
+    /* filter chips */
+    .rail-filters { display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 0 4px; }
+    .rail-chip {
+      font-size: 11px; font-weight: 600;
+      padding: 5px 10px;
+      border-radius: var(--chip-radius);
+      border: 1px solid var(--border-color);
+      background: var(--surface-color);
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--dur-fast) var(--ease);
+      font-family: var(--font-body);
+      box-shadow: none;
+    }
+    .rail-chip:hover { border-color: var(--border-strong); color: var(--text-color); }
+    .rail-chip.active {
+      background: var(--p-500); border-color: var(--p-500); color: #fff;
+    }
+
+    .rail-group-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+      color: var(--text-tertiary);
+      padding: 10px 4px 4px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .rail-group-label::after { content:''; flex:1; height:1px; background: var(--border-color); }
+
+    .drawer-item {
+      border-radius: var(--radius-xs);
+      padding: 9px 11px;
+      box-shadow: none;
+      border-color: transparent;
+      background: var(--surface-color);
+      transition: all var(--dur-fast) var(--ease);
+    }
+    .drawer-item:hover { border-color: var(--border-strong); transform: translateX(1px); }
+    .drawer-item.active {
+      background: var(--p-500);
+      border-color: var(--p-500);
+      box-shadow: var(--shadow-sm);
+    }
+    .drawer-name { font-size: 12.5px; }
+    .price-badge { font-family: var(--font-mono); font-size: 10px; }
+
+    /* ── Composer ────────────────────────────────────────────────────── */
+    .prompt-section {
+      background: transparent;
+      border-bottom: none;
+      padding: 16px 20px 6px;
+    }
+    .composer {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 6px 6px 0;
+      transition: box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    }
+    .composer:focus-within { border-color: var(--p-200); box-shadow: var(--shadow-lg); }
+    .composer textarea {
+      border: none !important;
+      box-shadow: none !important;
+      background: transparent;
+      height: 92px;
+      min-height: 60px;
+      padding: 12px 14px 6px;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .composer textarea:focus { outline: none; box-shadow: none !important; }
+    .composer #costEstimator .cost-bar {
+      border: none;
+      border-top: 1px solid var(--border-color);
+      border-radius: 0;
+      background: transparent;
+      padding: 8px 14px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .composer .controls {
+      margin-top: 0;
+      padding: 10px 12px 12px;
+      border-top: 1px solid var(--border-color);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .controls-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .controls-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .web-search-toggle { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+
+    #sendButton {
+      background: var(--p-500);
+      border-radius: var(--radius-xs);
+      padding: 10px 20px;
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+    #sendButton:hover { background: var(--p-600); }
+
+    /* ── Canvas toolbar + view modes ─────────────────────────────────── */
+    .canvas-bar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 20px 0;
+      flex-wrap: wrap;
+    }
+    .viewseg {
+      display: inline-flex; padding: 3px; gap: 2px;
+      background: var(--surface-3);
+      border: 1px solid var(--border-color);
+      border-radius: var(--chip-radius);
+    }
+    .viewseg button {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 13px;
+      border: none !important; background: transparent !important;
+      color: var(--text-secondary) !important;
+      font-size: 12.5px; font-weight: 600;
+      border-radius: var(--chip-radius) !important;
+      box-shadow: none !important;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all var(--dur-fast) var(--ease);
+    }
+    .viewseg button .material-icons { font-size: 16px !important; color: inherit !important; }
+    .viewseg button.active {
+      background: var(--n-0) !important; color: var(--p-500) !important;
+      box-shadow: var(--shadow-xs) !important;
+    }
+    .canvas-meta {
+      font-size: 12px; color: var(--text-tertiary);
+      font-family: var(--font-mono);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .gridsort {
+      font-size: 12px; padding: 6px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xs);
+      background: var(--surface-color);
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .response-container { padding: 14px 20px 24px; }
+    .model-response {
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 26px;
+      max-width: 1040px;
+    }
+    .model-header { border-bottom: 1px solid var(--border-color); }
+    .model-title { font-family: var(--font-head); letter-spacing: -.01em; }
+    .response-time { font-family: var(--font-mono); font-size: 11px; }
+
+    /* Grid view */
+    .grid-view { display: none; }
+    .grid-view.active { display: grid; }
+    .grid-view {
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 14px;
+      align-content: start;
+    }
+    .gcard {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-xs);
+      display: flex; flex-direction: column;
+      max-height: 480px;
+      overflow: hidden;
+      transition: box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    }
+    .gcard:hover { box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+    .gcard-head {
+      display: flex; align-items: center; gap: 8px;
+      padding: 11px 13px;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--surface-2);
+    }
+    .gcard-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--viz-1); }
+    .gcard-name {
+      font-size: 12.5px; font-weight: 700; color: var(--text-color);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-family: var(--font-head);
+    }
+    .gcard-stats {
+      margin-left: auto; display: flex; gap: 8px; align-items: center;
+      font-family: var(--font-mono); font-size: 10.5px; color: var(--text-tertiary);
+      white-space: nowrap;
+    }
+    .gcard-body {
+      padding: 13px;
+      font-size: 13px; line-height: 1.55;
+      overflow-y: auto; flex: 1;
+      white-space: pre-wrap;
+    }
+    .gcard-body p { margin: 0 0 .7em; }
+    .gcard-body h1,.gcard-body h2,.gcard-body h3 { font-size: 14px; margin: .9em 0 .35em; }
+    .gcard-body pre { font-size: 11px; padding: 8px; border-radius: var(--radius-xs); background: var(--n-100); overflow-x: auto; }
+    .gcard-body code { font-family: var(--font-mono); font-size: 11.5px; }
+    .gcard-foot {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 11px;
+      border-top: 1px solid var(--border-color);
+      background: var(--surface-2);
+    }
+    .gcard-act {
+      background: transparent !important; border: none !important;
+      color: var(--text-tertiary) !important;
+      padding: 4px !important; border-radius: var(--radius-xs) !important;
+      box-shadow: none !important; cursor: pointer;
+    }
+    .gcard-act:hover { background: var(--surface-3) !important; color: var(--p-500) !important; }
+    .gcard-act .material-icons { font-size: 17px !important; color: inherit !important; }
+    .gcard-badge {
+      margin-left: auto; font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: var(--chip-radius);
+      text-transform: uppercase; letter-spacing: .05em;
+    }
+    .gs-loading { background: var(--info-bg); color: var(--info); }
+    .gs-done    { background: var(--ok-bg);   color: var(--ok); }
+    .gs-error   { background: var(--bad-bg);  color: var(--bad); }
+
+    /* ── Insight Deck ────────────────────────────────────────────────── */
+    .insight-deck {
+      display: none;
+      margin: 0 20px 4px;
+      padding: 12px 14px;
+      background: linear-gradient(180deg, var(--n-0), var(--surface-2));
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      animation: deckIn var(--dur-slow) var(--ease);
+    }
+    .insight-deck.show { display: block; }
+    @keyframes deckIn { from { opacity:0; transform: translateY(8px) } to { opacity:1; transform:none } }
+    .deck-head {
+      display: flex; align-items: center; gap: 9px;
+      margin-bottom: 11px; flex-wrap: wrap;
+    }
+    .deck-kicker {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: var(--font-head);
+      font-size: 12.5px; font-weight: 700;
+      letter-spacing: .02em; color: var(--text-color);
+    }
+    .deck-kicker .material-icons { font-size: 18px; color: var(--p-500); }
+    .deck-sub { font-size: 11.5px; color: var(--text-tertiary); }
+    .deck-judge {
+      margin-left: auto; display: flex; align-items: center; gap: 7px;
+      font-size: 11px; color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+    .deck-judge select {
+      font-size: 11.5px; padding: 5px 9px;
+      border: 1px solid var(--border-color); border-radius: var(--radius-xs);
+      background: var(--surface-color); color: var(--text-color);
+      font-family: var(--font-mono); max-width: 230px; cursor: pointer; outline: none;
+    }
+    .deck-guard {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; color: var(--text-secondary); cursor: pointer;
+      padding: 4px 9px; border-radius: var(--chip-radius);
+      background: var(--p-50); border: 1px solid var(--p-100);
+      white-space: nowrap;
+    }
+    .deck-guard input { accent-color: var(--p-500); margin: 0; }
+
+    .deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(196px, 1fr));
+      gap: 9px;
+    }
+    .deck-btn {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+      text-align: left;
+      padding: 12px 13px;
+      background: var(--surface-color) !important;
+      border: 1px solid var(--border-color) !important;
+      border-radius: var(--radius-sm) !important;
+      box-shadow: var(--shadow-xs) !important;
+      cursor: pointer;
+      color: var(--text-color) !important;
+      font-family: var(--font-body);
+      transition: all var(--dur) var(--ease);
+      position: relative;
+      overflow: hidden;
+    }
+    .deck-btn:hover:not(:disabled) {
+      border-color: var(--p-200) !important;
+      box-shadow: var(--shadow-md) !important;
+      transform: translateY(-2px);
+    }
+    .deck-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .deck-btn-top { display: flex; align-items: center; gap: 7px; width: 100%; min-width: 0; }
+    .deck-btn-top .material-icons { font-size: 18px !important; flex-shrink: 0; }
+    .deck-btn-title { font-size: 13px; font-weight: 700; font-family: var(--font-head); min-width: 0; }
+    .deck-btn-desc {
+      font-size: 11px; color: var(--text-tertiary); line-height: 1.4;
+      width: 100%; white-space: normal; overflow-wrap: anywhere;
+    }
+    .deck-btn-cost {
+      margin-top: 5px; font-family: var(--font-mono); font-size: 10px;
+      color: var(--text-tertiary);
+      display: flex; align-items: center; gap: 5px;
+      width: 100%; flex-wrap: wrap;
+    }
+    .deck-btn.primary {
+      background: linear-gradient(135deg, var(--p-500), var(--p-400)) !important;
+      border-color: var(--p-500) !important;
+      color: #fff !important;
+      box-shadow: var(--shadow-md) !important;
+    }
+    .deck-btn.primary .deck-btn-desc,
+    .deck-btn.primary .deck-btn-cost { color: rgba(255,255,255,.82); }
+    .deck-btn.primary .material-icons { color: #fff !important; }
+    .deck-btn.primary:hover:not(:disabled) { box-shadow: var(--shadow-lg) !important; }
+    .deck-btn .ran-dot {
+      position: absolute; top: 9px; right: 9px;
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--ok); display: none;
+    }
+    .deck-btn.has-result .ran-dot { display: block; }
+
+    /* ── Insight workspace (results overlay) ─────────────────────────── */
+    .iw-overlay {
+      position: fixed; inset: 0;
+      background: rgba(21,32,31,.44);
+      backdrop-filter: blur(3px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1400; padding: 22px;
+    }
+    .iw-overlay.show { display: flex; animation: fadeIn var(--dur) var(--ease); }
+    @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+    .iw-panel {
+      background: var(--surface-color);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      width: min(1180px, 100%);
+      height: min(92vh, 980px);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      animation: panelIn var(--dur-slow) var(--ease);
+    }
+    @keyframes panelIn { from { opacity:0; transform: translateY(14px) scale(.99) } to { opacity:1; transform:none } }
+    .iw-head {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--surface-2);
+      flex-wrap: wrap;
+    }
+    .iw-title {
+      display: flex; align-items: center; gap: 9px;
+      font-family: var(--font-head); font-size: 16px; font-weight: 700;
+    }
+    .iw-title .material-icons { color: var(--p-500); }
+    .iw-tabs { display: flex; gap: 3px; padding: 3px; background: var(--surface-3); border-radius: var(--chip-radius); border: 1px solid var(--border-color); overflow-x: auto; }
+    .iw-tab {
+      padding: 6px 12px; font-size: 12px; font-weight: 600;
+      border: none !important; background: transparent !important;
+      color: var(--text-secondary) !important;
+      border-radius: var(--chip-radius) !important;
+      cursor: pointer; box-shadow: none !important; white-space: nowrap;
+      font-family: var(--font-body);
+    }
+    .iw-tab.active { background: var(--n-0) !important; color: var(--p-500) !important; box-shadow: var(--shadow-xs) !important; }
+    .iw-tab:disabled { opacity: .4; cursor: not-allowed; }
+    .iw-body { flex: 1; overflow-y: auto; padding: 22px 26px; }
+    .iw-foot {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 18px;
+      border-top: 1px solid var(--border-color);
+      background: var(--surface-2);
+      flex-wrap: wrap;
+    }
+
+    /* progress */
+    .iw-progress { max-width: 560px; margin: 60px auto; text-align: center; }
+    .iw-progress h3 { font-family: var(--font-head); font-size: 17px; margin: 0 0 6px; }
+    .iw-progress p { color: var(--text-secondary); font-size: 13px; margin: 0 0 18px; }
+    .iw-bar { height: 5px; background: var(--n-200); border-radius: 3px; overflow: hidden; }
+    .iw-bar > div {
+      height: 100%; background: linear-gradient(90deg, var(--p-500), var(--p-400));
+      border-radius: 3px; transition: width var(--dur-slow) var(--ease);
+    }
+    .iw-steps { display: flex; flex-direction: column; gap: 7px; margin-top: 20px; text-align: left; }
+    .iw-step {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 12.5px; color: var(--text-tertiary);
+      padding: 8px 11px; border-radius: var(--radius-xs);
+      background: var(--surface-2); border: 1px solid var(--border-color);
+    }
+    .iw-step.active { color: var(--p-600); border-color: var(--p-200); background: var(--p-50); font-weight: 600; }
+    .iw-step.done { color: var(--ok); }
+    .iw-step .material-icons { font-size: 16px; }
+
+    /* report typography */
+    .iw-report { max-width: 860px; margin: 0 auto; font-size: 15px; line-height: 1.68; }
+    .iw-report h1 { font-family: var(--font-head); font-size: 25px; margin: 0 0 .5em; letter-spacing: -.02em; }
+    .iw-report h2 {
+      font-family: var(--font-head); font-size: 19px; margin: 1.9em 0 .55em;
+      padding-bottom: .3em; border-bottom: 1px solid var(--border-color); letter-spacing: -.01em;
+    }
+    .iw-report h3 { font-family: var(--font-head); font-size: 15.5px; margin: 1.4em 0 .4em; color: var(--p-600); }
+    .iw-report p { margin: 0 0 1em; }
+    .iw-report ul, .iw-report ol { margin: 0 0 1em; padding-left: 1.35em; }
+    .iw-report li { margin-bottom: .45em; }
+    .iw-report blockquote {
+      margin: 1em 0; padding: 12px 16px;
+      border-left: 3px solid var(--p-400); background: var(--p-50);
+      border-radius: 0 var(--radius-xs) var(--radius-xs) 0; color: var(--text-secondary);
+    }
+    .iw-report code { font-family: var(--font-mono); font-size: 13px; background: var(--n-100); padding: 1px 5px; border-radius: 4px; }
+    .iw-report pre { background: var(--n-100); padding: 13px; border-radius: var(--radius-xs); overflow-x: auto; }
+    .iw-report table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 13px; }
+    .iw-report th, .iw-report td { padding: 9px 11px; border: 1px solid var(--border-color); text-align: left; vertical-align: top; }
+    .iw-report th { background: var(--surface-3); font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-secondary); }
+    .iw-report tr:nth-child(even) td { background: var(--surface-2); }
+    .attrib {
+      display: inline-block; font-family: var(--font-mono); font-size: 11px;
+      background: var(--p-50); color: var(--p-600);
+      padding: 1px 6px; border-radius: 4px; border: 1px solid var(--p-100);
+      white-space: nowrap;
+    }
+    .iw-streaming::after {
+      content: '▍'; color: var(--p-500);
+      animation: caret 1s steps(2) infinite;
+    }
+    @keyframes caret { 50% { opacity: 0 } }
+
+    /* generic analysis cards used by all modes */
+    .ia-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 0 0 18px; }
+    .ia-card {
+      background: var(--surface-color); border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm); padding: 14px 15px; box-shadow: var(--shadow-xs);
+    }
+    .ia-card h4 {
+      margin: 0 0 8px; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .07em; color: var(--text-tertiary);
+    }
+    .ia-stat { font-family: var(--font-head); font-size: 27px; font-weight: 700; color: var(--p-500); line-height: 1; }
+    .ia-stat-sub { font-size: 11.5px; color: var(--text-tertiary); margin-top: 5px; }
+    .ia-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 13px; }
+    .ia-row:last-child { border-bottom: none; }
+    .ia-model {
+      font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 230px;
+    }
+    .ia-bar { flex: 1; height: 7px; background: var(--n-200); border-radius: 4px; overflow: hidden; min-width: 60px; }
+    .ia-bar > i { display: block; height: 100%; border-radius: 4px; background: var(--p-500); }
+    .ia-num { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); width: 46px; text-align: right; }
+    .ia-tag {
+      display: inline-block; font-size: 10.5px; font-weight: 700; padding: 3px 8px;
+      border-radius: var(--chip-radius); text-transform: uppercase; letter-spacing: .04em;
+    }
+    .t-ok { background: var(--ok-bg); color: var(--ok); }
+    .t-warn { background: var(--warn-bg); color: var(--warn); }
+    .t-bad { background: var(--bad-bg); color: var(--bad); }
+    .t-info { background: var(--info-bg); color: var(--info); }
+    .t-neutral { background: var(--n-100); color: var(--text-secondary); }
+
+    /* ── Judge integrity panel ───────────────────────────────────────── */
+    .integrity {
+      border: 1px solid var(--p-100);
+      background: linear-gradient(180deg, var(--p-50), var(--n-0));
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      margin: 0 0 20px;
+    }
+    .integrity-head {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+      font-family: var(--font-head); font-size: 13px; font-weight: 700; color: var(--p-700);
+    }
+    .integrity-head .material-icons { font-size: 17px; color: var(--p-500); }
+    .integrity-note { font-size: 11.5px; color: var(--text-secondary); margin-bottom: 11px; line-height: 1.5; }
+    .integrity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 9px; }
+    .integrity-metric {
+      background: var(--n-0); border: 1px solid var(--border-color);
+      border-radius: var(--radius-xs); padding: 9px 11px;
+    }
+    .integrity-metric dt {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+      color: var(--text-tertiary); margin-bottom: 4px;
+    }
+    .integrity-metric dd {
+      margin: 0; font-family: var(--font-mono); font-size: 13.5px; font-weight: 600; color: var(--text-color);
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .integrity-metric small { display: block; font-family: var(--font-body); font-size: 10.5px; color: var(--text-tertiary); margin-top: 3px; font-weight: 400; }
+
+    /* ── Shell fit & polish ──────────────────────────────────────────── */
+    /* The brand block must never push the nav around, logo or fallback. */
+    .header-left { flex: 0 0 auto; }
+    .brand-fallback h1 {
+      font-size: 15px !important;
+      font-family: var(--font-head);
+      white-space: nowrap;
+      margin: 0;
+      letter-spacing: -.01em;
+    }
+    .appnav { flex: 0 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+    .appnav::-webkit-scrollbar { display: none; }
+    .header-right { flex: 0 0 auto; }
+
+    /* One primary action in the composer; everything else reads secondary. */
+    .composer .refresh-button,
+    .composer .dl-main {
+      background: var(--surface-color) !important;
+      color: var(--text-secondary) !important;
+      border: 1px solid var(--border-color) !important;
+      box-shadow: var(--shadow-xs) !important;
+      font-weight: 600;
+      padding: 9px 14px !important;
+      border-radius: var(--radius-xs) !important;
+    }
+    .composer .refresh-button:hover,
+    .composer .dl-main:hover {
+      background: var(--surface-2) !important;
+      border-color: var(--border-strong) !important;
+      color: var(--text-color) !important;
+    }
+    .composer .refresh-button .material-icons,
+    .composer .dl-main .material-icons { color: inherit !important; }
+
+    /* Wide tables and code must scroll inside the report, never the page. */
+    .iw-body { overflow-x: hidden; }
+    .iw-report table { display: block; width: max-content; max-width: 100%; overflow-x: auto; }
+    .iw-report li > p { margin: 0; }
+    .iw-report li { margin-bottom: .35em; }
+    .iw-report ol, .iw-report ul { margin-block: .4em 1em; }
+
+    /* ── Responsive ──────────────────────────────────────────────────── */
+    @media (max-width: 1180px) {
+      .appnav-item span:not(.material-icons) { display: none; }
+      .appnav-item { padding: 7px 10px; }
+    }
+    /* Below 1024 the rail collapses and the mobile picker takes over. This
+       restates the existing breakpoint because the shell rules above are
+       declared later in the sheet and would otherwise win. */
+    @media (max-width: 1024px) {
+      .rail-shell, .rail-shell.rail-collapsed { grid-template-columns: 1fr; }
+      .model-drawer { display: none; }
+    }
+    @media (max-width: 900px) {
+      :root { --rail-w: 250px; }
+      #sessionTracker #sessionTokens { display: none; }
+    }
+    @media (max-width: 768px) {
+      .header { padding: 0 12px; gap: 8px; }
+      .appnav { margin-left: 0; }
+      #sessionTracker { padding: 5px 9px; font-size: 11px; }
+      .prompt-section { padding: 12px 12px 4px; }
+      .canvas-bar { padding: 8px 12px 0; }
+      .response-container { padding: 10px 12px 18px; }
+      .insight-deck { margin: 0 12px 4px; padding: 11px; }
+      .deck-grid { grid-template-columns: 1fr 1fr; }
+      .deck-judge { width: 100%; margin-left: 0; }
+      .iw-overlay { padding: 0; }
+      .iw-panel { height: 100vh; border-radius: 0; width: 100%; }
+      .iw-body { padding: 16px 14px; }
+      .grid-view { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .deck-grid { grid-template-columns: 1fr; }
+    }
+
   </style>
 </head>
 <body>
@@ -2553,44 +3365,57 @@
             <h1>V's MultiGen AI Chat</h1>
           </span>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <!-- Segmented primary nav — every destination the old button row had -->
+        <nav class="appnav" aria-label="Primary">
+          <button class="appnav-item active" id="navChat" title="Multi-model chat">
+            <span class="material-icons">forum</span><span>Chat</span>
+          </button>
+          <button class="appnav-item" id="fusionBtn" title="Fusion — Multi-model orchestration into one answer">
+            <span class="material-icons">merge_type</span><span>Fusion</span>
+          </button>
+          <button class="appnav-item" id="imgPlayBtn" title="Image Generation Playground">
+            <span class="material-icons">image</span><span>Images</span>
+          </button>
+          <button class="appnav-item" id="batchBtn" title="Batch Prompt Runner">
+            <span class="material-icons">batch_prediction</span><span>Batch</span>
+          </button>
+          <button class="appnav-item" id="historyBtn" title="Prompt History &amp; Library">
+            <span class="material-icons">history</span><span>History</span>
+          </button>
+        </nav>
+
+        <div class="header-right">
           <div id="sessionTracker" title="Session spend tracker">
             <span class="material-icons">account_balance_wallet</span>
-            <span>Session:</span>
             <strong id="sessionCost">$0.0000</strong>
             <span id="sessionTokens" style="opacity:0.6;font-size:11px;"></span>
           </div>
-          <button id="historyBtn" class="button" title="Prompt History & Library" style="background:var(--surface-2);color:var(--text-color);border:1px solid var(--border-color);">
-            <span class="material-icons">history</span>
-            History
-          </button>
-          <button id="batchBtn" class="button" title="Batch Prompt Runner" style="background:var(--surface-2);color:var(--text-color);border:1px solid var(--border-color);">
-            <span class="material-icons">batch_prediction</span>
-            Batch
-          </button>
-          <button id="imgPlayBtn" class="button" title="Image Generation Playground" style="background:var(--surface-2);color:var(--text-color);border:1px solid var(--border-color);">
-            <span class="material-icons">image</span>
-            Images
-          </button>
-          <button id="fusionBtn" class="button btn-fusion" title="Fusion — Multi-model orchestration into one answer">
-            <span class="material-icons">merge_type</span>
-            Fusion
-          </button>
-          <button id="dashboardButton" class="button" title="Browse all Venice models — specs, pricing, capabilities">
-            <span class="material-icons">view_list</span>
-            Models
-          </button>
-          <a href="benchmark.html" class="button" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;" title="Benchmark Lab — pit new vs. old models across design, reasoning, images and video">
-            <span class="material-icons">speed</span>
-            Benchmark
-          </a>
-          <a href="api-guide.html" class="button" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;" title="Venice API Guide">
-            <span class="material-icons">menu_book</span>
-            API Guide
-          </a>
-          <button id="settingsButton" class="button" title="API Key Settings" style="background:var(--surface-2);color:var(--text-color);border:1px solid var(--border-color);">
-            <span class="material-icons">settings</span>
-          </button>
+          <div class="more-wrap">
+            <button class="icon-btn" id="moreBtn" title="More" aria-haspopup="true" aria-expanded="false">
+              <span class="material-icons">apps</span>
+              <span class="material-icons" style="font-size:16px !important;">arrow_drop_down</span>
+            </button>
+            <div class="more-menu" id="moreMenu" role="menu">
+              <div class="more-menu-label">Explore</div>
+              <div class="more-item" id="dashboardButton" role="menuitem" title="Browse all Venice models — specs, pricing, capabilities">
+                <span class="material-icons">view_list</span> Models
+              </div>
+              <a class="more-item" href="benchmark.html" role="menuitem" title="Benchmark Lab — pit new vs. old models across design, reasoning, images and video">
+                <span class="material-icons">speed</span> Benchmark Lab
+              </a>
+              <a class="more-item" href="api-guide.html" role="menuitem" title="Venice API Guide">
+                <span class="material-icons">menu_book</span> API Guide
+              </a>
+              <div class="more-sep"></div>
+              <div class="more-menu-label">Session</div>
+              <div class="more-item" id="settingsButton" role="menuitem" title="API Key Settings">
+                <span class="material-icons">settings</span> API Key Settings
+              </div>
+              <div class="more-item" onclick="openCmdPalette()" role="menuitem">
+                <span class="material-icons">bolt</span> Command Palette <small>Ctrl K</small>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -2604,57 +3429,135 @@
       <div class="mobile-model-tabs" id="mobileModelTabs" style="display:none;"></div>
       
       <div class="prompt-section">
-        <textarea id="prompt" placeholder="Enter your prompt here..."></textarea>
-        <div id="costEstimator">
-          <div class="cost-bar">
-            <span class="material-icons">calculate</span>
-            <div class="cb-item"><span>Tokens (est):</span> <strong id="cbTokens">—</strong></div>
-            <div class="cb-item"><span>Est. cost:</span> <strong id="cbCost">—</strong></div>
-            <div class="cb-item" id="cbModelName" style="margin-left:auto;color:#0E7490;font-weight:600;font-size:11px;"></div>
-          </div>
-        </div>
-        <div class="controls">
-          <div style="display: flex; gap: 20px; align-items: center;">
-            <label for="webSearch" class="web-search-toggle">
-              <input type="checkbox" id="webSearch">
-              <span class="toggle-slider"></span>
-              <span>Enable Web Search</span>
-            </label>
-            <label for="disableReasoning" class="web-search-toggle">
-              <input type="checkbox" id="disableReasoning">
-              <span class="toggle-slider"></span>
-              <span>Disable Reasoning</span>
-            </label>
-          </div>
-          <div style="display: flex; gap: 10px;">
-            <button id="refreshModelsButton" class="button refresh-button" title="Refresh model list">
-              <span class="material-icons">refresh</span>
-              Refresh Models
-            </button>
-            <button id="sendButton" title="Send prompt to all models">
-              <span class="material-icons">send</span>
-              Send
-            </button>
-            <div class="dl-dropdown" id="responsesDropdownWrap">
-              <button class="button dl-main" id="downloadButton" title="Download responses" onclick="toggleDlDropdown('responsesDropdown')">
-                <span class="material-icons">download</span>
-                Download
-                <span class="material-icons" style="font-size:16px;margin-left:2px;">arrow_drop_down</span>
-              </button>
-              <div class="dl-menu" id="responsesDropdown">
-                <div class="dl-item" onclick="downloadAllResponses('html')"><span class="material-icons">code</span> HTML</div>
-                <div class="dl-item" onclick="downloadAllResponses('md')"><span class="material-icons">description</span> Markdown</div>
-                <div class="dl-item" onclick="downloadAllResponses('pdf')"><span class="material-icons">picture_as_pdf</span> PDF</div>
-              </div>
+        <div class="composer">
+          <textarea id="prompt" placeholder="Ask every model at once…"></textarea>
+          <div id="costEstimator">
+            <div class="cost-bar">
+              <span class="material-icons">calculate</span>
+              <div class="cb-item"><span>Tokens (est):</span> <strong id="cbTokens">—</strong></div>
+              <div class="cb-item"><span>Est. cost:</span> <strong id="cbCost">—</strong></div>
+              <div class="cb-item" id="cbModelName" style="margin-left:auto;color:var(--p-500);font-weight:600;font-size:11px;"></div>
             </div>
-            <button id="analyzeButton" class="button" title="Analyze and compare all responses" style="background: #0E7490; display: none;">
-              <span class="material-icons">insights</span>
-              Analyze
-            </button>
+          </div>
+          <div class="controls">
+            <div class="controls-left">
+              <label for="webSearch" class="web-search-toggle">
+                <input type="checkbox" id="webSearch">
+                <span class="toggle-slider"></span>
+                <span>Web Search</span>
+              </label>
+              <label for="disableReasoning" class="web-search-toggle">
+                <input type="checkbox" id="disableReasoning">
+                <span class="toggle-slider"></span>
+                <span>Disable Reasoning</span>
+              </label>
+            </div>
+            <div class="controls-right">
+              <button id="refreshModelsButton" class="button refresh-button" title="Refresh model list">
+                <span class="material-icons">refresh</span>
+                Refresh
+              </button>
+              <div class="dl-dropdown" id="responsesDropdownWrap">
+                <button class="button dl-main" id="downloadButton" title="Download responses" onclick="toggleDlDropdown('responsesDropdown')">
+                  <span class="material-icons">download</span>
+                  Download
+                  <span class="material-icons" style="font-size:16px;margin-left:2px;">arrow_drop_down</span>
+                </button>
+                <div class="dl-menu" id="responsesDropdown">
+                  <div class="dl-item" onclick="downloadAllResponses('html')"><span class="material-icons">code</span> HTML</div>
+                  <div class="dl-item" onclick="downloadAllResponses('md')"><span class="material-icons">description</span> Markdown</div>
+                  <div class="dl-item" onclick="downloadAllResponses('pdf')"><span class="material-icons">picture_as_pdf</span> PDF</div>
+                </div>
+              </div>
+              <button id="sendButton" title="Send prompt to all models">
+                <span class="material-icons">send</span>
+                Send
+              </button>
+              <!-- Legacy analyze entry point — superseded by the Insight Deck below,
+                   kept hidden so existing handlers/command-palette entries still work. -->
+              <button id="analyzeButton" class="button" title="Analyze and compare all responses" style="background: var(--p-500); display: none;">
+                <span class="material-icons">insights</span>
+                Analyze
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      
+
+      <!-- ═══════════ INSIGHT DECK ═══════════ -->
+      <div class="insight-deck" id="insightDeck">
+        <div class="deck-head">
+          <span class="deck-kicker"><span class="material-icons">auto_awesome</span> Insight Deck</span>
+          <span class="deck-sub" id="deckSub">—</span>
+          <div class="deck-judge">
+            <label for="deckJudgeSelect" style="font-weight:600;">Aggregator</label>
+            <select id="deckJudgeSelect" title="Model that aggregates and judges. Defaults to Grok 4.5."></select>
+            <label class="deck-guard" title="The aggregator sees responses as anonymous Response A/B/C… so it cannot favour its own answer or a familiar brand.">
+              <input type="checkbox" id="guardBlind" checked> Blind
+            </label>
+            <label class="deck-guard" title="Runs scoring twice with the response order reversed, averages the scores, and reports how many ranks moved.">
+              <input type="checkbox" id="guardSwap" checked> Order-swap
+            </label>
+            <label class="deck-guard" title="Removes the aggregator's own answer from the corpus it scores. Off by default because you lose one answer.">
+              <input type="checkbox" id="guardRecuse"> Recuse self
+            </label>
+          </div>
+        </div>
+        <div class="deck-grid" id="deckGrid">
+          <button class="deck-btn primary" data-mode="aggregate" onclick="runInsight('aggregate')">
+            <span class="ran-dot"></span>
+            <span class="deck-btn-top"><span class="material-icons">hub</span><span class="deck-btn-title">Aggregate Report</span></span>
+            <span class="deck-btn-desc">One massive combined answer merging every model, fully attributed.</span>
+            <span class="deck-btn-cost" data-cost="aggregate"></span>
+          </button>
+          <button class="deck-btn" data-mode="scorecard" onclick="runInsight('scorecard')">
+            <span class="ran-dot"></span>
+            <span class="deck-btn-top"><span class="material-icons">leaderboard</span><span class="deck-btn-title">Comparative Scorecard</span></span>
+            <span class="deck-btn-desc">Grades, themes, disagreements, rankings and use-case fit.</span>
+            <span class="deck-btn-cost" data-cost="scorecard"></span>
+          </button>
+          <button class="deck-btn" data-mode="creativity" onclick="runInsight('creativity')">
+            <span class="ran-dot"></span>
+            <span class="deck-btn-top"><span class="material-icons">palette</span><span class="deck-btn-title">Creativity Lab</span></span>
+            <span class="deck-btn-desc">Novelty, divergence, risk-taking and ideas only one model had.</span>
+            <span class="deck-btn-cost" data-cost="creativity"></span>
+          </button>
+          <button class="deck-btn" data-mode="rigor" onclick="runInsight('rigor')">
+            <span class="ran-dot"></span>
+            <span class="deck-btn-top"><span class="material-icons">fact_check</span><span class="deck-btn-title">Rigor &amp; Fact Audit</span></span>
+            <span class="deck-btn-desc">Claim corroboration, contradictions and hallucination risk.</span>
+            <span class="deck-btn-cost" data-cost="rigor"></span>
+          </button>
+          <button class="deck-btn" data-mode="debate" onclick="runInsight('debate')">
+            <span class="ran-dot"></span>
+            <span class="deck-btn-top"><span class="material-icons">gavel</span><span class="deck-btn-title">Debate &amp; Adjudication</span></span>
+            <span class="deck-btn-desc">Best case per side, cross-examination, reasoned verdict.</span>
+            <span class="deck-btn-cost" data-cost="debate"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas toolbar -->
+      <div class="canvas-bar" id="canvasBar">
+        <div class="viewseg" role="tablist" aria-label="Response view">
+          <button id="viewFocusBtn" class="active" onclick="setCanvasView('focus')" role="tab" aria-selected="true">
+            <span class="material-icons">article</span> Focus
+          </button>
+          <button id="viewGridBtn" onclick="setCanvasView('grid')" role="tab" aria-selected="false">
+            <span class="material-icons">grid_view</span> Grid
+          </button>
+        </div>
+        <select class="gridsort" id="gridSort" onchange="renderGridView()" style="display:none;" title="Sort grid cards">
+          <option value="default">Sort: catalog order</option>
+          <option value="fastest">Sort: fastest first</option>
+          <option value="slowest">Sort: slowest first</option>
+          <option value="longest">Sort: longest answer</option>
+          <option value="shortest">Sort: shortest answer</option>
+          <option value="cheapest">Sort: cheapest first</option>
+        </select>
+        <div class="canvas-meta" id="canvasMeta"></div>
+      </div>
+
       <div class="response-container">
         <div class="model-response" id="selectedResponse">
           <div class="model-header">
@@ -2667,13 +3570,51 @@
             </div>
           </div>
           <div class="response-content">
-            <p style="color: #94a3b8; text-align: center; padding: 40px;">
+            <p style="color: var(--text-tertiary); text-align: center; padding: 40px;">
               Choose a model from the left panel to view its response
             </p>
           </div>
         </div>
+        <div class="grid-view" id="gridView"></div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ═══════════ INSIGHT WORKSPACE ═══════════ -->
+  <div class="iw-overlay" id="iwOverlay" onclick="if(event.target===this)closeInsightWorkspace()">
+    <div class="iw-panel" role="dialog" aria-modal="true" aria-labelledby="iwTitleText">
+      <div class="iw-head">
+        <div class="iw-title">
+          <span class="material-icons" id="iwIcon">hub</span>
+          <span id="iwTitleText">Aggregate Report</span>
+        </div>
+        <div class="iw-tabs" id="iwTabs"></div>
+        <button class="icon-btn" onclick="closeInsightWorkspace()" title="Close" style="margin-left:auto;">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="iw-body" id="iwBody"></div>
+      <div class="iw-foot" id="iwFoot" style="display:none;">
+        <div class="dl-dropdown" id="iwDlWrap">
+          <button class="button dl-main" style="background:var(--p-500);" onclick="toggleDlDropdown('iwDlMenu')">
+            <span class="material-icons">download</span> Download
+            <span class="material-icons" style="font-size:16px;margin-left:2px;">arrow_drop_down</span>
+          </button>
+          <div class="dl-menu" id="iwDlMenu" style="bottom:44px;top:auto;">
+            <div class="dl-item" onclick="downloadInsight('html')"><span class="material-icons">code</span> HTML</div>
+            <div class="dl-item" onclick="downloadInsight('md')"><span class="material-icons">description</span> Markdown</div>
+            <div class="dl-item" onclick="downloadInsight('pdf')"><span class="material-icons">picture_as_pdf</span> PDF</div>
+          </div>
+        </div>
+        <button class="icon-btn" onclick="copyInsight(this)" title="Copy this report as text">
+          <span class="material-icons">content_copy</span> Copy
+        </button>
+        <button class="icon-btn" id="iwRerunBtn" onclick="rerunInsight()" title="Run this analysis again">
+          <span class="material-icons">refresh</span> Re-run
+        </button>
+        <div class="canvas-meta" id="iwFootMeta" style="margin-left:auto;"></div>
+      </div>
     </div>
   </div>
 
@@ -3770,9 +4711,12 @@
                     contentEl.innerHTML = formatResponse(fullContent);
                     contentEl.scrollTop = contentEl.scrollHeight;
                   }
-                  
+
                   // Store updated content
                   modelResponses[model.id].content = fullContent;
+
+                  // Live-update the grid card (throttled inside)
+                  if (typeof scheduleGridRefresh === 'function') scheduleGridRefresh();
                 }
                 
                 // Track token usage
@@ -7070,11 +8014,16 @@ function rpCopyAnswer(btn){
         r => r.content && r.content !== 'Waiting for prompt...' && !r.content.includes('Loading...')
       ).length;
 
+      // The Insight Deck replaces the old lone Analyze button; the button itself
+      // stays in the DOM (hidden) so the command palette and any legacy handler work.
+      const deck = document.getElementById('insightDeck');
       if (completedResponses >= 2) {
-        analyzeButton.style.display = 'inline-flex';
+        if (deck) deck.classList.add('show');
+        if (typeof refreshInsightDeck === 'function') refreshInsightDeck();
       } else {
-        analyzeButton.style.display = 'none';
+        if (deck) deck.classList.remove('show');
       }
+      if (typeof scheduleGridRefresh === 'function') scheduleGridRefresh();
     }
 
     promptTextarea.addEventListener('keypress', (e) => {
@@ -7366,6 +8315,12 @@ function rpCopyAnswer(btn){
       { icon: 'settings',        label: 'Open Settings',            hint: '',    action: () => $('settingsButton')?.click() },
       { icon: 'download',        label: 'Download Responses',       hint: '',    action: () => $('downloadButton')?.click() },
       { icon: 'delete_sweep',    label: 'Clear Prompt History',     hint: '',    action: () => window.clearHistory?.() },
+      { icon: 'hub',             label: 'Aggregate Report',         hint: '',    action: () => window.runInsight?.('aggregate') },
+      { icon: 'leaderboard',     label: 'Comparative Scorecard',    hint: '',    action: () => window.runInsight?.('scorecard') },
+      { icon: 'palette',         label: 'Creativity Lab',           hint: '',    action: () => window.runInsight?.('creativity') },
+      { icon: 'fact_check',      label: 'Rigor & Fact Audit',       hint: '',    action: () => window.runInsight?.('rigor') },
+      { icon: 'gavel',           label: 'Debate & Adjudication',    hint: '',    action: () => window.runInsight?.('debate') },
+      { icon: 'grid_view',       label: 'Toggle Grid / Focus View', hint: '',    action: () => window.setCanvasView?.(document.getElementById('gridView')?.classList.contains('active') ? 'focus' : 'grid') },
     ];
 
     let cmdIdx = 0;
@@ -7899,5 +8854,1601 @@ function rpCopyAnswer(btn){
     });
   })();
   </script>
+
+  <script>
+  // Local HTML escaper — the app's escHtml lives inside another module's closure.
+  function iwEsc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  </script>
+  <!-- ═══════════════════════════════════════════════════════════════════
+       STUDIO SHELL — app bar behaviour, canvas view modes, grid renderer
+       ═══════════════════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    'use strict';
+
+    // ── Overflow "More" menu ─────────────────────────────────────────
+    const moreBtn = document.getElementById('moreBtn');
+    const moreMenu = document.getElementById('moreMenu');
+    if (moreBtn && moreMenu) {
+      moreBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = moreMenu.classList.toggle('open');
+        moreBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      document.addEventListener('click', (e) => {
+        if (!moreMenu.contains(e.target) && e.target !== moreBtn) {
+          moreMenu.classList.remove('open');
+          moreBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+      moreMenu.querySelectorAll('.more-item').forEach(el => {
+        el.addEventListener('click', () => moreMenu.classList.remove('open'));
+      });
+    }
+
+    // Chat nav item just closes any open overlay and returns to the canvas.
+    document.getElementById('navChat')?.addEventListener('click', () => {
+      if (typeof closeFusion === 'function' && document.getElementById('fusionOverlay')?.classList.contains('open')) closeFusion();
+      if (typeof closeImgPlayground === 'function') closeImgPlayground();
+      if (typeof closeBatch === 'function') closeBatch();
+      if (typeof closeHistory === 'function') closeHistory();
+      setActiveNav('navChat');
+    });
+
+    window.setActiveNav = function (id) {
+      document.querySelectorAll('.appnav-item').forEach(b => b.classList.toggle('active', b.id === id));
+    };
+
+    // Reflect overlay state in the nav highlight.
+    ['fusionBtn', 'imgPlayBtn', 'batchBtn', 'historyBtn'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', () => setActiveNav(id));
+    });
+
+    // Rail collapse — the old sidebarToggle keeps working, now driving the grid shell.
+    const shell = document.querySelector('.rail-shell');
+    document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+      if (window.innerWidth > 1024) shell?.classList.toggle('rail-collapsed');
+    });
+  })();
+
+  // ═══════════════════════════════════════════════════════════════════
+  //  CANVAS VIEW MODES — Focus (single model) and Grid (all at once)
+  // ═══════════════════════════════════════════════════════════════════
+  let canvasView = 'focus';
+  let _gridTimer = null;
+
+  function setCanvasView(mode) {
+    canvasView = mode;
+    const focusEl = document.getElementById('selectedResponse');
+    const gridEl = document.getElementById('gridView');
+    const sortEl = document.getElementById('gridSort');
+    document.getElementById('viewFocusBtn')?.classList.toggle('active', mode === 'focus');
+    document.getElementById('viewGridBtn')?.classList.toggle('active', mode === 'grid');
+    document.getElementById('viewFocusBtn')?.setAttribute('aria-selected', mode === 'focus');
+    document.getElementById('viewGridBtn')?.setAttribute('aria-selected', mode === 'grid');
+    if (focusEl) focusEl.style.display = mode === 'grid' ? 'none' : '';
+    if (gridEl) gridEl.classList.toggle('active', mode === 'grid');
+    if (sortEl) sortEl.style.display = mode === 'grid' ? '' : 'none';
+    try { localStorage.setItem('canvas_view', mode); } catch (_) {}
+    if (mode === 'grid') renderGridView();
+    updateCanvasMeta();
+  }
+  window.setCanvasView = setCanvasView;
+
+  // Throttled refresh so streaming deltas don't thrash the DOM.
+  function scheduleGridRefresh() {
+    updateCanvasMeta();
+    if (canvasView !== 'grid' || _gridTimer) return;
+    _gridTimer = setTimeout(() => { _gridTimer = null; renderGridView(); }, 400);
+  }
+  window.scheduleGridRefresh = scheduleGridRefresh;
+
+  function respState(d) {
+    if (!d || !d.content) return 'pending';
+    if (d.content.startsWith('Error:')) return 'error';
+    if (d.content === 'Waiting for prompt...' || d.content.includes('Loading...')) return 'pending';
+    return d.time && d.time !== 'Error' ? 'done' : 'loading';
+  }
+
+  function updateCanvasMeta() {
+    const el = document.getElementById('canvasMeta');
+    if (!el) return;
+    const all = Object.values(modelResponses || {});
+    if (!all.length) { el.textContent = ''; return; }
+    const done = all.filter(d => respState(d) === 'done').length;
+    const err = all.filter(d => respState(d) === 'error').length;
+    const running = all.filter(d => respState(d) === 'loading').length;
+    const parts = [`${done} complete`];
+    if (running) parts.push(`${running} streaming`);
+    if (err) parts.push(`${err} failed`);
+    el.textContent = parts.join(' · ');
+  }
+
+  function gridMetrics(id) {
+    const d = (modelResponses || {})[id] || {};
+    let cost = null, tps = null;
+    if (d.costSummary) { const m = d.costSummary.match(/\$([\d.]+)/); if (m) cost = parseFloat(m[1]); }
+    if (d.tokensPerSecond) { const m = String(d.tokensPerSecond).match(/([\d.]+)/); if (m) tps = parseFloat(m[1]); }
+    let ms = Infinity;
+    if (d.time) {
+      const s = String(d.time);
+      if (s.includes('ms')) ms = parseFloat(s);
+      else if (s.includes('s')) ms = parseFloat(s) * 1000;
+    }
+    return { cost, tps, ms, len: (d.content || '').length };
+  }
+
+  function renderGridView() {
+    const grid = document.getElementById('gridView');
+    if (!grid) return;
+    let ids = Object.keys(modelResponses || {});
+    if (!ids.length) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--text-tertiary);font-size:13px;">
+        Send a prompt to see every model's answer side by side.</div>`;
+      return;
+    }
+
+    const sort = document.getElementById('gridSort')?.value || 'default';
+    const cmp = {
+      fastest:  (a, b) => gridMetrics(a).ms - gridMetrics(b).ms,
+      slowest:  (a, b) => gridMetrics(b).ms - gridMetrics(a).ms,
+      longest:  (a, b) => gridMetrics(b).len - gridMetrics(a).len,
+      shortest: (a, b) => gridMetrics(a).len - gridMetrics(b).len,
+      cheapest: (a, b) => (gridMetrics(a).cost ?? 1e9) - (gridMetrics(b).cost ?? 1e9),
+    }[sort];
+    if (cmp) ids = ids.slice().sort(cmp);
+
+    const palette = ['var(--viz-1)','var(--viz-2)','var(--viz-3)','var(--viz-4)','var(--viz-5)','var(--viz-6)'];
+    grid.innerHTML = ids.map((id, i) => {
+      const d = modelResponses[id] || {};
+      const st = respState(d);
+      const met = gridMetrics(id);
+      const short = id.split('/').pop().replace(/-\d{8}$/, '');
+      const badge = st === 'done' ? '<span class="gcard-badge gs-done">done</span>'
+                  : st === 'error' ? '<span class="gcard-badge gs-error">error</span>'
+                  : st === 'loading' ? '<span class="gcard-badge gs-loading">streaming</span>' : '';
+      const stats = [
+        d.time && d.time !== 'Error' ? d.time : null,
+        met.tps ? `${met.tps}t/s` : null,
+        met.cost != null ? `$${met.cost.toFixed(4)}` : null
+      ].filter(Boolean).join(' · ');
+      const body = st === 'pending'
+        ? '<span style="color:var(--text-tertiary);">Waiting…</span>'
+        : (typeof formatResponse === 'function' ? formatResponse(d.content || '') : (d.content || ''));
+      return `<div class="gcard">
+        <div class="gcard-head">
+          <span class="gcard-dot" style="background:${palette[i % palette.length]}"></span>
+          <span class="gcard-name" title="${iwEsc(id)}">${iwEsc(short)}</span>
+          <span class="gcard-stats">${iwEsc(stats)}</span>
+        </div>
+        <div class="gcard-body">${body}</div>
+        <div class="gcard-foot">
+          <button class="gcard-act" title="Open in Focus view" onclick="selectModel('${id.replace(/'/g, "\\'")}');setCanvasView('focus');">
+            <span class="material-icons">open_in_full</span>
+          </button>
+          <button class="gcard-act" title="Copy this answer" onclick="copyToClipboard(modelResponses['${id.replace(/'/g, "\\'")}']?.content || '')">
+            <span class="material-icons">content_copy</span>
+          </button>
+          ${badge}
+        </div>
+      </div>`;
+    }).join('');
+  }
+  window.renderGridView = renderGridView;
+
+  // Restore the user's last view mode.
+  document.addEventListener('DOMContentLoaded', () => {
+    let saved = 'focus';
+    try { saved = localStorage.getItem('canvas_view') || 'focus'; } catch (_) {}
+    if (saved === 'grid') setCanvasView('grid');
+  });
+  </script>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       INSIGHT DECK ENGINE
+       Five post-generation analyses over the responses already on screen.
+       The aggregator defaults to Grok 4.5 run at full context/output.
+
+       Bias controls (see buildCorpus / integrity metrics below):
+         · blind labelling      — judge sees "Response A/B/C", never a vendor
+         · order randomisation  — plus an optional reversed-order second pass
+         · self-recusal         — optionally drop the judge's own answer
+         · measured, not claimed — every run reports self-preference delta,
+           rank instability, length correlation and coverage.
+       ═══════════════════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    'use strict';
+
+    // ─────────────────────────────────────────────────────────────────
+    //  Mode registry
+    // ─────────────────────────────────────────────────────────────────
+    const MODES = {
+      aggregate:  { title: 'Aggregate Report',        icon: 'hub',         passes: 2, scored: false },
+      scorecard:  { title: 'Comparative Scorecard',   icon: 'leaderboard', passes: 3, scored: true  },
+      creativity: { title: 'Creativity Lab',          icon: 'palette',     passes: 2, scored: true  },
+      rigor:      { title: 'Rigor & Fact Audit',      icon: 'fact_check',  passes: 2, scored: true  },
+      debate:     { title: 'Debate & Adjudication',   icon: 'gavel',       passes: 2, scored: false },
+    };
+
+    const state = {
+      results: {},      // mode -> { html, markdown, meta, integrity }
+      active: null,
+      runKey: null,     // identity of the response set the results belong to
+      busy: false,
+    };
+
+    // ─────────────────────────────────────────────────────────────────
+    //  Aggregator resolution — Grok 4.5, at full capacity
+    // ─────────────────────────────────────────────────────────────────
+    // Venice model ids are not stable across releases, so match by pattern
+    // against the live catalog rather than hard-coding one string.
+    const GROK45 = [
+      /^(x-ai\/)?grok-4[._-]5$/i,
+      /^(x-ai\/)?grok-4[._-]5[._-]/i,
+      /grok[._-]?4[._-]?5(?![0-9])/i,
+      /grok[._-]4[._-]50/i,
+    ];
+    const GROK_ANY = [/grok[._-]?4/i, /grok/i];
+    // Used only when no Grok is present in the catalog at all.
+    const FALLBACKS = [
+      /claude-opus/i, /gpt-5/i, /glm-5/i,
+      /qwen3-235b.*instruct/i, /qwen3-235b/i, /deepseek-v[34]/i, /gemini-3/i,
+    ];
+
+    function textModels() {
+      return (window.availableModels || []).filter(m => !m.modelType || m.modelType === 'text');
+    }
+
+    function firstMatch(patterns) {
+      const models = textModels();
+      for (const p of patterns) {
+        const hit = models.find(m => p.test(m.id));
+        if (hit) return hit;
+      }
+      return null;
+    }
+
+    // Returns { model, how } where `how` describes the model actually chosen,
+    // so the UI can never claim "Grok 4.5" while running something else.
+    function classify(model, viaPicker) {
+      if (!model) return 'none';
+      if (GROK45.some(p => p.test(model.id))) return 'grok45';
+      if (viaPicker) return 'selected';
+      if (GROK_ANY.some(p => p.test(model.id))) return 'grok-other';
+      return 'fallback';
+    }
+
+    function resolveAggregator() {
+      const picked = document.getElementById('deckJudgeSelect')?.value;
+      if (picked) {
+        const m = textModels().find(x => x.id === picked);
+        if (m) return { model: m, how: classify(m, true) };
+      }
+      let m = firstMatch(GROK45) || firstMatch(GROK_ANY) || firstMatch(FALLBACKS);
+      if (!m) {
+        m = textModels().sort(
+          (a, b) => (b.model_spec?.availableContextTokens || 0) - (a.model_spec?.availableContextTokens || 0)
+        )[0] || null;
+      }
+      return { model: m, how: classify(m, false) };
+    }
+
+    // "Full capacity": read the real ceilings off the model spec instead of
+    // capping at some conservative constant.
+    function capacityOf(model) {
+      const spec = model?.model_spec || {};
+      const ctx = spec.availableContextTokens || spec.contextTokens || 131072;
+      const specOut =
+        spec.constraints?.completion?.max ??
+        spec.maxCompletionTokens ?? spec.max_completion_tokens ?? spec.max_output_tokens ?? null;
+      // No explicit ceiling → take a generous quarter of context.
+      const maxOut = Math.max(4096, Math.min(specOut || Math.floor(ctx * 0.25), 131072));
+      // Leave room for the answer plus instructions.
+      const inputBudget = Math.max(8000, ctx - maxOut - 4000);
+      return { ctx, maxOut, inputBudget };
+    }
+
+    const estTokens = (s) => Math.ceil((s || '').length / 4);
+    const shortName = (id) => String(id).split('/').pop().replace(/-\d{8}$/, '');
+
+    // ─────────────────────────────────────────────────────────────────
+    //  Corpus construction + blinding
+    // ─────────────────────────────────────────────────────────────────
+    function collectResponses() {
+      const out = [];
+      for (const [modelId, d] of Object.entries(modelResponses || {})) {
+        const c = d && d.content;
+        if (!c || c === 'Waiting for prompt...' || c.includes('Loading...') || c.startsWith('Error:')) continue;
+        out.push({
+          modelId,
+          content: c,
+          time: d.time || null,
+          tokensPerSecond: d.tokensPerSecond || null,
+          costSummary: d.costSummary || null,
+          completionTokens: d.completionTokens || null,
+        });
+      }
+      return out;
+    }
+
+    const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    function labelFor(i) {
+      // A..Z, then AA, AB, … so 100+ models still get unique labels.
+      return i < 26 ? LETTERS[i] : LETTERS[Math.floor(i / 26) - 1] + LETTERS[i % 26];
+    }
+
+    function shuffled(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // The corpus is the single source of truth for what the judge sees.
+    // Real model names never cross the wire when blinding is on.
+    function buildCorpus(opts) {
+      const guards = readGuards();
+      let items = collectResponses();
+      let recused = null;
+
+      if (opts && opts.recuseModel && guards.recuse && items.length > 2) {
+        const before = items.length;
+        items = items.filter(r => r.modelId !== opts.recuseModel);
+        if (items.length < before) recused = opts.recuseModel;
+      }
+
+      const ordered = shuffled(items);
+      const byLabel = {}, byModel = {};
+      ordered.forEach((r, i) => {
+        const lbl = guards.blind ? `Response ${labelFor(i)}` : r.modelId;
+        r.label = lbl;
+        byLabel[lbl] = r;
+        byModel[r.modelId] = lbl;
+      });
+
+      return {
+        items: ordered, byLabel, byModel, recused, guards,
+        blind: guards.blind,
+        digest(order) {
+          const list = order === 'reverse' ? this.items.slice().reverse() : this.items;
+          return list.map(r => `### ${r.label}\n${r.content.replace(/\n{4,}/g, '\n\n\n').trim()}`)
+                     .join('\n\n---\n\n');
+        },
+        // Turn "Response C" back into the real model name for display.
+        deanonymize(html) {
+          if (!this.blind) return html;
+          let out = html;
+          for (const [lbl, r] of Object.entries(this.byLabel)) {
+            const re = new RegExp(lbl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+            out = out.replace(re, `<span class="attrib">${iwEsc(shortName(r.modelId))}</span>`);
+          }
+          return out;
+        },
+        deanonymizeText(text) {
+          if (!this.blind) return text;
+          let out = text;
+          for (const [lbl, r] of Object.entries(this.byLabel)) {
+            const re = new RegExp(lbl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+            out = out.replace(re, shortName(r.modelId));
+          }
+          return out;
+        },
+        resolveLabel(any) {
+          if (!any) return null;
+          const s = String(any).trim();
+          if (this.byLabel[s]) return this.byLabel[s].modelId;
+          const bare = s.replace(/^response\s+/i, '').trim().toUpperCase();
+          const hit = Object.entries(this.byLabel).find(([l]) => l.toUpperCase().endsWith(' ' + bare));
+          if (hit) return hit[1].modelId;
+          const direct = this.items.find(r => r.modelId === s || shortName(r.modelId) === s);
+          return direct ? direct.modelId : s;
+        },
+      };
+    }
+
+    function readGuards() {
+      return {
+        blind:  document.getElementById('guardBlind')?.checked !== false,
+        swap:   document.getElementById('guardSwap')?.checked !== false,
+        recuse: document.getElementById('guardRecuse')?.checked === true,
+      };
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  API plumbing
+    // ─────────────────────────────────────────────────────────────────
+    function apiKey() { return (typeof getApiKey === 'function' ? getApiKey() : '') || window.API_KEY || ''; }
+
+    async function chatCall(modelId, messages, o) {
+      const opt = o || {};
+      const body = {
+        model: modelId,
+        messages,
+        max_tokens: opt.maxTokens || 8192,
+        temperature: opt.temperature != null ? opt.temperature : 0.2,
+      };
+      if (opt.stream) body.stream = true;
+      if (opt.webSearch) body.venice_parameters = { enable_web_search: 'on' };
+
+      const r = await fetch(`${BASE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey()}` },
+        body: JSON.stringify(body),
+        signal: opt.signal,
+      });
+      if (!r.ok) {
+        const err = new Error(`API ${r.status}${r.status === 402 ? ' — model requires payment or access upgrade' : ''}`);
+        err.status = r.status;
+        throw err;
+      }
+      return r;
+    }
+
+    async function chatText(modelId, system, user, opt) {
+      const r = await chatCall(modelId, [
+        { role: 'system', content: system },
+        { role: 'user', content: user },
+      ], opt);
+      const d = await r.json();
+      return d.choices?.[0]?.message?.content || '';
+    }
+
+    async function chatStream(modelId, system, user, onChunk, opt) {
+      const r = await chatCall(modelId, [
+        { role: 'system', content: system },
+        { role: 'user', content: user },
+      ], Object.assign({ stream: true }, opt));
+      const reader = r.body.getReader();
+      const dec = new TextDecoder();
+      let buf = '', full = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split('\n');
+        buf = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const payload = line.slice(6);
+          if (payload === '[DONE]') continue;
+          try {
+            const j = JSON.parse(payload);
+            const delta = j.choices?.[0]?.delta?.content;
+            if (delta) { full += delta; onChunk(full); }
+          } catch (_) { /* partial frame */ }
+        }
+      }
+      return full;
+    }
+
+    function parseJson(raw) {
+      let s = String(raw).replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+      const m = s.match(/\{[\s\S]*\}/);
+      if (!m) throw new Error('No JSON object in model response');
+      let js = m[0].replace(/,(\s*[}\]])/g, '$1');
+      try { return JSON.parse(js); } catch (_) {
+        let f = js;
+        const bal = (open, close) => {
+          const n = (f.match(new RegExp('\\' + open, 'g')) || []).length
+                  - (f.match(new RegExp('\\' + close, 'g')) || []).length;
+          for (let i = 0; i < n; i++) f += close;
+        };
+        bal('[', ']'); bal('{', '}');
+        f = f.replace(/,\s*$/, '').replace(/,(\s*[}\]])/g, '$1');
+        return JSON.parse(f);
+      }
+    }
+
+    // JSON call with retry, then graceful degradation to another model.
+    async function jsonCall(modelId, system, user, opt) {
+      const o = opt || {};
+      const chain = [modelId];
+      const alt = firstMatch(FALLBACKS);
+      if (alt && alt.id !== modelId) chain.push(alt.id);
+
+      let lastErr = null;
+      for (const m of chain) {
+        for (let attempt = 0; attempt <= (o.retries != null ? o.retries : 1); attempt++) {
+          try {
+            const raw = await chatText(m, system, user, o);
+            const parsed = parseJson(raw);
+            if (m !== modelId && typeof showToast === 'function') {
+              showToast(`Analysis fell back to ${shortName(m)}`, 'warn', 5000);
+            }
+            return { data: parsed, modelUsed: m };
+          } catch (e) {
+            lastErr = e;
+            if (e.status === 402 || e.status === 403) break;
+          }
+        }
+      }
+      throw lastErr || new Error('Analysis call failed');
+    }
+
+    // Replace blind labels with real model ids everywhere in a parsed object.
+    function deanonymizeDeep(node, corpus) {
+      if (!corpus.blind) return node;
+      const pairs = Object.entries(corpus.byLabel)
+        .sort((a, b) => b[0].length - a[0].length)  // longest label first
+        .map(([lbl, r]) => [new RegExp(lbl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), r.modelId]);
+      const walk = (v) => {
+        if (typeof v === 'string') {
+          let s = v;
+          for (const [re, id] of pairs) s = s.replace(re, id);
+          return s;
+        }
+        if (Array.isArray(v)) return v.map(walk);
+        if (v && typeof v === 'object') {
+          const o = {};
+          for (const k of Object.keys(v)) o[k] = walk(v[k]);
+          return o;
+        }
+        return v;
+      };
+      return walk(node);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  Bias measurement — the numbers behind the Judge Integrity panel
+    // ─────────────────────────────────────────────────────────────────
+    function pearson(xs, ys) {
+      const n = xs.length;
+      if (n < 3) return null;
+      const mx = xs.reduce((a, b) => a + b, 0) / n;
+      const my = ys.reduce((a, b) => a + b, 0) / n;
+      let num = 0, dx = 0, dy = 0;
+      for (let i = 0; i < n; i++) {
+        const a = xs[i] - mx, b = ys[i] - my;
+        num += a * b; dx += a * a; dy += b * b;
+      }
+      if (!dx || !dy) return null;
+      return num / Math.sqrt(dx * dy);
+    }
+
+    function rankOf(scores) {
+      return Object.entries(scores)
+        .sort((a, b) => b[1] - a[1])
+        .map(([m]) => m);
+    }
+
+    // scores / scoresSwapped: { modelId: number }
+    function computeIntegrity(o) {
+      const corpus = o.corpus;
+      const guards = corpus.guards;
+      const out = {
+        blind: corpus.blind,
+        swap: guards.swap,
+        recused: corpus.recused,
+        aggregator: o.aggregator,
+        panelSize: corpus.items.length,
+        selfDelta: null, selfNote: o.scores ? 'aggregator not in panel' : 'this mode produces no scores',
+        flips: null, flipNote: null,
+        lengthR: null,
+        coverage: o.coverage != null ? o.coverage : null,
+        coverageMissing: o.coverageMissing || [],
+      };
+
+      const scores = o.scores || null;
+
+      // 1. Self-preference: how the judge scored its own (blinded) answer
+      //    relative to its average score for everyone else.
+      if (scores && o.aggregator && scores[o.aggregator] != null) {
+        const own = scores[o.aggregator];
+        const others = Object.entries(scores).filter(([m]) => m !== o.aggregator).map(([, v]) => v);
+        if (others.length) {
+          const mean = others.reduce((a, b) => a + b, 0) / others.length;
+          out.selfDelta = own - mean;
+          out.selfNote = `own ${own.toFixed(1)} vs panel mean ${mean.toFixed(1)}`;
+        }
+      } else if (corpus.recused) {
+        out.selfNote = 'recused from its own panel';
+      } else if (scores && o.aggregator) {
+        out.selfNote = 'aggregator did not answer this prompt';
+      }
+
+      // 2. Order stability: rank movement between forward and reversed passes.
+      if (scores && o.scoresSwapped) {
+        const r1 = rankOf(scores), r2 = rankOf(o.scoresSwapped);
+        const common = r1.filter(m => r2.includes(m));
+        let flips = 0;
+        common.forEach(m => { if (r1.indexOf(m) !== r2.indexOf(m)) flips++; });
+        out.flips = flips;
+        out.flipNote = `${common.length} models compared across both orders`;
+      }
+
+      // 3. Length bias: correlation between answer length and score.
+      if (scores) {
+        const xs = [], ys = [];
+        for (const [m, v] of Object.entries(scores)) {
+          const item = corpus.items.find(r => r.modelId === m);
+          if (item) { xs.push(item.content.length); ys.push(v); }
+        }
+        out.lengthR = pearson(xs, ys);
+      }
+
+      return out;
+    }
+
+    function verdict(ok, warn, value) {
+      if (value == null) return { cls: 't-neutral', word: 'n/a' };
+      const a = Math.abs(value);
+      if (a <= ok) return { cls: 't-ok', word: 'clean' };
+      if (a <= warn) return { cls: 't-warn', word: 'watch' };
+      return { cls: 't-bad', word: 'flagged' };
+    }
+
+    function renderIntegrity(g) {
+      const metric = (label, value, tag, note) => `
+        <div class="integrity-metric">
+          <dt>${label}</dt>
+          <dd>${value}${tag ? ` <span class="ia-tag ${tag.cls}">${tag.word}</span>` : ''}</dd>
+          ${note ? `<small>${iwEsc(note)}</small>` : ''}
+        </div>`;
+
+      const selfTag = g.selfDelta == null ? null : verdict(3, 8, g.selfDelta);
+      const flipTag = g.flips == null ? null
+        : verdict(Math.max(1, g.panelSize * 0.2), Math.max(2, g.panelSize * 0.45), g.flips);
+      const lenTag = g.lengthR == null ? null : verdict(0.35, 0.6, g.lengthR);
+      const covTag = g.coverage == null ? null
+        : (g.coverage >= 0.9 ? { cls: 't-ok', word: 'clean' }
+         : g.coverage >= 0.7 ? { cls: 't-warn', word: 'watch' } : { cls: 't-bad', word: 'flagged' });
+
+      return `<div class="integrity">
+        <div class="integrity-head"><span class="material-icons">shield</span> Judge integrity</div>
+        <div class="integrity-note">
+          ${shortName(g.aggregator || '—')} aggregated ${g.panelSize} answers.
+          ${g.blind
+            ? 'It saw them as anonymous <em>Response A/B/C…</em> in randomised order, so it could not favour its own output or a familiar brand.'
+            : '<strong>Blinding was off</strong> — the judge saw real model names, so self-preference and brand bias are unconstrained.'}
+          ${g.recused ? ` Its own answer was <strong>recused</strong> from the panel.` : ''}
+          These are measurements from this run, not guarantees.
+        </div>
+        <div class="integrity-grid">
+          ${metric('Blind labelling', g.blind ? 'on' : 'off', g.blind ? { cls: 't-ok', word: 'on' } : { cls: 't-bad', word: 'off' })}
+          ${metric('Self-preference', g.selfDelta == null ? '—' : (g.selfDelta > 0 ? '+' : '') + g.selfDelta.toFixed(1), selfTag, g.selfNote)}
+          ${metric('Order stability', g.flips == null ? '—' : `${g.flips} rank flips`, flipTag,
+                   g.flips == null ? (g.swap ? 'order-swap not applicable to this mode' : 'order-swap disabled') : g.flipNote)}
+          ${metric('Length bias', g.lengthR == null ? '—' : `r = ${g.lengthR.toFixed(2)}`, lenTag, 'score vs answer length')}
+          ${g.coverage == null ? '' : metric('Corpus coverage', `${Math.round(g.coverage * 100)}%`, covTag,
+                   g.coverageMissing.length ? `no pickup: ${g.coverageMissing.slice(0, 3).map(shortName).join(', ')}${g.coverageMissing.length > 3 ? ` +${g.coverageMissing.length - 3}` : ''}` : 'every model contributed')}
+        </div>
+      </div>`;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  Workspace UI
+    // ─────────────────────────────────────────────────────────────────
+    const $ = (id) => document.getElementById(id);
+
+    function openWorkspace(mode) {
+      state.active = mode;
+      $('iwOverlay')?.classList.add('show');
+      $('iwIcon').textContent = MODES[mode].icon;
+      $('iwTitleText').textContent = MODES[mode].title;
+      renderTabs();
+    }
+
+    window.closeInsightWorkspace = function () { $('iwOverlay')?.classList.remove('show'); };
+
+    function renderTabs() {
+      const wrap = $('iwTabs');
+      if (!wrap) return;
+      wrap.innerHTML = Object.keys(MODES).map(m => {
+        const has = !!state.results[m];
+        return `<button class="iw-tab ${state.active === m ? 'active' : ''}" ${has ? '' : 'disabled'}
+          onclick="showInsight('${m}')" title="${has ? 'View ' + MODES[m].title : 'Not run yet'}">${MODES[m].title.split(' ')[0]}</button>`;
+      }).join('');
+    }
+
+    window.showInsight = function (mode) {
+      const r = state.results[mode];
+      if (!r) return;
+      state.active = mode;
+      $('iwIcon').textContent = MODES[mode].icon;
+      $('iwTitleText').textContent = MODES[mode].title;
+      $('iwBody').innerHTML = r.html;
+      $('iwFoot').style.display = 'flex';
+      $('iwFootMeta').textContent = r.meta || '';
+      renderTabs();
+    };
+
+    function progress(steps, currentIndex, headline, sub) {
+      $('iwBody').innerHTML = `
+        <div class="iw-progress">
+          <h3>${iwEsc(headline)}</h3>
+          <p>${iwEsc(sub || '')}</p>
+          <div class="iw-bar"><div style="width:${Math.round((currentIndex / steps.length) * 100)}%"></div></div>
+          <div class="iw-steps">
+            ${steps.map((s, i) => `
+              <div class="iw-step ${i < currentIndex ? 'done' : i === currentIndex ? 'active' : ''}">
+                <span class="material-icons">${i < currentIndex ? 'check_circle' : i === currentIndex ? 'radio_button_checked' : 'radio_button_unchecked'}</span>
+                ${iwEsc(s)}
+              </div>`).join('')}
+          </div>
+        </div>`;
+      $('iwFoot').style.display = 'none';
+    }
+
+    function failure(msg) {
+      $('iwBody').innerHTML = `
+        <div class="iw-progress">
+          <span class="material-icons" style="font-size:44px;color:var(--bad);">error_outline</span>
+          <h3 style="margin-top:12px;">Analysis failed</h3>
+          <p>${iwEsc(msg)}</p>
+        </div>`;
+      $('iwFoot').style.display = 'none';
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  Deck state
+    // ─────────────────────────────────────────────────────────────────
+    function runKey() {
+      const ids = Object.keys(modelResponses || {}).sort().join('|');
+      const p = (document.getElementById('prompt')?.value || '').slice(0, 200);
+      return `${p}::${ids}`;
+    }
+
+    window.refreshInsightDeck = function () {
+      // A new prompt run invalidates cached analyses.
+      const key = runKey();
+      if (state.runKey !== key) {
+        state.runKey = key;
+        state.results = {};
+        document.querySelectorAll('.deck-btn').forEach(b => b.classList.remove('has-result'));
+      }
+
+      const responses = collectResponses();
+      const { model, how } = resolveAggregator();
+
+      // Aggregator picker — Grok 4.5 first, then remaining text models.
+      const sel = $('deckJudgeSelect');
+      if (sel && model) {
+        const current = sel.value;
+        const models = textModels();
+        const preferred = models.filter(m => GROK45.some(p => p.test(m.id)));
+        const rest = models.filter(m => !preferred.includes(m));
+        sel.innerHTML = [...preferred, ...rest].map(m =>
+          `<option value="${iwEsc(m.id)}">${iwEsc(shortName(m.id))}${preferred.includes(m) ? ' · Grok 4.5' : ''}</option>`
+        ).join('');
+        sel.value = current && models.some(m => m.id === current) ? current : model.id;
+      }
+
+      const cap0 = capacityOf(model);
+      const sub = $('deckSub');
+      if (sub) {
+        const note = how === 'grok45' ? `aggregating with ${shortName(model?.id)} (Grok 4.5) at ${(cap0.ctx / 1000).toFixed(0)}k context`
+                   : how === 'grok-other' ? `Grok 4.5 not in this catalog — using ${shortName(model?.id)}`
+                   : how === 'selected' ? `aggregating with ${shortName(model?.id)} (you picked this)`
+                   : `no Grok in this catalog — using ${shortName(model?.id)}`;
+        sub.textContent = `${responses.length} answers ready · ${note}`;
+      }
+
+      // Per-button cost estimate over the real corpus.
+      const cap = cap0;
+      const corpusTokens = responses.reduce((a, r) => a + estTokens(r.content), 0);
+      const price = model?.model_spec?.pricing || {};
+      const inUsd = price.input?.usd || 0, outUsd = price.output?.usd || 0;
+      const estimate = (passes, outTokens) =>
+        (corpusTokens * passes / 1e6) * inUsd + (outTokens / 1e6) * outUsd;
+
+      const guards = readGuards();
+      const outBudget = { aggregate: cap.maxOut, scorecard: 12000, creativity: 8000, rigor: 9000, debate: 8000 };
+      document.querySelectorAll('.deck-btn-cost').forEach(el => {
+        const mode = el.dataset.cost;
+        const passes = MODES[mode].passes * (guards.swap && MODES[mode].scored ? 2 : 1);
+        const usd = estimate(passes, outBudget[mode] || 8000);
+        el.innerHTML = `<span class="material-icons" style="font-size:12px;">payments</span> ~$${usd.toFixed(3)} · ${passes} pass${passes > 1 ? 'es' : ''} · ${corpusTokens >= 1000 ? (corpusTokens / 1000).toFixed(1) + 'k' : corpusTokens} tok in`;
+      });
+
+      document.querySelectorAll('.deck-btn').forEach(b => {
+        b.disabled = responses.length < 2 || state.busy;
+        if (state.results[b.dataset.mode]) b.classList.add('has-result');
+      });
+    };
+
+    // ─────────────────────────────────────────────────────────────────
+    //  Entry point
+    // ─────────────────────────────────────────────────────────────────
+    window.runInsight = async function (mode) {
+      if (state.busy) return;
+      const responses = collectResponses();
+      if (responses.length < 2) {
+        if (typeof showToast === 'function') showToast('Need at least 2 completed responses', 'warn');
+        return;
+      }
+      if (typeof ensureQueryAllowed === 'function' && !ensureQueryAllowed('chat')) return;
+
+      // Cached? Just show it.
+      if (state.results[mode] && state.runKey === runKey()) { openWorkspace(mode); showInsight(mode); return; }
+
+      state.busy = true;
+      refreshInsightDeck();
+      openWorkspace(mode);
+
+      const { model } = resolveAggregator();
+      if (!model) { failure('No text models loaded. Refresh models first.'); state.busy = false; return; }
+
+      const corpus = buildCorpus({ recuseModel: model.id });
+      const prompt = document.getElementById('prompt')?.value?.trim() || '';
+      const started = Date.now();
+
+      try {
+        const runner = { aggregate: runAggregate, scorecard: runScorecard, creativity: runCreativity, rigor: runRigor, debate: runDebate }[mode];
+        const result = await runner({ model, corpus, prompt });
+
+        const secs = ((Date.now() - started) / 1000).toFixed(1);
+        state.results[mode] = {
+          html: result.html,
+          markdown: result.markdown,
+          meta: `${shortName(model.id)} · ${corpus.items.length} answers · ${secs}s`,
+          title: MODES[mode].title,
+        };
+        state.runKey = runKey();
+        showInsight(mode);
+      } catch (e) {
+        console.error(`Insight [${mode}] failed:`, e);
+        failure(e.message || String(e));
+      } finally {
+        state.busy = false;
+        refreshInsightDeck();
+      }
+    };
+
+    window.rerunInsight = function () {
+      const mode = state.active;
+      if (!mode) return;
+      delete state.results[mode];
+      runInsight(mode);
+    };
+
+    // ═════════════════════════════════════════════════════════════════
+    //  MODE 1 — AGGREGATE REPORT
+    //  Grok 4.5 at full capacity: no truncation, context and output
+    //  budgets read off the model spec, map-reduce when the corpus is
+    //  larger than the window rather than dropping any answer.
+    // ═════════════════════════════════════════════════════════════════
+    const SYS_JSON = 'You are a rigorous analyst. You output ONLY valid JSON — no prose, no markdown fences. Refer to responses exactly by the labels given to you.';
+
+    async function runAggregate(ctx) {
+      const model = ctx.model, corpus = ctx.corpus, prompt = ctx.prompt;
+      const cap = capacityOf(model);
+      const steps = ['Reading every answer in full', 'Mapping claims and attribution', 'Writing the combined answer', 'Auditing coverage'];
+      progress(steps, 0, 'Building the aggregate report',
+        `${corpus.items.length} answers · ${shortName(model.id)} at ${(cap.ctx / 1000).toFixed(0)}k context / ${(cap.maxOut / 1000).toFixed(0)}k output`);
+
+      // ── Fit the corpus to the window, losing nothing ───────────────
+      let digest = corpus.digest();
+      let mapReduced = false;
+      if (estTokens(digest) > cap.inputBudget) {
+        mapReduced = true;
+        progress(steps, 0, 'Corpus exceeds the context window',
+          `Condensing in chunks so no answer is dropped · ${(estTokens(digest) / 1000).toFixed(0)}k tokens`);
+        const chunks = [];
+        let cur = [], curTok = 0;
+        const budget = Math.floor(cap.inputBudget * 0.7);
+        for (const item of corpus.items) {
+          const t = estTokens(item.content);
+          if (curTok + t > budget && cur.length) { chunks.push(cur); cur = []; curTok = 0; }
+          cur.push(item); curTok += t;
+        }
+        if (cur.length) chunks.push(cur);
+
+        const briefs = [];
+        for (let i = 0; i < chunks.length; i++) {
+          progress(steps, 0, 'Condensing chunk ' + (i + 1) + ' of ' + chunks.length, 'Every distinct point is preserved with its label');
+          const part = chunks[i].map(r => `### ${r.label}\n${r.content}`).join('\n\n---\n\n');
+          const brief = await chatText(model.id, SYS_JSON.replace('ONLY valid JSON — no prose, no markdown fences', 'dense structured notes'),
+            `Condense these responses into dense structured notes. Preserve EVERY distinct claim, recommendation, caveat and example, each tagged with its response label. Do not merge or drop points. Do not editorialise.\n\n${part}`,
+            { maxTokens: Math.min(cap.maxOut, 16000), temperature: 0.1 });
+          briefs.push(brief);
+        }
+        digest = briefs.join('\n\n═══\n\n');
+      }
+
+      // ── Pass 1: blueprint + attribution map ────────────────────────
+      progress(steps, 1, 'Mapping claims and attribution', 'Working out the structure and who said what');
+      const blue = await jsonCall(model.id, SYS_JSON,
+`These are ${corpus.items.length} independent AI answers to the prompt: "${prompt}"
+
+${digest}
+
+Plan a single definitive report that MERGES all of them into one answer. Return JSON:
+{
+  "title": "a precise title for the combined answer",
+  "thesis": "2-3 sentences stating the combined answer's core position",
+  "sections": [
+    {"heading":"section title","points":[{"point":"a substantive claim or piece of guidance","sources":["Response A","Response B"],"contested":false}]}
+  ],
+  "contested": [
+    {"question":"the point of disagreement","positions":[{"stance":"position","sources":["Response C"]}],"resolution":"which position is better supported and why","confidence":"high|medium|low"}
+  ],
+  "minority": [{"insight":"a point only one response made that is worth keeping","source":"Response D","whyKeep":"why it earns a place"}],
+  "recommendations": ["concrete actions the combined answer supports"],
+  "gaps": ["what no response covered that matters"]
+}
+Cover the full range of material. Aim for 5-9 sections. Every point must carry at least one source label.`,
+        { maxTokens: Math.min(cap.maxOut, 24000), temperature: 0.2 });
+
+      const plan = blue.data;
+
+      // ── Pass 2: the long-form combined answer, streamed ────────────
+      progress(steps, 2, 'Writing the combined answer', 'Streaming — this is the long one');
+      const body = $('iwBody');
+      let liveWrap = null;
+
+      const onChunk = (text) => {
+        if (!liveWrap) {
+          body.innerHTML = '<div class="iw-report" id="iwLive"></div>';
+          liveWrap = document.getElementById('iwLive');
+        }
+        liveWrap.className = 'iw-report iw-streaming';
+        liveWrap.innerHTML = formatResponse(text);
+        body.scrollTop = body.scrollHeight;
+      };
+
+      const raw = await chatStream(model.id, 
+        'You are the definitive synthesist. You merge many independent answers into one comprehensive document that is better than any individual input. You write in Markdown. You attribute every substantive claim inline using the exact response labels in square brackets, e.g. [Response A]. You never mention that you are an AI or describe your own process.',
+`Write the single combined answer to this prompt: "${prompt}"
+
+You are working from ${corpus.items.length} independent answers:
+
+${digest}
+
+Your plan:
+${JSON.stringify(plan, null, 2)}
+
+Write the full report in Markdown with these sections, in this order:
+
+# ${plan.title || 'Combined Answer'}
+
+## Executive answer
+The complete answer in 3-5 paragraphs. Someone who reads only this section should be fully served.
+
+## Deep dive
+One \`##\`-level section per theme from the plan. Go deep — merge overlapping material into single authoritative passages rather than listing what each model said. Attribute inline with [Response X].
+
+## Where the answers disagree
+Each contested point: the positions, who held them, and your adjudication with a stated confidence level.
+
+## Minority insights worth keeping
+Points only one answer raised that still deserve to survive into the combined answer.
+
+## What to actually do
+Concrete, ordered, actionable recommendations.
+
+## What everyone missed
+Gaps across the whole corpus.
+
+## Contribution map
+A Markdown table with columns | Response | What it uniquely contributed | Weight in this report |. Include EVERY response label, including weak ones — say plainly when a response added little.
+
+Rules:
+- This is the long-form deliverable. Be comprehensive and specific; do not summarise for brevity.
+- Merge, do not enumerate. The reader wants one answer, not a review of answers.
+- Keep concrete specifics — numbers, names, caveats, examples — from the source answers.
+- Attribute inline with the exact labels. Never invent a label.`,
+        onChunk,
+        { maxTokens: cap.maxOut, temperature: 0.35 });
+
+      // ── Pass 3: coverage audit (client-side, not self-reported) ────
+      progress(steps, 3, 'Auditing coverage', 'Checking every answer actually made it in');
+      const missing = corpus.items
+        .filter(r => !new RegExp(r.label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(raw))
+        .map(r => r.modelId);
+      const coverage = (corpus.items.length - missing.length) / Math.max(1, corpus.items.length);
+
+      const integrity = computeIntegrity({
+        corpus, aggregator: model.id, coverage, coverageMissing: missing,
+      });
+
+      const reportHtml = corpus.deanonymize(formatResponse(raw));
+      const html = `
+        ${renderIntegrity(integrity)}
+        ${mapReduced ? `<div class="ia-card" style="margin-bottom:18px;border-color:var(--warn);background:var(--warn-bg);">
+          <h4 style="color:var(--warn)">Map-reduce applied</h4>
+          <div style="font-size:13px;">The corpus was larger than ${shortName(model.id)}'s context window, so answers were condensed in chunks first. Every answer was read; none were dropped.</div>
+        </div>` : ''}
+        <div class="iw-report">${reportHtml}</div>`;
+
+      return { html, markdown: corpus.deanonymizeText(raw) };
+    }
+
+    // ═════════════════════════════════════════════════════════════════
+    //  MODE 2 — COMPARATIVE SCORECARD
+    //  Same three-pass analysis as before, now blinded and swap-checked,
+    //  rendered through the existing report builder so nothing is lost.
+    // ═════════════════════════════════════════════════════════════════
+    async function runScorecard(ctx) {
+      const model = ctx.model, corpus = ctx.corpus, prompt = ctx.prompt;
+      const cap = capacityOf(model);
+      const guards = corpus.guards;
+      const steps = ['Themes and consensus', 'Rankings and grades', 'Takeaways and gaps'];
+      if (guards.swap) steps.push('Order-swap bias check');
+
+      const digest = corpus.digest();
+      const n = corpus.items.length;
+
+      progress(steps, 0, 'Comparing every answer', `${n} answers · blinded and randomised`);
+      const p1 = (await jsonCall(model.id, SYS_JSON,
+`Analyze these ${n} answers to the prompt: "${prompt}"
+
+${digest}
+
+Return JSON:
+{
+  "overallAnalysis": "4-6 sentence executive summary: what the answers collectively say, where they agree and disagree, and overall quality",
+  "consensusLevel": "high" | "medium" | "low",
+  "diversityScore": number 1-10,
+  "commonThemes": [{"theme":"short title","description":"2-3 sentences","modelCount":number,"models":["Response A"],"strength":"strong|moderate|weak"}],
+  "disagreements": [{"topic":"what they disagree on","sides":[{"position":"view A","models":["Response A"]}]}],
+  "qualityTiers": {"exceptional":["Response A"],"strong":[],"adequate":[],"weak":[]}
+}`, { maxTokens: Math.min(cap.maxOut, 16000) })).data;
+
+      progress(steps, 1, 'Ranking and grading', 'Rubric first, then scores with evidence');
+      const pass2Prompt = (order) =>
+`Continue analysing the same ${n} answers to: "${prompt}"
+
+${corpus.digest(order)}
+
+Score on substance only. Do NOT reward length — a longer answer is not a better answer. Judge each answer against the prompt, not against the others' style.
+
+Return JSON:
+{
+  "qualityScores": [{"model":"Response A","score":number 0-100,"evidence":"a short quote or specific detail justifying the score"}],
+  "uniqueInsights": [{"insight":"the specific point","model":"Response A","significance":"why it matters","category":"practical|creative|contrarian|deep-dive|meta"}],
+  "mostUnique": [{"rank":1,"model":"Response A","score":number 1-100,"reason":"why most unique"}],
+  "mostSimilar": [{"rank":1,"model":"Response B","reason":"most consensus-aligned"}],
+  "bestForUseCase": [{"useCase":"quick overview","model":"Response A","why":"short"},{"useCase":"deep research","model":"Response B","why":"short"},{"useCase":"creative/lateral thinking","model":"Response C","why":"short"},{"useCase":"practical advice","model":"Response D","why":"short"},{"useCase":"balanced perspective","model":"Response E","why":"short"}],
+  "modelGrades": [{"model":"Response A","grade":"A+|A|A-|B+|B|B-|C+|C|D|F","oneLiner":"one sentence verdict","strength":"biggest thing it brings (3-6 words)","watchOut":"main weakness (3-6 words)","bestFor":"ideal use case (2-4 words)"}]
+}
+qualityScores and modelGrades must include EVERY response label.`;
+
+      const p2 = (await jsonCall(model.id, SYS_JSON, pass2Prompt('forward'), { maxTokens: Math.min(cap.maxOut, 20000) })).data;
+
+      progress(steps, 2, 'Synthesizing takeaways', 'Actionables, blind spots, follow-ups');
+      const p3 = (await jsonCall(model.id, SYS_JSON,
+`Final pass on the same ${n} answers to: "${prompt}"
+
+${digest}
+
+Return JSON:
+{
+  "actionableTakeaways": [{"takeaway":"specific actionable point synthesized from all answers","confidence":"high|medium|low","supportingModels":number}],
+  "blindSpots": ["things no answer mentioned that matter"],
+  "bestQuote": {"quote":"the single most insightful sentence (exact quote)","model":"Response A","why":"why it stands out"},
+  "responsePatterns": {"avgLength":"short|medium|long","structureTypes":{"listicle":number,"essay":number,"stepByStep":number,"mixed":number},"toneSpread":{"professional":number,"conversational":number,"academic":number,"creative":number}},
+  "followUpQuestions": ["3-5 questions to ask next"]
+}`, { maxTokens: Math.min(cap.maxOut, 14000) })).data;
+
+      // ── Order-swap bias check ──────────────────────────────────────
+      let scoresSwapped = null;
+      if (guards.swap) {
+        progress(steps, 3, 'Order-swap bias check', 'Re-scoring with the answer order reversed');
+        try {
+          const p2b = (await jsonCall(model.id, SYS_JSON, pass2Prompt('reverse'), { maxTokens: Math.min(cap.maxOut, 20000), retries: 0 })).data;
+          scoresSwapped = scoreMap(p2b.qualityScores, corpus);
+        } catch (e) {
+          console.warn('Swap pass failed, continuing without it:', e.message);
+        }
+      }
+
+      const scores = scoreMap(p2.qualityScores, corpus);
+      const integrity = computeIntegrity({ corpus, aggregator: model.id, scores, scoresSwapped });
+
+      // De-anonymize before handing to the existing renderer.
+      const analysis = deanonymizeDeep({
+        summary: { totalModels: n, consensusLevel: p1.consensusLevel || 'medium', diversityScore: p1.diversityScore || 5 },
+        overallAnalysis: p1.overallAnalysis || '',
+        commonThemes: p1.commonThemes || [],
+        disagreements: p1.disagreements || [],
+        qualityTiers: p1.qualityTiers || {},
+        uniqueInsights: p2.uniqueInsights || [],
+        mostUnique: p2.mostUnique || [],
+        mostSimilar: p2.mostSimilar || [],
+        bestForUseCase: p2.bestForUseCase || [],
+        modelGrades: p2.modelGrades || [],
+        actionableTakeaways: p3.actionableTakeaways || [],
+        blindSpots: p3.blindSpots || [],
+        bestQuote: p3.bestQuote || null,
+        responsePatterns: p3.responsePatterns || {},
+        followUpQuestions: p3.followUpQuestions || [],
+      }, corpus);
+
+      // Reuse the existing rich renderer, then lift its markup into the workspace.
+      const responsesForReport = corpus.items.map(r => ({
+        model: r.modelId, content: r.content, responseTime: r.time, tokenCount: r.completionTokens,
+      }));
+      window.lastAnalysisResult = { analysis, prompt, responses: responsesForReport };
+      displayAnalysisResults(analysis);
+      const rendered = document.getElementById('analysisBody')?.innerHTML || '';
+
+      const html = renderIntegrity(integrity) + scoreTable(scores, scoresSwapped) + rendered;
+      return { html, markdown: scorecardMarkdown(analysis, scores) };
+    }
+
+    function scoreMap(list, corpus) {
+      const out = {};
+      (list || []).forEach(x => {
+        const id = corpus.resolveLabel(x.model);
+        const v = Number(x.score);
+        if (id && !Number.isNaN(v)) out[id] = v;
+      });
+      return out;
+    }
+
+    function scoreTable(scores, swapped) {
+      const entries = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+      if (!entries.length) return '';
+      const max = Math.max(...entries.map(e => e[1]), 1);
+      return `<div class="ia-card" style="margin-bottom:20px;">
+        <h4>Quality score${swapped ? ' — forward vs reversed order' : ''}</h4>
+        ${entries.map(([m, v]) => {
+          const sw = swapped ? swapped[m] : null;
+          return `<div class="ia-row">
+            <span class="ia-model" title="${iwEsc(m)}">${iwEsc(shortName(m))}</span>
+            <span class="ia-bar"><i style="width:${Math.round(v / max * 100)}%"></i></span>
+            <span class="ia-num">${v.toFixed(0)}</span>
+            ${sw != null ? `<span class="ia-num" style="color:var(--text-tertiary);" title="reversed-order pass">${sw.toFixed(0)}</span>` : ''}
+          </div>`;
+        }).join('')}
+      </div>`;
+    }
+
+    function scorecardMarkdown(a, scores) {
+      const L = [`# Comparative Scorecard\n`, `${a.overallAnalysis}\n`];
+      L.push(`## Quality scores\n`);
+      Object.entries(scores).sort((x, y) => y[1] - x[1]).forEach(([m, v]) => L.push(`- **${shortName(m)}** — ${v.toFixed(0)}/100`));
+      if (a.modelGrades?.length) {
+        L.push(`\n## Grades\n`, `| Model | Grade | Verdict | Strength | Watch out |`, `|---|---|---|---|---|`);
+        a.modelGrades.forEach(g => L.push(`| ${shortName(g.model)} | ${g.grade || '—'} | ${g.oneLiner || ''} | ${g.strength || ''} | ${g.watchOut || ''} |`));
+      }
+      if (a.commonThemes?.length) {
+        L.push(`\n## Common themes\n`);
+        a.commonThemes.forEach(t => L.push(`### ${t.theme}\n${t.description}\n`));
+      }
+      if (a.actionableTakeaways?.length) {
+        L.push(`\n## Actionable takeaways\n`);
+        a.actionableTakeaways.forEach(t => L.push(`- ${t.takeaway} _(${t.confidence} confidence)_`));
+      }
+      if (a.blindSpots?.length) { L.push(`\n## Blind spots\n`); a.blindSpots.forEach(b => L.push(`- ${b}`)); }
+      if (a.followUpQuestions?.length) { L.push(`\n## Follow-up questions\n`); a.followUpQuestions.forEach(q => L.push(`- ${q}`)); }
+      return L.join('\n');
+    }
+
+    // ═════════════════════════════════════════════════════════════════
+    //  MODE 3 — CREATIVITY LAB
+    // ═════════════════════════════════════════════════════════════════
+    async function runCreativity(ctx) {
+      const model = ctx.model, corpus = ctx.corpus, prompt = ctx.prompt;
+      const cap = capacityOf(model);
+      const guards = corpus.guards;
+      const n = corpus.items.length;
+      const steps = ['Scoring originality', 'Mining sole-source ideas'];
+      if (guards.swap) steps.push('Order-swap bias check');
+
+      const ask = (order) =>
+`These are ${n} independent answers to: "${prompt}"
+
+${corpus.digest(order)}
+
+Assess CREATIVITY, not correctness. Reward genuine originality — a fresh framing, an unexpected connection, a risk taken. Penalise generic filler however well written. Do NOT reward length.
+
+Return JSON:
+{
+  "originality": [{"model":"Response A","score":number 0-100,"novelty":"what is actually new here","risk":"bold|balanced|safe","evidence":"a short quote"}],
+  "soleIdeas": [{"idea":"an idea exactly one answer had","model":"Response A","worth":"why it is worth keeping"}],
+  "divergence": [{"model":"Response A","position":"far-out|exploratory|mainstream|consensus-hugging","note":"one line"}],
+  "devices": [{"device":"metaphor|analogy|reframe|counterfactual|narrative|provocation","model":"Response A","example":"short quote"}],
+  "hedging": [{"model":"Response A","level":"committed|balanced|hedged","note":"one line"}],
+  "remix": {"pitch":"3-5 sentences combining the boldest ideas across answers into one stronger idea","ingredients":[{"from":"Response A","contributes":"what it adds"}]},
+  "verdict": "3-4 sentences on the creative spread of this panel"
+}
+originality and divergence must include EVERY response label.`;
+
+      progress(steps, 0, 'Scoring originality', `${n} answers · blinded and randomised`);
+      const r1 = (await jsonCall(model.id, SYS_JSON, ask('forward'), { maxTokens: Math.min(cap.maxOut, 18000), temperature: 0.4 })).data;
+
+      let swapped = null;
+      if (guards.swap) {
+        progress(steps, 2, 'Order-swap bias check', 'Re-scoring with the answer order reversed');
+        try {
+          const r2 = (await jsonCall(model.id, SYS_JSON, ask('reverse'), { maxTokens: Math.min(cap.maxOut, 18000), temperature: 0.4, retries: 0 })).data;
+          swapped = scoreMap(r2.originality, corpus);
+        } catch (e) { console.warn('Creativity swap pass failed:', e.message); }
+      }
+
+      const scores = scoreMap(r1.originality, corpus);
+      const integrity = computeIntegrity({ corpus, aggregator: model.id, scores, scoresSwapped: swapped });
+      const d = deanonymizeDeep(r1, corpus);
+
+      const posTag = { 'far-out': 't-bad', exploratory: 't-warn', mainstream: 't-info', 'consensus-hugging': 't-neutral' };
+      const riskTag = { bold: 't-bad', balanced: 't-warn', safe: 't-neutral' };
+
+      const html = `
+        ${renderIntegrity(integrity)}
+        <div class="iw-report"><h1>Creativity Lab</h1><p>${iwEsc(d.verdict || '')}</p></div>
+        ${scoreTable(scores, swapped)}
+        <div class="ia-grid">
+          <div class="ia-card">
+            <h4>Risk profile</h4>
+            ${(d.originality || []).map(o => `<div class="ia-row">
+              <span class="ia-model">${iwEsc(shortName(o.model))}</span>
+              <span class="ia-tag ${riskTag[o.risk] || 't-neutral'}" style="margin-left:auto;">${iwEsc(o.risk || '—')}</span>
+            </div>`).join('')}
+          </div>
+          <div class="ia-card">
+            <h4>Divergence from consensus</h4>
+            ${(d.divergence || []).map(o => `<div class="ia-row">
+              <span class="ia-model">${iwEsc(shortName(o.model))}</span>
+              <span class="ia-tag ${posTag[o.position] || 't-neutral'}" style="margin-left:auto;">${iwEsc(o.position || '—')}</span>
+            </div>`).join('')}
+          </div>
+          <div class="ia-card">
+            <h4>Commitment vs hedging</h4>
+            ${(d.hedging || []).map(o => `<div class="ia-row">
+              <span class="ia-model">${iwEsc(shortName(o.model))}</span>
+              <span class="ia-tag ${o.level === 'committed' ? 't-ok' : o.level === 'hedged' ? 't-warn' : 't-info'}" style="margin-left:auto;">${iwEsc(o.level || '—')}</span>
+            </div>`).join('')}
+          </div>
+        </div>
+        <div class="iw-report">
+          <h2>What each answer actually brought that's new</h2>
+          ${(d.originality || []).map(o => `<p><span class="attrib">${iwEsc(shortName(o.model))}</span> ${iwEsc(o.novelty || '')}${o.evidence ? `<br><em style="color:var(--text-tertiary);font-size:13px;">“${iwEsc(o.evidence)}”</em>` : ''}</p>`).join('')}
+
+          <h2>Ideas exactly one answer had</h2>
+          ${(d.soleIdeas || []).length ? (d.soleIdeas || []).map(s => `<blockquote><strong>${iwEsc(s.idea)}</strong><br><span class="attrib">${iwEsc(shortName(s.model))}</span> — ${iwEsc(s.worth || '')}</blockquote>`).join('') : '<p>No genuinely sole-source ideas — the panel converged.</p>'}
+
+          ${(d.devices || []).length ? `<h2>Rhetorical devices in play</h2>
+          <table><thead><tr><th>Device</th><th>Answer</th><th>Example</th></tr></thead><tbody>
+          ${(d.devices || []).map(x => `<tr><td>${iwEsc(x.device || '')}</td><td>${iwEsc(shortName(x.model))}</td><td>${iwEsc(x.example || '')}</td></tr>`).join('')}
+          </tbody></table>` : ''}
+
+          ${d.remix ? `<h2>Boldest-ideas remix</h2><p>${iwEsc(d.remix.pitch || '')}</p>
+          <ul>${(d.remix.ingredients || []).map(i => `<li><span class="attrib">${iwEsc(shortName(i.from))}</span> ${iwEsc(i.contributes || '')}</li>`).join('')}</ul>` : ''}
+        </div>`;
+
+      const md = [`# Creativity Lab\n`, d.verdict || '', `\n## Originality scores\n`,
+        ...Object.entries(scores).sort((a, b) => b[1] - a[1]).map(([m, v]) => `- **${shortName(m)}** — ${v.toFixed(0)}/100`),
+        `\n## Ideas exactly one answer had\n`,
+        ...(d.soleIdeas || []).map(s => `- **${s.idea}** — ${shortName(s.model)}: ${s.worth || ''}`),
+        d.remix ? `\n## Boldest-ideas remix\n\n${d.remix.pitch || ''}` : ''].join('\n');
+
+      return { html, markdown: md };
+    }
+
+    // ═════════════════════════════════════════════════════════════════
+    //  MODE 4 — RIGOR & FACT AUDIT
+    // ═════════════════════════════════════════════════════════════════
+    async function runRigor(ctx) {
+      const model = ctx.model, corpus = ctx.corpus, prompt = ctx.prompt;
+      const cap = capacityOf(model);
+      const guards = corpus.guards;
+      const n = corpus.items.length;
+      const webOn = document.getElementById('webSearch')?.checked;
+      const steps = ['Extracting atomic claims', 'Grading reasoning'];
+      if (webOn) steps.push('Verifying contested claims on the web');
+      if (guards.swap) steps.push('Order-swap bias check');
+
+      progress(steps, 0, 'Auditing claims', `${n} answers · blinded and randomised`);
+      const claims = (await jsonCall(model.id, SYS_JSON,
+`These are ${n} independent answers to: "${prompt}"
+
+${corpus.digest()}
+
+Audit them for factual rigor. Extract atomic, checkable claims — not opinions or recommendations.
+
+Return JSON:
+{
+  "claims": [{"claim":"a single checkable assertion","asserted":["Response A","Response B"],"contradicted":["Response C"],"corroboration":number,"risk":"low|medium|high","note":"why this risk level"}],
+  "contradictions": [{"topic":"what is contradicted","a":{"position":"","models":["Response A"]},"b":{"position":"","models":["Response B"]},"whoIsLikelyRight":"","confidence":"high|medium|low"}],
+  "unsupported": [{"statement":"a specific, confident-sounding claim with no support","model":"Response A","why":"why it reads as a hallucination risk"}],
+  "verdict": "3-5 sentences on the factual reliability of this panel as a whole"
+}
+Order claims by corroboration descending. Cap at 25 claims.`, { maxTokens: Math.min(cap.maxOut, 20000) })).data;
+
+      const gradeAsk = (order) =>
+`Same ${n} answers to: "${prompt}"
+
+${corpus.digest(order)}
+
+Grade REASONING QUALITY only — the soundness of the argument, use of evidence, and whether stated confidence matches actual support. Do NOT reward length or fluency.
+
+Return JSON:
+{
+  "reasoning": [{"model":"Response A","score":number 0-100,"grade":"A+|A|A-|B+|B|B-|C+|C|D|F","soundness":"one line","evidenceUse":"strong|adequate|thin|absent"}],
+  "calibration": [{"model":"Response A","stance":"overconfident|calibrated|underconfident","note":"one line"}]
+}
+Include EVERY response label in both arrays.`;
+
+      progress(steps, 1, 'Grading reasoning', 'Soundness, evidence use, calibration');
+      const rg = (await jsonCall(model.id, SYS_JSON, gradeAsk('forward'), { maxTokens: Math.min(cap.maxOut, 14000) })).data;
+
+      // Optional web verification — only when the user already opted into web search.
+      let webCheck = null;
+      if (webOn) {
+        progress(steps, 2, 'Verifying contested claims', 'Live web search on the most contested items');
+        try {
+          const top = (claims.contradictions || []).slice(0, 5)
+            .map((c, i) => `${i + 1}. ${c.topic} — position A: ${c.a?.position}; position B: ${c.b?.position}`).join('\n');
+          if (top) {
+            webCheck = await chatText(model.id,
+              'You verify contested claims against current sources. Be concise and cite what you find. Markdown only.',
+              `Check these contested points and state which position current evidence supports. If the evidence is genuinely unclear, say so rather than guessing.\n\n${top}`,
+              { maxTokens: 4000, webSearch: true, temperature: 0.1 });
+          }
+        } catch (e) { console.warn('Web verification failed:', e.message); }
+      }
+
+      let swapped = null;
+      if (guards.swap) {
+        progress(steps, steps.length - 1, 'Order-swap bias check', 'Re-grading with the answer order reversed');
+        try {
+          const rg2 = (await jsonCall(model.id, SYS_JSON, gradeAsk('reverse'), { maxTokens: Math.min(cap.maxOut, 14000), retries: 0 })).data;
+          swapped = scoreMap(rg2.reasoning, corpus);
+        } catch (e) { console.warn('Rigor swap pass failed:', e.message); }
+      }
+
+      const scores = scoreMap(rg.reasoning, corpus);
+      const integrity = computeIntegrity({ corpus, aggregator: model.id, scores, scoresSwapped: swapped });
+      const d = deanonymizeDeep(claims, corpus);
+      const g = deanonymizeDeep(rg, corpus);
+
+      const riskTag = { low: 't-ok', medium: 't-warn', high: 't-bad' };
+      const evTag = { strong: 't-ok', adequate: 't-info', thin: 't-warn', absent: 't-bad' };
+
+      const html = `
+        ${renderIntegrity(integrity)}
+        <div class="iw-report"><h1>Rigor &amp; Fact Audit</h1><p>${iwEsc(d.verdict || '')}</p></div>
+        ${scoreTable(scores, swapped)}
+        <div class="ia-card" style="margin-bottom:18px;">
+          <h4>Reasoning quality</h4>
+          ${(g.reasoning || []).map(r => `<div class="ia-row">
+            <span class="ia-model">${iwEsc(shortName(r.model))}</span>
+            <span style="font-size:12px;color:var(--text-secondary);flex:1;">${iwEsc(r.soundness || '')}</span>
+            <span class="ia-tag ${evTag[r.evidenceUse] || 't-neutral'}">${iwEsc(r.evidenceUse || '—')}</span>
+            <span class="ia-num">${iwEsc(r.grade || '')}</span>
+          </div>`).join('')}
+        </div>
+        <div class="iw-report">
+          <h2>Claim corroboration</h2>
+          <table><thead><tr><th>Claim</th><th>Asserted by</th><th>Corroboration</th><th>Risk</th></tr></thead><tbody>
+          ${(d.claims || []).map(c => `<tr>
+            <td>${iwEsc(c.claim || '')}${c.note ? `<br><em style="color:var(--text-tertiary);font-size:12px;">${iwEsc(c.note)}</em>` : ''}</td>
+            <td>${(c.asserted || []).map(m => `<span class="attrib">${iwEsc(shortName(m))}</span>`).join(' ')}</td>
+            <td>${c.corroboration != null ? c.corroboration : (c.asserted || []).length} of ${n}</td>
+            <td><span class="ia-tag ${riskTag[c.risk] || 't-neutral'}">${iwEsc(c.risk || '—')}</span></td>
+          </tr>`).join('')}
+          </tbody></table>
+
+          ${(d.contradictions || []).length ? `<h2>Direct contradictions</h2>
+          ${(d.contradictions || []).map(c => `<blockquote><strong>${iwEsc(c.topic || '')}</strong><br>
+            <span class="attrib">${(c.a?.models || []).map(shortName).join(', ')}</span> ${iwEsc(c.a?.position || '')}<br>
+            <span class="attrib">${(c.b?.models || []).map(shortName).join(', ')}</span> ${iwEsc(c.b?.position || '')}<br>
+            <em>Likely right: ${iwEsc(c.whoIsLikelyRight || 'unclear')} (${iwEsc(c.confidence || 'low')} confidence)</em></blockquote>`).join('')}` : ''}
+
+          ${(d.unsupported || []).length ? `<h2>Hallucination risk</h2>
+          ${(d.unsupported || []).map(u => `<p><span class="ia-tag t-bad">unsupported</span> <span class="attrib">${iwEsc(shortName(u.model))}</span> “${iwEsc(u.statement || '')}” — ${iwEsc(u.why || '')}</p>`).join('')}` : ''}
+
+          ${(g.calibration || []).length ? `<h2>Confidence calibration</h2>
+          <table><thead><tr><th>Answer</th><th>Stance</th><th>Note</th></tr></thead><tbody>
+          ${(g.calibration || []).map(c => `<tr><td>${iwEsc(shortName(c.model))}</td>
+            <td><span class="ia-tag ${c.stance === 'calibrated' ? 't-ok' : 't-warn'}">${iwEsc(c.stance || '')}</span></td>
+            <td>${iwEsc(c.note || '')}</td></tr>`).join('')}
+          </tbody></table>` : ''}
+
+          ${webCheck ? `<h2>Web verification</h2>${formatResponse(webCheck)}` : ''}
+        </div>`;
+
+      const md = [`# Rigor & Fact Audit\n`, d.verdict || '', `\n## Claims\n`,
+        ...(d.claims || []).map(c => `- ${c.claim} — asserted by ${(c.asserted || []).map(shortName).join(', ')} (risk: ${c.risk})`),
+        `\n## Contradictions\n`,
+        ...(d.contradictions || []).map(c => `- **${c.topic}** — likely right: ${c.whoIsLikelyRight} (${c.confidence})`),
+        `\n## Hallucination risk\n`,
+        ...(d.unsupported || []).map(u => `- ${shortName(u.model)}: "${u.statement}" — ${u.why}`),
+        webCheck ? `\n## Web verification\n\n${webCheck}` : ''].join('\n');
+
+      return { html, markdown: md };
+    }
+
+    // ═════════════════════════════════════════════════════════════════
+    //  MODE 5 — DEBATE & ADJUDICATION
+    // ═════════════════════════════════════════════════════════════════
+    async function runDebate(ctx) {
+      const model = ctx.model, corpus = ctx.corpus, prompt = ctx.prompt;
+      const cap = capacityOf(model);
+      const n = corpus.items.length;
+      const steps = ['Finding the real disputes', 'Arguing both sides and ruling'];
+
+      progress(steps, 0, 'Finding the real disputes', `${n} answers · blinded and randomised`);
+      const found = (await jsonCall(model.id, SYS_JSON,
+`These are ${n} independent answers to: "${prompt}"
+
+${corpus.digest()}
+
+Identify the points where the answers genuinely conflict — real substantive disagreements, not differences of emphasis or wording.
+
+Return JSON:
+{ "disputes": [{"question":"the disputed question","stakes":"why it matters","positions":[{"stance":"the position","models":["Response A"]}]}] }
+Return the 3-6 most consequential disputes. If the answers genuinely do not conflict, return an empty array.`,
+        { maxTokens: Math.min(cap.maxOut, 12000) })).data;
+
+      const disputes = found.disputes || [];
+      if (!disputes.length) {
+        const html = `<div class="iw-report"><h1>Debate &amp; Adjudication</h1>
+          <p>No substantive disagreements found across these ${n} answers — the panel converged. That is itself a signal: either the question has a settled answer, or the models share a blind spot. The Rigor audit is the better tool here.</p></div>`;
+        return { html, markdown: `# Debate & Adjudication\n\nNo substantive disagreements found across ${n} answers.` };
+      }
+
+      progress(steps, 1, 'Arguing both sides and ruling', `${disputes.length} disputes · steel-manning each position`);
+      const ruled = (await jsonCall(model.id, SYS_JSON,
+`Same ${n} answers to: "${prompt}"
+
+${corpus.digest()}
+
+Disputes to adjudicate:
+${JSON.stringify(disputes, null, 2)}
+
+For each dispute: steel-man every position (make its strongest possible case, stronger than the answer itself made it), cross-examine each against the others, then rule. Rule on the merits — the number of answers holding a position is weak evidence, and popularity is not correctness. Say plainly when a dispute cannot be settled from the material available.
+
+Return JSON:
+{
+  "rulings": [{
+    "question":"",
+    "stakes":"",
+    "cases":[{"stance":"","models":["Response A"],"strongestCase":"the best version of this argument, 2-4 sentences","weakness":"where it is vulnerable under cross-examination"}],
+    "verdict":"the ruling, 2-4 sentences",
+    "winner":"the stance that prevails, or 'unresolved'",
+    "confidence":"high|medium|low",
+    "whatWouldSettleIt":"the evidence that would settle this"
+  }],
+  "summary":"3-4 sentences on what these disputes reveal about the question itself"
+}`, { maxTokens: Math.min(cap.maxOut, 20000), temperature: 0.3 })).data;
+
+      const integrity = computeIntegrity({ corpus, aggregator: model.id });
+      const d = deanonymizeDeep(ruled, corpus);
+      const confTag = { high: 't-ok', medium: 't-warn', low: 't-bad' };
+
+      const html = `
+        ${renderIntegrity(integrity)}
+        <div class="iw-report">
+          <h1>Debate &amp; Adjudication</h1>
+          <p>${iwEsc(d.summary || '')}</p>
+          ${(d.rulings || []).map((r, i) => `
+            <h2>${i + 1}. ${iwEsc(r.question || '')}</h2>
+            <p style="color:var(--text-secondary);font-size:13.5px;"><strong>Stakes:</strong> ${iwEsc(r.stakes || '')}</p>
+            ${(r.cases || []).map(c => `
+              <div class="ia-card" style="margin-bottom:10px;">
+                <h4>${iwEsc(c.stance || '')} — ${(c.models || []).map(m => `<span class="attrib">${iwEsc(shortName(m))}</span>`).join(' ')}</h4>
+                <p style="margin:0 0 8px;font-size:13.5px;">${iwEsc(c.strongestCase || '')}</p>
+                <p style="margin:0;font-size:12.5px;color:var(--warn);">Vulnerable: ${iwEsc(c.weakness || '')}</p>
+              </div>`).join('')}
+            <blockquote>
+              <strong>Verdict:</strong> ${iwEsc(r.verdict || '')}<br>
+              <strong>Prevails:</strong> ${iwEsc(r.winner || 'unresolved')}
+              <span class="ia-tag ${confTag[r.confidence] || 't-neutral'}">${iwEsc(r.confidence || '')} confidence</span><br>
+              <em style="font-size:12.5px;">What would settle it: ${iwEsc(r.whatWouldSettleIt || '')}</em>
+            </blockquote>`).join('')}
+        </div>`;
+
+      const md = [`# Debate & Adjudication\n`, d.summary || '',
+        ...(d.rulings || []).map((r, i) => `\n## ${i + 1}. ${r.question}\n\n**Stakes:** ${r.stakes}\n\n` +
+          (r.cases || []).map(c => `- **${c.stance}** (${(c.models || []).map(shortName).join(', ')}): ${c.strongestCase}\n  - Vulnerable: ${c.weakness}`).join('\n') +
+          `\n\n**Verdict:** ${r.verdict}\n\n**Prevails:** ${r.winner} (${r.confidence} confidence)`)].join('\n');
+
+      return { html, markdown: md };
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  Exports
+    // ─────────────────────────────────────────────────────────────────
+    window.downloadInsight = function (fmt) {
+      const mode = state.active;
+      const r = state.results[mode];
+      if (!r) return;
+      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+      const base = `${mode}-report-${stamp}`;
+      const prompt = document.getElementById('prompt')?.value?.trim() || '';
+
+      if (fmt === 'md') {
+        const md = `# ${r.title}\n\n> Prompt: ${prompt}\n>\n> ${r.meta}\n\n${r.markdown}`;
+        triggerDownload(md, `${base}.md`, 'text/markdown');
+        return;
+      }
+
+      const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${iwEsc(r.title)}</title>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;background:#F4F8F8;color:#15201F;margin:0;padding:40px 20px;line-height:1.65;}
+  .wrap{max-width:900px;margin:0 auto;background:#fff;padding:44px;border-radius:20px;box-shadow:0 4px 24px rgba(8,40,45,.1);}
+  h1{font-size:26px;margin:0 0 6px;} h2{font-size:19px;margin:1.8em 0 .5em;padding-bottom:.3em;border-bottom:1px solid #DFE9E8;}
+  h3{font-size:15.5px;color:#0B5F77;} h4{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#6E827F;margin:0 0 8px;}
+  table{width:100%;border-collapse:collapse;margin:1em 0;font-size:13px;}
+  th,td{padding:9px 11px;border:1px solid #DFE9E8;text-align:left;vertical-align:top;}
+  th{background:#EDF3F3;font-size:11px;text-transform:uppercase;letter-spacing:.05em;}
+  blockquote{margin:1em 0;padding:12px 16px;border-left:3px solid #1C93A8;background:#E8F5F6;border-radius:0 8px 8px 0;}
+  .attrib{font-family:'JetBrains Mono',monospace;font-size:11px;background:#E8F5F6;color:#0B5F77;padding:1px 6px;border-radius:4px;border:1px solid #D2EBEE;}
+  .integrity{border:1px solid #D2EBEE;background:#E8F5F6;border-radius:12px;padding:14px 16px;margin-bottom:20px;}
+  .integrity-head{font-weight:700;color:#084A5D;margin-bottom:4px;}
+  .integrity-note{font-size:11.5px;color:#4F5E5B;margin-bottom:11px;}
+  .integrity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;}
+  .integrity-metric{background:#fff;border:1px solid #DFE9E8;border-radius:8px;padding:9px 11px;}
+  .integrity-metric dt{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#6E827F;font-weight:700;margin-bottom:4px;}
+  .integrity-metric dd{margin:0;font-family:'JetBrains Mono',monospace;font-size:13.5px;font-weight:600;}
+  .integrity-metric small{display:block;font-size:10.5px;color:#6E827F;margin-top:3px;}
+  .ia-card{background:#fff;border:1px solid #DFE9E8;border-radius:12px;padding:14px 15px;margin-bottom:12px;}
+  .ia-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:18px;}
+  .ia-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #DFE9E8;font-size:13px;}
+  .ia-model{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;}
+  .ia-bar{flex:1;height:7px;background:#DFE9E8;border-radius:4px;overflow:hidden;}
+  .ia-bar>i{display:block;height:100%;background:#0E7490;border-radius:4px;}
+  .ia-num{font-family:'JetBrains Mono',monospace;font-size:12px;width:46px;text-align:right;}
+  .ia-tag{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px;text-transform:uppercase;}
+  .t-ok{background:#E1F2E9;color:#0F7A4D;} .t-warn{background:#FAF0DD;color:#B45309;}
+  .t-bad{background:#FBE9E7;color:#C2362F;} .t-info{background:#E6EEFC;color:#2563EB;}
+  .t-neutral{background:#EDF3F3;color:#4F5E5B;}
+  .meta{font-size:12px;color:#6E827F;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #DFE9E8;}
+  .iw-streaming::after{content:'';}
+</style></head><body><div class="wrap">
+  <h1>${iwEsc(r.title)}</h1>
+  <div class="meta"><strong>Prompt:</strong> ${iwEsc(prompt)}<br>${iwEsc(r.meta)}</div>
+  ${r.html}
+</div></body></html>`;
+
+      if (fmt === 'pdf') {
+        if (typeof openPrintWindow === 'function') {
+          openPrintWindow(r.title, `<div class="wrap"><h1>${iwEsc(r.title)}</h1><div class="meta">${iwEsc(prompt)}</div>${r.html}</div>`);
+        } else {
+          const w = window.open('', '_blank');
+          w.document.write(doc.replace('</body>', '<script>setTimeout(()=>window.print(),600)<\/script></body>'));
+          w.document.close();
+        }
+        return;
+      }
+      triggerDownload(doc, `${base}.html`, 'text/html');
+    };
+
+    window.copyInsight = function (btn) {
+      const r = state.results[state.active];
+      if (!r) return;
+      const text = r.markdown || $('iwBody')?.innerText || '';
+      const flash = (ok) => {
+        if (!btn) return;
+        const orig = btn.innerHTML;
+        btn.innerHTML = `<span class="material-icons">${ok ? 'check' : 'error'}</span> ${ok ? 'Copied' : 'Failed'}`;
+        setTimeout(() => { btn.innerHTML = orig; }, 1600);
+      };
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text).then(() => flash(true)).catch(() => flash(false));
+      } else flash(false);
+    };
+
+    // Close the workspace on Escape.
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && $('iwOverlay')?.classList.contains('show')) closeInsightWorkspace();
+    });
+
+    // Legacy Analyze button → Comparative Scorecard.
+    document.addEventListener('DOMContentLoaded', () => {
+      const legacy = document.getElementById('analyzeButton');
+      if (legacy) {
+        const fresh = legacy.cloneNode(true);   // drop the old modal handler
+        legacy.parentNode.replaceChild(fresh, legacy);
+        fresh.addEventListener('click', () => runInsight('scorecard'));
+      }
+      // Keep guard toggles reflected in the per-button cost estimates.
+      ['guardBlind', 'guardSwap', 'guardRecuse'].forEach(id =>
+        document.getElementById(id)?.addEventListener('change', () => refreshInsightDeck()));
+      document.getElementById('deckJudgeSelect')?.addEventListener('change', () => refreshInsightDeck());
+    });
+  })();
+  </script>
+
 </body>
 </html>
