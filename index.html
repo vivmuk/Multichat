@@ -2709,16 +2709,24 @@
     .icon-btn:hover { border-color: var(--border-strong) !important; color: var(--text-color) !important; background: var(--surface-2) !important; }
     .icon-btn .material-icons { font-size: 18px !important; color: inherit !important; }
 
+    /* Viewport-anchored: the menu is a body-level element, because .header
+       carries both overflow:hidden and a backdrop-filter and would otherwise
+       clip it and capture its fixed positioning. */
     .more-menu {
-      position: absolute; right: 0; top: calc(100% + 8px);
-      min-width: 236px;
+      position: fixed;
+      right: 14px;
+      top: calc(var(--appbar-h) + 6px);
+      width: min(300px, calc(100vw - 24px));
+      max-height: calc(100vh - var(--appbar-h) - 24px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       background: var(--surface-color);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       box-shadow: var(--shadow-lg);
       padding: 6px;
       display: none;
-      z-index: 120;
+      z-index: 1300;
     }
     .more-menu.open { display: block; animation: menuIn var(--dur) var(--ease); }
     @keyframes menuIn { from { opacity:0; transform: translateY(-6px) } to { opacity:1; transform:none } }
@@ -3298,9 +3306,34 @@
     .iw-report ol, .iw-report ul { margin-block: .4em 1em; }
 
     /* ── Responsive ──────────────────────────────────────────────────── */
+    /* Nav items must never be squeezed to zero width — that silently makes
+       destinations unclickable rather than visibly overflowing. */
+    .appnav-item { flex: 0 0 auto; }
+    .more-nav-group { display: none; }
+    .more-btn-label { display: none; font-size: 13px; font-weight: 600; }
+
     @media (max-width: 1180px) {
-      .appnav-item span:not(.material-icons) { display: none; }
+      .appnav-item span:not(.material-icons):not(.more-btn-label) { display: none; }
       .appnav-item { padding: 7px 10px; }
+    }
+
+    /* Below 900px the segmented nav cannot fit alongside the brand and
+       session meter, so it is retired entirely and every destination moves
+       into the menu sheet. */
+    @media (max-width: 900px) {
+      .appnav { display: none; }
+      .more-nav-group { display: block; }
+      .more-btn-label { display: inline; }
+      .icon-btn#moreBtn {
+        background: var(--p-50) !important;
+        border-color: var(--p-100) !important;
+        color: var(--p-700) !important;
+        padding: 9px 12px !important;
+        min-height: 42px;
+      }
+      .more-menu { right: 10px; width: min(330px, calc(100vw - 20px)); }
+      .more-item { padding: 12px 12px; font-size: 14px; min-height: 46px; }
+      .more-item .material-icons { font-size: 20px; }
     }
     /* Below 1024 the rail collapses and the mobile picker takes over. This
        restates the existing breakpoint because the shell rules above are
@@ -3308,6 +3341,18 @@
     @media (max-width: 1024px) {
       .rail-shell, .rail-shell.rail-collapsed { grid-template-columns: 1fr; }
       .model-drawer { display: none; }
+
+      /* The base `button` rule sets color:white, which the mobile model pills
+         inherit onto their white background — the model names were invisible. */
+      .mobile-model-tab { color: var(--text-color) !important; }
+      .mobile-model-tab.active { color: #fff !important; }
+      .mobile-model-tab .tab-status { background: var(--n-400); }
+      .mobile-model-tab.tab-complete .tab-status { background: var(--ok); }
+      .mobile-model-tab.tab-error .tab-status { background: var(--bad); }
+
+      /* Send stays prominent but on the primary colour, not the legacy near-black. */
+      #sendButton { background: var(--p-500) !important; }
+      #sendButton:active { background: var(--p-600) !important; }
     }
     @media (max-width: 900px) {
       :root { --rail-w: 250px; }
@@ -3391,30 +3436,12 @@
             <span id="sessionTokens" style="opacity:0.6;font-size:11px;"></span>
           </div>
           <div class="more-wrap">
-            <button class="icon-btn" id="moreBtn" title="More" aria-haspopup="true" aria-expanded="false">
+            <button class="icon-btn" id="moreBtn" title="Menu" aria-haspopup="true" aria-expanded="false" aria-label="Open menu">
               <span class="material-icons">apps</span>
+              <span class="more-btn-label">Menu</span>
               <span class="material-icons" style="font-size:16px !important;">arrow_drop_down</span>
             </button>
-            <div class="more-menu" id="moreMenu" role="menu">
-              <div class="more-menu-label">Explore</div>
-              <div class="more-item" id="dashboardButton" role="menuitem" title="Browse all Venice models — specs, pricing, capabilities">
-                <span class="material-icons">view_list</span> Models
-              </div>
-              <a class="more-item" href="benchmark.html" role="menuitem" title="Benchmark Lab — pit new vs. old models across design, reasoning, images and video">
-                <span class="material-icons">speed</span> Benchmark Lab
-              </a>
-              <a class="more-item" href="api-guide.html" role="menuitem" title="Venice API Guide">
-                <span class="material-icons">menu_book</span> API Guide
-              </a>
-              <div class="more-sep"></div>
-              <div class="more-menu-label">Session</div>
-              <div class="more-item" id="settingsButton" role="menuitem" title="API Key Settings">
-                <span class="material-icons">settings</span> API Key Settings
-              </div>
-              <div class="more-item" onclick="openCmdPalette()" role="menuitem">
-                <span class="material-icons">bolt</span> Command Palette <small>Ctrl K</small>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
@@ -3614,6 +3641,51 @@
           <span class="material-icons">refresh</span> Re-run
         </button>
         <div class="canvas-meta" id="iwFootMeta" style="margin-left:auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App menu — lives at body level because .header has overflow:hidden and a
+       backdrop-filter, which would both clip it and capture its fixed positioning. -->
+  <div class="more-menu" id="moreMenu" role="menu">
+    <div class="more-menu-label">Explore</div>
+    <div class="more-item" id="dashboardButton" role="menuitem" title="Browse all Venice models — specs, pricing, capabilities">
+      <span class="material-icons">view_list</span> Models
+    </div>
+    <a class="more-item" href="benchmark.html" role="menuitem" title="Benchmark Lab — pit new vs. old models across design, reasoning, images and video">
+      <span class="material-icons">speed</span> Benchmark Lab
+    </a>
+    <a class="more-item" href="api-guide.html" role="menuitem" title="Venice API Guide">
+      <span class="material-icons">menu_book</span> API Guide
+    </a>
+    <div class="more-sep"></div>
+    <div class="more-menu-label">Session</div>
+    <div class="more-item" id="settingsButton" role="menuitem" title="API Key Settings">
+      <span class="material-icons">settings</span> API Key Settings
+    </div>
+    <div class="more-item" onclick="openCmdPalette()" role="menuitem">
+      <span class="material-icons">bolt</span> Command Palette <small>Ctrl K</small>
+    </div>
+    <!-- Mobile only: the segmented nav is hidden below 900px, so every
+         primary destination has to be reachable from here. These delegate
+         to the real nav buttons so there is one set of handlers. -->
+    <div class="more-nav-group">
+      <div class="more-sep"></div>
+      <div class="more-menu-label">Go to</div>
+      <div class="more-item" role="menuitem" onclick="document.getElementById('navChat').click()">
+        <span class="material-icons">forum</span> Chat
+      </div>
+      <div class="more-item" role="menuitem" onclick="document.getElementById('fusionBtn').click()">
+        <span class="material-icons">merge_type</span> Fusion
+      </div>
+      <div class="more-item" role="menuitem" onclick="document.getElementById('imgPlayBtn').click()">
+        <span class="material-icons">image</span> Images
+      </div>
+      <div class="more-item" role="menuitem" onclick="document.getElementById('batchBtn').click()">
+        <span class="material-icons">batch_prediction</span> Batch
+      </div>
+      <div class="more-item" role="menuitem" onclick="document.getElementById('historyBtn').click()">
+        <span class="material-icons">history</span> History
       </div>
     </div>
   </div>
