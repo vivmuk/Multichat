@@ -5,11 +5,30 @@
   publish = "."
 
 # Multi-page static site — no SPA catch-all redirect.
-# Each .html file (index.html, dashboard.html, benchmark.html, api-guide.html) is a real route.
+# Each .html file is a real route:
+#   index.html     → model catalog (home)
+#   chat.html      → multi-model chat + Fusion
+#   benchmark.html → benchmark lab
+#   api-guide.html → Venice API guide
 # VENICE_API_KEY is injected at build time via build.js (set in Netlify dashboard).
 
 [[redirects]]
   from = "/fusion"
-  to = "/index.html"
+  to = "/chat.html"
   status = 200
 
+# The catalog used to live at /dashboard.html; keep old links working.
+[[redirects]]
+  from = "/dashboard"
+  to = "/index.html"
+  status = 301
+
+[[redirects]]
+  from = "/chat"
+  to = "/chat.html"
+  status = 200
+
+[[redirects]]
+  from = "/models"
+  to = "/index.html"
+  status = 200
