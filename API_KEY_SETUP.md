@@ -4,7 +4,7 @@ The application now uses environment variables to store the Venice AI API key se
 
 ## For Netlify Deployment (Recommended)
 
-### Static HTML App (index.html)
+### Static HTML App (`index.html` model catalog, `chat.html`, `benchmark.html`)
 
 1. In Netlify Dashboard:
    - Go to **Site settings** > **Environment variables**

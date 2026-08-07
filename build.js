@@ -22,7 +22,8 @@ const scriptInjection = apiKey ? `
   </script>` : '';
 
 // HTML files to process
-const htmlFiles = ['index.html', 'dashboard.html', 'benchmark.html'];
+// index.html is the model catalog (home), chat.html is the multi-model chat.
+const htmlFiles = ['index.html', 'chat.html', 'benchmark.html'];
 
 htmlFiles.forEach(filename => {
   const htmlPath = path.join(__dirname, filename);
