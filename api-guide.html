@@ -149,6 +149,10 @@
     .param-table .p-req{font-size:11px;background:var(--red-bg);color:var(--red);border-radius:4px;padding:2px 6px;font-weight:600;}
     .param-table .p-opt{font-size:11px;background:var(--green-bg);color:var(--green);border-radius:4px;padding:2px 6px;font-weight:600;}
     .param-table .p-desc{color:var(--text-secondary);}
+    .pol-cell{font-size:11px;font-weight:700;border-radius:4px;padding:2px 7px;white-space:nowrap;display:inline-block;}
+    .pol-cell.open{background:var(--green-bg);color:var(--green);}
+    .pol-cell.limited{background:var(--amber-bg);color:var(--amber);}
+    .pol-cell.blocked{background:var(--red-bg);color:var(--red);}
 
     /* PRICING TABLE */
     .pricing-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;margin:16px 0;}
@@ -972,6 +976,72 @@ print(transcription.text)</code></pre>
       <div class="callout callout-warn">
         <span class="material-icons">warning</span>
         <div class="callout-text"><strong>Async processing:</strong> Video generation is queue-based. Submit a job and poll for results using the returned job ID.</div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="material-icons">policy</span>
+        <div class="callout-text"><strong>Picking a model:</strong> the three axes below decide most video jobs. Only the voice column comes from the API (<code>model_spec.constraints.audio</code>) — likeness and NSFW are provider policy and can change without notice. The <a href="index.html?type=video">Video tab of the catalog</a> renders these live per model, including models added after this page was written.</div>
+      </div>
+
+      <table class="param-table">
+        <thead>
+          <tr><th>Model family</th><th>Tier</th><th>Likeness / IP</th><th>Native voice</th><th>Adult / NSFW</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="p-name">wan-*</td>
+            <td><span class="p-type">private</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td><span class="pol-cell limited">Varies</span></td>
+            <td><span class="pol-cell limited">Limited</span></td>
+            <td class="p-desc">Open weights on Venice GPUs — no upstream likeness filter. Audio depends on the revision; trust <code>constraints.audio</code>. Explicit prompts are accepted but render unreliably.</td>
+          </tr>
+          <tr>
+            <td class="p-name">ovi-*</td>
+            <td><span class="p-type">private</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td><span class="pol-cell open">Native</span></td>
+            <td><span class="pol-cell limited">Limited</span></td>
+            <td class="p-desc">Twin audio/video backbone: synced speech, multi-speaker dialogue and SFX in one pass. Same open-weights posture as Wan.</td>
+          </tr>
+          <tr>
+            <td class="p-name">sora-*</td>
+            <td><span class="p-type">anonymized</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td><span class="pol-cell open">Native</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td class="p-desc">A real face needs a verified Cameo with permission; copyrighted characters are opt-in by the rightsholder.</td>
+          </tr>
+          <tr>
+            <td class="p-name">veo-*</td>
+            <td><span class="p-type">anonymized</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td><span class="pol-cell open">Native</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td class="p-desc">Public-figure filter fires even on celebrity-adjacent hallucinations. Zero tolerance on explicit content.</td>
+          </tr>
+          <tr>
+            <td class="p-name">kling-*</td>
+            <td><span class="p-type">anonymized</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td><span class="pol-cell limited">Varies</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td class="p-desc">Strictest moderation of the set — prompt, upload and output are each screened. v3 scores audio, earlier turbo revisions do not.</td>
+          </tr>
+          <tr>
+            <td class="p-name">seedance-*</td>
+            <td><span class="p-type">anonymized</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td><span class="pol-cell open">Native</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td class="p-desc">Face generation restricted by the provider. Dual-channel stereo audio.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warn">
+        <span class="material-icons">gavel</span>
+        <div class="callout-text"><strong>Permissive is not cleared:</strong> an "Open" likeness rating describes what the model will render, not what you hold the rights to publish. Clearing a real person's likeness or a protected character remains your responsibility.</div>
       </div>
 
       <div class="code-block">
