@@ -559,6 +559,37 @@
     }
     .detail-footer { padding: 4px 20px 8px; font-size: 9px; color: var(--text-muted); }
 
+    /* ===== VOICE AUDITION (TTS models) ===== */
+    .voice-group-head {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--text-muted); margin: 14px 0 6px;
+    }
+    .voice-group-head:first-child { margin-top: 2px; }
+    .voice-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+    .voice-btn {
+      display: flex; align-items: center; gap: 6px; width: 100%;
+      padding: 7px 9px; border-radius: var(--radius-md); border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-primary); cursor: pointer;
+      font-family: inherit; font-size: 11px; font-weight: 600; text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .voice-btn:hover { border-color: var(--accent); background: var(--accent-bg); }
+    .voice-btn.playing { border-color: var(--accent); background: var(--accent-bg); }
+    .voice-btn .material-icons { font-size: 16px; color: var(--accent); flex: none; }
+    .voice-btn.playing .material-icons { animation: pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .voice-btn .vb-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .voice-compare-note {
+      font-size: 11px; color: var(--text-secondary); background: var(--accent-bg);
+      border: 1px dashed var(--border); border-radius: var(--radius-md); padding: 8px 10px; margin-bottom: 10px;
+    }
+    .voice-flag { font-size: 13px; margin-right: 2px; }
+    .voice-cap-badge {
+      display: inline-flex; padding: 1px 7px; border-radius: var(--radius-full);
+      font-size: 9px; font-weight: 600; background: var(--teal-bg); color: var(--teal); margin-left: 6px;
+    }
+
     /* ===== EMPTY STATE ===== */
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
     .empty-state .material-icons { font-size: 48px; color: var(--border); margin-bottom: 12px; }
@@ -1716,10 +1747,20 @@
           max = formatTokens(Math.floor(DIEM_BUDGET / price)) + ' secs';
         }
         row.sortPrice = price > 0 ? price : Number.POSITIVE_INFINITY;
+        row.voices = (raw.model_spec?.voices || []).slice();
+        row.voiceFormats = raw.model_spec?.supported_formats || [];
+        row.customVoiceId = !!raw.model_spec?.supports_custom_voice_id;
+        const VOICE_SAMPLE = "Oh wow — hold on, seriously? The whole plan changed overnight? That's... actually kind of brilliant. Okay, okay, I'm in. Let's see what you've got.";
+        row.voiceSample = VOICE_SAMPLE;
+        // Qwen 3 is the only family that accepts an emotion `prompt` — that is
+        // what the audition clip leans on, per the API's parameter matrix.
+        const qwenEmotion = /qwen3/.test(raw.id);
+        row.voiceParams = qwenEmotion ? ['emotion prompt', 'temperature', 'top_p'] : [];
         row.stats = [
           { label: unit || 'Price', value: price > 0 ? '$' + price.toFixed(2) : '—', cls: ntPriceClass(price > 1 ? price / 100 : price) },
           { label: 'Max @ $48', value: max },
           { label: 'First audio', value: '~' + ttsLatencyMs(raw.id) + 'ms' },
+          { label: 'Voices', value: row.voices.length || '—' },
         ];
         row.priceCsv = { unit: unit || 'n/a', input: price, output: 0 };
       }
@@ -2342,11 +2383,139 @@
 
         ${r.text ? buildDetailPanel(r.text, { omitHeader: true }) : statCards}
         ${r.video ? buildVideoPanel(r) : ''}
+        ${r.type === 'tts' ? buildVoicesPanel(r) : ''}
 
         ${!r.text && r.traits.length ? `<div class="detail-card"><h5>Traits</h5><div class="trait-badges">${r.traits.map(t => `<span class="trait-badge">${escHtml(t)}</span>`).join('')}</div></div>` : ''}
 
         <div class="drawer-hint">
           <kbd>←</kbd> <kbd>→</kbd> flip through models · <kbd>Esc</kbd> close · <kbd>C</kbd> copy this ID
+        </div>`;
+    }
+
+    // =====================================================================
+    // VOICE AUDITION — static pre-generated clips per TTS model/voice.
+    // Clips live in assets/voice-clips/<model-id>/<voice>.<ext> and were
+    // generated with a fixed expressive sample line so models A/B fairly.
+    // =====================================================================
+    const VOICE_CLIP_EXT = { };
+
+    // Kokoro voice ids carry a language prefix (af_, bm_, zf_, …) — group on
+    // it so 54 voices read as ~10 language blocks instead of one wall.
+    const KOKORO_LANG = {
+      af: '🇺🇸 English (American · female)', am: '🇺🇸 English (American · male)',
+      bf: '🇬🇧 English (British · female)', bm: '🇬🇧 English (British · male)',
+      ef: '🇪🇸 Spanish (female)', em: '🇪🇸 Spanish (male)',
+      ff: '🇫🇷 French (female)', hf: '🇮🇳 Hindi (female)', hm: '🇮🇳 Hindi (male)',
+      if: '🇮🇹 Italian (female)', im: '🇮🇹 Italian (male)',
+      jf: '🇯🇵 Japanese (female)', jm: '🇯🇵 Japanese (male)',
+      pf: '🇧🇷 Portuguese (female)', pm: '🇧🇷 Portuguese (male)',
+      zf: '🇨🇳 Chinese (female)', zm: '🇨🇳 Chinese (male)',
+    };
+
+    function groupVoices(modelId, voices) {
+      if (/kokoro/.test(modelId)) {
+        const groups = new Map();
+        voices.forEach(v => {
+          const pfx = v.slice(0, 2);
+          const label = KOKORO_LANG[pfx] || 'Other';
+          if (!groups.has(label)) groups.set(label, []);
+          groups.get(label).push(v);
+        });
+        return [...groups.entries()];
+      }
+      return [[null, voices]];   // one flat group for every other family
+    }
+
+    function voiceClipPath(modelId, voice, fmt) {
+      return `assets/voice-clips/${modelId}/${voice}.${fmt || 'mp3'}`;
+    }
+
+    let currentVoiceAudio = null;
+    let currentVoiceBtn = null;
+
+    function playVoiceClip(btn, modelId, voice, fmt) {
+      const path = voiceClipPath(modelId, voice, fmt);
+      if (currentVoiceBtn === btn && currentVoiceAudio && !currentVoiceAudio.paused) {
+        currentVoiceAudio.pause(); return;
+      }
+      stopVoiceClip();
+      const audio = new Audio(path);
+      currentVoiceAudio = audio; currentVoiceBtn = btn;
+      btn.classList.add('playing');
+      const icon = btn.querySelector('.material-icons');
+      if (icon) icon.textContent = 'stop';
+      audio.addEventListener('ended', () => stopVoiceClip());
+      let fellBack = false;
+      audio.addEventListener('error', () => {
+        // No pre-generated clip for this combo — fall back to live TTS once.
+        if (fellBack) return;
+        fellBack = true;
+        genVoiceLive(btn, modelId, voice);
+      });
+      audio.play().catch(() => { if (!fellBack) { fellBack = true; genVoiceLive(btn, modelId, voice); } });
+    }
+
+    function genVoiceLive(btn, modelId, voice) {
+      const apiKey = getApiKey();
+      if (!apiKey) { stopVoiceClip(); return; }
+      fetch(`${BASE_URL}/audio/speech`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: modelId, voice, input: 'Oh wow — hold on, seriously? The whole plan changed overnight?', response_format: 'mp3' }),
+      }).then(r => r.ok ? r.blob() : Promise.reject(r.status))
+        .then(blob => {
+          const url = URL.createObjectURL(blob);
+          const audio = new Audio(url);
+          currentVoiceAudio = audio; currentVoiceBtn = btn;
+          audio.addEventListener('ended', () => { URL.revokeObjectURL(url); stopVoiceClip(); });
+          audio.play().catch(() => stopVoiceClip());
+        })
+        .catch(() => stopVoiceClip());
+    }
+
+    function stopVoiceClip() {
+      if (currentVoiceAudio) { currentVoiceAudio.pause(); currentVoiceAudio = null; }
+      if (currentVoiceBtn) {
+        currentVoiceBtn.classList.remove('playing');
+        const icon = currentVoiceBtn.querySelector('.material-icons');
+        if (icon) icon.textContent = 'play_arrow';
+        currentVoiceBtn = null;
+      }
+    }
+
+    // Ext the pre-generated clips use per model — mirrors the generator
+    // script's format choice (mp3 when supported, else wav).
+    function clipExtFor(modelId, formats) {
+      if (VOICE_CLIP_EXT[modelId]) return VOICE_CLIP_EXT[modelId];
+      return (formats || []).includes('mp3') ? 'mp3' : 'wav';
+    }
+
+    function buildVoicesPanel(r) {
+      const ext = clipExtFor(r.id, r.voiceFormats);
+      const caps = (r.voiceParams || []).map(p => `<span class="voice-cap-badge" title="This model accepts the <${p}> parameter on /audio/speech">${escHtml(p)}</span>`).join('');
+      const customBadge = r.customVoiceId ? '<span class="voice-cap-badge" title="Accepts a custom voice ID">custom voice ID</span>' : '';
+      const fmtBadge = `<span class="voice-cap-badge" title="Supported response formats">${escHtml((r.voiceFormats || []).join(', '))}</span>`;
+
+      const groups = groupVoices(r.id, r.voices);
+      const groupHtml = groups.map(([label, voices]) => `
+        ${label ? `<div class="voice-group-head"><span class="material-icons" style="font-size:12px;">public</span>${escHtml(label)} · ${voices.length}</div>` : ''}
+        <div class="voice-grid">${voices.map(v => `
+          <button class="voice-btn" onclick="event.stopPropagation(); playVoiceClip(this, '${escAttr(r.id)}', '${escAttr(v)}', '${escAttr(ext)}')"
+                  title="Play audition clip — ${attr(r.voiceSample || '')}">
+            <span class="material-icons">play_arrow</span><span class="vb-name">${escHtml(v)}</span>
+          </button>`).join('')}
+        </div>`).join('');
+
+      return `
+        <div class="detail-card" style="margin-top:12px;">
+          <h5>Voice audition — ${r.voices.length} voices <span style="float:right;font-weight:400;">static clips · offline-ready</span></h5>
+          <div class="voice-compare-note">
+            Every voice reads the same expressive line, so models and voices
+            compare apples-to-apples. Static clips play instantly; anything
+            missing falls back to live generation.
+            ${(caps || customBadge) ? `<div style="margin-top:6px;">Parameters this model accepts: ${caps}${customBadge} · formats: ${fmtBadge}</div>` : ''}
+          </div>
+          ${groupHtml}
         </div>`;
     }
 
