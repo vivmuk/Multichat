@@ -420,6 +420,9 @@
     .chip-voice { background: var(--teal-bg); color: var(--teal); }
     .chip-voice.active { background: var(--teal); color: white; border-color: var(--teal); box-shadow: 0 2px 8px rgba(20,184,166,0.3); }
     .chip-voice:hover:not(.active) { border-color: var(--teal); }
+    .chip-filter { background: var(--cyan-bg); color: var(--cyan); }
+    .chip-filter.active { background: var(--cyan); color: white; border-color: var(--cyan); box-shadow: 0 2px 8px rgba(6,182,212,0.3); }
+    .chip-filter:hover:not(.active) { border-color: var(--cyan); }
     .chip-nsfw { background: var(--rose-bg); color: var(--rose); }
     .chip-nsfw.active { background: var(--rose); color: white; border-color: var(--rose); box-shadow: 0 2px 8px rgba(244,63,94,0.3); }
     .chip-nsfw:hover:not(.active) { border-color: var(--rose); }
@@ -1149,17 +1152,21 @@
           <button class="filter-chip chip-video" data-filter="video" onclick="toggleFilter(this)">
             <span class="material-icons check-icon">check</span><span class="material-icons">videocam</span> Video In
           </button>
-          <button class="filter-chip chip-likeness" data-filter="vidLikeness" onclick="toggleFilter(this)"
-                  title="Video models that do not block real people or copyrighted characters">
-            <span class="material-icons check-icon">check</span><span class="material-icons">record_voice_over</span> Likeness OK
+          <button class="filter-chip chip-likeness" data-filter="polLikeness" onclick="toggleFilter(this)"
+                  title="Video and image models that do not block real people or copyrighted characters">
+            <span class="material-icons check-icon">check</span><span class="material-icons">face</span> Likeness OK
+          </button>
+          <button class="filter-chip chip-nsfw" data-filter="polNsfw" onclick="toggleFilter(this)"
+                  title="Video and image models that do not refuse adult content">
+            <span class="material-icons check-icon">check</span><span class="material-icons">explicit</span> NSFW OK
           </button>
           <button class="filter-chip chip-voice" data-filter="vidVoice" onclick="toggleFilter(this)"
                   title="Video models that generate their own dialogue and sound effects">
             <span class="material-icons check-icon">check</span><span class="material-icons">graphic_eq</span> Native Voice
           </button>
-          <button class="filter-chip chip-nsfw" data-filter="vidNsfw" onclick="toggleFilter(this)"
-                  title="Video models that do not refuse adult content">
-            <span class="material-icons check-icon">check</span><span class="material-icons">explicit</span> NSFW OK
+          <button class="filter-chip chip-filter" data-filter="imgUnfiltered" onclick="toggleFilter(this)"
+                  title="Image models served from Venice hardware with no third-party classifier in the path">
+            <span class="material-icons check-icon">check</span><span class="material-icons">shield</span> No Filter
           </button>
           <button class="filter-chip chip-vision" data-filter="multiImage" onclick="toggleFilter(this)">
             <span class="material-icons check-icon">check</span><span class="material-icons">collections</span> Multi-image
@@ -1392,14 +1399,34 @@
       unrated: { label: 'Unrated', icon: 'help_outline',  cls: 'pol-unrated' },
     };
 
-    const POLICY_AXES = [
-      { key: 'likeness', label: 'Likeness / IP', short: 'Likeness', icon: 'record_voice_over',
-        desc: 'Whether real people (actors, public figures) and copyrighted characters survive the provider filter.' },
-      { key: 'voice',    label: 'Native voice',  short: 'Voice',    icon: 'graphic_eq',
-        desc: 'Whether the model scores its own dialogue and sound effects, or returns a silent clip you must dub.' },
-      { key: 'nsfw',     label: 'Adult / NSFW',  short: 'NSFW',     icon: 'explicit',
-        desc: 'Whether explicit adult content is permitted and actually renders usably.' },
-    ];
+    // Video and image models are judged on three axes each. Likeness and NSFW
+    // ask the same question of both; the third differs because the media do.
+    // For video it is whether the model scores its own audio; for images it is
+    // where the filter lives, which for a still is the thing that decides
+    // whether a prompt is refused at all.
+    const POLICY_AXES = {
+      video: [
+        { key: 'likeness', label: 'Likeness / IP', short: 'Likeness', icon: 'record_voice_over',
+          desc: 'Whether real people (actors, public figures) and copyrighted characters survive the provider filter.' },
+        { key: 'voice',    label: 'Native voice',  short: 'Voice',    icon: 'graphic_eq',
+          desc: 'Whether the model scores its own dialogue and sound effects, or returns a silent clip you must dub.' },
+        { key: 'nsfw',     label: 'Adult / NSFW',  short: 'NSFW',     icon: 'explicit',
+          desc: 'Whether explicit adult content is permitted and actually renders usably.' },
+      ],
+      image: [
+        { key: 'likeness', label: 'Likeness / IP', short: 'Likeness', icon: 'face',
+          desc: 'Whether real people (actors, public figures) and copyrighted characters survive the filter, where one exists.' },
+        { key: 'filter',   label: 'Filter',        short: 'Filter',   icon: 'shield',
+          desc: 'Where the refusal lives. Open weights on Venice hardware carry no classifier wrapper; a proxied model brings the provider\'s own.' },
+        { key: 'nsfw',     label: 'Adult / NSFW',  short: 'NSFW',     icon: 'explicit',
+          desc: 'Whether explicit adult content is permitted and the weights were actually trained to render it.' },
+      ],
+    };
+
+    // The profile a row carries lives on row.policy; its .kind picks the axes.
+    function axesFor(row) {
+      return (row && row.policy && POLICY_AXES[row.policy.kind]) || null;
+    }
 
     // Matched against the lowercased model ID, first hit wins — so Ovi (built
     // on a Wan backbone, but its own policy story) is listed before Wan.
@@ -1507,6 +1534,7 @@
                  : 'text → video';
 
       return {
+        kind: 'video',
         family: entry ? entry.family : 'Unlisted',
         mode,
         modeSource: modeRaw ? 'api' : 'id',
@@ -1517,6 +1545,167 @@
         audioConfigurable: configurable,
         likeness: axis('likeness'),
         voice: axis('voice'),
+        nsfw: axis('nsfw'),
+      };
+    }
+
+    // =====================================================================
+    // IMAGE CONTENT POLICY
+    //
+    // Images work differently from video, and the difference is the whole
+    // story: a filter is not part of a model's weights, it is a classifier
+    // the host wraps around them. Venice's product layer adds none of its
+    // own, so an open-weight model served on Venice hardware has nothing
+    // between the prompt and the sampler, while a model proxied to OpenAI,
+    // Google or ByteDance carries that provider's prompt and output screens
+    // and can refuse a request Venice would have allowed.
+    //
+    // That makes the filter axis API-derived: model_spec.privacy already
+    // reports "private" (Venice-hosted) vs "anonymized" (proxied), which is
+    // exactly the distinction. Likeness and NSFW stay curated, as for video.
+    //
+    // NSFW here splits two ways that matter when picking a model. A model
+    // can be unfiltered yet untrained for explicit work — nothing refuses
+    // the prompt, the result is simply tame. Those rate "limited", not
+    // "open"; "open" is reserved for weights actually trained for it.
+    // =====================================================================
+    const IMAGE_POLICY = [
+      // Purpose-built adult models first: several carry an SDXL/Flux
+      // lineage whose generic patterns appear further down this list.
+      {
+        test: /lustify/, family: 'Lustify',
+        likeness: { state: 'open', note: 'Open weights on Venice hardware, no classifier wrapper. An SDXL-lineage model, so a well-known face may render from the base training alone.' },
+        nsfw:     { state: 'open', note: 'Purpose-built for photoreal adult imagery — this is what the weights were fine-tuned for, so results are usable rather than merely un-refused.' },
+        source: 'Venice uncensored image roster + Lustify model lineage',
+      },
+      {
+        test: /pony/, family: 'Pony',
+        likeness: { state: 'open', note: 'Open weights on Venice hardware, no classifier wrapper. Stylised output, so likeness fidelity is lower than a photoreal model.' },
+        nsfw:     { state: 'open', note: 'The Pony lineage is explicitly trained for adult content and responds to its own scoring tags.' },
+        source: 'Venice uncensored image roster + Pony Diffusion lineage',
+      },
+      {
+        test: /wai|illustrious/, family: 'WAI / Illustrious',
+        likeness: { state: 'open', note: 'No classifier wrapper. Anime-domain weights: real-person likeness is out of distribution, so expect a stylised approximation rather than a match.' },
+        nsfw:     { state: 'open', note: 'Anime-domain adult content is well within this model\'s training.' },
+        source: 'Venice uncensored image roster (listed as "Anime (WAI)")',
+      },
+      {
+        test: /uncensored/, family: 'Uncensored fine-tune',
+        likeness: { state: 'open', note: 'A de-restricted fine-tune served on Venice hardware with no classifier wrapper.' },
+        nsfw:     { state: 'open', note: 'Fine-tuned specifically to remove the base model\'s reluctance around explicit content.' },
+        source: 'Venice uncensored image roster',
+      },
+      {
+        test: /chroma/, family: 'Chroma',
+        likeness: { state: 'open', note: 'Flux-lineage open weights on Venice hardware, no classifier wrapper.' },
+        nsfw:     { state: 'open', note: 'A Flux derivative retrained without the base model\'s content restrictions.' },
+        source: 'Venice uncensored image roster + Chroma model lineage',
+      },
+      {
+        test: /z-image/, family: 'Z-Image',
+        likeness: { state: 'open', note: 'Open weights on Venice hardware, no classifier wrapper.' },
+        nsfw:     { state: 'open', note: 'Listed among Venice\'s uncensored image models; the fast turbo sampling makes it cheap to iterate on.' },
+        source: 'Venice uncensored image roster',
+      },
+
+      // Third-party proxied models: the provider's filter, not Venice's.
+      {
+        test: /gpt-image|dall-?e/, family: 'OpenAI GPT Image',
+        likeness: { state: 'limited', note: 'Stylised depictions of public figures are permitted, but photorealistic likenesses of a specific person stay blocked, and any public figure can opt out of being generated at all.' },
+        nsfw:     { state: 'blocked', note: 'Explicit content is refused under OpenAI usage policy.' },
+        source: 'OpenAI image content policy',
+      },
+      {
+        test: /nano-banana|gemini|imagen/, family: 'Google (Nano Banana / Imagen)',
+        likeness: { state: 'blocked', note: 'Google applies IP and likeness restrictions that reach beyond public figures — protected characters and reference-image rights are screened too, and the model clears none of them for you.' },
+        nsfw:     { state: 'blocked', note: 'Explicit content is refused.' },
+        source: 'Google Gemini image generation policy',
+      },
+      {
+        test: /seedream|seedance/, family: 'ByteDance Seedream',
+        likeness: { state: 'blocked', note: 'Face and likeness generation is restricted by the provider.' },
+        nsfw:     { state: 'blocked', note: 'Explicit content is not permitted.' },
+        source: 'ByteDance Seedream content policy',
+      },
+
+      // Unfiltered but not trained for adult work — the "limited" case.
+      {
+        test: /flux/, family: 'Flux',
+        likeness: { state: 'open', note: 'Open weights on Venice hardware. The Flux licence carries an acceptable-use policy, but that is a policy document, not a filter compiled into the weights — nothing intercepts the prompt.' },
+        nsfw:     { state: 'limited', note: 'Nothing refuses the prompt, but the base Flux training is deliberately tame around explicit anatomy. Use the uncensored fine-tune or Chroma if that is the job.' },
+        source: 'Black Forest Labs Flux model card + Venice private-tier hosting',
+      },
+      {
+        test: /hidream/, family: 'HiDream',
+        likeness: { state: 'open', note: 'Open weights on Venice hardware, no classifier wrapper.' },
+        nsfw:     { state: 'limited', note: 'Unfiltered but not trained for explicit output — prompts are accepted, results are tame.' },
+        source: 'HiDream open weights + Venice private-tier hosting',
+      },
+      {
+        test: /qwen/, family: 'Qwen Image',
+        likeness: { state: 'open', note: 'Open weights on Venice hardware, no classifier wrapper. Strong at legible in-image text.' },
+        nsfw:     { state: 'limited', note: 'Unfiltered but tame: the training set was not built for explicit content.' },
+        source: 'Qwen Image open weights + Venice private-tier hosting',
+      },
+      {
+        test: /sd-?3|sd35|sdxl|stable-?diffusion/, family: 'Stable Diffusion',
+        likeness: { state: 'open', note: 'Open weights on Venice hardware, no classifier wrapper.' },
+        nsfw:     { state: 'limited', note: 'SD 3.x in particular was filtered at training time around human anatomy, so explicit prompts are accepted but render poorly.' },
+        source: 'Stability AI model cards + Venice private-tier hosting',
+      },
+    ];
+
+    // Where the refusal lives. This one is not curated: model_spec.privacy
+    // already draws exactly the line that matters, so it is read from the API.
+    function filterAxisFromPrivacy(privacy) {
+      if (privacy === 'private') {
+        return { state: 'open', source: 'Venice API',
+          note: 'Venice-hosted (private tier): the weights run on Venice\'s own infrastructure with no third-party classifier wrapped around them, and Venice adds no product filter of its own. Only the model\'s own training limits apply.' };
+      }
+      if (privacy === 'anonymized') {
+        return { state: 'blocked', source: 'Venice API',
+          note: 'Proxied to a third-party provider (anonymized tier). That provider screens prompts and outputs with its own classifiers and can refuse a request Venice itself would have allowed.' };
+      }
+      return { state: 'unrated', source: 'Venice API', inferred: true,
+        note: 'The API did not report a privacy tier for this model, so where its filter lives is unknown.' };
+    }
+
+    function imageProfile(raw, spec) {
+      const id = String(raw.id || '').toLowerCase();
+      const c = spec.constraints || {};
+      const entry = IMAGE_POLICY.find(e => e.test.test(id)) || null;
+      const privacy = spec.privacy || 'unknown';
+
+      const axis = key => {
+        const fromTable = entry && entry[key];
+        if (fromTable && fromTable.state !== 'unrated') {
+          return { state: fromTable.state, note: fromTable.note, source: entry.source, verified: true };
+        }
+        const inf = inferFromPrivacy(privacy, key);
+        return { state: inf.state, note: inf.note, inferred: true, source: 'Inferred from privacy tier' };
+      };
+
+      // Each image model commits to one sizing idiom; sending the wrong one
+      // is a 400. The API says which, and the old card never surfaced it.
+      const ratios = c.aspectRatios || c.aspect_ratios || [];
+      const resolutions = c.resolutions || [];
+      const sizing = (ratios.length || resolutions.length) ? 'aspect + resolution' : 'width × height';
+
+      return {
+        kind: 'image',
+        family: entry ? entry.family : 'Unlisted',
+        sizing,
+        aspectRatios: ratios,
+        defaultAspectRatio: c.defaultAspectRatio || '',
+        resolutions,
+        defaultResolution: c.defaultResolution || '',
+        widthHeightDivisor: c.widthHeightDivisor || 0,
+        stepsDefault: c.steps?.default || 0,
+        stepsMax: c.steps?.max || 0,
+        promptLimit: c.promptCharacterLimit || 0,
+        likeness: axis('likeness'),
+        filter: filterAxisFromPrivacy(privacy),
         nsfw: axis('nsfw'),
       };
     }
@@ -1692,7 +1881,7 @@
         stats: [],
         priceCsv: {},
         text: null,
-        video: null,
+        policy: null,   // video/image content-policy profile
         raw,
       };
 
@@ -1711,15 +1900,22 @@
       }
 
       else if (type === 'image') {
+        const ip = imageProfile(raw, spec);
         const resPrices = p.resolutions ? Object.values(p.resolutions).map(r => r.usd).filter(n => n > 0) : [];
         const price = p.generation?.usd ?? p.per_image?.usd ?? p.per_generation?.usd ?? p.inference?.usd ?? p.usd
                    ?? (resPrices.length ? Math.min(...resPrices) : 0);
+        row.policy = ip;
+        row.family = ip.family;
         row.sortPrice = price > 0 ? price : Number.POSITIVE_INFINITY;
+        // The upscale prices the API attaches to every image row are shared
+        // account-wide SKUs, not this model's own capability, so they moved to
+        // the drawer (labelled as such) and the card shows what varies instead.
         row.stats = [
           { label: 'Per image', value: price > 0 ? '$' + price.toFixed(3) : '—', cls: ntPriceClass(price) },
           { label: 'Max @ $48', value: price > 0 ? Math.floor(DIEM_BUDGET / price).toLocaleString() : '—' },
-          { label: 'Upscale 2×', value: '$' + (p.upscale?.['2x']?.usd ?? 0.02).toFixed(2) },
-          { label: 'Upscale 4×', value: '$' + (p.upscale?.['4x']?.usd ?? 0.08).toFixed(2) },
+          { label: 'Sizing',    value: ip.sizing },
+          { label: 'Filter',    value: ip.filter.state === 'open' ? 'None'
+                                     : ip.filter.state === 'blocked' ? 'Provider' : 'Unknown' },
         ];
         row.priceCsv = { unit: '$/image', input: price, output: 0 };
       }
@@ -1809,7 +2005,7 @@
       else if (type === 'video') {
         const vp = videoProfile(raw, spec);
         const price = p.per_second?.usd ?? p.per_video?.usd ?? p.generation?.usd ?? 0;
-        row.video = vp;
+        row.policy = vp;
         row.videoMode = vp.mode;
         row.family = vp.family;
         row.sortPrice = price > 0 ? price : Number.POSITIVE_INFINITY;
@@ -1946,11 +2142,14 @@
     const CAP_FILTERS = new Set(['reasoning','reasoningEffort','vision','multiImage','code',
       'websearch','xsearch','functions','schema','logprobs','audio','video','tee','e2ee']);
 
-    // Filter name -> the policy axis on row.video it reads.
-    const VIDEO_FILTERS = new Map([
-      ['vidLikeness', 'likeness'],
-      ['vidVoice',    'voice'],
-      ['vidNsfw',     'nsfw'],
+    // Filter name -> the policy axis on row.policy it reads, and which kinds
+    // of model can satisfy it. Likeness and NSFW ask the same question of
+    // video and image alike, so those chips span both tabs.
+    const POLICY_FILTERS = new Map([
+      ['polLikeness',   { axis: 'likeness', kinds: ['video', 'image'] }],
+      ['polNsfw',       { axis: 'nsfw',     kinds: ['video', 'image'] }],
+      ['vidVoice',      { axis: 'voice',    kinds: ['video'] }],
+      ['imgUnfiltered', { axis: 'filter',   kinds: ['image'] }],
     ]);
 
     function applyFilters() {
@@ -1982,11 +2181,15 @@
           // merely renders adult content unreliably is still a candidate, while
           // "Blocked" and "Unrated" are not. Non-video rows can never satisfy
           // these, so they drop out.
-          if (VIDEO_FILTERS.has(f)) {
-            const v = r.video;
-            if (!v) return false;
-            const st = v[VIDEO_FILTERS.get(f)]?.state;
-            if (f === 'vidVoice') { if (st !== 'open') return false; }
+          if (POLICY_FILTERS.has(f)) {
+            const spec = POLICY_FILTERS.get(f);
+            const pol = r.policy;
+            if (!pol || !spec.kinds.includes(pol.kind)) return false;
+            const st = pol[spec.axis]?.state;
+            // Native voice and "no filter" are binary facts the API reports,
+            // so only "open" counts. Likeness and NSFW are judgement calls
+            // where "limited" is still a candidate worth showing.
+            if (f === 'vidVoice' || f === 'imgUnfiltered') { if (st !== 'open') return false; }
             else if (st !== 'open' && st !== 'limited') return false;
             continue;
           }
@@ -2103,9 +2306,10 @@
     // was inferred rather than checked. The tooltip carries the reasoning so
     // the badge never has to be taken on faith.
     function policyDots(row) {
-      const v = row.video;
-      if (!v) return '';
-      return POLICY_AXES.map(ax => {
+      const v = row.policy;
+      const axes = axesFor(row);
+      if (!v || !axes) return '';
+      return axes.map(ax => {
         const r = v[ax.key] || { state: 'unrated', note: '' };
         const st = POLICY_STATES[r.state] || POLICY_STATES.unrated;
         const tip = `${ax.label}: ${st.label}${r.inferred ? ' (inferred — not confirmed)' : ''}\n\n${r.note || ''}`;
@@ -2115,7 +2319,7 @@
     }
 
     function capDots(row) {
-      if (row.video) return policyDots(row);
+      if (row.policy) return policyDots(row);
       const d = row.text;
       if (!d) return '';
       let c = '';
@@ -2132,11 +2336,43 @@
 
     // Heads the Video tab: says what the three badges mean and, just as
     // importantly, which of them the API actually vouches for.
-    function renderVideoLegend() {
+    // Copy that differs per media type: what the third badge means, and which
+    // of the three the API actually vouches for.
+    const LEGEND_COPY = {
+      video: {
+        title: 'Picking a video model',
+        note: `The voice badge is read live from the Venice API
+          (<code>constraints.audio</code>). Likeness and NSFW are provider
+          policy curated in this app — a solid badge was checked against the
+          provider's published policy, a dashed one was only inferred from the
+          model's privacy tier.`,
+      },
+      image: {
+        title: 'Picking an image model',
+        note: `The filter badge is read live from the Venice API
+          (<code>model_spec.privacy</code>), because that is exactly the line
+          that matters: a filter is a classifier the host wraps around a model,
+          not part of its weights, and Venice adds none of its own. Likeness
+          and NSFW are curated here — a solid badge was checked against the
+          model's lineage or the provider's published policy, a dashed one was
+          only inferred from the privacy tier. Note that unfiltered is not the
+          same as capable: a model with no filter can still be untrained for
+          explicit work, which is what a "Limited" NSFW badge means.`,
+      },
+    };
+
+    function renderPolicyLegend() {
       const el = document.getElementById('videoLegend');
       if (!el) return;
-      const showing = activeType === 'video' || (activeType === 'all' && rows.some(r => r.video));
-      if (!showing) { el.innerHTML = ''; return; }
+      // On a single-type tab the kind is the tab; on All Models, lead with
+      // whichever policy-bearing kind is actually on screen.
+      const kind = (activeType === 'video' || activeType === 'image') ? activeType
+                 : (activeType === 'all' && visibleRows.some(r => r.policy))
+                   ? visibleRows.find(r => r.policy).policy.kind
+                   : null;
+      const axes = kind && POLICY_AXES[kind];
+      if (!axes) { el.innerHTML = ''; return; }
+      const copy = LEGEND_COPY[kind];
 
       const scale = Object.keys(POLICY_STATES).map(k => {
         const st = POLICY_STATES[k];
@@ -2145,10 +2381,10 @@
 
       el.innerHTML = `
         <div class="video-legend">
-          <h4><span class="material-icons">policy</span>Picking a video model</h4>
-          <div class="vl-sub">Every video model carries three badges. Hover any badge for the reasoning behind it.</div>
+          <h4><span class="material-icons">policy</span>${escHtml(copy.title)}</h4>
+          <div class="vl-sub">Every ${kind} model carries three badges. Hover any badge for the reasoning behind it.</div>
           <div class="vl-axes">
-            ${POLICY_AXES.map(ax => `
+            ${axes.map(ax => `
               <div class="vl-axis">
                 <div class="vl-axis-name"><span class="material-icons">${ax.icon}</span>${escHtml(ax.label)}</div>
                 <div class="vl-axis-desc">${escHtml(ax.desc)}</div>
@@ -2158,19 +2394,15 @@
             <span class="pol-dot pol-unrated pol-inferred"><span class="material-icons">help_outline</span>Dashed = inferred</span>
           </div>
           <div class="vl-note">
-            The voice badge is read live from the Venice API
-            (<code>constraints.audio</code>). Likeness and NSFW are provider
-            policy curated in this app — a solid badge was checked against the
-            provider's published policy, a dashed one was only inferred from the
-            model's privacy tier. Providers change these rules without notice.
-            A permissive rating tells you what will render, not what you are
-            cleared to publish.
+            ${copy.note}
+            Providers change these rules without notice. A permissive rating
+            tells you what will render, not what you are cleared to publish.
           </div>
         </div>`;
     }
 
     function renderGrid() {
-      renderVideoLegend();
+      renderPolicyLegend();
       const grid = document.getElementById('modelGrid');
       if (!visibleRows.length) {
         grid.innerHTML = `<div class="grid-empty">
@@ -2298,8 +2530,80 @@
 
     // The two things you actually decide a video model on: what shape of clip
     // it can produce, and what it will let you put in the frame.
+    // One row per axis, identical for video and image.
+    function policyRows(pol, axes) {
+      return axes.map(ax => {
+        const a = pol[ax.key] || { state: 'unrated', note: '' };
+        const st = POLICY_STATES[a.state] || POLICY_STATES.unrated;
+        return `
+          <div class="pol-row">
+            <div class="pol-row-head">
+              <span class="pol-row-name"><span class="material-icons">${ax.icon}</span>${escHtml(ax.label)}</span>
+              <span class="pol-dot ${st.cls}${a.inferred ? ' pol-inferred' : ''}">
+                <span class="material-icons">${st.icon}</span>${st.label}${a.inferred ? ' · inferred' : ''}
+              </span>
+            </div>
+            ${a.note ? `<div class="pol-row-note">${escHtml(a.note)}</div>` : ''}
+            ${a.source ? `<div class="pol-row-note"><span class="pol-src">Basis: ${escHtml(a.source)}</span></div>` : ''}
+          </div>`;
+      }).join('');
+    }
+
+    function buildPolicyPanel(r) {
+      if (!r.policy) return '';
+      return r.policy.kind === 'image' ? buildImagePanel(r) : buildVideoPanel(r);
+    }
+
+    // Images commit to one sizing idiom and reject the other with a 400, so
+    // the envelope here is worth as much as the policy block beside it.
+    function buildImagePanel(r) {
+      const v = r.policy;
+      const p = r.raw?.model_spec?.pricing || {};
+      const list = a => (a && a.length) ? a.map(x => escHtml(String(x))).join(', ') : '—';
+      const ratio = v.aspectRatios.length
+        ? list(v.aspectRatios) + (v.defaultAspectRatio ? ` (default ${escHtml(v.defaultAspectRatio)})` : '')
+        : '—';
+      const res = v.resolutions.length
+        ? list(v.resolutions) + (v.defaultResolution ? ` (default ${escHtml(v.defaultResolution)})` : '')
+        : '—';
+      const steps = v.stepsDefault || v.stepsMax
+        ? `${v.stepsDefault || '?'}${v.stepsMax ? ' / max ' + v.stepsMax : ''}` : '—';
+
+      const gen = `
+        <div class="detail-card" style="margin-bottom:12px;">
+          <h5>Generation envelope</h5>
+          <div class="detail-stat"><span class="detail-stat-label">Sizing idiom</span><span class="detail-stat-value">${escHtml(v.sizing)}</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">Aspect ratios</span><span class="detail-stat-value">${ratio}</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">Resolutions</span><span class="detail-stat-value">${res}</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">W/H divisor</span><span class="detail-stat-value">${v.widthHeightDivisor || '—'}</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">Steps</span><span class="detail-stat-value">${steps}</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">Prompt limit</span><span class="detail-stat-value">${v.promptLimit ? v.promptLimit.toLocaleString() + ' chars' : '—'}</span></div>
+          <div class="pol-row-note">${v.sizing === 'aspect + resolution'
+            ? 'Send <code>aspect_ratio</code> and <code>resolution</code>. Passing <code>width</code>/<code>height</code> to this model is a 400.'
+            : 'Send <code>width</code> and <code>height</code>, both divisible by the divisor above. Turbo models ignore <code>steps</code>.'}</div>
+          <div class="pol-row-note">Upscale is priced account-wide, not per model: 2× $${(p.upscale?.['2x']?.usd ?? 0.02).toFixed(2)}, 4× $${(p.upscale?.['4x']?.usd ?? 0.08).toFixed(2)}. It does not mean this model upscales.</div>
+        </div>`;
+
+      return gen + `
+        <div class="detail-card" style="margin-bottom:12px;">
+          <h5>Content policy — ${escHtml(v.family)}</h5>
+          ${policyRows(v, POLICY_AXES.image)}
+          <div class="pol-row-note" style="border-top:1px dashed var(--border);padding-top:9px;margin-top:8px;">
+            Only the filter axis comes from the Venice API. Likeness and NSFW are
+            curated in this app from model lineage and provider policy, and can
+            change without notice — re-check before you build on them. Note also
+            that <code>safe_mode</code> defaults to <code>true</code> on
+            <code>/image/generate</code> and blurs adult output: an open NSFW
+            badge still needs <code>safe_mode: false</code> on the request. A
+            permissive rating describes what the model will render, not what you
+            have the right to publish: clearing a real person's likeness or a
+            protected character is on you.
+          </div>
+        </div>`;
+    }
+
     function buildVideoPanel(r) {
-      const v = r.video;
+      const v = r.policy;
       const list = a => (a && a.length) ? a.map(x => escHtml(String(x))).join(', ') : '—';
 
       const gen = `
@@ -2314,26 +2618,10 @@
           <div class="pol-row-note">Venice does not return video pricing on <code>/models</code>. Call <code>POST /video/quote</code> with your duration and resolution for the real per-job price.</div>
         </div>`;
 
-      const rows = POLICY_AXES.map(ax => {
-        const a = v[ax.key] || { state: 'unrated', note: '' };
-        const st = POLICY_STATES[a.state] || POLICY_STATES.unrated;
-        return `
-          <div class="pol-row">
-            <div class="pol-row-head">
-              <span class="pol-row-name"><span class="material-icons">${ax.icon}</span>${escHtml(ax.label)}</span>
-              <span class="pol-dot ${st.cls}${a.inferred ? ' pol-inferred' : ''}">
-                <span class="material-icons">${st.icon}</span>${st.label}${a.inferred ? ' · inferred' : ''}
-              </span>
-            </div>
-            ${a.note ? `<div class="pol-row-note">${escHtml(a.note)}</div>` : ''}
-            ${a.source ? `<div class="pol-row-note"><span class="pol-src">Basis: ${escHtml(a.source)}</span></div>` : ''}
-          </div>`;
-      }).join('');
-
       return gen + `
         <div class="detail-card" style="margin-bottom:12px;">
           <h5>Content policy — ${escHtml(v.family)}</h5>
-          ${rows}
+          ${policyRows(v, POLICY_AXES.video)}
           <div class="pol-row-note" style="border-top:1px dashed var(--border);padding-top:9px;margin-top:8px;">
             Only the voice axis comes from the Venice API. Likeness and NSFW are
             provider policy recorded in this app and can change without notice —
@@ -2382,7 +2670,7 @@
         </div>
 
         ${r.text ? buildDetailPanel(r.text, { omitHeader: true }) : statCards}
-        ${r.video ? buildVideoPanel(r) : ''}
+        ${buildPolicyPanel(r)}
         ${r.type === 'tts' ? buildVoicesPanel(r) : ''}
 
         ${!r.text && r.traits.length ? `<div class="detail-card"><h5>Traits</h5><div class="trait-badges">${r.traits.map(t => `<span class="trait-badge">${escHtml(t)}</span>`).join('')}</div></div>` : ''}
@@ -2555,14 +2843,15 @@
       const head = ['Type','ID','Display Name','Added (Venice)','Added (ISO)','New','Recommended','Beta','Offline',
                     'Privacy','Family','Context','Max Output','Price Unit','Price In','Price Out','Quantization',
                     'Reasoning','Vision','Code','Web Search','Functions','JSON Schema','Audio In','Video In',
-                    'Video Mode','Video Durations','Video Resolutions',
-                    'Likeness Policy','Likeness Confirmed','Native Voice','Voice Confirmed','NSFW Policy','NSFW Confirmed',
+                    'Policy Kind','Video Mode','Video Durations','Image Sizing','Aspect Ratios','Resolutions',
+                    'Likeness Policy','Likeness Confirmed','Native Voice','Voice Confirmed',
+                    'Filter','Filter Confirmed','NSFW Policy','NSFW Confirmed',
                     'Traits','Deprecation','Region Restrictions','Owned By','Source','Description'];
       const q = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
       const yn = v => v ? 'Yes' : 'No';
       const body = list.map(r => {
         const d = r.text;
-        const v = r.video;
+        const v = r.policy;
         return [
           r.type, q(r.id), q(r.name),
           q(r.created ? fmtDate(r.created) : ''),
@@ -2576,9 +2865,13 @@
           r.quantization,
           yn(d?.reasoning), yn(d?.vision), yn(d?.code), yn(d?.websearch),
           yn(d?.functions), yn(d?.schema), yn(d?.audioInput), yn(d?.videoInput),
-          q(v ? v.mode : ''), q(v ? v.durations.join(';') : ''), q(v ? v.resolutions.join(';') : ''),
+          q(v ? v.kind : ''),
+          q(v?.kind === 'video' ? v.mode : ''), q(v?.kind === 'video' ? v.durations.join(';') : ''),
+          q(v?.kind === 'image' ? v.sizing : ''), q(v ? (v.aspectRatios || []).join(';') : ''),
+          q(v ? (v.resolutions || []).join(';') : ''),
           q(v ? v.likeness.state : ''), v ? yn(!v.likeness.inferred) : '',
-          q(v ? v.voice.state : ''),    v ? yn(!v.voice.inferred) : '',
+          q(v?.voice ? v.voice.state : ''),  v?.voice  ? yn(!v.voice.inferred)  : '',
+          q(v?.filter ? v.filter.state : ''), v?.filter ? yn(!v.filter.inferred) : '',
           q(v ? v.nsfw.state : ''),     v ? yn(!v.nsfw.inferred) : '',
           q(r.traits.join(';')),
           q(r.deprecationDate ? (typeof r.deprecationDate === 'number' ? fmtDate(r.deprecationDate) : r.deprecationDate) : ''),
