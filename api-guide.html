@@ -718,6 +718,112 @@ for chunk in stream:
         <div><div class="section-title">Image Generation</div><div class="section-sub">POST /image/generate — Create images from text prompts</div></div>
       </div>
 
+      <div class="callout callout-info">
+        <span class="material-icons">policy</span>
+        <div class="callout-text"><strong>Picking a model:</strong> a filter is a classifier the host wraps around a model, not part of its weights — and Venice adds none of its own. So an open-weight model on Venice hardware has nothing between your prompt and the sampler, while a proxied model carries its provider's screens. Only the filter column comes from the API (<code>model_spec.privacy</code>); likeness and NSFW are curated. The <a href="index.html?type=image">Image tab of the catalog</a> renders these live per model.</div>
+      </div>
+
+      <table class="param-table">
+        <thead>
+          <tr><th>Model family</th><th>Tier</th><th>Likeness / IP</th><th>Filter</th><th>Adult / NSFW</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="p-name">lustify-*</td>
+            <td><span class="p-type">private</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td><span class="pol-cell open">None</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td class="p-desc">Purpose-built for photoreal adult imagery. SDXL lineage, so a well-known face may render from base training alone.</td>
+          </tr>
+          <tr>
+            <td class="p-name">pony-*</td>
+            <td><span class="p-type">private</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td><span class="pol-cell open">None</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td class="p-desc">Explicitly trained for adult content and responds to its own scoring tags. Stylised, so likeness fidelity is lower.</td>
+          </tr>
+          <tr>
+            <td class="p-name">wai-* / illustrious</td>
+            <td><span class="p-type">private</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td><span class="pol-cell open">None</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td class="p-desc">Anime domain. Real-person likeness is out of distribution — expect a stylised approximation.</td>
+          </tr>
+          <tr>
+            <td class="p-name">*-uncensored, chroma</td>
+            <td><span class="p-type">private</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td><span class="pol-cell open">None</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td class="p-desc">De-restricted fine-tunes of a filtered base, retrained to drop the base model's reluctance.</td>
+          </tr>
+          <tr>
+            <td class="p-name">z-image-*</td>
+            <td><span class="p-type">private</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td><span class="pol-cell open">None</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td class="p-desc">Listed among Venice's uncensored models; fast turbo sampling makes iteration cheap.</td>
+          </tr>
+          <tr>
+            <td class="p-name">flux-*</td>
+            <td><span class="p-type">private</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td><span class="pol-cell open">None</span></td>
+            <td><span class="pol-cell limited">Limited</span></td>
+            <td class="p-desc">The Flux licence carries an acceptable-use policy, but that is a document, not a filter in the weights. Base training is tame around explicit anatomy.</td>
+          </tr>
+          <tr>
+            <td class="p-name">hidream, qwen-image</td>
+            <td><span class="p-type">private</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td><span class="pol-cell open">None</span></td>
+            <td><span class="pol-cell limited">Limited</span></td>
+            <td class="p-desc">Unfiltered but not trained for explicit output — prompts are accepted, results are tame. Qwen is strong at legible in-image text.</td>
+          </tr>
+          <tr>
+            <td class="p-name">sd3.x / sdxl</td>
+            <td><span class="p-type">private</span></td>
+            <td><span class="pol-cell open">Open</span></td>
+            <td><span class="pol-cell open">None</span></td>
+            <td><span class="pol-cell limited">Limited</span></td>
+            <td class="p-desc">SD 3.x was filtered at training time around human anatomy, so explicit prompts render poorly.</td>
+          </tr>
+          <tr>
+            <td class="p-name">gpt-image-*</td>
+            <td><span class="p-type">anonymized</span></td>
+            <td><span class="pol-cell limited">Limited</span></td>
+            <td><span class="pol-cell blocked">Provider</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td class="p-desc">Stylised public figures permitted; photorealistic likeness of a specific person stays blocked, and public figures can opt out entirely.</td>
+          </tr>
+          <tr>
+            <td class="p-name">nano-banana-*</td>
+            <td><span class="p-type">anonymized</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td><span class="pol-cell blocked">Provider</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td class="p-desc">IP and likeness restrictions reach past public figures to protected characters and reference-image rights.</td>
+          </tr>
+          <tr>
+            <td class="p-name">seedream-*</td>
+            <td><span class="p-type">anonymized</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td><span class="pol-cell blocked">Provider</span></td>
+            <td><span class="pol-cell blocked">Blocked</span></td>
+            <td class="p-desc">Face and likeness generation restricted by the provider.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warn">
+        <span class="material-icons">visibility_off</span>
+        <div class="callout-text"><strong>Unfiltered is not the same as capable, and open still needs the flag:</strong> a model with no filter can simply be untrained for explicit work — that is what "Limited" means above. And <code>safe_mode</code> defaults to <code>true</code> on <code>/image/generate</code>, blurring adult output, so an "Open" NSFW model still needs <code>safe_mode: false</code> on the request. As with video, a permissive rating describes what will render, not what you hold the rights to publish.</div>
+      </div>
+
       <table class="param-table">
         <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
         <tbody>
