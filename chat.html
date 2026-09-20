@@ -3791,7 +3791,7 @@
         <div class="img-controls">
           <div class="img-ctrl-group">
             <div class="img-ctrl-label">Model</div>
-            <select id="imgModel"><option value="fluently-xl">fluently-xl</option></select>
+            <select id="imgModel"><option value="z-image-turbo">z-image-turbo</option></select>
           </div>
           <div class="img-ctrl-group">
             <div class="img-ctrl-label">Prompt</div>
@@ -3913,11 +3913,11 @@
         <div style="display:flex;align-items:center;gap:8px;margin-left:auto;margin-right:12px;">
           <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;white-space:nowrap;">Analysis Model</label>
           <select id="analysisModelSelect" style="padding:5px 10px;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;font-family:inherit;outline:none;background:#f8fafc;color:#0f172a;cursor:pointer;">
-            <option value="grok-4-20">grok-4-20 (2M ctx)</option>
-            <option value="claude-opus-4-6">claude-opus-4-6</option>
-            <option value="qwen3-235b-a22b-thinking-2507">qwen3-235b (thinking)</option>
-            <option value="qwen3-235b-a22b-instruct-2507">qwen3-235b (instruct)</option>
-            <option value="gemini-3-flash-preview">gemini-3-flash</option>
+            <option value="claude-opus-5">claude-opus-5</option>
+            <option value="grok-4-6">grok-4-6</option>
+            <option value="z-ai-glm-5-3">z-ai-glm-5-3</option>
+            <option value="gemini-3-8-flash">gemini-3-8-flash</option>
+            <option value="kimi-k3">kimi-k3</option>
           </select>
         </div>
         <button class="close-button" id="closeAnalysis">
@@ -6042,7 +6042,7 @@
       const sel = document.getElementById('analysisModelSelect');
       if (sel && availableModels.length) {
         const existing = new Set([...sel.options].map(o => o.value));
-        const priority = ['grok-4-20','grok-4-1','claude-opus','qwen3-235','qwen3-30','gemini'];
+        const priority = ['claude-opus-5','claude-opus','grok-4-6','grok-4','z-ai-glm-5-3','glm-5','kimi-k3','gemini-3-8','gemini','qwen-3-8','qwen3'];
         const loaded = availableModels
           .filter(m => !existing.has(m.id))
           .sort((a,b) => {
@@ -6113,20 +6113,25 @@
       const MODEL_CAPS = {
         'grok-4-20': 131072,
         'grok-4-20-multi-agent': 131072,
+        'grok-4-6': 131072,
+        'claude-opus-5': 64000,
+        'claude-opus-4-8': 32000,
         'claude-opus-4-6': 32000,
-        'qwen3-235b-a22b-thinking-2507': 32000,
-        'qwen3-235b-a22b-instruct-2507': 32000,
+        'z-ai-glm-5-3': 32000,
+        'kimi-k3': 32000,
+        'gemini-3-8-flash': 16384,
         'gemini-3-flash-preview': 16384,
       };
       // Fallback chain tried in order when primary returns 402/403
       const FALLBACK_CHAIN = [
+        'claude-opus-5',
+        'z-ai-glm-5-3',
+        'kimi-k3',
+        'gemini-3-8-flash',
         'claude-opus-4-6',
-        'qwen3-235b-a22b-instruct-2507',
-        'qwen3-235b-a22b-thinking-2507',
-        'gemini-3-flash-preview',
       ];
 
-      let _activeAnalysisModel = (document.getElementById('analysisModelSelect')?.value) || 'claude-opus-4-6';
+      let _activeAnalysisModel = (document.getElementById('analysisModelSelect')?.value) || 'claude-opus-5';
 
       async function callModel(model, systemMsg, userMsg) {
         const maxTok = MODEL_CAPS[model] || 16384;
@@ -6360,27 +6365,27 @@ Return JSON:
     const FUSION_PRESETS = {
       frontier: {
         panelPatterns: [
-          ['^claude-opus-4-6$','claude-opus-4-6','claude-opus','claude'],
-          ['^openai-gpt-55$','openai-gpt-55','gpt-5.5','gpt-55','openai.*gpt','gpt'],
-          ['^zai-org-glm-5-2$','zai-org-glm-5-2','glm-5-2','glm-5','zai-org-glm','glm']
+          ['^claude-opus-5$','claude-opus-5','claude-opus-4-8','claude-opus-4-6','claude-opus','claude'],
+          ['^openai-gpt-6-astra$','openai-gpt-6-astra','openai-gpt-56-sol','openai-gpt-55','gpt-6','gpt-5.5','gpt-55','openai.*gpt','gpt'],
+          ['^z-ai-glm-5-3$','z-ai-glm-5-3','zai-org-glm-5-2','glm-5-3','glm-5-2','glm-5','zai-org-glm','glm']
         ],
-        judgePatterns: ['^claude-opus-4-8$','claude-opus-4-8','claude-opus-4-6','claude-opus','claude']
+        judgePatterns: ['^claude-opus-5$','claude-opus-5','claude-opus-4-8','claude-opus-4-6','claude-opus','claude']
       },
       dragon: {
         panelPatterns: [
-          ['^deepseek-v4-pro$','deepseek-v4-pro','deepseek-v4','deepseek'],
-          ['^minimax-m3-preview$','minimax-m3-preview','minimax-m3','minimax'],
-          ['^kimi-k2-6$','kimi-k2-6','kimi-k2','kimi']
+          ['^deepseek-v4-pro$','deepseek-v4-pro','deepseek-v4-1','deepseek-v4','deepseek'],
+          ['^minimax-m27$','minimax-m27','minimax-m3-preview','minimax-m3','minimax'],
+          ['^kimi-k3$','kimi-k3','kimi-k2-6','kimi-k2','kimi']
         ],
-        judgePatterns: ['^zai-org-glm-5-1$','zai-org-glm-5-1','glm-5-1','zai','glm']
+        judgePatterns: ['^z-ai-glm-5-3$','z-ai-glm-5-3','zai-org-glm-5-1','glm-5-3','glm-5-1','zai','glm']
       },
       spark: {
         panelPatterns: [
           ['^google-gemma-4-31b-it$','google-gemma-4-31b-it','gemma-4-31b','gemma'],
           ['^arcee-trinity-large-thinking$','arcee-trinity-large-thinking','trinity-large-thinking','arcee-trinity','arcee'],
-          ['^grok-4-20-multi-agent$','grok-4-20-multi-agent','grok-4-20','grok']
+          ['^grok-4-6$','grok-4-6','grok-4-20-multi-agent','grok-4-20','grok-4-3','grok']
         ],
-        judgePatterns: ['^grok-4-3$','grok-4-3','grok-4','grok']
+        judgePatterns: ['^grok-4-6$','grok-4-6','grok-4-3','grok-4','grok']
       }
     };
 
@@ -8722,33 +8727,36 @@ function rpCopyAnswer(btn){
       if (!m) return;
       m.classList.add('open');
       pushRoute('image');
-      // Fetch image models from API on first open
+      // Refresh image models from the live catalog every open so new
+      // families (Grok Imagine 2, GPT Image 2.5, Krea, …) show up.
       const sel = $('imgModel');
-      if (sel && sel.options.length <= 1) {
+      if (sel) {
+        const prev = sel.value;
         try {
           const apiKey = window.getApiKey ? window.getApiKey() : (localStorage.getItem('venice_user_api_key') || '');
-          const resp = await fetch('https://api.venice.ai/api/v1/models?type=image', {
-            headers: { 'Authorization': `Bearer ${apiKey}` }
+          const resp = await fetch('https://api.venice.ai/api/v1/models?type=image&_=' + Date.now(), {
+            headers: { 'Authorization': `Bearer ${apiKey}` },
+            cache: 'no-store'
           });
           const data = await resp.json();
-          const imgModels = data.data || [];
-          // Clear default and repopulate
+          const imgModels = (data.data || []).filter(x => x.id && x.model_spec?.offline !== true);
           sel.innerHTML = '';
           imgModels.forEach(x => {
             const o = document.createElement('option');
-            o.value = x.id; o.textContent = x.id;
+            o.value = x.id;
+            o.textContent = x.model_spec?.name ? `${x.model_spec.name} (${x.id})` : x.id;
             sel.appendChild(o);
           });
           if (!imgModels.length) {
             const o = document.createElement('option');
-            o.value = 'fluently-xl'; o.textContent = 'fluently-xl';
+            o.value = 'z-image-turbo'; o.textContent = 'z-image-turbo';
             sel.appendChild(o);
           }
+          if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
         } catch {
-          // fallback
           if (sel.options.length === 0) {
             const o = document.createElement('option');
-            o.value = 'fluently-xl'; o.textContent = 'fluently-xl';
+            o.value = 'z-image-turbo'; o.textContent = 'z-image-turbo';
             sel.appendChild(o);
           }
         }
@@ -8763,7 +8771,7 @@ function rpCopyAnswer(btn){
       if (!prompt) { showToast('Enter an image prompt', 'warn'); return; }
       if (!ensureQueryAllowed('image')) return;
 
-      const model  = $('imgModel')?.value || 'fluently-xl';
+      const model  = $('imgModel')?.value || 'z-image-turbo';
       const style  = $('imgStyle')?.value || undefined;
       const steps  = parseInt($('imgSteps')?.value || '20');
       const cfg    = parseFloat($('imgCfg')?.value || '7');

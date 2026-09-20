@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>V's MultiGen AI Chat — Models</title>
-  <meta name="description" content="Live catalog of every Venice AI model — language, image, video, voice, music, speech-to-text, image editing and embeddings — sorted by release date.">
+  <meta name="description" content="Live catalog of every Venice AI model — language, image, video, voice, music, speech-to-text, image editing, upscale, embeddings and System One decisions — sorted by release date.">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="logo.png">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -984,6 +984,26 @@
       background: var(--surface-2); border: 1px solid var(--border);
       border-radius: 4px; padding: 1px 5px;
     }
+    .decision-try label {
+      display: block; font-size: 11px; font-weight: 700; letter-spacing: .04em;
+      text-transform: uppercase; color: var(--text-muted); margin: 10px 0 5px;
+    }
+    .decision-try textarea, .decision-try input, .decision-try select {
+      width: 100%; padding: 8px 10px; border-radius: var(--radius-md);
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text-primary); font-family: inherit; font-size: 13px;
+      outline: none; box-sizing: border-box;
+    }
+    .decision-try textarea { min-height: 88px; resize: vertical; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .decision-try .decision-run {
+      margin-top: 12px; width: 100%; justify-content: center;
+    }
+    .decision-result {
+      margin-top: 12px; padding: 10px 12px; border-radius: var(--radius-md);
+      background: var(--surface-2); border: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      white-space: pre-wrap; word-break: break-word; display: none;
+    }
     /* The reused detail panel is laid out for a full-width page; inside the
        drawer it needs to fold down to two columns to stay readable. */
     .model-detail-drawer .detail-panel { padding: 0; background: none; border: none; }
@@ -1473,6 +1493,55 @@
         nsfw:     { state: 'blocked', note: 'Explicit content is not permitted.' },
         source: 'ByteDance Seedance content policy',
       },
+      {
+        test: /gemini-omni|omni-flash/, family: 'Gemini Omni',
+        likeness: { state: 'blocked', note: 'Google screens public figures and copyrighted characters on the Omni video family the same way it does on Veo.' },
+        voice:    { state: 'open', note: 'Native audio is part of the Omni video path — dialogue and ambience land in the same pass when the API reports audio support.' },
+        nsfw:     { state: 'blocked', note: 'Sexually explicit material is refused under Google generative-media policy.' },
+        source: 'Google Gemini / Veo generative media policy',
+      },
+      {
+        test: /grok-imagine/, family: 'Grok Imagine',
+        likeness: { state: 'limited', note: 'xAI allows stylised depictions more readily than OpenAI or Google, but photoreal public-figure likenesses are still restricted on the hosted Imagine path.' },
+        voice:    { state: 'unrated', note: 'Audio support varies by Imagine revision — the API constraint is authoritative when present.' },
+        nsfw:     { state: 'limited', note: 'xAI is less strict than OpenAI on adult content, but the hosted Imagine endpoint still refuses some explicit prompts.' },
+        source: 'xAI Grok Imagine usage policy',
+      },
+      {
+        test: /minimax|hailuo/, family: 'MiniMax',
+        likeness: { state: 'blocked', note: 'MiniMax screens celebrity and political likenesses on the hosted video models.' },
+        voice:    { state: 'unrated', note: 'Native audio depends on the Hailuo / MiniMax revision — trust the API audio flag.' },
+        nsfw:     { state: 'blocked', note: 'Explicit content is not permitted on the hosted MiniMax video API.' },
+        source: 'MiniMax / Hailuo content policy',
+      },
+      {
+        test: /pixverse/, family: 'PixVerse',
+        likeness: { state: 'blocked', note: 'PixVerse applies a likeness and IP filter on hosted generations.' },
+        voice:    { state: 'unrated', note: 'Audio support is revision-dependent; the API constraint decides.' },
+        nsfw:     { state: 'blocked', note: 'Adult content is refused by the provider.' },
+        source: 'PixVerse content policy',
+      },
+      {
+        test: /runway/, family: 'Runway',
+        likeness: { state: 'blocked', note: 'Runway blocks photoreal likenesses of real people and copyrighted characters.' },
+        voice:    { state: 'unrated', note: 'Gen-4 audio support is version-dependent — use the API audio flag.' },
+        nsfw:     { state: 'blocked', note: 'Explicit content is not permitted under Runway acceptable use.' },
+        source: 'Runway acceptable use policy',
+      },
+      {
+        test: /\bltx\b|lightricks/, family: 'LTX',
+        likeness: { state: 'open', note: 'Open-weights LTX models served on Venice hardware have no upstream celebrity/IP interceptor in the path.' },
+        voice:    { state: 'unrated', note: 'Varies by LTX revision — the API audio constraint overrides this row when present.' },
+        nsfw:     { state: 'limited', note: 'No hard prompt filter, but the training mix is not an adult-specialist set. Unfiltered generation still needs a paid Venice plan.' },
+        source: 'Lightricks LTX open weights + Venice private-tier hosting',
+      },
+      {
+        test: /vidu/, family: 'Vidu',
+        likeness: { state: 'blocked', note: 'Vidu screens public-figure and copyrighted-character depictions.' },
+        voice:    { state: 'unrated', note: 'Audio support is revision-dependent; the API constraint decides.' },
+        nsfw:     { state: 'blocked', note: 'Explicit content is not permitted.' },
+        source: 'Shengshu / Vidu content policy',
+      },
     ];
 
     // No table entry: say so, and derive a provisional read from the privacy
@@ -1628,6 +1697,42 @@
         nsfw:     { state: 'blocked', note: 'Explicit content is not permitted.' },
         source: 'ByteDance Seedream content policy',
       },
+      {
+        test: /grok-imagine/, family: 'Grok Imagine',
+        likeness: { state: 'limited', note: 'xAI is looser than OpenAI on stylised public figures, but photoreal likenesses of a specific person are still restricted on the hosted Imagine path.' },
+        nsfw:     { state: 'limited', note: 'Some adult prompts are accepted that OpenAI would refuse, but the hosted Imagine endpoint is not an uncensored stack.' },
+        source: 'xAI Grok Imagine usage policy',
+      },
+      {
+        test: /krea/, family: 'Krea',
+        likeness: { state: 'blocked', note: 'Krea applies a likeness and IP screen on hosted generations.' },
+        nsfw:     { state: 'blocked', note: 'Explicit content is refused by the provider.' },
+        source: 'Krea content policy',
+      },
+      {
+        test: /luma|uni-1/, family: 'Luma',
+        likeness: { state: 'blocked', note: 'Luma screens real-person likenesses and copyrighted characters on Uni-1 / Dream Machine-class models.' },
+        nsfw:     { state: 'blocked', note: 'Adult content is not permitted.' },
+        source: 'Luma Dream Machine acceptable use',
+      },
+      {
+        test: /ideogram/, family: 'Ideogram',
+        likeness: { state: 'blocked', note: 'Ideogram filters public-figure and trademarked-character depictions.' },
+        nsfw:     { state: 'blocked', note: 'Explicit content is refused.' },
+        source: 'Ideogram content policy',
+      },
+      {
+        test: /recraft/, family: 'Recraft',
+        likeness: { state: 'blocked', note: 'Recraft applies a likeness and brand-IP filter on hosted generations.' },
+        nsfw:     { state: 'blocked', note: 'Explicit content is not permitted.' },
+        source: 'Recraft acceptable use',
+      },
+      {
+        test: /imagineart/, family: 'ImagineArt',
+        likeness: { state: 'blocked', note: 'ImagineArt screens celebrity likenesses on the hosted API.' },
+        nsfw:     { state: 'blocked', note: 'Adult content is refused by the provider.' },
+        source: 'ImagineArt content policy',
+      },
 
       // Unfiltered but not trained for adult work — the "limited" case.
       {
@@ -1647,6 +1752,18 @@
         likeness: { state: 'open', note: 'Open weights on Venice hardware, no classifier wrapper. Strong at legible in-image text.' },
         nsfw:     { state: 'limited', note: 'Unfiltered but tame: the training set was not built for explicit content.' },
         source: 'Qwen Image open weights + Venice private-tier hosting',
+      },
+      {
+        test: /\bwan\b|wan-?\d/, family: 'Wan Image',
+        likeness: { state: 'open', note: 'Open weights running on Venice GPUs. No upstream celebrity interceptor sits between the prompt and the sampler.' },
+        nsfw:     { state: 'limited', note: 'No hard prompt filter, but explicit quality is unreliable. Unfiltered generation requires a paid Venice plan.' },
+        source: 'Wan open-weights distribution + Venice private-tier hosting',
+      },
+      {
+        test: /hunyuan/, family: 'Hunyuan Image',
+        likeness: { state: 'open', note: 'Open weights on Venice hardware, no classifier wrapper.' },
+        nsfw:     { state: 'limited', note: 'Unfiltered but not trained as an adult specialist — prompts are accepted, results are often tame.' },
+        source: 'Tencent Hunyuan Image open weights + Venice private-tier hosting',
       },
       {
         test: /sd-?3|sd35|sdxl|stable-?diffusion/, family: 'Stable Diffusion',
@@ -1718,9 +1835,11 @@
       music:     { label: 'Music',          icon: 'music_note',        color: 'rose'   },
       asr:       { label: 'Speech-to-Text', icon: 'mic',               color: 'amber'  },
       inpaint:   { label: 'Image Edit',     icon: 'auto_fix_high',     color: 'violet' },
+      upscale:   { label: 'Upscale',        icon: 'zoom_out_map',      color: 'cyan'   },
       embedding: { label: 'Embedding',      icon: 'hub',               color: 'teal'   },
+      decision:  { label: 'Decisions',      icon: 'rule',              color: 'purple' },
     };
-    const TYPE_ORDER = ['text', 'image', 'video', 'tts', 'music', 'asr', 'inpaint', 'embedding'];
+    const TYPE_ORDER = ['text', 'image', 'video', 'tts', 'music', 'asr', 'inpaint', 'upscale', 'embedding', 'decision'];
 
     let catalog = {};            // { type: [rawModel, ...] } — straight from the API
     let rows = [];               // normalized rows for every model, every type
@@ -1746,6 +1865,8 @@
     // =====================================================================
     // FETCH — always live. No cache layer, no bundled model list: every load
     // rebuilds the whole catalog from the API response.
+    // Prefer type=all so a newly added Venice type (decision, upscale, …)
+    // appears as a tab without a code change. Per-type fetch is the fallback.
     // =====================================================================
     async function fetchModels() {
       const apiKey = getApiKey();
@@ -1765,12 +1886,28 @@
           return [];
         }
       };
+      const groupByType = list => {
+        const grouped = {};
+        (list || []).forEach(m => {
+          const t = m.type || 'unknown';
+          (grouped[t] ||= []).push(m);
+        });
+        return grouped;
+      };
 
       try {
-        const results = await Promise.all(TYPE_ORDER.map(fetchType));
+        let grouped = {};
+        try {
+          const all = await fetchType('all');
+          if (!all.length) throw new Error('empty type=all');
+          grouped = groupByType(all);
+        } catch (err) {
+          console.warn('[Venice] type=all failed, falling back per-type:', err);
+          const results = await Promise.all(TYPE_ORDER.map(fetchType));
+          TYPE_ORDER.forEach((t, i) => { if (results[i].length) grouped[t] = results[i]; });
+        }
 
-        catalog = {};
-        TYPE_ORDER.forEach((t, i) => { if (results[i].length) catalog[t] = results[i]; });
+        catalog = grouped;
 
         const everything = Object.values(catalog).flat();
         if (!everything.length) throw new Error('The API returned no models.');
@@ -1790,7 +1927,7 @@
         const online      = t => (catalog[t] || []).filter(m => m.model_spec?.offline !== true);
         allImageModels    = online('image');
         allAudioModels    = online('tts');
-        allUpscaleModels  = online('inpaint');
+        allUpscaleModels  = online('upscale').concat(online('inpaint'));
         allEmbeddingModels= online('embedding');
         allVideoModels    = online('video');
         allMusicModels    = online('music');
@@ -1946,6 +2083,7 @@
         row.voices = (raw.model_spec?.voices || []).slice();
         row.voiceFormats = raw.model_spec?.supported_formats || [];
         row.customVoiceId = !!raw.model_spec?.supports_custom_voice_id;
+        row.voiceCloning = raw.model_spec?.voice_cloning || null;
         const VOICE_SAMPLE = "Oh wow — hold on, seriously? The whole plan changed overnight? That's... actually kind of brilliant. Okay, okay, I'm in. Let's see what you've got.";
         row.voiceSample = VOICE_SAMPLE;
         // Qwen 3 is the only family that accepts an emotion `prompt` — that is
@@ -2000,6 +2138,42 @@
           { label: 'Max @ $48', value: price > 0 ? formatTokens(Math.floor((DIEM_BUDGET / price) * 1e6)) : '—' },
         ];
         row.priceCsv = { unit: '$/1M tokens', input: price, output: 0 };
+      }
+
+      else if (type === 'decision') {
+        const stateCap = spec.maxStateTokens || 0;
+        const totalCap = spec.maxTotalTokens || 0;
+        const inPrice = p.input?.usd ?? 0;
+        row.contextTokens = stateCap;
+        row.sortPrice = inPrice > 0 ? inPrice : 0;
+        row.decision = { stateCap, totalCap, questionTypes: ['noul', 'choice', 'score'] };
+        if (!row.description) {
+          row.description = 'TypeSafe System One decision model. Evaluates application state against typed questions (yes/no, choice, or score) and returns calibrated probabilities — not generated text. Call POST /decisions or the /systemone alias.';
+        }
+        row.stats = [
+          { label: 'Kind',      value: 'System One' },
+          { label: 'State cap', value: stateCap ? formatTokens(stateCap) : '—' },
+          { label: 'Total cap', value: totalCap ? formatTokens(totalCap) : '—' },
+          { label: 'In / 1M',   value: inPrice > 0 ? '$' + inPrice.toFixed(3) : 'Metered', cls: inPrice > 0 ? getPriceClass(inPrice) : 'nt-price-na' },
+        ];
+        row.priceCsv = { unit: '$/1M tokens', input: inPrice, output: p.output?.usd ?? 0 };
+      }
+
+      else if (type === 'upscale') {
+        const gen = p.generation?.usd ?? 0;
+        const x2 = p.upscale?.['2x']?.usd ?? p['2x']?.usd ?? 0.02;
+        const x4 = p.upscale?.['4x']?.usd ?? p['4x']?.usd ?? 0.08;
+        row.sortPrice = x2 > 0 ? x2 : (gen > 0 ? gen : Number.POSITIVE_INFINITY);
+        if (!row.description) {
+          row.description = 'Venice image upscaler. POST /image/upscale with image, scale (2 or 4), and creativity (0–0.02). The old enhance / replication fields are gone.';
+        }
+        row.stats = [
+          { label: '2×',          value: x2 > 0 ? '$' + x2.toFixed(2) : '—', cls: ntPriceClass(x2) },
+          { label: '4×',          value: x4 > 0 ? '$' + x4.toFixed(2) : '—', cls: ntPriceClass(x4) },
+          { label: 'Generation',  value: gen > 0 ? '$' + gen.toFixed(2) : '—' },
+          { label: 'Max 2× @$48', value: x2 > 0 ? Math.floor(DIEM_BUDGET / x2).toLocaleString() : '—' },
+        ];
+        row.priceCsv = { unit: '$/upscale', input: x2, output: x4 };
       }
 
       else if (type === 'video') {
@@ -2320,6 +2494,13 @@
 
     function capDots(row) {
       if (row.policy) return policyDots(row);
+      if (row.type === 'decision') {
+        return '<span class="cap-dot dot-schema"><span class="material-icons">rule</span>System One</span>' +
+               '<span class="cap-dot dot-functions"><span class="material-icons">percent</span>Probabilities</span>';
+      }
+      if (row.type === 'upscale') {
+        return '<span class="cap-dot dot-vision"><span class="material-icons">zoom_out_map</span>2× / 4×</span>';
+      }
       const d = row.text;
       if (!d) return '';
       let c = '';
@@ -2656,6 +2837,7 @@
 
         <div class="drawer-actions">
           ${r.type === 'text' ? `<a class="drawer-action primary" href="chat.html?model=${encodeURIComponent(r.id)}"><span class="material-icons">chat</span> Try in chat</a>` : ''}
+          ${r.type === 'image' ? `<a class="drawer-action primary" href="chat.html#image"><span class="material-icons">image</span> Open Images</a>` : ''}
           ${r.modelSource ? `<a class="drawer-action secondary" href="${attr(r.modelSource)}" target="_blank" rel="noopener"><span class="material-icons">open_in_new</span> Model card</a>` : ''}
         </div>
 
@@ -2672,6 +2854,8 @@
         ${r.text ? buildDetailPanel(r.text, { omitHeader: true }) : statCards}
         ${buildPolicyPanel(r)}
         ${r.type === 'tts' ? buildVoicesPanel(r) : ''}
+        ${r.type === 'decision' ? buildDecisionPanel(r) : ''}
+        ${r.type === 'upscale' ? buildUpscalePanel(r) : ''}
 
         ${!r.text && r.traits.length ? `<div class="detail-card"><h5>Traits</h5><div class="trait-badges">${r.traits.map(t => `<span class="trait-badge">${escHtml(t)}</span>`).join('')}</div></div>` : ''}
 
@@ -2685,7 +2869,7 @@
     // Clips live in assets/voice-clips/<model-id>/<voice>.<ext> and were
     // generated with a fixed expressive sample line so models A/B fairly.
     // =====================================================================
-    const VOICE_CLIP_EXT = { };
+    const VOICE_CLIP_EXT = { 'tts-gradium-v1': 'wav', 'tts-orpheus': 'wav', 'tts-chatterbox-hd': 'wav', 'tts-inworld-1-5-max': 'wav' };
 
     // Kokoro voice ids carry a language prefix (af_, bm_, zf_, …) — group on
     // it so 54 voices read as ~10 language blocks instead of one wall.
@@ -2782,6 +2966,8 @@
       const ext = clipExtFor(r.id, r.voiceFormats);
       const caps = (r.voiceParams || []).map(p => `<span class="voice-cap-badge" title="This model accepts the <${p}> parameter on /audio/speech">${escHtml(p)}</span>`).join('');
       const customBadge = r.customVoiceId ? '<span class="voice-cap-badge" title="Accepts a custom voice ID">custom voice ID</span>' : '';
+      const clone = r.voiceCloning;
+      const cloneBadge = clone ? `<span class="voice-cap-badge" title="Upload a reference clip to POST /audio/voices, then pass the vv_ handle as voice">voice cloning${clone.mode ? ' · ' + escHtml(clone.mode) : ''}</span>` : '';
       const fmtBadge = `<span class="voice-cap-badge" title="Supported response formats">${escHtml((r.voiceFormats || []).join(', '))}</span>`;
 
       const groups = groupVoices(r.id, r.voices);
@@ -2801,10 +2987,136 @@
             Every voice reads the same expressive line, so models and voices
             compare apples-to-apples. Static clips play instantly; anything
             missing falls back to live generation.
-            ${(caps || customBadge) ? `<div style="margin-top:6px;">Parameters this model accepts: ${caps}${customBadge} · formats: ${fmtBadge}</div>` : ''}
+            ${(caps || customBadge || cloneBadge) ? `<div style="margin-top:6px;">Parameters this model accepts: ${caps}${customBadge}${cloneBadge} · formats: ${fmtBadge}</div>` : ''}
           </div>
           ${groupHtml}
         </div>`;
+    }
+
+    function buildUpscalePanel(r) {
+      const p = r.raw?.model_spec?.pricing || {};
+      const x2 = p.upscale?.['2x']?.usd ?? 0.02;
+      const x4 = p.upscale?.['4x']?.usd ?? 0.08;
+      return `
+        <div class="detail-card" style="margin-top:12px;">
+          <h5>How to call it</h5>
+          <div class="detail-stat"><span class="detail-stat-label">Endpoint</span><span class="detail-stat-value"><code>POST /image/upscale</code></span></div>
+          <div class="detail-stat"><span class="detail-stat-label">Fields</span><span class="detail-stat-value"><code>image</code>, <code>scale</code> (2 or 4), <code>creativity</code> (0–0.02)</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">2×</span><span class="detail-stat-value">$${x2.toFixed(2)}</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">4×</span><span class="detail-stat-value">$${x4.toFixed(2)}</span></div>
+          <div class="pol-row-note"><code>scale: 1</code> is rejected. The old <code>enhance</code>, <code>enhancePrompt</code>, <code>enhanceCreativity</code>, and <code>replication</code> fields are gone.</div>
+        </div>`;
+    }
+
+    function buildDecisionPanel(r) {
+      const d = r.decision || {};
+      return `
+        <div class="detail-card" style="margin-top:12px;">
+          <h5>System One — not a chat model</h5>
+          <div class="pol-row-note">
+            Jev evaluates a <code>state</code> against typed <code>questions</code> and returns
+            calibrated probabilities. There is no answer string to parse.
+            <code>POST /decisions</code> is the native route; <code>POST /systemone</code>
+            is the TypeSafe-compatible alias.
+          </div>
+          <div class="detail-stat"><span class="detail-stat-label">noul</span><span class="detail-stat-value">Yes / no probability (0–1)</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">choice</span><span class="detail-stat-value">Pick one option + full distribution</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">score</span><span class="detail-stat-value">Weighted position on an ordered rubric</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">State cap</span><span class="detail-stat-value">${d.stateCap ? formatTokens(d.stateCap) : '—'}</span></div>
+          <div class="detail-stat"><span class="detail-stat-label">Total cap</span><span class="detail-stat-value">${d.totalCap ? formatTokens(d.totalCap) : '—'}</span></div>
+        </div>
+        <div class="detail-card decision-try" style="margin-top:12px;">
+          <h5>Try a decision</h5>
+          <label for="jevState">State</label>
+          <textarea id="jevState">Help! My payouts have been failing for 3 days.</textarea>
+          <label for="jevQType">Question type</label>
+          <select id="jevQType" onchange="onJevTypeChange()">
+            <option value="noul">noul — yes / no</option>
+            <option value="choice">choice — pick one</option>
+            <option value="score">score — ordered rubric</option>
+          </select>
+          <label for="jevInstructions">Instructions</label>
+          <input id="jevInstructions" value="Does this message convey urgency?" />
+          <div id="jevCriteriaWrap" style="display:none;">
+            <label for="jevCriteria">Criteria <span id="jevCriteriaHint" style="font-weight:400;text-transform:none;letter-spacing:0;"></span></label>
+            <textarea id="jevCriteria" style="min-height:72px;"></textarea>
+          </div>
+          <button class="drawer-action primary decision-run" onclick="runDecisionEval('${escAttr(r.id)}')">
+            <span class="material-icons">play_arrow</span> Evaluate
+          </button>
+          <pre class="decision-result" id="jevResult"></pre>
+        </div>`;
+    }
+
+    function onJevTypeChange() {
+      const type = document.getElementById('jevQType')?.value;
+      const wrap = document.getElementById('jevCriteriaWrap');
+      const hint = document.getElementById('jevCriteriaHint');
+      const box = document.getElementById('jevCriteria');
+      const inst = document.getElementById('jevInstructions');
+      if (!wrap) return;
+      if (type === 'noul') {
+        wrap.style.display = 'none';
+        if (inst) inst.value = 'Does this message convey urgency?';
+      } else if (type === 'choice') {
+        wrap.style.display = '';
+        if (hint) hint.textContent = '(one option per line, optionally “name: rubric”)';
+        if (box) box.value = 'billing: Payments, invoicing, refunds\ntechnical: Bugs, outages, integrations\naccount: Login, password, access';
+        if (inst) inst.value = 'Which team should handle this?';
+      } else {
+        wrap.style.display = '';
+        if (hint) hint.textContent = '(one level per line, lowest to highest)';
+        if (box) box.value = 'Calm\nFrustrated\nVery angry';
+        if (inst) inst.value = 'How frustrated is the customer?';
+      }
+    }
+
+    async function runDecisionEval(modelId) {
+      const out = document.getElementById('jevResult');
+      const state = (document.getElementById('jevState')?.value || '').trim();
+      const qtype = document.getElementById('jevQType')?.value || 'noul';
+      const instructions = (document.getElementById('jevInstructions')?.value || '').trim();
+      if (!state || !instructions) {
+        if (out) { out.style.display = 'block'; out.textContent = 'State and instructions are required.'; }
+        return;
+      }
+      const question = { type: qtype, instructions };
+      if (qtype === 'choice') {
+        const criteria = {};
+        (document.getElementById('jevCriteria')?.value || '').split('\n').forEach(line => {
+          const t = line.trim(); if (!t) return;
+          const i = t.indexOf(':');
+          if (i === -1) criteria[t] = null;
+          else criteria[t.slice(0, i).trim()] = t.slice(i + 1).trim() || null;
+        });
+        if (Object.keys(criteria).length < 2) {
+          if (out) { out.style.display = 'block'; out.textContent = 'Choice questions need at least two criteria lines.'; }
+          return;
+        }
+        question.criteria = criteria;
+      } else if (qtype === 'score') {
+        const levels = (document.getElementById('jevCriteria')?.value || '').split('\n').map(s => s.trim()).filter(Boolean);
+        if (levels.length < 2) {
+          if (out) { out.style.display = 'block'; out.textContent = 'Score questions need at least two rubric levels.'; }
+          return;
+        }
+        question.criteria = levels;
+      }
+      const apiKey = getApiKey();
+      if (!apiKey) { if (out) { out.style.display = 'block'; out.textContent = 'Connect an API key first.'; } return; }
+      if (out) { out.style.display = 'block'; out.textContent = 'Evaluating…'; }
+      try {
+        const r = await fetch(`${BASE_URL}/decisions`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model: modelId, state, questions: { q1: question } }),
+        });
+        const body = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(body.error || body.message || `HTTP ${r.status}`);
+        out.textContent = JSON.stringify(body, null, 2);
+      } catch (err) {
+        out.textContent = 'Decision failed: ' + (err.message || err);
+      }
     }
 
     // =====================================================================
@@ -3120,6 +3432,7 @@
         ['Gemma', /gemma/], ['Kimi', /kimi|moonshot/], ['MiniMax', /minimax/],
         ['GLM', /glm|zhipu|zai/], ['Phi', /phi-/], ['Nous', /nous|hermes/],
         ['Dolphin', /dolphin/], ['Arcee', /arcee|trinity/],
+        ['TypeSafe', /jev|typesafe|system.?one/],
       ];
       for (const [label, re] of families) { if (re.test(s)) return label; }
       return 'Other';
