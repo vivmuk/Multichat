@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>V's MultiGen AI Chat — Models</title>
   <meta name="description" content="Live catalog of every Venice AI model — language, image, video, voice, music, speech-to-text, image editing, upscale, embeddings and System One decisions — sorted by release date.">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
@@ -2545,12 +2546,10 @@
     function renderPolicyLegend() {
       const el = document.getElementById('videoLegend');
       if (!el) return;
-      // On a single-type tab the kind is the tab; on All Models, lead with
-      // whichever policy-bearing kind is actually on screen.
-      const kind = (activeType === 'video' || activeType === 'image') ? activeType
-                 : (activeType === 'all' && visibleRows.some(r => r.policy))
-                   ? visibleRows.find(r => r.policy).policy.kind
-                   : null;
+      // The badge legend belongs to the media tabs it describes. On All Models every
+      // type is mixed together, so a card headed "Picking a video model" was sitting at
+      // the top of a list that is mostly not video models.
+      const kind = (activeType === 'video' || activeType === 'image') ? activeType : null;
       const axes = kind && POLICY_AXES[kind];
       if (!axes) { el.innerHTML = ''; return; }
       const copy = LEGEND_COPY[kind];
