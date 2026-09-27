@@ -208,6 +208,9 @@
     }
     .refine-select:hover { border-color: var(--accent); }
     .refine-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+    .policy-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .policy-select { max-width: 100%; }
+    @media (max-width: 640px) { .policy-select { flex: 1 1 100%; } }
     .refine-toggle {
       display: inline-flex; align-items: center; gap: 5px;
       font-size: 11px; font-weight: 600; color: var(--text-secondary);
@@ -1144,7 +1147,14 @@
 
       <!-- Advanced filters (collapsed by default so the models stay the focus) -->
       <div class="toolbar" id="advancedFilters">
-        <div class="filter-section">
+        <!-- Content policy. These are the badges the model cards already carry, turned
+             into filters, because "which model will actually render this" is the first
+             question on the image and video tabs. The section follows the active tab. -->
+        <div class="filter-section" id="policySection" style="display:none;">
+          <span class="filter-label">Content policy:</span>
+          <div class="policy-controls" id="policyControls"></div>
+        </div>
+        <div class="filter-section" id="capabilitySection">
           <span class="filter-label">Capabilities:</span>
           <button class="filter-chip chip-reasoning" data-filter="reasoning" onclick="toggleFilter(this)">
             <span class="material-icons check-icon">check</span><span class="material-icons">psychology</span> Reasoning
@@ -1172,22 +1182,6 @@
           </button>
           <button class="filter-chip chip-video" data-filter="video" onclick="toggleFilter(this)">
             <span class="material-icons check-icon">check</span><span class="material-icons">videocam</span> Video In
-          </button>
-          <button class="filter-chip chip-likeness" data-filter="polLikeness" onclick="toggleFilter(this)"
-                  title="Video and image models that do not block real people or copyrighted characters">
-            <span class="material-icons check-icon">check</span><span class="material-icons">face</span> Likeness OK
-          </button>
-          <button class="filter-chip chip-nsfw" data-filter="polNsfw" onclick="toggleFilter(this)"
-                  title="Video and image models that do not refuse adult content">
-            <span class="material-icons check-icon">check</span><span class="material-icons">explicit</span> NSFW OK
-          </button>
-          <button class="filter-chip chip-voice" data-filter="vidVoice" onclick="toggleFilter(this)"
-                  title="Video models that generate their own dialogue and sound effects">
-            <span class="material-icons check-icon">check</span><span class="material-icons">graphic_eq</span> Native Voice
-          </button>
-          <button class="filter-chip chip-filter" data-filter="imgUnfiltered" onclick="toggleFilter(this)"
-                  title="Image models served from Venice hardware with no third-party classifier in the path">
-            <span class="material-icons check-icon">check</span><span class="material-icons">shield</span> No Filter
           </button>
           <button class="filter-chip chip-vision" data-filter="multiImage" onclick="toggleFilter(this)">
             <span class="material-icons check-icon">check</span><span class="material-icons">collections</span> Multi-image
@@ -1230,7 +1224,7 @@
             <span class="material-icons">close</span> Clear All
           </button>
         </div>
-        <div class="filter-section">
+        <div class="filter-section" id="refineSection">
           <span class="filter-label">Refine:</span>
           <select id="familyFilter" class="refine-select" onchange="applyFilters()" title="Model family / series">
             <option value="">All families</option>
@@ -1941,6 +1935,7 @@
 
         buildTabs();
         populateFamilyFilter();
+        renderPolicyFilters();
         applyFilters();
         updateKPIs();
         fetchRateLimits();
@@ -2264,10 +2259,16 @@
       document.getElementById('insightsView').classList.toggle('active', insights);
       if (insights) { drawChart(); return; }
 
-      // Capability/refine filters only mean anything for language models.
-      const showAdvanced = (key === 'text' || key === 'all');
-      document.getElementById('filterToggleBtn').style.display = showAdvanced ? '' : 'none';
-      if (!showAdvanced) document.getElementById('advancedFilters').classList.remove('open');
+      // The panel itself is offered on every browse tab now. What changes is which
+      // sections are inside it: capabilities and price are language-model concepts,
+      // content policy is the reverse and only decides stills and video. Anything a
+      // section takes out of the panel is dropped from the filter set with it.
+      const langFilters = (key === 'text' || key === 'all');
+      document.getElementById('filterToggleBtn').style.display = '';
+      document.getElementById('capabilitySection').style.display = langFilters ? '' : 'none';
+      document.getElementById('refineSection').style.display = langFilters ? '' : 'none';
+      if (!langFilters) dropLanguageFilters();
+      renderPolicyFilters();
 
       applyFilters();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2298,6 +2299,7 @@
       ['familyFilter', 'minContextFilter', 'maxPriceFilter'].forEach(id => {
         const el = document.getElementById(id); if (el) el.selectedIndex = 0;
       });
+      document.querySelectorAll('#policyControls select[data-axis]').forEach(s => { s.selectedIndex = 0; });
       const ho = document.getElementById('hideOffline'); if (ho) ho.checked = true;
       applyFilters();
     }
@@ -2317,15 +2319,89 @@
     const CAP_FILTERS = new Set(['reasoning','reasoningEffort','vision','multiImage','code',
       'websearch','xsearch','functions','schema','logprobs','audio','video','tee','e2ee']);
 
-    // Filter name -> the policy axis on row.policy it reads, and which kinds
-    // of model can satisfy it. Likeness and NSFW ask the same question of
-    // video and image alike, so those chips span both tabs.
-    const POLICY_FILTERS = new Map([
-      ['polLikeness',   { axis: 'likeness', kinds: ['video', 'image'] }],
-      ['polNsfw',       { axis: 'nsfw',     kinds: ['video', 'image'] }],
-      ['vidVoice',      { axis: 'voice',    kinds: ['video'] }],
-      ['imgUnfiltered', { axis: 'filter',   kinds: ['image'] }],
-    ]);
+    // Which policy axes the Content policy section offers per tab. Likeness and NSFW
+    // are asked of both media kinds, so on All Models they are the only two that mean
+    // the same thing for every row in the list; native voice belongs to video and the
+    // filter axis to stills, so those appear only where they are decidable.
+    const POLICY_TAB_AXES = {
+      all:   ['likeness', 'nsfw'],
+      video: ['likeness', 'voice', 'nsfw'],
+      image: ['likeness', 'filter', 'nsfw'],
+    };
+
+    function policyAxisDef(axis) {
+      for (const kind of ['video', 'image']) {
+        const def = (POLICY_AXES[kind] || []).find(a => a.key === axis);
+        if (def) return def;
+      }
+      return null;
+    }
+
+    // One dropdown per applicable axis, each option carrying the number of models on
+    // this tab that it would return, so the choice is made against real counts rather
+    // than a label. Rebuilt on every tab change: the axes and the counts both differ.
+    function renderPolicyFilters() {
+      const section = document.getElementById('policySection');
+      const host = document.getElementById('policyControls');
+      if (!section || !host) return;
+      const axes = POLICY_TAB_AXES[activeType] || [];
+      if (!axes.length) { section.style.display = 'none'; host.innerHTML = ''; return; }
+
+      const previous = {};
+      host.querySelectorAll('select[data-axis]').forEach(s => { previous[s.dataset.axis] = s.value; });
+      const pool = activeType === 'all' ? rows : rows.filter(r => r.type === activeType);
+
+      host.innerHTML = axes.map(axis => {
+        const def = policyAxisDef(axis) || { short: axis, desc: '' };
+        const counts = {};
+        for (const r of pool) {
+          const pol = r.policy;
+          if (!pol || !pol[axis]) continue;
+          const st = pol[axis].state;
+          counts[st] = (counts[st] || 0) + 1;
+        }
+        const open = counts.open || 0, limited = counts.limited || 0;
+        const blocked = counts.blocked || 0, unrated = counts.unrated || 0;
+        // Native voice and the image filter axis are reported as plain facts, so an
+        // "open or limited" option would be meaningless there; the judgement axes get it.
+        const binary = limited === 0 && unrated === 0;
+        const opts = [['', 'Any']];
+        if (binary) {
+          opts.push(['open', `Yes (${open})`], ['blocked', `No (${blocked})`]);
+        } else {
+          opts.push(['allowed', `Allowed (${open + limited})`], ['open', `Open only (${open})`],
+                    ['limited', `Limited only (${limited})`], ['blocked', `Blocked (${blocked})`]);
+          if (unrated) opts.push(['unrated', `Unrated (${unrated})`]);
+        }
+        const keep = previous[axis] || '';
+        return `<select class="refine-select policy-select" data-axis="${axis}"
+                        title="${escHtml(def.desc || '')}" aria-label="${escHtml(def.short)} policy"
+                        onchange="applyFilters()">${
+          opts.map(([v, label]) =>
+            `<option value="${v}"${v === keep ? ' selected' : ''}>${escHtml(def.short)}: ${escHtml(label)}</option>`
+          ).join('')}</select>`;
+      }).join('');
+      section.style.display = '';
+
+      // A choice carried over from a tab whose options no longer exist would filter
+      // the grid with nothing on screen to explain it.
+      host.querySelectorAll('select[data-axis]').forEach(s => {
+        if (s.value && ![...s.options].some(o => o.value === s.value)) s.value = '';
+      });
+    }
+
+    // Chips and refine selects that leave the panel have to leave the filter set with
+    // them, or a hidden control keeps thinning the list invisibly.
+    function dropLanguageFilters() {
+      document.querySelectorAll('#capabilitySection .filter-chip.active').forEach(c => {
+        c.classList.remove('active');
+        activeFilters.delete(c.dataset.filter);
+      });
+      ['familyFilter', 'minContextFilter', 'maxPriceFilter'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.selectedIndex = 0;
+      });
+    }
 
     function applyFilters() {
       if (activeType === 'insights') return;
@@ -2343,6 +2419,19 @@
         if (search && !r.id.toLowerCase().includes(search) && !r.name.toLowerCase().includes(search)) return false;
         if (hideOffline && r.offline) return false;
 
+        // Content policy. Only the axes the current tab offers are rendered, so an
+        // axis with no select cannot filter: switching to Language clears these.
+        for (const sel of document.querySelectorAll('#policyControls select[data-axis]')) {
+          const want = sel.value;
+          if (!want) continue;
+          const pol = r.policy;
+          if (!pol) return false;
+          const st = pol[sel.dataset.axis]?.state;
+          if (!st) return false;
+          if (want === 'allowed') { if (st !== 'open' && st !== 'limited') return false; }
+          else if (st !== want) return false;
+        }
+
         for (const f of activeFilters) {
           // Type-agnostic property filters
           if (f === 'new'          && !r.isNew) return false;
@@ -2352,22 +2441,6 @@
           if (f === 'anonymized'   && r.privacy !== 'anonymized') return false;
           if (f === 'deprecated'   && !r.deprecationDate) return false;
 
-          // Video policy filters. "Open" and "Limited" both pass — a model that
-          // merely renders adult content unreliably is still a candidate, while
-          // "Blocked" and "Unrated" are not. Non-video rows can never satisfy
-          // these, so they drop out.
-          if (POLICY_FILTERS.has(f)) {
-            const spec = POLICY_FILTERS.get(f);
-            const pol = r.policy;
-            if (!pol || !spec.kinds.includes(pol.kind)) return false;
-            const st = pol[spec.axis]?.state;
-            // Native voice and "no filter" are binary facts the API reports,
-            // so only "open" counts. Likeness and NSFW are judgement calls
-            // where "limited" is still a candidate worth showing.
-            if (f === 'vidVoice' || f === 'imgUnfiltered') { if (st !== 'open') return false; }
-            else if (st !== 'open' && st !== 'limited') return false;
-            continue;
-          }
 
           // Capability filters are language-model concepts: a non-text model
           // can never satisfy them, so it drops out rather than sneaking through.
@@ -2392,11 +2465,16 @@
       sortRows();
       renderGrid();
 
-      const refineActive = !!(family || minContext || maxPrice !== null || !hideOffline);
-      const anyFilter = activeFilters.size > 0 || refineActive;
+      const policyActive = [...document.querySelectorAll('#policyControls select[data-axis]')]
+        .filter(s => s.value).length;
+      const refineActive = !!(family || minContext || maxPrice !== null || !hideOffline)
+        || document.getElementById('minContextFilter')?.selectedIndex > 0
+        || document.getElementById('maxPriceFilter')?.selectedIndex > 0;
+      const nActive = activeFilters.size + policyActive;
+      const anyFilter = nActive > 0 || refineActive;
       document.getElementById('clearFiltersBtn').style.display = anyFilter ? 'inline-flex' : 'none';
       document.getElementById('filterToggleBtn').classList.toggle('has-active', anyFilter);
-      document.getElementById('filterCountBadge').textContent = activeFilters.size ? ` (${activeFilters.size})` : '';
+      document.getElementById('filterCountBadge').textContent = nActive ? ` (${nActive})` : '';
       document.getElementById('searchCount').innerHTML =
         `Showing <strong>${visibleRows.length}</strong> of <strong>${pool.length}</strong> models`;
       renderFreshness();
@@ -2577,6 +2655,8 @@
             ${copy.note}
             Providers change these rules without notice. A permissive rating
             tells you what will render, not what you are cleared to publish.
+            To narrow the list by any one of them, open <strong>Filters</strong>
+            on this tab: <strong>Content policy</strong> carries the same axes.
           </div>
         </div>`;
     }
