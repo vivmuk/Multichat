@@ -3299,3 +3299,62 @@ input[type="checkbox"]:checked + .toggle-slider:before { background-color: var(-
   background: var(--brass-deep) !important;
   color: #171009 !important;
 }
+
+/* ---- last leftovers from the review ----
+   The count pill's brass border on the active tab read as leftover gold, and the
+   tab's own underline already marks that state. The NEW mark on a tab went
+   dark-on-dark in the night room. The capability chips were pale enough to read as
+   disabled, the rule under the badges was the heaviest line on the card, and COPY
+   ID — the only action a card carries — was set as quietly as a caption. */
+.type-tab.active .tab-count { border-color: var(--ink-soft) !important; }
+.model-card [class*="cap"] { background: #EDEAE2 !important; border-color: #C9C4B6 !important; color: var(--ink) !important; }
+.model-card .mc-foot { border-top-color: var(--rule) !important; }
+.model-card button[class*="copy"], .model-card .mc-copy {
+  color: var(--ink) !important; border-color: var(--ink-soft) !important; font-weight: 700 !important;
+}
+[data-theme="dark"] .type-tabbar .tab-new-dot,
+[data-theme="dark"] .type-tabbar .mini-tag,
+[data-theme="dark"] .type-tabbar .tag-new {
+  background: var(--card) !important; color: var(--cab-deep) !important; border-color: var(--card) !important;
+}
+[data-theme="dark"] .type-tabbar .type-tab.active { background: #3E2E1E !important; border-bottom-color: var(--brass) !important; }
+
+/* ---- colour-coded capability marks ----
+   Each capability chip carries its own class in the markup (dot-reasoning,
+   dot-websearch, ...), so the marks can carry a colour that means something
+   instead of four identical pale boxes: a reader can scan the last line of a card
+   and see what it can do. The inks are the sheet's own ten, so nothing new enters
+   the palette, and every pair is the same ink-on-stock relationship already
+   contrast-checked.
+   contrast-checked. */
+.model-card .cap-dot.dot-audio { background: #FDF3E3 !important; border-color: #B45309 !important; }
+.model-card .cap-dot.dot-audio, .model-card .cap-dot.dot-audio .material-icons { color: #B45309 !important; }
+.model-card .cap-dot.dot-audio .material-icons { color: #B45309 !important; }
+
+.model-card .cap-dot.dot-code { background: #F7EEFE !important; border-color: #7E22CE !important; }
+.model-card .cap-dot.dot-code, .model-card .cap-dot.dot-code .material-icons { color: #7E22CE !important; }
+.model-card .cap-dot.dot-code .material-icons { color: #7E22CE !important; }
+
+.model-card .cap-dot.dot-functions { background: #EEF0FE !important; border-color: #3730A3 !important; }
+.model-card .cap-dot.dot-functions, .model-card .cap-dot.dot-functions .material-icons { color: #3730A3 !important; }
+.model-card .cap-dot.dot-functions .material-icons { color: #3730A3 !important; }
+
+.model-card .cap-dot.dot-reasoning { background: #F4EEFE !important; border-color: #6D28D9 !important; }
+.model-card .cap-dot.dot-reasoning, .model-card .cap-dot.dot-reasoning .material-icons { color: #6D28D9 !important; }
+.model-card .cap-dot.dot-reasoning .material-icons { color: #6D28D9 !important; }
+
+.model-card .cap-dot.dot-schema { background: #F1F5F9 !important; border-color: #475569 !important; }
+.model-card .cap-dot.dot-schema, .model-card .cap-dot.dot-schema .material-icons { color: #475569 !important; }
+.model-card .cap-dot.dot-schema .material-icons { color: #475569 !important; }
+
+.model-card .cap-dot.dot-video { background: #FFF1E8 !important; border-color: #C2410C !important; }
+.model-card .cap-dot.dot-video, .model-card .cap-dot.dot-video .material-icons { color: #C2410C !important; }
+.model-card .cap-dot.dot-video .material-icons { color: #C2410C !important; }
+
+.model-card .cap-dot.dot-vision { background: #E8F5F3 !important; border-color: #0F766E !important; }
+.model-card .cap-dot.dot-vision, .model-card .cap-dot.dot-vision .material-icons { color: #0F766E !important; }
+.model-card .cap-dot.dot-vision .material-icons { color: #0F766E !important; }
+
+.model-card .cap-dot.dot-websearch { background: #EDF2FF !important; border-color: #1D4ED8 !important; }
+.model-card .cap-dot.dot-websearch, .model-card .cap-dot.dot-websearch .material-icons { color: #1D4ED8 !important; }
+.model-card .cap-dot.dot-websearch .material-icons { color: #1D4ED8 !important; }
