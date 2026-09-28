@@ -3235,3 +3235,67 @@ input[type="checkbox"]:checked + .toggle-slider:before { background-color: var(-
   --purple-bg: #F7EEFE; --slate-bg: #F1F5F9;
   --ink-faint: #6E6146;
 }
+
+/* ============ night chrome, a typed count, and edges you can see ============
+   Three things the review caught. In the dark room the app bar, the toolbar strip
+   and the tab strip were still light stock, so the theme looked half applied;
+   the brass count pill was a fourth place wearing the action colour; and the card
+   edge and the dotted leaders sat too close to the white to define anything. */
+[data-theme="dark"] nav.top-nav,
+[data-theme="dark"] .type-tabbar {
+  background: var(--cab-deep) !important;
+  color: var(--card) !important;
+  border-bottom-color: #0B0703 !important;
+}
+[data-theme="dark"] nav.top-nav .nav-btn,
+[data-theme="dark"] .type-tabbar .type-tab {
+  background: #2E2117 !important;
+  color: #EFE6D6 !important;
+  border-color: #4A3A28 !important;
+}
+[data-theme="dark"] nav.top-nav .nav-btn.active,
+[data-theme="dark"] .type-tabbar .type-tab.active {
+  background: var(--cab) !important;
+  color: var(--card) !important;
+  border-bottom-color: var(--brass) !important;
+}
+[data-theme="dark"] nav.top-nav .brand-title,
+[data-theme="dark"] nav.top-nav h1 { color: var(--card) !important; }
+
+/* the count is a typed figure, not a gold chip: brass is the action colour and the
+   active tab's own mark, and it cannot also be a number's background */
+.type-tab .tab-count {
+  background: var(--card) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--rule-strong) !important;
+}
+.type-tab.active .tab-count { border-color: var(--brass) !important; }
+
+/* edges that define the card, and leaders you can follow */
+.model-card { border-color: #9C9788 !important; }
+.mc-stat-label::after { border-bottom-color: #9C9788 !important; }
+.model-card .mc-cap, [class*="cap"], .tag-new, .mini-tag {
+  background: var(--card-2) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--rule) !important;
+}
+.tag-new { border-color: var(--ink-soft) !important; font-weight: 700 !important; }
+
+/* the icon row (the .toolbar strip) into the dark room, with its buttons */
+[data-theme="dark"] .toolbar {
+  background: var(--cab-deep) !important;
+  color: var(--card) !important;
+  border-color: #0B0703 !important;
+}
+[data-theme="dark"] .toolbar .nav-btn,
+[data-theme="dark"] .toolbar button,
+[data-theme="dark"] .toolbar .icon-btn {
+  background: #2E2117 !important;
+  color: #EFE6D6 !important;
+  border-color: #4A3A28 !important;
+}
+[data-theme="dark"] .toolbar .nav-btn.active,
+[data-theme="dark"] .toolbar button.active {
+  background: var(--brass-deep) !important;
+  color: #171009 !important;
+}
