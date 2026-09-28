@@ -3321,40 +3321,34 @@ input[type="checkbox"]:checked + .toggle-slider:before { background-color: var(-
 
 /* ---- colour-coded capability marks ----
    Each capability chip carries its own class in the markup (dot-reasoning,
-   dot-websearch, ...), so the marks can carry a colour that means something
-   instead of four identical pale boxes: a reader can scan the last line of a card
-   and see what it can do. The inks are the sheet's own ten, so nothing new enters
-   the palette, and every pair is the same ink-on-stock relationship already
-   contrast-checked.
-   contrast-checked. */
-.model-card .cap-dot.dot-audio { background: #FDF3E3 !important; border-color: #B45309 !important; }
-.model-card .cap-dot.dot-audio, .model-card .cap-dot.dot-audio .material-icons { color: #B45309 !important; }
-.model-card .cap-dot.dot-audio .material-icons { color: #B45309 !important; }
+   dot-websearch, ...), so the marks carry a colour that means something instead of
+   four identical pale boxes: a card's last line can be scanned for what it can do.
+   The hues are deliberately spread (Reason violet, Func green, JSON amber, Web blue,
+   Vision cyan, Code purple, Video orange, Audio rose) because neighbouring hues
+   collapse into 'purple-ish' at phone size. Every stock is a 12 per cent tint of its
+   own hue and the label is darkened until it carries that stock above 4.6:1, so the
+   row reads as colour without a label going soft. Computed, not eyeballed. */
 
-.model-card .cap-dot.dot-code { background: #F7EEFE !important; border-color: #7E22CE !important; }
-.model-card .cap-dot.dot-code, .model-card .cap-dot.dot-code .material-icons { color: #7E22CE !important; }
-.model-card .cap-dot.dot-code .material-icons { color: #7E22CE !important; }
-
-.model-card .cap-dot.dot-functions { background: #EEF0FE !important; border-color: #3730A3 !important; }
-.model-card .cap-dot.dot-functions, .model-card .cap-dot.dot-functions .material-icons { color: #3730A3 !important; }
-.model-card .cap-dot.dot-functions .material-icons { color: #3730A3 !important; }
-
-.model-card .cap-dot.dot-reasoning { background: #F4EEFE !important; border-color: #6D28D9 !important; }
+.model-card .cap-dot.dot-reasoning { background: #EDE5FA !important; border-color: #6D28D9 !important; }
 .model-card .cap-dot.dot-reasoning, .model-card .cap-dot.dot-reasoning .material-icons { color: #6D28D9 !important; }
-.model-card .cap-dot.dot-reasoning .material-icons { color: #6D28D9 !important; }
 
-.model-card .cap-dot.dot-schema { background: #F1F5F9 !important; border-color: #475569 !important; }
-.model-card .cap-dot.dot-schema, .model-card .cap-dot.dot-schema .material-icons { color: #475569 !important; }
-.model-card .cap-dot.dot-schema .material-icons { color: #475569 !important; }
-
-.model-card .cap-dot.dot-video { background: #FFF1E8 !important; border-color: #C2410C !important; }
-.model-card .cap-dot.dot-video, .model-card .cap-dot.dot-video .material-icons { color: #C2410C !important; }
-.model-card .cap-dot.dot-video .material-icons { color: #C2410C !important; }
-
-.model-card .cap-dot.dot-vision { background: #E8F5F3 !important; border-color: #0F766E !important; }
-.model-card .cap-dot.dot-vision, .model-card .cap-dot.dot-vision .material-icons { color: #0F766E !important; }
-.model-card .cap-dot.dot-vision .material-icons { color: #0F766E !important; }
-
-.model-card .cap-dot.dot-websearch { background: #EDF2FF !important; border-color: #1D4ED8 !important; }
+.model-card .cap-dot.dot-websearch { background: #E4EAFA !important; border-color: #1D4ED8 !important; }
 .model-card .cap-dot.dot-websearch, .model-card .cap-dot.dot-websearch .material-icons { color: #1D4ED8 !important; }
-.model-card .cap-dot.dot-websearch .material-icons { color: #1D4ED8 !important; }
+
+.model-card .cap-dot.dot-functions { background: #E3F0E8 !important; border-color: #147839 !important; }
+.model-card .cap-dot.dot-functions, .model-card .cap-dot.dot-functions .material-icons { color: #147839 !important; }
+
+.model-card .cap-dot.dot-schema { background: #F6EAE1 !important; border-color: #A94E08 !important; }
+.model-card .cap-dot.dot-schema, .model-card .cap-dot.dot-schema .material-icons { color: #A94E08 !important; }
+
+.model-card .cap-dot.dot-vision { background: #E2EEF2 !important; border-color: #0D6D87 !important; }
+.model-card .cap-dot.dot-vision, .model-card .cap-dot.dot-vision .material-icons { color: #0D6D87 !important; }
+
+.model-card .cap-dot.dot-code { background: #F0E4F9 !important; border-color: #7E22CE !important; }
+.model-card .cap-dot.dot-code, .model-card .cap-dot.dot-code .material-icons { color: #7E22CE !important; }
+
+.model-card .cap-dot.dot-video { background: #F8E8E2 !important; border-color: #B63D0B !important; }
+.model-card .cap-dot.dot-video, .model-card .cap-dot.dot-video .material-icons { color: #B63D0B !important; }
+
+.model-card .cap-dot.dot-audio { background: #F7E3EC !important; border-color: #BE185D !important; }
+.model-card .cap-dot.dot-audio, .model-card .cap-dot.dot-audio .material-icons { color: #BE185D !important; }
