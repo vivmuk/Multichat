@@ -1072,6 +1072,7 @@
     }
 
   </style>
+  <link rel="stylesheet" href="assets/card-catalogue.css">
 </head>
 
 <body>
@@ -1126,7 +1127,7 @@
       <div class="home-toolbar">
         <div class="search-box">
           <span class="material-icons">search</span>
-          <input type="text" id="searchInput" placeholder="Search this tab by name or model ID…  (Ctrl/⌘ K)" oninput="applyFilters()">
+          <input type="text" id="searchInput" placeholder="Search by name or model ID" title="Search this tab by name or model ID (Ctrl/⌘ K)" oninput="applyFilters()">
         </div>
         <span class="sort-label">Sort</span>
         <select id="sortSelect" class="sort-select" onchange="onSortChange()" title="Sort order">
@@ -1334,9 +1335,9 @@
             </div>
           </div>
           <div class="chart-legend">
-            <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#10b981;"></div> Fast (&lt;400ms TTFT)</div>
-            <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#f59e0b;"></div> Medium (400–1200ms)</div>
-            <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#ef4444;"></div> Slow (&gt;1200ms)</div>
+            <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#274F73;"></div> Fast (&lt;400ms TTFT)</div>
+            <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#6E7C88;"></div> Medium (400–1200ms)</div>
+            <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#A8332A;"></div> Slow (&gt;1200ms)</div>
             <div class="chart-legend-item" style="color:var(--text-muted);font-size:10px;">● Dot size = context window · Hover for details</div>
           </div>
         </div>
@@ -3845,17 +3846,19 @@
 
     // --- Colour helpers ---
     const TIER_COLORS = {
-      fast: { fill: '#10b981', stroke: '#059669', label: '#065f46' },
-      med:  { fill: '#f59e0b', stroke: '#d97706', label: '#78350f' },
-      slow: { fill: '#ef4444', stroke: '#dc2626', label: '#7f1d1d' },
+      fast: { fill: '#274F73', stroke: '#1C3A56', label: '#14293D' },
+      med:  { fill: '#6E7C88', stroke: '#55616B', label: '#3A424A' },
+      slow: { fill: '#A8332A', stroke: '#86261F', label: '#5C1A15' },
     };
     function tierColor(t) { return TIER_COLORS[t] || TIER_COLORS.med; }
 
     function isDark() { return document.documentElement.getAttribute('data-theme') === 'dark'; }
     function themePalette() {
+      // The card catalogue: the chart is drawn on card stock, so its ground stays cream
+      // in both rooms; only the hairline grid and the ink change.
       return isDark()
-        ? { bg:'#0f172a', gridLine:'rgba(255,255,255,0.07)', axis:'rgba(255,255,255,0.5)', text:'#94a3b8', textStrong:'#f1f5f9' }
-        : { bg:'#f8fafc', gridLine:'rgba(0,0,0,0.05)',       axis:'rgba(0,0,0,0.35)',      text:'#64748b', textStrong:'#0f172a' };
+        ? { bg:'#F2EADA', gridLine:'rgba(36,28,18,0.12)', axis:'rgba(36,28,18,0.50)', text:'#5A4E3C', textStrong:'#241C12' }
+        : { bg:'#FBF6E9', gridLine:'rgba(36,28,18,0.10)', axis:'rgba(36,28,18,0.45)', text:'#5A4E3C', textStrong:'#241C12' };
     }
 
     // --- Scatter plot ---
