@@ -1,0 +1,419 @@
+{
+ "chat.html": {
+  "vw": 390,
+  "overflow": 0,
+  "wideCount": 10,
+  "wide": [
+   {
+    "sel": "button.mobile-model-tab",
+    "w": 168,
+    "left": 339,
+    "over": 118
+   },
+   {
+    "sel": "button.mobile-model-tab",
+    "w": 148,
+    "left": 514,
+    "over": 271
+   },
+   {
+    "sel": "span.tab-status",
+    "w": 6,
+    "left": 527,
+    "over": 143
+   },
+   {
+    "sel": "button.mobile-model-tab",
+    "w": 155,
+    "left": 667,
+    "over": 433
+   },
+   {
+    "sel": "span.tab-status",
+    "w": 6,
+    "left": 680,
+    "over": 296
+   },
+   {
+    "sel": "button.mobile-model-tab",
+    "w": 155,
+    "left": 829,
+    "over": 594
+   },
+   {
+    "sel": "span.tab-status",
+    "w": 6,
+    "left": 842,
+    "over": 458
+   },
+   {
+    "sel": "button.mobile-model-tab",
+    "w": 157,
+    "left": 990,
+    "over": 757
+   },
+   {
+    "sel": "span.tab-status",
+    "w": 6,
+    "left": 1003,
+    "over": 619
+   },
+   {
+    "sel": "button.mobile-model-tab",
+    "w": 165,
+    "left": 1153,
+    "over": 927
+   }
+  ],
+  "smallTargets": 134,
+  "smallBySize": {
+   "button.icon-btn x42": 1,
+   "select x40": 1,
+   "button.mobile-model-tab.active x34": 1,
+   "button.mobile-model-tab x34": 122,
+   "button.button.refresh-button x40": 1,
+   "button.button.dl-main x40": 1,
+   "button.active x40": 1,
+   "button x40": 1,
+   "button.copy-button x40": 1,
+   "button.hp-close x40": 1,
+   "input x34": 1,
+   "button.hp-save-btn x40": 1,
+   "button.hp-clear-btn x40": 1
+  },
+  "tinyText": [
+   {
+    "sel": "strong",
+    "fs": "11px",
+    "txt": "$0.0000"
+   }
+  ],
+  "tables": [],
+  "inputs": [
+   {
+    "sel": "select",
+    "fs": "15px",
+    "h": 40
+   },
+   {
+    "sel": "textarea",
+    "fs": "14px",
+    "h": 92
+   },
+   {
+    "sel": "input",
+    "fs": "13px",
+    "h": 34
+   }
+  ]
+ },
+ "benchmark.html": {
+  "vw": 390,
+  "overflow": 0,
+  "wideCount": 9,
+  "wide": [
+   {
+    "sel": "button.suite-tab",
+    "w": 179,
+    "left": 345,
+    "over": 135
+   },
+   {
+    "sel": "button.suite-tab",
+    "w": 300,
+    "left": 527,
+    "over": 436
+   },
+   {
+    "sel": "span.material-icons",
+    "w": 170,
+    "left": 542,
+    "over": 322
+   },
+   {
+    "sel": "button.suite-tab",
+    "w": 175,
+    "left": 828,
+    "over": 613
+   },
+   {
+    "sel": "span.material-icons",
+    "w": 17,
+    "left": 843,
+    "over": 470
+   },
+   {
+    "sel": "button.suite-tab",
+    "w": 143,
+    "left": 1005,
+    "over": 758
+   },
+   {
+    "sel": "span.material-icons",
+    "w": 17,
+    "left": 1020,
+    "over": 647
+   },
+   {
+    "sel": "button.suite-tab",
+    "w": 134,
+    "left": 1150,
+    "over": 894
+   },
+   {
+    "sel": "span.material-icons",
+    "w": 17,
+    "left": 1165,
+    "over": 792
+   }
+  ],
+  "smallTargets": 18,
+  "smallBySize": {
+   "button.nav-btn.secondary x34": 1,
+   "a.nav-btn.secondary x34": 2,
+   "a.nav-btn.primary x34": 1,
+   "button.suite-tab.active x37": 1,
+   "button.suite-tab x37": 6,
+   "button.preset-chip.active x29": 1,
+   "button.preset-chip x29": 2,
+   "button.mini-btn x29": 2,
+   "select.judge-select x34": 1,
+   "button.run-btn x43": 1
+  },
+  "tinyText": [
+   {
+    "sel": "span.rubric-chip",
+    "fs": "10.5px",
+    "txt": "Visual impact"
+   },
+   {
+    "sel": "span.rubric-chip",
+    "fs": "10.5px",
+    "txt": "Originality"
+   },
+   {
+    "sel": "span.rubric-chip",
+    "fs": "10.5px",
+    "txt": "Typography & color"
+   },
+   {
+    "sel": "span.rubric-chip",
+    "fs": "10.5px",
+    "txt": "Layout & responsiveness"
+   },
+   {
+    "sel": "span.rubric-chip",
+    "fs": "10.5px",
+    "txt": "Motion & interactivity"
+   },
+   {
+    "sel": "span.rubric-chip",
+    "fs": "10.5px",
+    "txt": "Code quality"
+   },
+   {
+    "sel": "span.badge-new",
+    "fs": "9px",
+    "txt": "NEW"
+   },
+   {
+    "sel": "span.mc-price",
+    "fs": "10.5px",
+    "txt": "$7.5/M out"
+   }
+  ],
+  "tables": [],
+  "inputs": [
+   {
+    "sel": "textarea.challenge-textarea",
+    "fs": "12.5px",
+    "h": 130
+   },
+   {
+    "sel": "select.judge-select",
+    "fs": "12px",
+    "h": 34
+   }
+  ]
+ },
+ "api-guide.html": {
+  "vw": 390,
+  "overflow": 0,
+  "wideCount": 10,
+  "wide": [
+   {
+    "sel": "code",
+    "w": 340,
+    "left": 52,
+    "over": 2
+   },
+   {
+    "sel": "code",
+    "w": 412,
+    "left": 31,
+    "over": 53
+   },
+   {
+    "sel": "code",
+    "w": 419,
+    "left": 31,
+    "over": 60
+   },
+   {
+    "sel": "code",
+    "w": 405,
+    "left": 31,
+    "over": 46
+   },
+   {
+    "sel": "code",
+    "w": 405,
+    "left": 31,
+    "over": 46
+   },
+   {
+    "sel": "code",
+    "w": 448,
+    "left": 31,
+    "over": 89
+   },
+   {
+    "sel": "code",
+    "w": 419,
+    "left": 31,
+    "over": 60
+   },
+   {
+    "sel": "code",
+    "w": 419,
+    "left": 31,
+    "over": 60
+   },
+   {
+    "sel": "code",
+    "w": 434,
+    "left": 31,
+    "over": 75
+   },
+   {
+    "sel": "code",
+    "w": 434,
+    "left": 31,
+    "over": 75
+   }
+  ],
+  "smallTargets": 42,
+  "smallBySize": {
+   "button.nav-btn.secondary x30": 2,
+   "a.nav-btn.secondary x33": 1,
+   "a.nav-btn.primary x33": 1,
+   "button.copy-btn x23": 36,
+   "a x16": 2
+  },
+  "tinyText": [
+   {
+    "sel": "span.inline-code",
+    "fs": "11.5px",
+    "txt": "Authorization: Bearer YO"
+   },
+   {
+    "sel": "span.inline-code",
+    "fs": "11.5px",
+    "txt": "base_url"
+   },
+   {
+    "sel": "span.inline-code",
+    "fs": "11.5px",
+    "txt": "https://api.venice.ai/ap"
+   },
+   {
+    "sel": "span.inline-code",
+    "fs": "11.5px",
+    "txt": "?type="
+   },
+   {
+    "sel": "th",
+    "fs": "10px",
+    "txt": "Parameter"
+   },
+   {
+    "sel": "th",
+    "fs": "10px",
+    "txt": "Type"
+   },
+   {
+    "sel": "th",
+    "fs": "10px",
+    "txt": "Required"
+   },
+   {
+    "sel": "th",
+    "fs": "10px",
+    "txt": "Description"
+   }
+  ],
+  "tables": [
+   {
+    "w": 358,
+    "scrollW": 358,
+    "clientW": 358
+   },
+   {
+    "w": 358,
+    "scrollW": 358,
+    "clientW": 358
+   },
+   {
+    "w": 358,
+    "scrollW": 358,
+    "clientW": 358
+   },
+   {
+    "w": 358,
+    "scrollW": 358,
+    "clientW": 358
+   },
+   {
+    "w": 358,
+    "scrollW": 358,
+    "clientW": 358
+   },
+   {
+    "w": 358,
+    "scrollW": 358,
+    "clientW": 358
+   },
+   {
+    "w": 471,
+    "scrollW": 471,
+    "clientW": 356
+   },
+   {
+    "w": 403,
+    "scrollW": 403,
+    "clientW": 356
+   },
+   {
+    "w": 356,
+    "scrollW": 356,
+    "clientW": 356
+   },
+   {
+    "w": 356,
+    "scrollW": 356,
+    "clientW": 356
+   },
+   {
+    "w": 356,
+    "scrollW": 356,
+    "clientW": 356
+   },
+   {
+    "w": 358,
+    "scrollW": 358,
+    "clientW": 358
+   }
+  ],
+  "inputs": []
+ }
+}
