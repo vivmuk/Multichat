@@ -2640,3 +2640,25 @@ input[type="checkbox"]:checked + .toggle-slider:before { background-color: var(-
   font-family: 'Material Icons';
   font-feature-settings: 'liga';
 }
+
+/* ---- real-data pass: a track may never exceed its container ----
+   Measured with all 366 rows loaded: at 390px the grid's only track computed
+   to 420.7px inside a 366px column, so the page scrolled 43px sideways. The
+   cause is the automatic minimum of a 1fr track: it grows to the card's
+   min-content width and cannot shrink back. minmax(0, 1fr) removes that floor,
+   and min-width:0 lets the card's own rows shrink and wrap instead. The empty
+   state hides this completely, which is why it survived verification. */
+.model-card,
+.model-card > *,
+.model-card .mc-row,
+.model-card .mc-meta,
+.model-card .model-name,
+.model-card .model-id { min-width: 0; }
+
+@media (max-width: 768px) {
+  .model-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* the table view scrolls inside its own wrapper; the wrapper must not push
+   the page wider than the viewport either */
+.table-scroll { max-width: 100%; min-width: 0; }
