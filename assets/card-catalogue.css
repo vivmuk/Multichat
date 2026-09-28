@@ -29,14 +29,14 @@
 
 :root {
   /* the cabinet */
-  --cab: #7A5B3A;
-  --cab-deep: #5C4128;
+  --cab: #3A332B;      /* graphite, not oak: the chrome is a dark rule on white */
+  --cab-deep: #262119;
   /* the card stock */
-  --card: #FBF6E9;
-  --card-2: #F3EAD6;
+  --card: #FFFFFF;
+  --card-2: #F4F3F0;
   /* the ruled hairline */
-  --rule: #D8CDB2;
-  --rule-strong: #BFAF8E;
+  --rule: #E4E2DB;
+  --rule-strong: #B5AF9F;
   /* typed ink */
   --ink: #241C12;
   --ink-soft: #5A4E3C;
@@ -49,7 +49,7 @@
   --brass-deep: #A87B2C;
   --on-brass: var(--ink);
   /* roles: what sits on the room, and the chrome's own height */
-  --ground: var(--card-2);
+  --ground: #FFFFFF;
   --on-ground: var(--ink);
   --hdr-h: 60px;
 
@@ -1848,29 +1848,29 @@ table.ptable tr:hover td { background: var(--card-2); }
 /* Scoped to chat.html only: chat is the one page that carries .rail-shell, and
    its token names must not leak onto the other three sheets' own values. */
 :root:has(.rail-shell) {
-  --n-0: #FBF6E9;   --n-25: #F3EAD6;  --n-50: #F3EAD6;  --n-100: #F3EAD6;
-  --n-200: #D8CDB2; --n-300: #BFAF8E; --n-400: #8A7A60;  --n-500: #5A4E3C;
-  --n-600: #5A4E3C; --n-700: #241C12; --n-800: #241C12; --n-900: #241C12;
-  --p-50: #F3EAD6;  --p-100: #EADFC5; --p-200: #BFAF8E;
+  --n-0: #FFFFFF;   --n-25: #F4F3F0;  --n-50: #F4F3F0;  --n-100: #F4F3F0;
+  --n-200: #E4E2DB; --n-300: #B5AF9F; --n-400: #6B6555;  --n-500: #4A4436;
+  --n-600: #4A4436; --n-700: #241C12; --n-800: #241C12; --n-900: #241C12;
+  --p-50: #F4F3F0;  --p-100: #E8E7E2; --p-200: #B5AF9F;
   --p-400: #C9973F; --p-500: #C9973F; --p-600: #A87B2C; --p-700: #5C4128;
-  --viz-1: #5C4128; --viz-2: #274F73; --viz-3: #5A4E3C;
-  --viz-4: #A8332A; --viz-5: #5C4128; --viz-6: #5A4E3C;
-  --ok: #274F73;   --ok-bg: #F3EAD6;
-  --warn: #A8332A; --warn-bg: #F3EAD6;
-  --bad: #A8332A;  --bad-bg: #F3EAD6;
-  --info: #274F73; --info-bg: #F3EAD6;
-  --background-color: #F3EAD6;
-  --surface-color: #FBF6E9;
-  --surface-2: #F3EAD6;
-  --surface-3: #F3EAD6;
+  --viz-1: #5C4128; --viz-2: #274F73; --viz-3: #4A4436;
+  --viz-4: #A8332A; --viz-5: #5C4128; --viz-6: #4A4436;
+  --ok: #274F73;   --ok-bg: #EAF7EE;
+  --warn: #A8332A; --warn-bg: #FDF3E3;
+  --bad: #A8332A;  --bad-bg: #FDECEA;
+  --info: #274F73; --info-bg: #EDF2FF;
+  --background-color: #F4F3F0;
+  --surface-color: #FFFFFF;
+  --surface-2: #F4F3F0;
+  --surface-3: #F4F3F0;
   --text-color: #241C12;
   --text-secondary: #5A4E3C;
   --text-tertiary: #8A7A60;
-  --border-color: #D8CDB2;
-  --border-strong: #BFAF8E;
-  --surface: #FBF6E9;
-  --surface-strong: #FBF6E9;
-  --background: #F3EAD6;
+  --border-color: #E4E2DB;
+  --border-strong: #B5AF9F;
+  --surface: #FFFFFF;
+  --surface-strong: #FFFFFF;
+  --background: #F4F3F0;
   --accent: #5C4128;
   --primary: #5C4128;
   --primary-2: #5C4128;
@@ -3153,3 +3153,85 @@ input[type="checkbox"]:checked + .toggle-slider:before { background-color: var(-
    do the separating, and one rule closes the field. */
 .mc-stat { border-bottom: 0; padding: 3px 0 2px; }
 .mc-stat:last-child { border-bottom: 1px solid var(--rule-strong); }
+
+/* ============ white ground and real facet colours ============
+   Direction from the user: the beige ground was distracting, the background should
+   be white, and the cards should carry more colour so they are easy to tell apart.
+   The room is now white and the stock is white; the colour lives in the GUIDE TABS,
+   because every model already carries a facet in the data (TYPE_META in the page
+   script) and the incumbent palette names for those facets had been collapsed onto
+   two inks with every tint flattened to one beige. They are real now.
+
+   Colour roles, and nothing outside them may carry a colour:
+     brass          = an action you can press
+     red/blue stamp = a verdict (policy standing, an error)
+     facet ink      = what kind of thing this is (its tab, its chip, its tint)
+*/
+:root {
+  --ground: #FFFFFF;
+  --on-ground: var(--ink);
+  --card: #FFFFFF;
+  --card-2: #F4F3F0;
+  --rule: #E4E2DB;
+  --rule-strong: #B5AF9F;
+  --ink: #14110C;
+  --ink-soft: #4A4436;
+  --ink-faint: #6B6555;
+  --indigo: #3730A3; --indigo-bg: #EEF0FE;
+  --blue: #1D4ED8; --blue-bg: #EDF2FF;
+  --orange: #C2410C; --orange-bg: #FFF1E8;
+  --green: #15803D; --green-bg: #EAF7EE;
+  --rose: #BE185D; --rose-bg: #FDEFF5;
+  --amber: #B45309; --amber-bg: #FDF3E3;
+  --violet: #6D28D9; --violet-bg: #F4EEFE;
+  --cyan: #0E7490; --cyan-bg: #E9F6F9;
+  --teal: #0F766E; --teal-bg: #E8F5F3;
+  --purple: #7E22CE; --purple-bg: #F7EEFE;
+  --slate: #475569; --slate-bg: #F1F5F9;
+}
+
+/* the tab is the card's facet mark: filled with the facet's own ink, its word
+   reversed out of it, so a screenful can be sorted by eye before a word is read */
+.model-card .mc-typechip { font-weight: 700; }
+.model-card .mc-typechip[style*="--indigo-bg"] { background: var(--indigo) !important; color: #FFFFFF !important; }
+.model-card .mc-typechip[style*="--blue-bg"] { background: var(--blue) !important; color: #FFFFFF !important; }
+.model-card .mc-typechip[style*="--orange-bg"] { background: var(--orange) !important; color: #FFFFFF !important; }
+.model-card .mc-typechip[style*="--green-bg"] { background: var(--green) !important; color: #FFFFFF !important; }
+.model-card .mc-typechip[style*="--rose-bg"] { background: var(--rose) !important; color: #FFFFFF !important; }
+.model-card .mc-typechip[style*="--amber-bg"] { background: var(--amber) !important; color: #FFFFFF !important; }
+.model-card .mc-typechip[style*="--violet-bg"] { background: var(--violet) !important; color: #FFFFFF !important; }
+.model-card .mc-typechip[style*="--cyan-bg"] { background: var(--cyan) !important; color: #FFFFFF !important; }
+.model-card .mc-typechip[style*="--teal-bg"] { background: var(--teal) !important; color: #FFFFFF !important; }
+.model-card .mc-typechip[style*="--purple-bg"] { background: var(--purple) !important; color: #FFFFFF !important; }
+.model-card .mc-typechip[style*="--slate-bg"] { background: var(--slate) !important; color: #FFFFFF !important; }
+
+/* --orange also paints every button in chat.html through the incumbent's element
+   rule, so it stays brass for actions and the video facet is answered directly */
+.model-card .mc-typechip[style*="--orange-bg"] { background: #C2410C !important; color: #FFFFFF !important; }
+
+/* the facet tints survive the dark room: the cards stay light stock there, so the
+   pale tints still read and the colour coding survives the theme switch. The faint
+   ink is darkened too: #8A7A60 on #F2EADA measured 3.4:1, under the bar for small
+   text. #6E6146 measures 5.07:1. */
+[data-theme="dark"] {
+  /* the full night set is re-declared here on purpose: this sheet's own :root block
+     sits later in the file and ties on specificity with the earlier dark block, so
+     source order would otherwise paint the dark room white. */
+  --cab: #241A12; --cab-deep: #171009;
+  --card: #F2EADA; --card-2: #E8DCC6;
+  --rule: #4A3A28; --rule-strong: #6B563C;
+  --ink: #241C12; --ink-soft: #5A4E3C;
+  --brass: #D9A94C; --brass-deep: #C9973F;
+  --primary-light: #2E2117; --accent-light: #C9B08A; --orange-light: #E0C489;
+  --ground: var(--cab); --on-ground: var(--card);
+  --background: var(--ground); --surface: var(--card);
+  --surface-2: var(--card-2); --surface-3: var(--card-2); --surface-hover: var(--card-2);
+  --text-primary: var(--ink); --text-secondary: var(--ink-soft); --text-muted: #6E6146;
+  --border: var(--rule); --border-light: var(--rule); --border-strong: var(--rule-strong);
+  --accent-bg: var(--card-2); --primary: var(--brass-deep);
+  --indigo-bg: #EEF0FE; --blue-bg: #EDF2FF;   --orange-bg: #FFF1E8;
+  --green-bg: #EAF7EE;  --rose-bg: #FDEFF5;   --amber-bg: #FDF3E3;
+  --violet-bg: #F4EEFE; --cyan-bg: #E9F6F9;   --teal-bg: #E8F5F3;
+  --purple-bg: #F7EEFE; --slate-bg: #F1F5F9;
+  --ink-faint: #6E6146;
+}
