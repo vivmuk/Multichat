@@ -3124,3 +3124,24 @@ input[type="checkbox"]:checked + .toggle-slider:before { background-color: var(-
 }
 .search-count strong { color: var(--on-ground); }
 @media (max-width: 768px) { .search-count { text-align: left; } }
+
+/* ---- the spec block is a typed entry, not a stat table ----
+   The last objection to the card: "four stacked rows of label-left/value-right with
+   uniform spacing and uniform visual weight is structurally a stat table... the
+   values are a different typeface from the labels", and its cheapest fix is "a
+   dotted leader between label and value so it reads as a table of contents rather
+   than a metric stack". Both applied: one typed face for label and value, and a
+   leader carrying the eye from the label to its reading. */
+.mc-stat-value {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 600;
+}
+.mc-stat-label { display: flex; align-items: baseline; gap: 6px; flex: 1 1 auto; min-width: 0;
+  /* one typed face for the entry: the label and its reading are set in the same
+     stock type, so the block reads as a typed line rather than a metric stack */
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+.mc-stat-label::after {
+  content: ''; flex: 1 1 auto; min-width: 12px;
+  border-bottom: 1px dotted var(--rule-strong);
+  transform: translateY(-2px);
+}
