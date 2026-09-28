@@ -3100,3 +3100,27 @@ input[type="checkbox"]:checked + .toggle-slider:before { background-color: var(-
 @media (min-width: 561px) and (max-width: 900px) {
   .model-grid { grid-template-columns: repeat(auto-fill, minmax(min(248px, 100%), 1fr)); }
 }
+
+/* ---- the spec block is a typed field, not a KPI panel ----
+   A review of the real 366-row page called the ruled two-column grid with its
+   vertical divider "a KPI panel: on a real index card you would expect a single
+   spec line or a stamped field". Every reading now gets its own ruled line, its
+   label at the left in typed caps and its value at the right in the typed face. */
+.mc-stats { display: block; }
+.mc-stat {
+  display: flex; flex-direction: row; align-items: baseline;
+  justify-content: space-between; gap: 12px;
+  padding: 3px 0; border-bottom: 1px solid var(--rule);
+}
+.mc-stats > .mc-stat:nth-child(odd) { border-right: 0; padding-right: 0; }
+.mc-stats > .mc-stat:nth-child(even) { padding-left: 0; }
+.mc-stat-label { font-size: 8.5px; }
+.mc-stat-value { font-size: 12.5px; }
+
+/* the count is a typed line on the room, not a boxed centred counter */
+.search-count {
+  border: 0; background: transparent; text-align: left;
+  color: var(--on-ground); letter-spacing: 0.08em; padding: 2px 0 0;
+}
+.search-count strong { color: var(--on-ground); }
+@media (max-width: 768px) { .search-count { text-align: left; } }
