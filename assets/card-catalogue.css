@@ -3145,3 +3145,11 @@ input[type="checkbox"]:checked + .toggle-slider:before { background-color: var(-
   border-bottom: 1px dotted var(--rule-strong);
   transform: translateY(-2px);
 }
+
+/* ---- rows are separated by leading, not by rules ----
+   The last review's strongest point: "the hairline rules between each reading row
+   are the single biggest tell — rules between rows are table rows, full stop. A
+   typed entry separates its lines with leading, not with rules." The leaders now
+   do the separating, and one rule closes the field. */
+.mc-stat { border-bottom: 0; padding: 3px 0 2px; }
+.mc-stat:last-child { border-bottom: 1px solid var(--rule-strong); }
