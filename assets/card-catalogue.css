@@ -385,6 +385,11 @@ h1, h2, h3, h4, h5, h6, .kpi-value, .rate-value, .drawer-title, .mc-name,
   color: var(--ink);
   border-color: var(--rule-strong);
   border-bottom: 2px solid var(--brass);
+  border-top: 2px solid var(--brass);   /* the drawer you have open is framed in
+                                           the one action colour; on a strip of
+                                           twelve tabs an underline two pixels
+                                           tall was not a legible state */
+  font-weight: 700;
 }
 
 .type-tab .tab-count {
@@ -2662,3 +2667,436 @@ input[type="checkbox"]:checked + .toggle-slider:before { background-color: var(-
 /* the table view scrolls inside its own wrapper; the wrapper must not push
    the page wider than the viewport either */
 .table-scroll { max-width: 100%; min-width: 0; }
+
+
+/* ===========================================================================
+   11. THE MATERIAL PASS — the card, the stack, the drawer face, the drawer
+   ---------------------------------------------------------------------------
+   The keyless check only ever sees the empty state, so the world held on the
+   chrome and fell apart where the data is: with 366 rows loaded the stack read
+   as a marketing grid of flat rectangles, led by a generic initials tile and an
+   unlabelled ring in every corner, with a navy stripe and a blue NEW tag as the
+   only material, a dark square on every tab, a mid-word clip on the tab strip,
+   and no depth anywhere but in the type.
+
+   This section is the answer, written to the same three laws: no shadows, no
+   gradients, no second accent colour; depth is a card lying on a darker card
+   plus a hairline rule. A card is stock: a cut edge, a printed frame, ruled
+   fields, a doubled heading rule and two filing punches, repeated on every
+   card so a screenful reads as filed stock. Nothing above this section has to
+   change — every rule here re-states an existing selector later in the
+   cascade, and the two phone blocks are repeated at the end because a media
+   query carries no extra weight of its own.
+   =========================================================================== */
+
+/* --- 11.1 The stack: a drawer of index cards, not a marketing grid -------- */
+
+/* 248px fits four columns at 1280 where 336px only fit three, and three wide
+   cards of short content is exactly the landscape, airy read that broke the
+   proportion. */
+.model-grid { gap: 20px 12px; grid-template-columns: repeat(auto-fill, minmax(min(248px, 100%), 1fr)); }
+
+/* --- 11.2 One card: cut edge, printed frame, ruled fields, punched foot --- */
+
+.model-card {
+  background: var(--card);
+  border: 1px solid var(--rule-strong);   /* the cut edge of the stock */
+  border-radius: 2px;                     /* near-square: card stock, not a tile */
+  outline: none;
+  box-shadow: none;
+  padding: 14px 15px 14px;
+  gap: 0;                                 /* fields are separated by rules, not air */
+  flex-direction: column;
+}
+
+/* The card's material, and the one thing no shadow is allowed to do here: a
+   second card lying under it, offset three pixels down and right, so every
+   card in the stack shows the edge of the card beneath it.
+
+   What this replaced, and why: the old build hung an 8px ring in the top-right
+   corner of every card, and the first version of this pass turned it into two
+   filing punches at the foot. A ring on a card is a control-shaped object with
+   no label and no state — the review read the punches as radio buttons, which
+   is the same defect wearing new clothes. So the circles are gone and the
+   stock is carried by a card edge, which cannot be mistaken for a control. */
+.model-card::before { content: none; }   /* the unlabelled ring: deleted */
+/* The card-stock edge: the line of the card beneath this one, a 2px oak rule
+   set two pixels out from the card's own edge on the right and the bottom, so
+   every card in the stack shows the stock under it. Drawn on top and never
+   behind: a negative-z layer sat under the page's own background and vanished.
+   No fill, no blur, no shadow — a line, which is what a card edge is. */
+.model-card::after {
+  content: '';
+  position: absolute;
+  top: 4px; left: 4px; right: -5px; bottom: -5px;
+  border-right: 2px solid var(--rule);
+  border-bottom: 2px solid var(--rule);
+  border-radius: 0 0 2px 0;
+  background: transparent;
+  pointer-events: none;
+  transition: none;
+}
+
+.model-card:hover {
+  border-color: var(--cab-deep);
+  background: var(--card);
+  box-shadow: none;
+  transform: none;
+}
+/* picking the card up off the stack: the card beneath shows more */
+.model-card:hover::after { top: 3px; left: 3px; right: -7px; bottom: -7px; }
+
+/* A newly added model is a STATUS, so it is carried the way this world carries
+   state — a step in weight, a darker heading rule, and the stamped NEW mark in
+   the card's foot. The navy left stripe is gone: a coloured one-side border is
+   banned outright here, and blue is a verdict ink, never decoration. */
+.model-card.is-new { border: 1px solid var(--rule-strong); }
+.model-card.is-new .mc-head { border-bottom-color: var(--ink); }
+.model-card.is-new .mc-head::after { background: var(--ink-faint); }
+.model-card.is-offline { opacity: 0.6; }
+
+/* --- 11.3 The head: the heading rule of a card, doubled ------------------- */
+
+/* The card's top edge carries the guide tab (11.3a) and nothing else: a rule
+   under the tab made the tab read as a section header with a rule beneath it,
+   which is the one reading that kills the metaphor. The heading rule of the
+   card is the rule under the title, doubled four pixels lower — the line a
+   card's heading is typed above, repeating at the same height on every card in
+   the drawer. */
+.mc-head {
+  position: relative;
+  padding: 7px 0 8px;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.mc-head::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px;
+  background: var(--rule); pointer-events: none;
+}
+.mc-title { padding-right: 0; }
+
+/* The model name is what a catalogue is FOR, so it is the loudest thing on the
+   card. Everything under it is typed, and quieter. */
+.mc-name {
+  font-size: 18px; font-weight: 700; line-height: 1.2;
+  letter-spacing: -0.025em; gap: 6px;
+}
+
+/* The 32px initials tile is the universal SaaS model-list convention, and it
+   was the first thing the eye landed on, on every card. On a card the card
+   itself is the identity, so it goes; in the ledger table it is reduced to a
+   plain typed mark on the stock, with no box, no fill and no radius at all. */
+.model-card .model-avatar { display: none; }
+.model-avatar {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--ink-faint);
+  font-size: 9px; font-weight: 600; letter-spacing: 0.1em;
+}
+.model-avatar.reasoning, .model-avatar.vision, .model-avatar.code {
+  background: transparent; color: var(--ink-faint);
+}
+
+/* The added-date is a typed note beside the name, not a pill and not a rule:
+   a short stray underline at the title's baseline read as a broken line. */
+.mc-date {
+  background: transparent; border: none;
+  color: var(--ink-faint); font-size: 9.5px; font-weight: 600;
+  padding: 0;
+}
+.mc-date .material-icons { font-size: 12px; color: var(--ink-faint); }
+.mc-date.fresh { background: transparent; color: var(--ink); font-weight: 700; }
+.mc-date.unknown { color: var(--ink-faint); }
+
+/* A type and a status are typed words stamped on the stock. */
+.mc-foot { gap: 6px; }
+
+/* The guide tab. The world's own device is a tab standing proud of the stack
+   with a facet printed on it, and a stack of cards with no tab at all is what
+   read as a plain grid of panels. The card's type chip leaves the foot row and
+   becomes that tab: it rises out of the card's own top edge, breaking the
+   card's top line, carrying the facet, on every card, at the same place.
+
+   The geometry is the card's own: the card's padding-top is 14px, so the tab
+   is 22px above the head's content box — 8px proud of the card's cut edge,
+   with its foot landing exactly where the head's content begins, so no rule
+   and no stray band sits under the tab to re-read it as a header. The chip
+   keeps the incumbent's inline fill and ink; this only moves it. */
+.model-card .mc-typechip {
+  position: absolute;
+  top: -30px;     /* 17px tall, so the tab's foot sits one pixel INSIDE the card's
+                     cut edge and covers the card's top border across the tab's own
+                     width: the rule then terminates at the tab's left edge and
+                     resumes at its right edge instead of being drawn along the
+                     tab's foot as a second, doubled line */
+  left: -9px;     /* six pixels inboard of the card's cut edge: the card keeps its
+                     own corner, the way a filed tab is inset from the card's */
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 17px;
+  padding: 0 9px;
+  border: 1px solid var(--rule-strong);
+  border-bottom: none;
+  border-radius: 2px 2px 0 0;
+  /* one stock, one outline: the tab is cut from the card, so it wears the card's
+     own material rather than a tint of its own (!important because the incumbent
+     markup carries an inline fill on this element) */
+  background: var(--card) !important;
+  /* the facet is a printed word on the tab, not a colour code */
+  color: var(--ink-soft) !important;
+  font-size: 8px;
+  letter-spacing: 0.09em;
+}
+/* the tab carries the facet as a printed word; the type glyph belongs to the
+   filter row and the drawer, not to the tab */
+.model-card .mc-typechip .material-icons { display: none; }
+.mc-typechip { border-radius: 0; border-color: var(--rule); font-size: 9.5px; padding: 3px 7px; }
+.mini-tag {
+  background: transparent;
+  border: 1px solid var(--rule-strong); border-radius: 0;
+  color: var(--ink-soft); padding: 0 5px;
+}
+.tag-beta, .tag-private, .tag-anonymized, .tag-recommended, .tag-quant {
+  background: transparent; color: var(--ink-soft); border-color: var(--rule-strong);
+}
+/* NEW: the stamped mark of the world's own stock, ink on card, never blue.
+   Set at the weight of the other status words so the model name stays the
+   loudest thing on the card; the card's own status is carried by the struck
+   heading rule above it. */
+.tag-new {
+  background: transparent; color: var(--ink-soft);
+  border: 1px solid var(--ink-soft); border-radius: 0;
+  font-weight: 700; letter-spacing: 0.1em; padding: 0 5px;
+}
+
+/* --- 11.4 The serial line: typed on a rule, copied quietly --------------- */
+
+.mc-idrow {
+  background: transparent;
+  border: none; border-bottom: 1px solid var(--rule);
+  border-radius: 0; overflow: visible;
+  margin-top: 8px;
+}
+.mc-id { color: var(--ink); font-size: 11.5px; padding: 6px 0; letter-spacing: 0.005em; }
+/* COPY ID was the loudest thing on every card while the model name stayed
+   quiet — a wall of brass buttons where the catalogue should have a rhythm of
+   typed names. It keeps a control's own edge and a card's own stock, so it
+   still reads as something you can press, but it is set at the weight of the
+   fields around it, and brass appears only when it is actually pressed. */
+.id-copy {
+  align-self: center;
+  height: 19px;
+  background: var(--card-2);
+  color: var(--ink-soft);
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+  padding: 0 8px; gap: 4px;
+}
+.id-copy .material-icons { font-size: 12px; color: var(--ink-soft); }
+.id-copy:hover { background: var(--brass); color: var(--on-brass); border-color: var(--brass-deep); }
+.id-copy:hover .material-icons { color: var(--on-brass); }
+.id-copy.copied { background: var(--brass); color: var(--on-brass); border-color: var(--brass-deep); }
+.id-copy.copied .material-icons { color: var(--on-brass); }
+
+/* --- 11.5 The fields: a measured grid, ruled like a ledger --------------- */
+
+/* The stat grid and the typed id line are the card's real content, so the
+   stats stop being a row of loose chips and become a ruled field table with a
+   column rule, label over value. One rule per boundary and never two: the
+   serial's rule closes the row above, the cells' own rules close the grid, and
+   the foot's rule closes the description. A pair of parallel rules nine pixels
+   apart read as a mistake, not as a ledger. */
+.mc-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 0; row-gap: 0;
+  padding: 0;
+  margin-top: 9px;
+}
+.mc-stat {
+  flex-direction: column; align-items: flex-start; gap: 1px;
+  min-width: 0; padding: 5px 10px 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.mc-stats > .mc-stat:nth-child(odd) { border-right: 1px solid var(--rule); padding-right: 10px; }
+.mc-stats > .mc-stat:nth-child(even) { padding-left: 10px; }
+.mc-stats > .mc-stat:only-child { border-right: none; }
+.mc-stat-label { font-size: 8.5px; color: var(--ink-faint); letter-spacing: 0.1em; }
+.mc-stat-value { font-size: 12px; font-weight: 500; color: var(--ink); }
+
+.mc-desc {
+  color: var(--ink-soft); font-size: 11.5px; line-height: 1.45;
+  padding-top: 7px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* The card's foot: the policy verdicts and capability words, stamped on a rule
+   of their own and set against the foot of the card, so the stacks in a row
+   all end on the same line the way a filed row does. Verdict inks are
+   untouched here — they are verdicts. */
+.cap-dots, .pol-dots { gap: 5px; margin-top: auto; padding-top: 8px; border-top: 1px solid var(--rule); }
+.cap-dot, .pol-dot { border-radius: 0; }
+.cap-dot {
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-soft);
+  padding: 2px 6px; font-size: 8.5px;
+}
+.cap-dot .material-icons { color: var(--ink-soft); font-size: 11px; }
+.dot-reasoning, .dot-vision, .dot-code, .dot-websearch, .dot-functions,
+.dot-schema, .dot-logprobs, .dot-audio, .dot-video {
+  background: transparent; color: var(--ink-soft);
+}
+
+/* --- 11.6 The drawer face: the status mark and the scroll affordance ----- */
+
+/* .tab-new-dot was re-cut as a 7px opaque ink square with no label — beside
+   the active tab's "366" count and beside Language it read as a broken glyph.
+   It is now the same stamp the cards wear, in mono, and it says what it is. */
+.type-tab .tab-new-dot {
+  width: auto; height: auto;
+  border-radius: 0;
+  background: transparent; box-shadow: none;
+  border: 1px solid var(--ink); color: var(--ink);
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 7.5px; font-weight: 700; line-height: 12px;
+  letter-spacing: 0.08em; padding: 0 3px; margin-left: 4px;
+  display: inline-block; text-transform: uppercase;
+}
+.type-tab .tab-new-dot::after { content: 'NEW'; }
+.type-tab.active .tab-new-dot { border-color: var(--ink); color: var(--ink); }
+
+/* Twelve tabs in ten slots has always overflowed, and a tab clipped mid-word
+   with nothing behind it reads as a broken page. The right 18px of the strip
+   is now the drawn edge of the drawer face with a scroll chevron on it, so the
+   cut reads as "more drawers behind this one". The tab bar is sticky, which is
+   already a containing block, so this needs no position of its own. The strip's
+   own rail is kept thin: it sits directly above the cards' tabs and a heavy
+   rail competes with them. */
+.type-tabbar-inner::-webkit-scrollbar { height: 4px; }
+.type-tabbar::after {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 6px; width: 18px;
+  background: var(--card);
+  border-left: 1px solid var(--rule-strong);
+  pointer-events: none; z-index: 2;
+}
+.type-tabbar::before {
+  content: ''; position: absolute; right: 5px; top: 50%; width: 0; height: 0;
+  margin-top: -5px;
+  border-left: 6px solid var(--ink-soft);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  pointer-events: none; z-index: 3;
+}
+
+/* --- 11.7 The detail panel: a card pulled out and laid down -------------- */
+
+/* The drawer was a generic detail pane that only gestured at the metaphor. It
+   is now the card itself: stock, a cut edge, a printed frame inset from that
+   edge, a ruled head band, and ruled, typed sections below. */
+.model-detail-drawer {
+  background: var(--card);
+  border-left: 2px solid var(--rule-strong);
+  outline: 1px solid var(--rule);
+  outline-offset: -9px;
+  box-shadow: none;
+}
+.drawer-head {
+  margin: 9px 9px 0;
+  padding: 11px 12px;
+  background: var(--card-2);
+  border-bottom: 2px solid var(--rule-strong);
+  position: relative; z-index: 3;   /* so the tab below it is not painted over */
+  justify-content: flex-end;        /* the position mark is on the tab now */
+}
+/* The guide tab at the head of the pulled card, and the guide mark is a label:
+   the card's position in the drawer is printed on it. It starts at the head's
+   rule and covers it across its own width, so the rule is broken by the tab the
+   way every card's top line is broken by its own tab — attached, not a chip
+   left floating below a line. */
+.model-detail-drawer .drawer-pos {
+  position: absolute;
+  left: 13px;
+  top: 100%;
+  z-index: 3;
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 20px;
+  padding: 0 11px;
+  background: var(--card);
+  border: 1px solid var(--rule-strong);
+  border-top: none;
+  border-radius: 0 0 2px 2px;
+  color: var(--ink-soft);
+  font-size: 9.5px; letter-spacing: 0.04em;
+  margin-right: 0;
+}
+.drawer-body { background: transparent; padding: 26px 24px 46px; }
+.drawer-title { font-size: 23px; line-height: 1.18; letter-spacing: -0.02em; margin-bottom: 9px; }
+.drawer-metarow { padding-bottom: 9px; border-bottom: 1px solid var(--rule); margin-bottom: 14px; }
+
+.detail-card {
+  background: var(--card);
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  padding: 11px 13px;
+}
+.detail-card h5 {
+  color: var(--ink-faint); font-size: 8.5px; letter-spacing: 0.1em;
+  margin: 0 0 7px; padding: 0 0 5px;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.detail-stat {
+  align-items: baseline; gap: 12px;
+  padding: 4px 0; border-bottom: 1px solid var(--rule);
+}
+.detail-stat-label { font-size: 9.5px; color: var(--ink-soft); }
+.detail-stat-value { font-size: 11.5px; color: var(--ink); text-align: right; }
+
+/* A description is a labelled field on the card, ruled and typed — not a block
+   with a coloured one-side border, which this world does not allow. */
+.detail-description {
+  background: var(--card-2);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  color: var(--ink-soft); padding: 9px 11px;
+}
+.detail-description .desc-label {
+  display: block;
+  font-size: 8.5px; letter-spacing: 0.1em;
+  margin-bottom: 4px; color: var(--ink-faint);
+}
+.detail-meta-row { border-top: 1px solid var(--rule); padding-top: 8px; }
+.detail-footer { border-top: 1px solid var(--rule); }
+.trait-badges { gap: 5px; }
+
+/* --- 11.8 The same two phone blocks, re-stated after the pass ------------ */
+
+@media (max-width: 768px) {
+  /* the real-data grid fix, kept: a 1fr track may never grow to min-content;
+     the row gap leaves room for the tab that stands proud of every card */
+  .model-grid { grid-template-columns: minmax(0, 1fr); gap: 20px 10px; }
+  .model-card { padding: 13px 13px 13px; }
+  .mc-name { font-size: 16px; }
+  /* the card's padding-top is 13 here, so the tab's offset moves with it */
+  /* padding-top is 13 here, so the 17px tab needs -29px to end 1px inside the card */
+  .model-card .mc-typechip { top: -29px; left: -7px; height: 17px; }
+  .mc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mc-desc { -webkit-line-clamp: 3; }
+  .type-tabbar::after { width: 16px; }
+  .drawer-head { margin: 8px 8px 0; padding: 10px 11px; }
+  .drawer-body { padding: 26px 16px 40px; }
+  .model-detail-drawer { outline-offset: -8px; border-left: 1px solid var(--rule-strong); }
+}
+
+/* One card wide is right for a phone in one hand; at 600px and up it leaves a
+   729px card that is all landscape air, so the stack takes two columns again
+   before the phone rules end. min(248px, 100%) is the shrinkable floor: the
+   track can never outgrow its container, which is the defect this stack was
+   carrying into the real data. */
+@media (min-width: 561px) and (max-width: 900px) {
+  .model-grid { grid-template-columns: repeat(auto-fill, minmax(min(248px, 100%), 1fr)); }
+}
