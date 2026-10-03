@@ -25,3 +25,6 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Mock production scratch: staged attempts and rejected renders
+.impeccable/mocks/*/_staging/

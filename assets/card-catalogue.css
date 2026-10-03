@@ -3433,3 +3433,18 @@ input[type="checkbox"]:checked + .toggle-slider:before { background-color: var(-
   #hpSearch, .hp-search input { max-width: 100% !important; }
   .hp-panel, .hp-drawer, .hp-sheet { max-width: 100vw !important; }
 }
+
+/* The vendor colophon on a model card. The mark of whoever built the model is
+   set as plain ink on the stock: no box, no fill, no radius, never a colour
+   chip, sized to the name it stands beside. A vendor with no published mark
+   carries none, and the model name is the identity on its own. */
+.provider-mark {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  align-self: center;
+  object-fit: contain;
+  opacity: 0.88;
+  vertical-align: -2px;
+}
+.mc-name .provider-mark + .mc-name-text { margin-left: 1px; }

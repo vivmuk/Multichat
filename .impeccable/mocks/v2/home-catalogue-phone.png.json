@@ -1,0 +1,59 @@
+{
+ "image": "home-catalogue-phone.png",
+ "direction": "one catalogue four rooms",
+ "model": "nano-banana-2-lite",
+ "size": "768x1376",
+ "aspect_ratio": "9:16",
+ "resolution": "1K",
+ "format": "png",
+ "prompt": "Phone screen, portrait, the MODEL CATALOGUE room of the app. Layout top to bottom, biggest region named first. 1. A slim header strip at the very top, about 6 percent of the height: bold grotesk title \"V's MultiGen AI Chat\" at the left, and at the right three small square hairline outlined icon buttons labelled Refresh, Download and Menu. A hairline rule closes the strip. 2. Directly under the rule, a row of card catalogue divider tabs standing on their edges, each a solid rectangle in its own facet colour with the facet word reversed out in white uppercase: TEXT in deep red, IMAGE in blue, VIDEO in ochre, TTS in green, MUSIC in purple, ASR in teal, INPAINT in brown, UPSCALE in slate, EMBEDDING only partly visible at the right edge. One tab is drawn taller and darker to read as the selected one. 3. A full width hairline bordered search field: a small magnifier glyph at the left and a typed placeholder \"Search 380 models\" in grey. 4. A typed sort line, full width: at the left the label \"SORT\" with the value \"1st: cost\", dotted leaders between them, and at the right the typed line \"Showing 380 of 380 models\", closed by a single hairline rule. 5. THE MAIN REGION, about 62 percent of the screen, the densest part: a tight two column grid of cream paper model cards, cards separated by hairline rules, each card a filled cream rectangle. Every card carries, across its top edge, a narrow divider tab in its facet colour with the reversed white facet word TEXT or VIDEO or IMAGE; a bold grotesk model name; then four typed reading rows with dotted leaders and a short value at the right. Real card names, each used once: \"grok-4-3\", \"kimi-k2-6\", \"deepseek-v4-pro\", \"claude-fable-5\", \"mercury-2\", \"gemini-3-6-flash\", \"qwen3-35b\", \"mistral-small-24b\". Real reading rows on every card, exactly four of them, in this order, the name at the left and its value at the right of the dots: the name \"Cost\" against a dollar figure such as \"$0.88\" or \"$3.75\"; the name \"Context\" against a token count such as \"262K\"; the name \"Max out\" against a token count such as \"33K\"; the name \"Native voice\" against \"Yes\" or against \"No\". Each of those four names appears exactly once on a card, never twice, never followed by the word to or the words to the, and never as a row whose name is missing from the left. Never set a dollar figure beside \"Context\" or beside \"Max out\", and never set a token count, the word No or the word Yes beside \"Context\" or beside \"Max out\". Vary the figures card by card rather than repeating one identical set. Two cards also carry a small tilted stamp, one in stamp red reading the single word \"LIMITED\" and one in stamp blue reading the single word \"OPEN\", each stamp showing that one word only. 6. At the foot of the screen a single typed count line, centred: \"380 models, 137 video, 43 image\". This image is a FLAT UI SCREEN DESIGN for a phone, drawn as flat vector shapes, filling the whole canvas edge to edge. The image IS the screen. No phone body, no wooden bezel, no picture frame, no device mockup, no hand, no desk, no room, no background photograph, no 3D, no perspective, no drop shadows, no gradients, no glass, no glow, no bevels, no rounded pill buttons, no emoji, no watermark. Design world: a physical card catalogue and library index translated into a web app. White page ground, cream paper card stock surfaces (hex F7F4EC), hairline dark rules one pixel thick. Headings and UI chrome in a clean grotesk sans in near black. All data is set as TYPED ENTRIES in a monospace typewriter face: a label at the left, a value at the right, joined by dotted leaders, entries separated by empty leading only (not by rules), and the whole block closed by a single hairline rule. Index divider tabs are plain rectangles filled with the facet colour and the facet word REVERSED OUT in white uppercase letters. Brass gold (hex C9A227) is used ONLY on the one primary action button. Stamp red (hex B3372E) and stamp blue (hex 2F5D8C) are used ONLY on small status words. Restrained, dense, factual, printed, like a well set library catalogue or an engineering spec sheet, not a marketing page. All text is crisp, correctly spelled and legible at phone scale. No em dash and no en dash characters anywhere: use plain hyphens, colons, commas or parentheses only. The only words printed on the screen are the labels and strings given in quotation marks in this brief: do not print any other heading, caption, legend, annotation, placeholder, colour swatch strip or explanatory sentence, and never print the words REGION, CARD, PANEL, SECTION, BLOCK, EMPTY, INDEX, CODE BLOCK or NUMBERED anywhere on the screen.",
+ "prompt_source": "_staging/briefs.json",
+ "attempts": 2,
+ "attempt_log": [
+  {
+   "attempt": 1,
+   "size": "1024x1024",
+   "bytes": 22117,
+   "stddev": 0.0,
+   "accepted": false
+  },
+  {
+   "attempt": 2,
+   "size": "768x1376",
+   "bytes": 1290175,
+   "stddev": 64.65,
+   "accepted": true
+  }
+ ],
+ "blank_guard": {
+  "stddev": 64.65,
+  "bytes": 1290175
+ },
+ "mounting_tiles_expected": 8,
+ "marks": "pending composite",
+ "vision_qc": {
+  "verdict": "pass",
+  "checked": "reading rows correct after the fix: each card shows Cost, Context, Max out and Native voice once each, dollar figures only beside Cost and token counts only beside Context and Max out; the two stamp marks LIMITED and OPEN are the world's verdict stamps and are intentional; no em dash or en dash; no capsule or pill control, gradient, shadow, glass or emoji; flat screen, not a photo or bezel. Accepted caveat: the reading figures repeat across cards and the sort line reads 1st: cost while the costs are not in order.",
+  "checked_with": "vision_analyze"
+ },
+ "date": "2026-10-02",
+ "note": "phone comp, one catalogue four rooms. The sidecar previously carried the superseded mounting-tile brief; the shipped image was generated from the frozen mark-free brief.",
+ "sha256": "630942a042654e04053e0edb9e93dbda215d0bea498457f70be5f327a1237ad5",
+ "bytes": 1290175,
+ "binding_verified": true,
+ "verified_on": "2026-10-02",
+ "qc_by": "vision pass on the rendered file, checklist per room",
+ "file": {
+  "path": "home-catalogue-phone.png",
+  "sha256": "630942a042654e04053e0edb9e93dbda215d0bea498457f70be5f327a1237ad5",
+  "sha256_prefix": "630942a04265",
+  "bytes": 1290175,
+  "size": "768x1376"
+ },
+ "verified": {
+  "bound_at": "2026-10-03T00:55:41-04:00",
+  "verifier": "mc_bind_all.py",
+  "method": "sha256 recorded against the file on disk at commit time",
+  "rebound": false
+ }
+}

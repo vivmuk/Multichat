@@ -1,0 +1,485 @@
+{
+ "image": "providers-phone.png",
+ "direction": "one catalogue four rooms",
+ "kind": "deterministic sheet, not image model",
+ "renderer": "PIL, exact geometry",
+ "size": "768x1376",
+ "date": "2026-10-02",
+ "catalogue_total": 380,
+ "facet_split": {
+  "text": 129,
+  "image": 43,
+  "video": 137,
+  "music": 18,
+  "embedding": 9,
+  "tts": 11,
+  "upscale": 1,
+  "inpaint": 26,
+  "asr": 5,
+  "decision": 1
+ },
+ "vendors": [
+  {
+   "vendor": "Alibaba",
+   "count": 58,
+   "facets": {
+    "text": 21,
+    "image": 7,
+    "video": 24,
+    "inpaint": 6
+   },
+   "slug": "alibaba",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Google",
+   "count": 35,
+   "facets": {
+    "text": 11,
+    "image": 3,
+    "video": 15,
+    "music": 1,
+    "embedding": 1,
+    "tts": 1,
+    "inpaint": 3
+   },
+   "slug": "google",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "OpenAI",
+   "count": 31,
+   "facets": {
+    "text": 22,
+    "image": 4,
+    "inpaint": 4,
+    "asr": 1
+   },
+   "slug": "openai",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "ByteDance",
+   "count": 25,
+   "facets": {
+    "text": 1,
+    "image": 3,
+    "video": 17,
+    "music": 1,
+    "inpaint": 3
+   },
+   "slug": "bytedance",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Kling",
+   "count": 25,
+   "facets": {
+    "video": 25
+   },
+   "slug": "kling",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "xAI",
+   "count": 24,
+   "facets": {
+    "text": 7,
+    "image": 3,
+    "video": 9,
+    "tts": 1,
+    "inpaint": 3,
+    "asr": 1
+   },
+   "slug": "xai",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "MiniMax",
+   "count": 18,
+   "facets": {
+    "text": 3,
+    "video": 11,
+    "music": 3,
+    "tts": 1
+   },
+   "slug": "minimax",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Anthropic",
+   "count": 15,
+   "facets": {
+    "text": 15
+   },
+   "slug": "anthropic",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Z.ai",
+   "count": 15,
+   "facets": {
+    "text": 14,
+    "image": 1
+   },
+   "slug": "z.ai",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "ElevenLabs",
+   "count": 10,
+   "facets": {
+    "music": 8,
+    "tts": 1,
+    "asr": 1
+   },
+   "slug": "elevenlabs",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Black Forest",
+   "count": 8,
+   "facets": {
+    "image": 3,
+    "video": 3,
+    "inpaint": 2
+   },
+   "slug": "flux",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "DeepSeek",
+   "count": 8,
+   "facets": {
+    "text": 8
+   },
+   "slug": "deepseek",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Lightricks",
+   "count": 8,
+   "facets": {
+    "video": 8
+   },
+   "slug": "lightricks",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Moonshot",
+   "count": 7,
+   "facets": {
+    "text": 7
+   },
+   "slug": "moonshot",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "PixVerse",
+   "count": 7,
+   "facets": {
+    "video": 7
+   },
+   "slug": "pixverse",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Aion Labs",
+   "count": 4,
+   "facets": {
+    "text": 4
+   },
+   "slug": null,
+   "source": null,
+   "has_mark": false
+  },
+  {
+   "vendor": "Luma",
+   "count": 4,
+   "facets": {
+    "image": 2,
+    "inpaint": 2
+   },
+   "slug": "luma",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "NVIDIA",
+   "count": 4,
+   "facets": {
+    "text": 3,
+    "asr": 1
+   },
+   "slug": "nvidia",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Venice",
+   "count": 4,
+   "facets": {
+    "text": 2,
+    "image": 1,
+    "decision": 1
+   },
+   "slug": null,
+   "source": null,
+   "has_mark": false
+  },
+  {
+   "vendor": "Ideogram",
+   "count": 3,
+   "facets": {
+    "image": 2,
+    "inpaint": 1
+   },
+   "slug": "ideogram",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Krea",
+   "count": 3,
+   "facets": {
+    "image": 3
+   },
+   "slug": "krea",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Runway",
+   "count": 3,
+   "facets": {
+    "video": 3
+   },
+   "slug": "runway",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Inception",
+   "count": 2,
+   "facets": {
+    "text": 2
+   },
+   "slug": null,
+   "source": null,
+   "has_mark": false
+  },
+  {
+   "vendor": "Meta",
+   "count": 2,
+   "facets": {
+    "text": 2
+   },
+   "slug": "meta",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Recraft",
+   "count": 2,
+   "facets": {
+    "image": 2
+   },
+   "slug": "recraft",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Vidu",
+   "count": 2,
+   "facets": {
+    "video": 2
+   },
+   "slug": "vidu",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Xiaomi",
+   "count": 2,
+   "facets": {
+    "text": 2
+   },
+   "slug": "xiaomi",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Bria",
+   "count": 1,
+   "facets": {
+    "image": 1
+   },
+   "slug": null,
+   "source": null,
+   "has_mark": false
+  },
+  {
+   "vendor": "fal.ai",
+   "count": 1,
+   "facets": {
+    "asr": 1
+   },
+   "slug": "fal",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Inworld",
+   "count": 1,
+   "facets": {
+    "tts": 1
+   },
+   "slug": null,
+   "source": null,
+   "has_mark": false
+  },
+  {
+   "vendor": "Mistral",
+   "count": 1,
+   "facets": {
+    "text": 1
+   },
+   "slug": "mistral",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Nous Research",
+   "count": 1,
+   "facets": {
+    "text": 1
+   },
+   "slug": "nous",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Stability AI",
+   "count": 1,
+   "facets": {
+    "music": 1
+   },
+   "slug": "stability",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Tencent",
+   "count": 1,
+   "facets": {
+    "image": 1
+   },
+   "slug": "tencent",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Topaz",
+   "count": 1,
+   "facets": {
+    "video": 1
+   },
+   "slug": "topazlabs",
+   "source": "cached",
+   "has_mark": true
+  },
+  {
+   "vendor": "Other",
+   "count": 43,
+   "facets": {},
+   "slug": null,
+   "source": null,
+   "has_mark": false
+  }
+ ],
+ "unattributed_ids": [
+  "inkling",
+  "abliteration-abliterated-model-large-v2",
+  "e2ee-gemma-4-26b-a4b-uncensored-p",
+  "imagineart-1.5-pro",
+  "muse-image",
+  "lustify-sdxl",
+  "lustify-v7",
+  "lustify-v8",
+  "wai-Illustrious",
+  "chroma",
+  "happyhorse-1-1-text-to-video",
+  "happyhorse-1-1-image-to-video",
+  "happyhorse-1-1-reference-to-video",
+  "happyhorse-1-0-text-to-video",
+  "happyhorse-1-0-image-to-video",
+  "happyhorse-1-0-reference-to-video",
+  "happyhorse-1-0-video-to-video",
+  "ovi-image-to-video",
+  "longcat-distilled-image-to-video",
+  "longcat-distilled-text-to-video",
+  "longcat-image-to-video",
+  "longcat-text-to-video",
+  "ace-step-15",
+  "sonilo-v1-1-music",
+  "sonilo-v1-1-sound-effects",
+  "mmaudio-v2-text-to-audio",
+  "text-embedding-bge-m3",
+  "text-embedding-bge-en-icl",
+  "text-embedding-qwen3-8b",
+  "text-embedding-qwen3-0-6b",
+  "text-embedding-multilingual-e5-large-instruct",
+  "text-embedding-3-small",
+  "text-embedding-3-large",
+  "text-embedding-nemotron-embed-vl-1b-v2",
+  "tts-kokoro",
+  "tts-qwen3-0-6b",
+  "tts-qwen3-1-7b",
+  "tts-chatterbox-hd",
+  "tts-orpheus",
+  "tts-gradium-v1",
+  "upscaler",
+  "firered-image-edit",
+  "muse-image-edit"
+ ],
+ "note": "vendor marks fetched from @lobehub/icons-static-svg and simple-icons; rasterised to PNG; vendors with no published mark keep a hollow tile",
+ "vision_qc": {
+  "verdict": "pass",
+  "checked": "deterministic render, not an image model: 36 rows, 30 carry a real vendor mark, 6 hollow tiles for vendors with no published mark (Venice, Inception, Aion Labs, Bria, Inworld and the Other row); no truncated text, no collision, no em dash or en dash, no gradient, shadow, glass or emoji. Vendor names and counts legible at phone scale, facet breakdowns are the smallest type on the screen.",
+  "checked_with": "vision_analyze"
+ },
+ "qc_by": "vision pass on the rendered file, checklist per room",
+ "sha256": "970c21c7117291cc610ba88774a8b0ffd6c7702de7e0fc473620b4674599fc45",
+ "bytes": 95619,
+ "binding_verified": true,
+ "verified_on": "2026-10-02",
+ "prompt": "(deterministic render, no prompt)",
+ "file": {
+  "path": "providers-phone.png",
+  "sha256": "970c21c7117291cc610ba88774a8b0ffd6c7702de7e0fc473620b4674599fc45",
+  "sha256_prefix": "970c21c71172",
+  "bytes": 95619,
+  "size": "768x1376"
+ },
+ "verified": {
+  "bound_at": "2026-10-03T00:55:41-04:00",
+  "verifier": "mc_bind_all.py",
+  "method": "sha256 recorded against the file on disk at commit time",
+  "rebound": false
+ }
+}

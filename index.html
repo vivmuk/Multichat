@@ -2682,7 +2682,7 @@
           <div class="mc-head">
             <div class="model-avatar ${r.text ? getAvatarClass(r.raw) : ''}">${getInitials(r.id)}</div>
             <div class="mc-title">
-              <div class="mc-name"><span class="mc-name-text">${escHtml(r.name)}</span>${dateChip(r)}</div>
+              <div class="mc-name">${providerMark(r.id)}<span class="mc-name-text">${escHtml(r.name)}</span>${dateChip(r)}</div>
               <div class="mc-foot" style="margin-top:5px;">${activeType === 'all' ? typeChip(r.type) : ''}${tagsFor(r)}</div>
             </div>
           </div>
@@ -3368,6 +3368,63 @@
       if (t >= 1e3) return (t / 1e3).toFixed(0) + 'K';
       return t.toLocaleString();
     }
+    // ---------------------------------------------------------------------
+    // VENDOR COLOPHON
+    // Whoever built the model is printed on the card as its own published mark,
+    // set in ink on the stock: no box, no fill, no radius, no colour chip. A
+    // vendor with no published mark carries none and the name stands alone.
+    // ---------------------------------------------------------------------
+    const PROVIDER_RULES = [
+      [/^(qwen|wan-|e2ee-qwen)/i, 'Alibaba'],
+      [/^(openai|gpt|o[0-9]|chatgpt|e2ee-gpt)/i, 'OpenAI'],
+      [/^(claude|anthropic)/i, 'Anthropic'],
+      [/^(gemini|gemma|google-|veo3|nano-banana|lyria|tts-gemini)/i, 'Google'],
+      [/^(zai|z-ai|z-image|glm|e2ee-glm|olafangensan-glm)/i, 'Z.ai'],
+      [/^(deepseek|e2ee-deepseek)/i, 'DeepSeek'],
+      [/^(grok|xai|tts-xai|stt-xai)/i, 'xAI'],
+      [/^(kimi|moonshot|e2ee-kimi)/i, 'Moonshot'],
+      [/^(elevenlabs|tts-elevenlabs)/i, 'ElevenLabs'],
+      [/^(minimax|tts-minimax|hailuo)/i, 'MiniMax'],
+      [/^(nvidia|nemotron)/i, 'NVIDIA'],
+      [/^(hermes|nous)/i, 'Nous Research'],
+      [/^(llama|meta-)/i, 'Meta'],
+      [/^(mistral|magistral|devstral|pixtral)/i, 'Mistral'],
+      [/^(seed|seedance)/i, 'ByteDance'],
+      [/^xiaomi/i, 'Xiaomi'],
+      [/^kling/i, 'Kling'],
+      [/^runway/i, 'Runway'],
+      [/^luma/i, 'Luma'],
+      [/^ideogram/i, 'Ideogram'],
+      [/^recraft/i, 'Recraft'],
+      [/^bria/i, 'Bria'],
+      [/^topaz/i, 'Topaz'],
+      [/^ltx/i, 'Lightricks'],
+      [/^pixverse/i, 'PixVerse'],
+      [/^vidu/i, 'Vidu'],
+      [/^stable-/i, 'Stability AI'],
+      [/^tts-inworld/i, 'Inworld'],
+      [/^flux/i, 'Black Forest'],
+      [/^hunyuan/i, 'Tencent'],
+      [/^krea/i, 'Krea'],
+      [/^fal-ai\//i, 'fal.ai'],
+      [/^(venice|jev-)/i, 'Venice'],
+      [/^aion/i, 'Aion Labs'],
+      [/^mercury/i, 'Inception']
+    ];
+    const PROVIDER_SLUGS = { 'Alibaba': 'alibaba', 'Google': 'google', 'OpenAI': 'openai', 'ByteDance': 'bytedance', 'Kling': 'kling', 'xAI': 'xai', 'MiniMax': 'minimax', 'Anthropic': 'anthropic', 'Z.ai': 'z.ai', 'ElevenLabs': 'elevenlabs', 'Black Forest': 'flux', 'DeepSeek': 'deepseek', 'Lightricks': 'lightricks', 'Moonshot': 'moonshot', 'PixVerse': 'pixverse', 'Luma': 'luma', 'NVIDIA': 'nvidia', 'Ideogram': 'ideogram', 'Krea': 'krea', 'Runway': 'runway', 'Meta': 'meta', 'Recraft': 'recraft', 'Vidu': 'vidu', 'Xiaomi': 'xiaomi', 'fal.ai': 'fal', 'Mistral': 'mistral', 'Nous Research': 'nous', 'Stability AI': 'stability', 'Tencent': 'tencent', 'Topaz': 'topazlabs' };
+    function providerOf(id) {
+      const s = String(id || '');
+      for (const pair of PROVIDER_RULES) if (pair[0].test(s)) return pair[1];
+      return '';
+    }
+    function providerMark(id) {
+      const vendor = providerOf(id);
+      const slug = PROVIDER_SLUGS[vendor];
+      if (!slug) return '';
+      return '<img class="provider-mark" src="assets/providers/' + slug + '-48.png" alt="' +
+             escAttr(vendor) + '" title="' + escAttr(vendor) + '">';
+    }
+
     function getInitials(id) {
       const p = id.replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(' ').filter(Boolean);
       return p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : id.replace(/[^a-zA-Z0-9]/g,'').slice(0,2).toUpperCase();

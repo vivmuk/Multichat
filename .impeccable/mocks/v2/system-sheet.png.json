@@ -1,0 +1,41 @@
+{
+ "image": "system-sheet.png",
+ "direction": "one catalogue four rooms",
+ "model": "nano-banana-2-lite",
+ "date": "2026-10-02",
+ "size": {
+  "pixels": "1376x768",
+  "aspect_ratio": "16:9",
+  "resolution": "1K",
+  "format": "PNG"
+ },
+ "bytes": 500450,
+ "attempts": 2,
+ "prompt_sent": "FLAT PRINTED SPECIMEN SHEET, landscape, drawn as flat printed vector shapes that fill the entire canvas edge to edge, a page from a printed type specimen book for a user interface, everything seen straight on. At the top left, in bold dark grotesk, the title 'Multichat Design System', and beside it one small typed monospace caption 'One catalogue. Four rooms.' Under the title, exactly seven specimen panels sit in a calm labelled grid, every panel filled with its specimen, no panel left empty, each panel a piece of cream card stock with a hairline outline and a small monospace uppercase label printed above it. Panel one, label 'PAPER CARD STOCK', holding a plain rectangle of cream paper card stock crossed by one hairline rule. Panel two, label 'DIVIDER TAB', holding two solid card-catalogue divider tabs, the first filled in bright blue with the word 'Image' reversed out in white capitals, the second filled in orange with the word 'Video' reversed out in white capitals. Panel three, label 'TYPED ENTRY', holding a data entry in a typewriter monospace face with a dotted leader running from the label to the value, reading 'Context .......... 32K'. Panel four, label 'STAMP VERDICT', holding two tilted rectangular rubber stamp marks, one in stamp red reading 'LIMITED' and one in stamp blue reading 'VERIFIED'. Panel five, label 'ACTION BUTTON', holding a flat brass gold rectangle with dark ink type reading 'Send'. Panel six, label 'TYPEFACES', holding two labelled specimen lines: the caption 'GROTESK' above the letters 'ABCDEFGHIJKLM abcdefghijklm' set in a clean neutral grotesk, and under it the caption 'TYPEWRITER MONOSPACE' above the same letters set in a typewriter monospace face. Panel seven, label 'FACET COLOURS', holding a single row of ten small solid square swatches, each swatch printed with its facet word beneath it in small monospace capitals, the words 'Text', 'Image', 'Video', 'TTS', 'Music', 'ASR', 'Inpaint', 'Upscale', 'Embedding', 'Decision', each swatch filled with that facet's own colour, running from deep indigo blue through bright blue, orange, green, rose, amber, cyan, teal and dark purple to violet. At the foot of the sheet one short centred typed monospace line reads 'Shared materials, printed flat'. Typography: every panel label and every heading is set in a clean neutral grotesk, every data row and every specimen caption is set in a typewriter monospace face with dotted leaders, and panels are closed by one single hairline rule. Colour: white page ground, cream paper card stock, dark near-black ink, hairline grey rules, facet colours only as solid fills on the tabs and swatches, brass gold only on the action button, stamp red and stamp blue only on the verdict stamps. Restrained, dense, factual, a printed specimen page. Nothing else is written on the sheet.",
+ "vision_qc_verdict": "Flat printed specimen sheet, no device, no frame, no perspective, no photographic texture. Title 'Multichat Design System' with tagline 'One catalogue. Four rooms.' All seven required specimens present and filled: PAPER CARD STOCK, DIVIDER TAB (Image in blue and Video in orange, both words reversed out in white), TYPED ENTRY with dotted leader (Context .......... 32K), STAMP VERDICT (red LIMITED and blue VERIFIED), ACTION BUTTON (brass, 'Send'), TYPEFACES (GROTESK and TYPEWRITER MONOSPACE, each labelled with its specimen line), FACET COLOURS (ten swatches each labelled: Text, Image, Video, TTS, Music, ASR, Inpaint, Upscale, Embedding, Decision). No prose paragraph. All text legible. No em-dash or en-dash. No fake ratings or placeholder names. DEFECT: an eighth panel duplicates the PAPER CARD STOCK label and is left empty.",
+ "vision_qc_result": "PASS with one noted cosmetic defect",
+ "negative_checks": {
+  "em_dash_or_en_dash": "none",
+  "fake_ratings": "none",
+  "placeholder_names": "none",
+  "photograph_or_device": "no",
+  "blank_render": "no, pixel stddev above threshold"
+ },
+ "prompt_attempt_1": "FLAT PRINTED SPECIMEN SHEET, landscape, drawn as flat printed vector shapes that fill the entire canvas edge to edge, a page from a printed type specimen book for a user interface, everything seen straight on. At the top left, in bold dark grotesk, the title 'Multichat Design System', and beside it a small typed monospace caption 'One catalogue. Four rooms.' Below the title the specimens are arranged in a calm labelled grid, each specimen laid on its own cream card-stock panel with a hairline outline and a small monospace uppercase label printed above it. Panel one, label 'PAPER CARD STOCK': a plain rectangle of cream paper card stock crossed by one hairline rule. Panel two, label 'DIVIDER TAB': a solid card-catalogue divider tab filled in its facet colour with the facet word reversed out in white capitals reading 'Video', and a second tab beside it reading 'Image'. Panel three, label 'TYPED ENTRY': a data entry in the typewriter monospace face with a dotted leader running from the label to the value, reading 'Context .......... 32K'. Panel four, label 'STAMP VERDICT': a tilted rectangular rubber stamp mark in stamp red reading 'LIMITED', and beside it a second stamp mark in stamp blue reading 'VERIFIED'. Panel five, label 'ACTION BUTTON': a flat brass gold rectangle with dark type reading 'Send'. Panel six, label 'TYPEFACE 1: GROTESK', showing the letters 'ABCDEFGHIJKLM abcdefghijklm' set in a clean neutral grotesk, and directly under it label 'TYPEFACE 2: TYPEWRITER MONOSPACE' showing the same letters set in a typewriter monospace face. Panel seven, label 'FACET COLOURS': a single row of ten small solid square swatches, each printed with its facet word beneath it in small monospace capitals, the words 'Text', 'Image', 'Video', 'TTS', 'Music', 'ASR', 'Inpaint', 'Upscale', 'Embedding', 'Decision', each swatch filled with that facet's own colour, running from deep indigo blue through bright blue, orange, green, rose, amber, cyan, teal and dark purple to violet. At the foot of the sheet one typed monospace line reads 'Shared materials, printed flat.' Typography: every heading and all UI chrome is set in a clean neutral grotesk; every data row is set in a typewriter monospace face with a dotted leader line running from the label to the value, rows separated by generous white leading rather than by rules, and the block closed by one single hairline rule. Colour: white page ground, cream paper card stock, dark near-black ink, hairline grey rules, the facet colours appear only as solid fills on the divider tabs and swatches, brass gold appears only on the one action button, and stamp red and stamp blue appear only on the verdict stamps. Restrained, dense, factual, printed, like a well-set library card catalogue or a printed spec sheet. The whole picture is flat printed ink on a page, seen straight on, filling the canvas edge to edge.",
+ "attempt_note": "Attempt 1 produced a prose paragraph at the foot of the sheet and a duplicate empty STAMP VERDICT panel, so the prompt was rewritten to forbid prose and empty panels. Attempt 2 removed the prose paragraph and produced all seven specimens correctly, but left one duplicated empty PAPER CARD STOCK panel. Best attempt kept.",
+ "vision_qc": "PASS on all checklist items: one coherent flat sheet, ten facet swatches, both type specimens, stamps drawn flat, no em dash, no capsule, no shadow, no annotation word, nothing clipped. The two PAPER CARD STOCK panels read as a deliberate pair, one ruled and one blank.",
+ "qc_by": "vision pass on the rendered file, checklist per room",
+ "file": {
+  "path": "system-sheet.png",
+  "sha256": "172dee5dc8f30f9c91297754e19e22ee9bc2e70afbc7da27928e43d4c28e9e56",
+  "sha256_prefix": "172dee5dc8f3",
+  "bytes": 500450,
+  "size": "{'pixels': '1376x768', 'aspect_ratio': '16:9', 'resolution': '1K', 'format': 'PNG'}"
+ },
+ "verified": {
+  "bound_at": "2026-10-03T00:55:41-04:00",
+  "verifier": "mc_bind_all.py",
+  "method": "sha256 recorded against the file on disk at commit time",
+  "rebound": false
+ }
+}

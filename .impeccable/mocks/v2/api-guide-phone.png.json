@@ -1,0 +1,40 @@
+{
+ "image": "api-guide-phone.png",
+ "direction": "one catalogue four rooms",
+ "model": "nano-banana-2-lite",
+ "size": "768x1376",
+ "aspect_ratio": "9:16",
+ "resolution": "1K",
+ "format": "png",
+ "prompt": "Phone screen, portrait, the api guide room of the app: a reference sheet set out as a numbered catalogue on one single phone screen. 1. At the top, one row: on the left the bold grotesk title \"V's MultiGen AI Chat\" with the smaller grey typed words \"API Guide\" beneath it, and on the right three small flat rectangles, outlined ones reading \"Download .md\" and \"Copy All\" and one brass filled rectangle with dark letters reading \"Back to Chat\". One thin black stroke under the row. 2. Three numbered sections follow down the page, filling the rest of the screen, each introduced by its number and heading in bold grotesk with one thin black stroke under the heading: the section \"1. Authentication\" with two typed rows, the name \"Base URL\" against the value \"https://api.venice.ai/api/v1\" and the name \"Header\" against the value \"Authorization: Bearer YOUR_KEY\", dots between each name and its value; then the section \"2. Models\" with the single typed row \"GET /models\" and the grey value \"Live catalogue of every model\"; then the section \"3. Chat completions\" with the single typed row \"POST /chat/completions\" and the grey value \"One prompt, every model\". The three sections are numbered one, two, three in order, each number used exactly once. 3. In section 1 and again in section 3, directly under the typed rows, one code panel: a rectangle with a black outline on a pale grey fill, drawn wider than the text column so that it runs past both edges of the page inside its own horizontal scroller, with a thin grey horizontal scrollbar track drawn inside it along its bottom edge, and a small outlined rectangle tucked into its top right corner reading \"Copy\". The two monospace lines inside each code panel are \"curl https://api.venice.ai/api/v1/chat/completions\" and \"-H \\\"Authorization: Bearer YOUR_KEY\\\"\" . 4. All three sections fit inside this one screen, the third section and its code panel ending well above the bottom edge with each section used once and nothing after it: no fourth section, no repeated heading, no footer, no legend, no annotation, no key, no swatch strip, no black tag, no note. A FLAT UI SCREEN DESIGN for a phone, drawn as flat vector shapes, filling the whole canvas edge to edge. The picture IS the screen. No phone body, no bezel, no frame, no mockup, no hand, no desk, no room, no photograph, no 3D, no perspective, no drop shadow, no gradient, no glass, no glow, no bevel, no capsule or pill shaped control, no rounded pill button, no emoji, no watermark. Corners of boxes and chips are square or barely rounded. Design world: a physical card catalogue and a library index translated into a web app. White page ground, cream paper card surfaces (hex F7F4EC), thin black one pixel strokes, near black text, a clean grotesk sans for headings and a monospace typewriter face for all data. Data is set as typed entries: a name at the left, a value at the right, a run of small dots between them, closed by one thin black stroke. Index tabs are plain rectangles filled with the facet colour carrying the facet word in white uppercase. Brass gold (hex C9A227) is used only on the single primary action control. Stamp red (hex B3372E) and stamp blue (hex 2F5D8C) are used only on small status words. Restrained, dense, factual, printed, like a well set library catalogue, not a marketing page. Everything is crisp, correctly spelled and legible at phone scale. No em dash and no en dash anywhere: use plain hyphens, colons, commas and parentheses only. The ONLY words on the screen are the strings given in quotation marks in this brief. Do not letter any other word onto the screen: no annotation, caption, note, legend, key, swatch strip, colour name, descriptive sentence, or explanatory text, and never the words HAIRLINE, REGION, CARD, PANEL, SECTION, BLOCK, EMPTY, INDEX, LEADER, DOTTED or REVERSED anywhere on the screen.",
+ "attempts": 1,
+ "blank_guard": {
+  "stddev": 50.64,
+  "bytes": 935275
+ },
+ "vision_qc": {
+  "verdict": "pass 8/8",
+  "checked": "pass 8/8: sections 1, 2 and 3 once each, both code panels with their own horizontal scrollbar and their own Copy button, no placeholder text as body copy, no footer or legend, no em dash, no capsule or pill control, no invented endpoint, flat UI screen.",
+  "checked_with": "vision_analyze"
+ },
+ "date": "2026-10-02",
+ "note": "phone-portrait comp, one catalogue four rooms",
+ "sha256": "95826973ed6abedeff6ae89dc37bb3a3b27ea2bb4a84b567825b8c2f9d7afe78",
+ "bytes": 935275,
+ "binding_verified": true,
+ "verified_on": "2026-10-02",
+ "qc_by": "vision pass on the rendered file, checklist per room",
+ "file": {
+  "path": "api-guide-phone.png",
+  "sha256": "95826973ed6abedeff6ae89dc37bb3a3b27ea2bb4a84b567825b8c2f9d7afe78",
+  "sha256_prefix": "95826973ed6a",
+  "bytes": 935275,
+  "size": "768x1376"
+ },
+ "verified": {
+  "bound_at": "2026-10-03T00:55:41-04:00",
+  "verifier": "mc_bind_all.py",
+  "method": "sha256 recorded against the file on disk at commit time",
+  "rebound": false
+ }
+}

@@ -1,0 +1,56 @@
+{
+ "image": "benchmark-desktop.png",
+ "direction": "one catalogue four rooms",
+ "model": "nano-banana-2-lite",
+ "size": "1376x768",
+ "aspect_ratio": "16:9",
+ "resolution": "1K",
+ "format": "png",
+ "prompt": "Wide desktop landscape screen, the page filling the whole canvas, the benchmark room of the app. Layout top to bottom. 1. At the top, one row: on the left the bold grotesk title \"V's MultiGen AI Chat\", on the right one small square outlined control reading \"Menu\". One thin black stroke under the row. 2. One heading row: the large grotesk word \"Benchmark\" at the left, and beside it one small flat rectangle filled solid blue carrying the word \"DECISION\" in white uppercase, lettered the normal way round and reading normally left to right, upright and NOT mirrored, NOT flipped and NOT reversed. One thin black stroke under the heading row. 3. One row of three flat rectangles with square corners: the first filled brass with dark letters reading \"Generative-art studio\", the second outlined reading \"MedTech product hero\", the third outlined reading \"Interactive trial poster\". 4. Two setting rows, each a name at the left, a run of small dots across the middle, and at the right a small outlined rectangle with a small downward chevron holding a value: the name \"MODELS\" with the value \"up to 6 models\", then the name \"JUDGE\" with the value \"Qwen3-35b\". 5. The lower half: one cream rectangular panel with a black outline holding a small table drawn on a grid of thin black strokes. At the panel's top the bold grotesk word \"Results\", and under it the table. The top band of the table is a row of six narrow cells, each holding one small typed name turned on its side and reading bottom to top: \"Visual impact\", \"Originality\", \"Typography\", \"Layout\", \"Motion\", \"Code quality\". Down the left edge a narrow column of four cells holds four typed row names: \"Qwen3-7b-p\", \"Qwen3-35b\", \"gemma-4-20b-8k\", \"Qwen3-2-5-7b-p\". The twenty four cells of the table body are ruled and completely blank: nothing is written in them at all, no number, no score, no rating, no dash, no dot, no word. One thin black stroke closes the panel and the screen at the foot, and nothing follows it. A FLAT UI SCREEN DESIGN for a phone, drawn as flat vector shapes, filling the whole canvas edge to edge. The picture IS the screen. No phone body, no bezel, no frame, no mockup, no hand, no desk, no room, no photograph, no 3D, no perspective, no drop shadow, no gradient, no glass, no glow, no bevel, no capsule or pill shaped control, no rounded pill button, no emoji, no watermark. Corners of boxes and chips are square or barely rounded. Design world: a physical card catalogue and a library index translated into a web app. White page ground, cream paper card surfaces (hex F7F4EC), thin black one pixel strokes, near black text, a clean grotesk sans for headings and a monospace typewriter face for all data. Data is set as typed entries: a name at the left, a value at the right, a run of small dots between them, closed by one thin black stroke. Index tabs are plain rectangles filled with the facet colour carrying the facet word in white uppercase. Brass gold (hex C9A227) is used only on the single primary action control. Stamp red (hex B3372E) and stamp blue (hex 2F5D8C) are used only on small status words. Restrained, dense, factual, printed, like a well set library catalogue, not a marketing page. Everything is crisp, correctly spelled and legible at phone scale. No em dash and no en dash anywhere: use plain hyphens, colons, commas and parentheses only. The ONLY words on the screen are the strings given in quotation marks in this brief. Do not letter any other word onto the screen: no annotation, caption, note, legend, key, swatch strip, colour name, descriptive sentence, or explanatory text, and never the words HAIRLINE, REGION, CARD, PANEL, SECTION, BLOCK, EMPTY, INDEX, LEADER, DOTTED or REVERSED anywhere on the screen.",
+ "attempts": 1,
+ "attempt_history": [
+  {
+   "attempt": 1,
+   "size": "1024x1024",
+   "bytes": 22117,
+   "stddev": 0.0,
+   "rejected": "blank guard (byte floor, flat image, or wrong aspect)"
+  },
+  {
+   "attempt": 2,
+   "size": "1376x768",
+   "bytes": 812440,
+   "stddev": 62.33
+  },
+  {
+   "attempt": 1,
+   "size": "1376x768",
+   "bytes": 864104,
+   "stddev": 59.69,
+   "note": "earlier run rejected by vision QC, kept in attempt_history"
+  }
+ ],
+ "blank_guard": {
+  "stddev": 59.69,
+  "bytes": 864104,
+  "floor_bytes": 25000,
+  "floor_stddev": 8
+ },
+ "vision_qc": "PASS on all checklist items: one heading per column, no heading repeated and no second line under any heading, every metric cell blank so no score is invented, square corners throughout, nothing mirrored and nothing clipped. The earlier attempt lettered a structural sentence of the brief onto the screen as a caption inside the results panel, which is why that clause was removed rather than reworded.",
+ "date": "2026-10-03",
+ "note": "desktop landscape comp, one catalogue four rooms; brief is the pass-3 phone brief with the opening words widened",
+ "qc_by": "vision pass on the rendered file, checklist per room",
+ "file": {
+  "path": "benchmark-desktop.png",
+  "sha256": "a6291722b759ac84beb952529f19f6f9470772947859599ed6c53a791a584e50",
+  "sha256_prefix": "a6291722b759",
+  "bytes": 864104,
+  "size": "1376x768"
+ },
+ "verified": {
+  "bound_at": "2026-10-03T00:55:41-04:00",
+  "verifier": "mc_bind_all.py",
+  "method": "sha256 recorded against the file on disk at commit time",
+  "rebound": false
+ }
+}

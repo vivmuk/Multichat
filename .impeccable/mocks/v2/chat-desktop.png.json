@@ -1,0 +1,42 @@
+{
+ "image": "chat-desktop.png",
+ "direction": "one catalogue four rooms",
+ "model": "nano-banana-2-lite",
+ "size": "1376x768",
+ "aspect_ratio": "16:9",
+ "resolution": "1K",
+ "format": "png",
+ "prompt": "Wide desktop landscape screen, the page filling the whole canvas, the chat room of the app. Layout top to bottom. 1. At the top, one row: on the left the bold grotesk title \"V's MultiGen AI Chat\", on the right one small square outlined control reading \"Menu\". One thin black stroke under the row. 2. Second row: three flat rectangular chips side by side, square corners. The first chip is filled cream with a black outline and holds a small solid black square followed by the words \"Qwen3-7b-p\", and it reads as the chosen chip. The second and third chips are outlined only and hold the words \"Qwen3-35b\" and \"gemma-4-20b-8k\". 3. Third band: a cream rectangular panel with a black outline, about a third of the screen. Inside it, in order from the top: a large typed field with a blinking caret and the grey typed words \"Ask every model at once\"; one thin black stroke; then two option rows, each with the option name in typed letters at the left, a run of small dots across the middle, and at the right a small flat square cornered rectangle acting as a switch, with a small solid square block sitting inside it at its left end, followed by the typed word \"Off\", neither switch being capsule shaped or pill shaped and neither carrying a round knob, the two option names being \"Web Search\" and \"Double Reasoning\"; then one row of three controls: an outlined rectangle reading \"Refresh\", an outlined rectangle reading \"Download\", and at the right one solid brass gold rectangle with dark letters reading \"Send\". 4. Fourth row: one segmented control made of two rectangles joined side by side, the left half reading \"Focus\" and the right half reading \"Grid\", the right half filled dark to read as the chosen half. 5. The lower half of the screen: two cream rectangular panels with black outlines, stacked one above the other. Each panel is introduced by a tab strip along its top edge: the upper panel's tab is deep red with the word \"TEXT\" in white uppercase, and the bold grotesk words \"Qwen3-7b-p\" sit at the right of that strip; the lower panel's tab is ochre with the word \"VIDEO\" in white uppercase, and the words \"Qwen3-35b\" sit at the right of that strip. Under each strip one thin black stroke, then in the empty body of each panel one short centred grey typed line, \"Waiting for prompt...\" . 6. The screen ends with the lower panel and one thin black stroke. Nothing else is on the screen. A FLAT UI SCREEN DESIGN for a phone, drawn as flat vector shapes, filling the whole canvas edge to edge. The picture IS the screen. No phone body, no bezel, no frame, no mockup, no hand, no desk, no room, no photograph, no 3D, no perspective, no drop shadow, no gradient, no glass, no glow, no bevel, no capsule or pill shaped control, no rounded pill button, no emoji, no watermark. Corners of boxes and chips are square or barely rounded. Design world: a physical card catalogue and a library index translated into a web app. White page ground, cream paper card surfaces (hex F7F4EC), thin black one pixel strokes, near black text, a clean grotesk sans for headings and a monospace typewriter face for all data. Data is set as typed entries: a name at the left, a value at the right, a run of small dots between them, closed by one thin black stroke. Index tabs are plain rectangles filled with the facet colour carrying the facet word in white uppercase. Brass gold (hex C9A227) is used only on the single primary action control. Stamp red (hex B3372E) and stamp blue (hex 2F5D8C) are used only on small status words. Restrained, dense, factual, printed, like a well set library catalogue, not a marketing page. Everything is crisp, correctly spelled and legible at phone scale. No em dash and no en dash anywhere: use plain hyphens, colons, commas and parentheses only. The ONLY words on the screen are the strings given in quotation marks in this brief. Do not letter any other word onto the screen: no annotation, caption, note, legend, key, swatch strip, colour name, descriptive sentence, or explanatory text, and never the words HAIRLINE, REGION, CARD, PANEL, SECTION, BLOCK, EMPTY, INDEX, LEADER, DOTTED or REVERSED anywhere on the screen.",
+ "attempts": 1,
+ "attempt_history": [
+  {
+   "attempt": 1,
+   "size": "1376x768",
+   "bytes": 804452,
+   "stddev": 62.72
+  }
+ ],
+ "blank_guard": {
+  "stddev": 62.72,
+  "bytes": 804452,
+  "floor_bytes": 25000,
+  "floor_stddev": 8
+ },
+ "vision_qc": "PASS on all checklist items after re-render: the two option controls are flat square-cornered rectangles with a small square block inside and no round knob, no capsule anywhere, no drop shadow, gradient, glass or glow on any card, Refresh, Download, Send and Menu each appearing once, and no leaked annotation word. The round dots in the leaders are typographic, not controls.",
+ "date": "2026-10-03",
+ "note": "desktop landscape comp, one catalogue four rooms; brief is the pass-3 phone brief with the opening words widened",
+ "qc_by": "vision pass on the rendered file, checklist per room",
+ "file": {
+  "path": "chat-desktop.png",
+  "sha256": "038714f0632bdee28ed51a43c1bf07f7d0477114f2de9d35602acf2b056c27ce",
+  "sha256_prefix": "038714f0632b",
+  "bytes": 804452,
+  "size": "1376x768"
+ },
+ "verified": {
+  "bound_at": "2026-10-03T00:55:41-04:00",
+  "verifier": "mc_bind_all.py",
+  "method": "sha256 recorded against the file on disk at commit time",
+  "rebound": false
+ }
+}
