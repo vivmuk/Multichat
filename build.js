@@ -14,12 +14,9 @@ if (!apiKey) {
 // Escape the API key for safe injection into JavaScript
 const escapedApiKey = apiKey ? apiKey.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"') : '';
 
-// Create the script injection
-const scriptInjection = apiKey ? `
-  <script>
-    // API key injected from Netlify environment variable
-    window.VENICE_API_KEY = '${escapedApiKey}';
-  </script>` : '';
+// BYOK: no baked-in keys. Users enter their own key via the auth modal
+// (stored in localStorage). config.js fallback stays in place.
+const scriptInjection = '';
 
 // HTML files to process
 // index.html is the model catalog (home), chat.html is the multi-model chat.
