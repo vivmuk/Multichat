@@ -101,3 +101,19 @@
   .list { padding: 16px 20px 40px; gap: 12px; }
   .m:hover { border-color: var(--line-strong); box-shadow: var(--shadow); }
 }
+
+/* ---- colour tags: one hue per model type and per capability -------------------
+   Set --h on the element; the tint and the ink are derived from it, and both
+   hold at least 4.5:1 against each other in light and in dark. */
+.hue { background: hsl(var(--h) 85% 91%); color: hsl(var(--h) 80% 26%); }
+.tag.type { font-weight: 750; letter-spacing: .01em; }
+.dot { width: 9px; height: 9px; border-radius: 50%; flex: none; background: hsl(var(--h) 75% 48%); }
+.opts .chip[data-cap]::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: hsl(var(--h) 75% 48%); }
+.caplist li { align-items: center; }
+.caplist .tag { min-width: 96px; justify-content: center; }
+:root[data-theme="dark"] .hue { background: hsl(var(--h) 55% 19%); color: hsl(var(--h) 90% 78%); }
+:root[data-theme="dark"] .dot, :root[data-theme="dark"] .opts .chip[data-cap]::before { background: hsl(var(--h) 85% 66%); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hue { background: hsl(var(--h) 55% 19%); color: hsl(var(--h) 90% 78%); }
+  :root:not([data-theme="light"]) .dot, :root:not([data-theme="light"]) .opts .chip[data-cap]::before { background: hsl(var(--h) 85% 66%); }
+}
