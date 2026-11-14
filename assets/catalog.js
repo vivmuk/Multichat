@@ -109,9 +109,18 @@
     } catch (e) { /* sandboxed frame */ }
     apply();
   }
+  // A sheet is opened by an ordinary fragment navigation (#m/<id>, #filters),
+  // the same thing a plain in-page link does. Every browser, and every in-app
+  // browser, records that as a history entry, so Back closes the sheet.
+  var sheetsOpened = 0;
+  function openSheet(hash) {
+    if (location.hash === hash) { apply(); return; }
+    sheetsOpened++;
+    location.hash = hash;          // fires hashchange → apply()
+  }
   function closeSheet() {
-    if (history.state && history.state.mc) history.back();   // we opened it: step back
-    else go(S, '', false);                                   // arrived by deep link: just clear it
+    if (sheetsOpened > 0) history.back();                        // we opened it: step back (popstate keeps count)
+    else go(S, '', false);                                       // arrived by deep link: just clear it
   }
 
   // ------------------------------------------------------------------ filtering
@@ -208,7 +217,7 @@
     return out;
   }
   function cardHtml(r) {
-    var href = esc(urlFor(S, '#m/' + encodeURIComponent(r.id)));
+    var href = '#m/' + esc(encodeURIComponent(r.id));
     return '<a class="m-head" href="' + href + '" data-open="' + esc(r.id) + '">' + mark(r, 22) +
         '<span class="m-name">' + esc(r.name) + '</span><span class="m-tags">' + tags(r) + '</span>' +
         '<span class="m-sub">' + esc(subline(r)) + '</span>' + icon('chevron', 'sm m-go') + '</a>' +
@@ -466,7 +475,7 @@
     var open = t.closest('[data-open]');
     if (open && !e.metaKey && !e.ctrlKey && !e.shiftKey && e.button === 0) {
       e.preventDefault();
-      go(S, '#m/' + encodeURIComponent(open.getAttribute('data-open')), true);
+      openSheet('#m/' + encodeURIComponent(open.getAttribute('data-open')));
       return;
     }
     var type = t.closest('[data-type]');
@@ -481,7 +490,7 @@
     var act = t.closest('[data-act]');
     if (!act) return;
     switch (act.getAttribute('data-act')) {
-      case 'filters': go(S, '#filters', true); break;
+      case 'filters': openSheet('#filters'); break;
       case 'close': closeSheet(); break;
       case 'clear': mutate(function (s) { var keep = { type: s.type, sort: s.sort }; Object.assign(s, blank(), keep); }); $('q').value = ''; break;
       case 'qclear': $('q').value = ''; mutate(function (s) { s.q = ''; }); $('q').focus(); break;
@@ -519,6 +528,7 @@
     else if (e.key === '/' && !lastSheet && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { e.preventDefault(); $('q').focus(); }
   });
   window.addEventListener('popstate', function () {
+    if (lastSheet && !location.hash && sheetsOpened > 0) sheetsOpened--;
     // Leaving the filter sheet with Back keeps what was chosen in it.
     if (lastSheet === 'filters' && location.hash !== '#filters') {
       try { history.replaceState(history.state, '', urlFor(S, location.hash)); } catch (e) { /* sandboxed */ }
