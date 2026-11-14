@@ -1,5 +1,5 @@
 # API Keys - Keep private
-# config.js is tracked (it's a keyless placeholder; build.js injects the real key at deploy time)
+# config.js is tracked: a keyless placeholder. Visitors enter their own key in the chat.
 config.js.local
 
 # Dependencies

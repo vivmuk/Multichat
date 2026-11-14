@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>For agents · V’s MultiGen AI Chat</title>
+<meta name="description" content="Machine-readable access to the Venice AI model list, prices, API documentation and OpenAPI spec: llms.txt, Markdown, JSON and an MCP endpoint. No key, no JavaScript.">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="alternate" type="text/markdown" href="llms.txt" title="Index for agents">
+<link rel="alternate" type="text/markdown" href="agents.md" title="Agent guide">
+<link rel="stylesheet" href="assets/base.css" data-inline>
+<link rel="stylesheet" href="assets/app.css" data-inline>
+<style>
+  .ep { display: grid; gap: 8px; }
+  .ep h3 { font-size: 15.5px; }
+  .ep p { color: var(--text-2); font-size: 14px; }
+  .ep .copy code { font-size: 13px; }
+  .ep-row { display: flex; gap: 6px; align-items: stretch; }
+  .ep-row .copy { flex: 1; min-width: 0; }
+  .ep-row .icon-btn { border: 1px solid var(--line); background: var(--surface); flex: none; height: auto; min-height: 44px; }
+  .lead-card { border-color: var(--accent); background: var(--accent-bg); }
+  .lead-card h2 { font-size: 17px; margin: 0 0 6px; }
+  .lead-card p { color: var(--text-2); margin-bottom: 10px; }
+  .lead-card .codeblock { margin-bottom: 0; }
+  .note { border-left: 3px solid var(--warn); background: var(--warn-bg); color: var(--text); padding: 10px 12px; border-radius: 0 8px 8px 0; font-size: 14px; margin: 16px 0; }
+  .prose h2:first-child { margin-top: 26px; }
+</style>
+</head>
+<body>
+<script src="assets/app.js" data-inline></script>
+
+<main class="page">
+  <header class="page-head">
+    <p class="eyebrow">For agents</p>
+    <h1>The whole site, without a browser</h1>
+    <p>Everything a person can read here, an agent can read as Markdown or JSON: every Venice model with its ID and price, the Venice API documentation, and the OpenAPI spec. No key, no JavaScript, no scraping.</p>
+  </header>
+
+  <div class="note" id="staticNote" hidden>This copy of the site is being served as plain files, so the endpoints below are not running. They need the site's own server (<code>node server.js</code>).</div>
+
+  <div class="prose">
+    <div class="card lead-card" style="margin-top:20px">
+      <h2>Hand this to your agent</h2>
+      <p>One line is enough. The index it points to explains the rest.</p>
+      <div class="codeblock"><pre id="handoff" class="wrap">Read <span data-o></span>/llms.txt to find Venice AI model IDs and prices, then call the Venice API at https://api.venice.ai/api/v1.</pre><button class="icon-btn" type="button" data-copy-from="#handoff" data-copy-label="Copied the instruction" aria-label="Copy"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div>
+    </div>
+
+    <h2 id="start">Start here</h2>
+    <div class="cards" id="startCards"></div>
+
+    <h2 id="models">Models and prices</h2>
+    <div class="cards" id="modelCards"></div>
+
+    <h3>Filtering</h3>
+    <p>Both <code>/models.md</code> and <code>/models.json</code> take the same query parameters.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Parameter</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>type</code></td><td><code>text</code>, <code>image</code>, <code>video</code>, <code>tts</code>, <code>music</code>, <code>asr</code>, <code>inpaint</code>, <code>upscale</code>, <code>embedding</code>, <code>decision</code></td></tr>
+        <tr><td><code>q</code></td><td>Free text matched against ID, name, vendor and capabilities</td></tr>
+        <tr><td><code>cap</code></td><td>Comma list, all must match: <code>vision</code>, <code>reasoning</code>, <code>tools</code>, <code>web</code>, <code>code</code>, <code>schema</code>, <code>audio</code>, <code>video</code>, <code>xsearch</code>, <code>tee</code>, <code>e2ee</code>, <code>logprobs</code></td></tr>
+        <tr><td><code>privacy</code></td><td><code>private</code> (Venice-hosted) or <code>anonymized</code> (proxied to the provider)</td></tr>
+        <tr><td><code>provider</code></td><td>Vendor name, such as <code>Google</code> or <code>Anthropic</code></td></tr>
+        <tr><td><code>max_price</code></td><td>Ceiling in USD on the headline rate: input price per 1M tokens for text, the per-unit price otherwise</td></tr>
+        <tr><td><code>uncensored</code></td><td><code>1</code> keeps only models Venice marks uncensored</td></tr>
+        <tr><td><code>sort</code></td><td><code>newest</code> (default), <code>price</code>, <code>price-desc</code>, <code>name</code>, <code>context</code></td></tr>
+        <tr><td><code>limit</code></td><td>Maximum rows</td></tr>
+      </tbody>
+    </table></div>
+    <div class="codeblock"><pre id="ex1"># The five cheapest text models that see images and call tools
+curl "<span data-o></span>/models.json?type=text&amp;cap=vision,tools&amp;sort=price&amp;limit=5"
+
+# Video models, cheapest first, as a Markdown table
+curl "<span data-o></span>/models.md?type=video&amp;sort=price"
+
+# One model in full: every price, limits, policy ratings
+curl <span data-o></span>/models/claude-fable-5-2.md</pre><button class="icon-btn" type="button" data-copy-from="#ex1" data-copy-label="Copied the examples" aria-label="Copy"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div>
+
+    <h2 id="docs">Venice API documentation</h2>
+    <p>Cached copies of <a href="https://docs.venice.ai" target="_blank" rel="noopener">docs.venice.ai</a>, refreshed hourly, so an agent that can reach this site can read the whole API reference from one origin. The originals stay authoritative.</p>
+    <div class="cards" id="docCards"></div>
+
+    <h2 id="mcp">MCP</h2>
+    <p>The same catalogue as tools, over Streamable HTTP, with no authentication. It is read-only: nothing here can spend money or change state.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Tool</th><th>What it returns</th></tr></thead>
+      <tbody>
+        <tr><td><code>list_models</code></td><td>Models with ID and price, filtered by type, capability, vendor, privacy or a price ceiling</td></tr>
+        <tr><td><code>get_model</code></td><td>One model's full sheet</td></tr>
+        <tr><td><code>read_venice_docs</code></td><td>Any Venice documentation page as Markdown, or the index of all pages</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Claude Code</h3>
+    <div class="codeblock"><pre id="mcp1">claude mcp add --transport http venice-catalog <span data-o></span>/mcp</pre><button class="icon-btn" type="button" data-copy-from="#mcp1" data-copy-label="Copied the command" aria-label="Copy"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div>
+    <h3>Any MCP client</h3>
+    <div class="codeblock"><pre id="mcp2">{
+  "mcpServers": {
+    "venice-catalog": { "type": "http", "url": "<span data-o></span>/mcp" }
+  }
+}</pre><button class="icon-btn" type="button" data-copy-from="#mcp2" data-copy-label="Copied the config" aria-label="Copy"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div>
+    <p>To call the Venice API itself through MCP, or to search the docs, Venice runs its own servers: see <a href="https://docs.venice.ai/guides/integrations/venice-mcp" target="_blank" rel="noopener">the Venice MCP guide</a>.</p>
+
+    <h2 id="rules">What an agent should know</h2>
+    <ul>
+      <li><strong>Read IDs at run time.</strong> Models are added and retired often. The list here is read from the Venice API and refreshed every five minutes.</li>
+      <li><strong>Prices are exact.</strong> US dollars as Venice reports them, never rounded. Video rates come from Venice's pricing page; <code>POST /video/quote</code> gives the price of a specific job.</li>
+      <li><strong>This site holds no key.</strong> Reading the catalogue needs none. Calling the Venice API needs the caller's own key from <a href="https://venice.ai/settings/api" target="_blank" rel="noopener">venice.ai/settings/api</a>, or a wallet through x402.</li>
+      <li><strong>Policy ratings are opinions with a basis.</strong> Likeness and NSFW ratings are curated by the site's author from provider policy. “Open” means not blocked, and “inferred” means derived from the privacy tier, not checked.</li>
+    </ul>
+  </div>
+</main>
+
+<p class="foot">Built on the public <a href="https://docs.venice.ai" target="_blank" rel="noopener">Venice API</a>. <a href="./">Back to the catalogue</a></p>
+
+<script>
+(function () {
+  var A = window.VApp, o = location.origin + location.pathname.replace(/[^/]*$/, '').replace(/\/$/, '');
+  document.querySelectorAll('[data-o]').forEach(function (el) { el.textContent = o; });
+  var COPY = '<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>';
+  function card(title, path, text) {
+    var open = path.replace(/\{id\}/, 'claude-fable-5-2').replace(/\{path\}/, 'api-reference/endpoint/chat/completions');
+    return '<div class="card ep"><h3>' + A.esc(title) + '</h3><p>' + text + '</p><div class="ep-row">' +
+      '<button class="copy" type="button" data-copy="' + A.esc(o + path) + '" data-copy-label="Copied the URL"><code>' + A.esc(path) + '</code><span class="copy-cta">' + COPY + 'Copy</span></button>' +
+      '<a class="icon-btn" href="' + A.esc(open.slice(1)) + '" target="_blank" rel="noopener" aria-label="Open ' + A.esc(path) + '">' + A.icon('ext') + '</a></div></div>';
+  }
+  document.getElementById('startCards').innerHTML =
+    card('Index', '/llms.txt', 'What this site is and where everything lives. The same text is returned for <code>GET /</code> with <code>Accept: text/markdown</code>.') +
+    card('Agent guide', '/agents.md', 'How to find a model here and call it on the Venice API, with request examples.') +
+    card('Everything in one file', '/llms-full.txt', 'The index, the guide and the full model table, concatenated.');
+  document.getElementById('modelCards').innerHTML =
+    card('All models, Markdown', '/models.md', 'Every model ID with its price, context window and capabilities, in tables grouped by type.') +
+    card('All models, JSON', '/models.json', 'One record per model: ID, readable price, Venice’s raw pricing object, limits, policy ratings.') +
+    card('One model', '/models/{id}.md', 'The full sheet for a single model. Use <code>.json</code> for the record plus the untouched Venice object.') +
+    card('Raw Venice payload', '/api/catalog.json', 'The unmodified <code>GET /models?type=all</code> response this site is built from, with video prices and trait defaults.');
+  document.getElementById('docCards').innerHTML =
+    card('Docs index', '/docs/llms.txt', 'Every page of the Venice documentation, with a one-line summary of each.') +
+    card('Any docs page', '/docs/{path}.md', 'Take a docs.venice.ai URL, swap the host for this one under <code>/docs/</code>, and end it in <code>.md</code>.') +
+    card('OpenAPI spec', '/openapi.yaml', 'The complete Venice API schema: every endpoint, parameter and response.') +
+    card('Pricing tables', '/docs/pricing.md', 'Venice’s own pricing page, including long-context rates and tool fees.') +
+    card('Venice’s agent guide', '/docs/agents.md', 'Venice’s instructions for agents using the API.');
+  fetch('healthz').then(function (r) { if (!r.ok) throw 0; }).catch(function () { document.getElementById('staticNote').hidden = false; });
+})();
+</script>
+</body>
+</html>

@@ -1,13 +1,13 @@
 {
   "name": "venice-multi-chat-app",
-  "version": "1.0.0",
-  "description": "Venice AI Multi-Chat Application",
+  "version": "2.0.0",
+  "description": "V's MultiGen AI Chat: a live Venice AI model catalogue with prices, multi-model chat, a benchmark lab, and machine-readable endpoints for agents.",
+  "main": "server.js",
   "scripts": {
-    "start": "npx serve . --listen 3000",
-    "build": "node build.js"
+    "start": "node server.js",
+    "test": "node test/smoke.js"
   },
   "engines": {
     "node": ">=18.0.0"
   }
 }
-

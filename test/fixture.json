@@ -1,0 +1,835 @@
+{
+ "models": [
+  {
+   "context_length": 1000000,
+   "created": 1794182400,
+   "id": "claude-fable-5-2",
+   "model_spec": {
+    "pricing": {
+     "input": {
+      "usd": 8,
+      "diem": 8
+     },
+     "cache_input": {
+      "usd": 0.2,
+      "diem": 0.2
+     },
+     "cache_write": {
+      "usd": 10,
+      "diem": 10
+     },
+     "output": {
+      "usd": 40,
+      "diem": 40
+     }
+    },
+    "availableContextTokens": 1000000,
+    "maxCompletionTokens": 128000,
+    "capabilities": {
+     "optimizedForCode": true,
+     "quantization": "not-available",
+     "supportsAudioInput": false,
+     "supportsFunctionCalling": true,
+     "supportsLogProbs": false,
+     "supportsMultipleImages": true,
+     "maxImages": 10,
+     "supportsReasoning": true,
+     "supportsReasoningEffort": true,
+     "reasoningEffortOptions": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+     ],
+     "defaultReasoningEffort": "high",
+     "supportsResponseSchema": true,
+     "supportsTeeAttestation": false,
+     "supportsE2EE": false,
+     "supportsVideoInput": false,
+     "supportsVision": true,
+     "supportsWebSearch": true,
+     "supportsXSearch": false
+    },
+    "description": "Claude Fable 5.2 improves on Claude Fable 5.1 across the board, with the biggest gains in agentic coding, long-running agentic workflows, and knowledge work such as long code refactors, front-end development, and finance and analysis tasks. It features a 1M token context window, 128K max output tokens, always-on adaptive thinking, and strong multimodal capabilities, and tends to be more concise in its plans and summaries.",
+    "name": "Claude Fable 5.2",
+    "modelSource": "",
+    "offline": false,
+    "privacy": "anonymized",
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "text"
+  },
+  {
+   "context_length": 256000,
+   "created": 1768435200,
+   "id": "mistral-small-3-2-24b-instruct",
+   "model_spec": {
+    "pricing": {
+     "input": {
+      "usd": 0.09375,
+      "diem": 0.09375
+     },
+     "output": {
+      "usd": 0.25,
+      "diem": 0.25
+     }
+    },
+    "availableContextTokens": 256000,
+    "maxCompletionTokens": 16384,
+    "capabilities": {
+     "optimizedForCode": false,
+     "quantization": "fp8",
+     "supportsAudioInput": false,
+     "supportsFunctionCalling": true,
+     "supportsLogProbs": false,
+     "supportsMultipleImages": true,
+     "maxImages": 10,
+     "supportsReasoning": false,
+     "supportsReasoningEffort": false,
+     "supportsResponseSchema": true,
+     "supportsTeeAttestation": false,
+     "supportsE2EE": false,
+     "supportsVideoInput": false,
+     "supportsVision": true,
+     "supportsWebSearch": true,
+     "supportsXSearch": false
+    },
+    "description": "Mistral Small 3.2 is a 24B parameter model optimized for efficiency and performance. Ideal for general-purpose tasks with balanced speed and capability.",
+    "name": "Mistral Small 3.2 24B Instruct",
+    "modelSource": "https://huggingface.co/mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+    "offline": false,
+    "privacy": "private",
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "text"
+  },
+  {
+   "created": 1743099022,
+   "id": "venice-sd35",
+   "model_spec": {
+    "pricing": {
+     "generation": {
+      "usd": 0.01,
+      "diem": 0.01
+     },
+     "upscale": {
+      "2x": {
+       "usd": 0.02,
+       "diem": 0.02
+      },
+      "4x": {
+       "usd": 0.08,
+       "diem": 0.08
+      }
+     }
+    },
+    "constraints": {
+     "promptCharacterLimit": 1500,
+     "steps": {
+      "default": 25,
+      "max": 30
+     },
+     "widthHeightDivisor": 16
+    },
+    "supportsWebSearch": false,
+    "supportsOptimizePromptThinking": false,
+    "supportsStyleReferences": false,
+    "description": "Venice SD35 is Venice's deployment of Stable Diffusion 3.5 Large, Stability AI's open-weight text-to-image model. It favors artistic and painterly styles over strict photorealism and accepts prompts of up to 1,500 characters.",
+    "name": "Venice SD35",
+    "modelSource": "https://huggingface.co/stabilityai/stable-diffusion-3.5-large",
+    "offline": false,
+    "privacy": "private",
+    "traits": [
+     "eliza-default"
+    ]
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "image"
+  },
+  {
+   "created": 1794268800,
+   "id": "seedream-v5-5",
+   "model_spec": {
+    "pricing": {
+     "resolutions": {
+      "1K": {
+       "usd": 0.0255,
+       "diem": 0.0255
+      },
+      "1.5K": {
+       "usd": 0.034,
+       "diem": 0.034
+      },
+      "2K": {
+       "usd": 0.051,
+       "diem": 0.051
+      }
+     },
+     "upscale": {
+      "2x": {
+       "usd": 0.02,
+       "diem": 0.02
+      },
+      "4x": {
+       "usd": 0.08,
+       "diem": 0.08
+      }
+     }
+    },
+    "model_sets": [
+     "venice_recommendations"
+    ],
+    "constraints": {
+     "promptCharacterLimit": 10000,
+     "defaultResolution": "1K",
+     "resolutions": [
+      "1K",
+      "1.5K",
+      "2K"
+     ],
+     "supportsTransparentBackground": true,
+     "aspectRatios": [
+      "1:1",
+      "3:2",
+      "16:9",
+      "21:9",
+      "9:16",
+      "2:3",
+      "3:4",
+      "4:3"
+     ],
+     "defaultAspectRatio": "1:1",
+     "steps": {
+      "default": 20,
+      "max": 50
+     },
+     "widthHeightDivisor": 1
+    },
+    "supportsWebSearch": false,
+    "supportsOptimizePromptThinking": false,
+    "supportsStyleReferences": false,
+    "description": "Seedream V5.5 is ByteDance Seed's Seedream 5.5, generating high-quality images at 1K, 1.5K, or 2K with improved realism and text rendering. It pairs with Seedream V5.5 Edit.",
+    "name": "Seedream V5.5",
+    "offline": false,
+    "privacy": "anonymized",
+    "traits": [],
+    "uncensored": true
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "image"
+  },
+  {
+   "created": 1785542400,
+   "id": "wan-3-0-text-to-video",
+   "model_spec": {
+    "privacy": "anonymized",
+    "constraints": {
+     "model_type": "text-to-video",
+     "aspect_ratios": [
+      "16:9",
+      "9:16",
+      "1:1",
+      "4:3",
+      "3:4"
+     ],
+     "resolutions": [
+      "1080p",
+      "720p",
+      "480p"
+     ],
+     "durations": [
+      "2s",
+      "5s",
+      "10s",
+      "15s",
+      "20s",
+      "25s",
+      "30s"
+     ],
+     "audio": true,
+     "audio_configurable": true,
+     "audio_input": false,
+     "per_reference_audio": false,
+     "video_input": false,
+     "prompt_character_limit": 20000
+    },
+    "model_sets": [
+     "uncensored",
+     "high_resolution",
+     "audio",
+     "long_duration"
+    ],
+    "description": "Wan 3.0 is Alibaba's video model, generating 2- to 30-second clips at up to 1080p from text, with optional native audio.",
+    "name": "Wan 3.0",
+    "offline": false,
+    "traits": [],
+    "uncensored": true
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "video"
+  },
+  {
+   "created": 1785801600,
+   "id": "flux-3-extend-video",
+   "model_spec": {
+    "privacy": "anonymized",
+    "constraints": {
+     "model_type": "video",
+     "aspect_ratios": [
+      "auto",
+      "21:9",
+      "16:9",
+      "4:3",
+      "1:1",
+      "3:4",
+      "9:16",
+      "9:21"
+     ],
+     "resolutions": [
+      "720p",
+      "1080p",
+      "1440p",
+      "2160p"
+     ],
+     "durations": [
+      "5s",
+      "10s",
+      "15s",
+      "20s"
+     ],
+     "audio": true,
+     "audio_configurable": false,
+     "audio_input": false,
+     "per_reference_audio": false,
+     "video_input": true
+    },
+    "model_sets": [
+     "high_resolution",
+     "ultra_high_resolution",
+     "audio",
+     "long_duration"
+    ],
+    "description": "Flux 3 Extend continues an existing clip beyond its final frame, adding 5 to 20 seconds at up to 4K with synchronized audio.",
+    "name": "Flux 3 Extend",
+    "offline": false,
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "video"
+  },
+  {
+   "created": 1786060800,
+   "id": "seedance-2-5-edit-video-basic",
+   "model_spec": {
+    "privacy": "anonymized",
+    "constraints": {
+     "model_type": "video",
+     "aspect_ratios": [],
+     "resolutions": [
+      "4k",
+      "1080p",
+      "720p",
+      "480p"
+     ],
+     "durations": [
+      "Auto"
+     ],
+     "audio": true,
+     "audio_configurable": true,
+     "audio_input": true,
+     "per_reference_audio": false,
+     "video_input": false,
+     "prompt_character_limit": 15000,
+     "reference_image_min_short_side_pixels": 300,
+     "reference_image_min_aspect_ratio": 0.4,
+     "reference_image_max_aspect_ratio": 2.5
+    },
+    "model_sets": [
+     "high_resolution",
+     "ultra_high_resolution",
+     "audio",
+     "long_duration",
+     "cinematic",
+     "photorealistic"
+    ],
+    "description": "Seedance 2.5 Edit changes a 4- to 30-second source video by swapping subjects, objects or styles, while keeping its original motion, camera and length. Reference images are optional, and output is up to 4K.",
+    "name": "Seedance 2.5 Edit",
+    "offline": false,
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "video"
+  },
+  {
+   "created": 1742418046,
+   "id": "tts-kokoro",
+   "model_spec": {
+    "pricing": {
+     "input": {
+      "usd": 3.5,
+      "diem": 3.5
+     }
+    },
+    "default_format": "mp3",
+    "supported_formats": [
+     "mp3",
+     "opus",
+     "aac",
+     "flac",
+     "wav",
+     "pcm"
+    ],
+    "supports_custom_voice_id": false,
+    "voices": [
+     "af_alloy",
+     "af_aoede",
+     "af_bella",
+     "af_heart",
+     "af_jadzia",
+     "af_jessica",
+     "af_kore",
+     "af_nicole",
+     "af_nova",
+     "af_river",
+     "af_sarah",
+     "af_sky",
+     "am_adam",
+     "am_echo",
+     "am_eric",
+     "am_fenrir",
+     "am_liam",
+     "am_michael",
+     "am_onyx",
+     "am_puck",
+     "am_santa",
+     "bf_alice",
+     "bf_emma",
+     "bf_lily",
+     "bm_daniel",
+     "bm_fable",
+     "bm_george",
+     "bm_lewis",
+     "ef_dora",
+     "em_alex",
+     "em_santa",
+     "ff_siwis",
+     "hf_alpha",
+     "hf_beta",
+     "hm_omega",
+     "hm_psi",
+     "if_sara",
+     "im_nicola",
+     "jf_alpha",
+     "jf_gongitsune",
+     "jf_nezumi",
+     "jf_tebukuro",
+     "jm_kumo",
+     "pf_dora",
+     "pm_alex",
+     "pm_santa",
+     "zf_xiaobei",
+     "zf_xiaoni",
+     "zf_xiaoxiao",
+     "zf_xiaoyi",
+     "zm_yunjian",
+     "zm_yunxi",
+     "zm_yunxia",
+     "zm_yunyang"
+    ],
+    "description": "Kokoro is hexgrad's open-weight 82M-parameter text-to-speech model. It speaks in 54 voices across several languages and returns MP3, Opus, AAC, FLAC, WAV or PCM audio.",
+    "name": "Kokoro Text to Speech",
+    "modelSource": "https://huggingface.co/hexgrad/Kokoro-82M",
+    "offline": false,
+    "privacy": "private",
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "tts"
+  },
+  {
+   "created": 1771804800,
+   "id": "ace-step-15",
+   "model_spec": {
+    "pricing": {
+     "durations": {
+      "60": {
+       "usd": 0.03,
+       "diem": 0.03,
+       "min_seconds": 60,
+       "max_seconds": 60
+      },
+      "90": {
+       "usd": 0.04,
+       "diem": 0.04,
+       "min_seconds": 61,
+       "max_seconds": 90
+      },
+      "120": {
+       "usd": 0.05,
+       "diem": 0.05,
+       "min_seconds": 91,
+       "max_seconds": 120
+      },
+      "150": {
+       "usd": 0.06,
+       "diem": 0.06,
+       "min_seconds": 121,
+       "max_seconds": 150
+      },
+      "180": {
+       "usd": 0.07,
+       "diem": 0.07,
+       "min_seconds": 151,
+       "max_seconds": 180
+      },
+      "210": {
+       "usd": 0.08,
+       "diem": 0.08,
+       "min_seconds": 181,
+       "max_seconds": 210
+      }
+     }
+    },
+    "supports_lyrics": true,
+    "lyrics_required": false,
+    "supports_force_instrumental": false,
+    "supports_lyrics_optimizer": false,
+    "supports_loop": false,
+    "duration_options": [
+     60,
+     90,
+     120,
+     150,
+     180,
+     210
+    ],
+    "min_duration": 60,
+    "max_duration": 210,
+    "default_duration": 60,
+    "supported_formats": [
+     "flac"
+    ],
+    "default_format": "flac",
+    "prompt_character_limit": 512,
+    "lyrics_character_limit": 4096,
+    "min_prompt_length": 10,
+    "supports_custom_voice_id": false,
+    "supports_language_code": false,
+    "supports_speed": false,
+    "supports_reference_audios": false,
+    "description": "Feature-rich song generation with optional lyrics and detailed musical controls.",
+    "name": "ACE-Step 1.5",
+    "modelSource": "https://huggingface.co/ACE-Step/Ace-Step1.5",
+    "offline": false,
+    "privacy": "anonymized",
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "music"
+  },
+  {
+   "created": 1772236800,
+   "id": "elevenlabs-tts-v3",
+   "model_spec": {
+    "pricing": {
+     "per_thousand_characters": {
+      "usd": 0.11500000000000002,
+      "diem": 0.11500000000000002
+     }
+    },
+    "supports_lyrics": false,
+    "lyrics_required": false,
+    "supports_force_instrumental": false,
+    "supports_lyrics_optimizer": false,
+    "supports_loop": false,
+    "supported_formats": [
+     "mp3"
+    ],
+    "default_format": "mp3",
+    "prompt_character_limit": 5000,
+    "min_prompt_length": 1,
+    "voices": [
+     "Aria",
+     "Roger",
+     "Sarah",
+     "Laura",
+     "Charlie",
+     "George",
+     "Callum",
+     "River",
+     "Liam",
+     "Charlotte",
+     "Alice",
+     "Matilda",
+     "Will",
+     "Jessica",
+     "Eric",
+     "Chris",
+     "Brian",
+     "Daniel",
+     "Lily",
+     "Bill"
+    ],
+    "default_voice": "Aria",
+    "supports_custom_voice_id": true,
+    "supports_language_code": false,
+    "supports_speed": false,
+    "supports_reference_audios": false,
+    "description": "Generate natural text-to-speech audio using ElevenLabs Eleven-v3. High-quality voices with stability control and automatic text normalization.",
+    "name": "ElevenLabs TTS v3",
+    "modelSource": "",
+    "offline": false,
+    "privacy": "anonymized",
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "music"
+  },
+  {
+   "created": 1760136444,
+   "id": "nvidia/parakeet-tdt-0.6b-v3",
+   "model_spec": {
+    "pricing": {
+     "per_audio_second": {
+      "usd": 0.0001,
+      "diem": 0.0001
+     }
+    },
+    "description": "Parakeet TDT 0.6B v3 is NVIDIA's open-weight speech recognition model, with 600 million parameters and support for 25 European languages, which it detects on its own. It transcribes quickly, with punctuation and capitalization.",
+    "name": "Parakeet ASR",
+    "modelSource": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3",
+    "offline": false,
+    "privacy": "private",
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "asr"
+  },
+  {
+   "created": 1774396800,
+   "id": "firered-image-edit",
+   "model_spec": {
+    "pricing": {
+     "inpaint": {
+      "usd": 0.04,
+      "diem": 0.04
+     }
+    },
+    "constraints": {
+     "aspectRatios": [
+      "auto",
+      "1:1",
+      "5:4",
+      "4:3",
+      "3:2",
+      "16:9",
+      "21:9",
+      "4:5",
+      "3:4",
+      "2:3",
+      "9:16",
+      "9:21"
+     ],
+     "promptCharacterLimit": 1500,
+     "combineImages": true,
+     "singleImageAspectRatio": true
+    },
+    "supportsOptimizePromptThinking": false,
+    "description": "FireRed is an instruction-following image editor that changes a source image from a natural-language request, with support for several reference images. It accepts prompts of up to 1,500 characters.",
+    "name": "FireRed",
+    "offline": false,
+    "privacy": "private",
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "inpaint"
+  },
+  {
+   "created": 1744453050,
+   "id": "upscaler",
+   "model_spec": {
+    "pricing": {
+     "generation": {
+      "usd": 0.01,
+      "diem": 0.01
+     },
+     "upscale": {
+      "2x": {
+       "usd": 0.02,
+       "diem": 0.02
+      },
+      "4x": {
+       "usd": 0.08,
+       "diem": 0.08
+      }
+     }
+    },
+    "description": "Upscaler is Venice's image upscaling model, enlarging an image 2x to 4x, up to 4096×4096 pixels. An optional creativity setting lets it add fine detail and texture as it scales.",
+    "name": "Upscaler",
+    "offline": false,
+    "privacy": "private",
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "upscale"
+  },
+  {
+   "created": 1741924661,
+   "id": "text-embedding-bge-m3",
+   "model_spec": {
+    "pricing": {
+     "input": {
+      "usd": 0.15,
+      "diem": 0.15
+     },
+     "output": {
+      "usd": 0.6,
+      "diem": 0.6
+     }
+    },
+    "embeddingDimensions": 1024,
+    "maxInputTokens": 8192,
+    "description": "BGE-M3 is BAAI's open-weight multilingual embedding model, covering more than 100 languages. It turns inputs of up to 8,192 tokens into 1,024-dimensional vectors for semantic search, retrieval and clustering across languages.",
+    "name": "BGE-M3",
+    "modelSource": "https://huggingface.co/BAAI/bge-m3",
+    "offline": false,
+    "privacy": "private",
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "embedding"
+  },
+  {
+   "created": 1789689600,
+   "id": "jev-latest",
+   "model_spec": {
+    "betaModel": true,
+    "pricing": {
+     "input": {
+      "usd": 0.042,
+      "diem": 0.042
+     },
+     "output": {
+      "usd": 0,
+      "diem": 0
+     }
+    },
+    "maxStateTokens": 32000,
+    "maxTotalTokens": 64000,
+    "description": "Jev (System One) is TypeSafe AI's decision model. Instead of writing text, it answers typed questions about a passage with structured judgments: yes-or-no probabilities, choices with confidence, or scores on a rubric. It reads up to 32,000 tokens of context, with up to 64,000 tokens across context and questions.",
+    "name": "Jev (System One)",
+    "offline": false,
+    "privacy": "anonymized",
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "decision"
+  },
+  {
+   "context_length": 1000000,
+   "created": 1780358400,
+   "id": "qwen-3-7-plus",
+   "model_spec": {
+    "pricing": {
+     "input": {
+      "usd": 0.5,
+      "diem": 0.5
+     },
+     "cache_input": {
+      "usd": 0.05,
+      "diem": 0.05
+     },
+     "cache_write": {
+      "usd": 0.625,
+      "diem": 0.625
+     },
+     "output": {
+      "usd": 2,
+      "diem": 2
+     },
+     "extended": {
+      "context_token_threshold": 256000,
+      "input": {
+       "usd": 1.5,
+       "diem": 1.5
+      },
+      "output": {
+       "usd": 6,
+       "diem": 6
+      },
+      "cache_input": {
+       "usd": 0.15,
+       "diem": 0.15
+      },
+      "cache_write": {
+       "usd": 1.875,
+       "diem": 1.875
+      }
+     }
+    },
+    "model_sets": [
+     "venice_recommendations"
+    ],
+    "availableContextTokens": 1000000,
+    "maxCompletionTokens": 65536,
+    "capabilities": {
+     "optimizedForCode": true,
+     "quantization": "not-available",
+     "supportsAudioInput": false,
+     "supportsFunctionCalling": true,
+     "supportsLogProbs": false,
+     "supportsMultipleImages": true,
+     "maxImages": 10,
+     "supportsReasoning": true,
+     "supportsReasoningEffort": false,
+     "supportsResponseSchema": true,
+     "supportsTeeAttestation": false,
+     "supportsE2EE": false,
+     "supportsVideoInput": true,
+     "supportsVision": true,
+     "supportsWebSearch": true,
+     "supportsXSearch": false
+    },
+    "constraints": {
+     "temperature": {
+      "default": 0.7
+     },
+     "top_p": {
+      "default": 0.8
+     }
+    },
+    "description": "Qwen 3.7 Plus, the successor to Qwen 3.6 Plus, is a reasoning model from Alibaba with exceptional performance across coding, reasoning, and general knowledge tasks. Features mixed reasoning, function calling, and multimodal input support.",
+    "name": "Qwen 3.7 Plus",
+    "modelSource": "https://www.alibabacloud.com/help/en/model-studio/models",
+    "offline": false,
+    "privacy": "anonymized",
+    "traits": []
+   },
+   "object": "model",
+   "owned_by": "venice.ai",
+   "type": "text"
+  }
+ ],
+ "pricingMd": "# Pricing\n\n## Video\n\nPrices per second of video. The rate depends on resolution and audio, so each row runs from the cheapest setting to the most expensive one. Get the exact price for a job from [`POST /video/quote`](https://docs.venice.ai/api-reference/endpoint/video/quote) before you queue it; each model's page lists clip prices. Models priced by source charge by the video you send, so quote them with your input.\n\n| Model | ID | Type | Per second | Privacy |\n| - | - | - | - | - |\n| Flux 3 Extend | `flux-3-extend-video` | Video edit | Priced by source | Anonymized |\n| Seedance 2.5 Edit | `seedance-2-5-edit-video-basic` | Video edit | Quote per job | Anonymized |\n| Wan 3.0 | `wan-3-0-text-to-video` | Text to video | $0.065 to $0.26 | Anonymized |\n\n\n## Web search and tools\n",
+ "traits": {
+  "default": "mistral-small-3-2-24b-instruct"
+ }
+}

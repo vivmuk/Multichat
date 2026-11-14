@@ -1,0 +1,104 @@
+/* guide.css — the API guide's own pieces, drawn with the shared tokens. */
+:root {
+  /* names the guide's inline styles still use */
+  --text-secondary: var(--text-2);
+  --red: var(--bad); --red-bg: var(--bad-bg);
+  --green: var(--ok); --green-bg: var(--ok-bg);
+  --amber: var(--warn); --amber-bg: var(--warn-bg);
+  --orange: var(--spark); --orange-bg: var(--spark-bg);
+  --violet: var(--accent-ink); --violet-bg: var(--accent-bg);
+  --teal: var(--accent-ink); --teal-bg: var(--accent-bg);
+  --cyan: var(--accent-ink); --cyan-bg: var(--accent-bg);
+  --blue: var(--accent-ink); --blue-bg: var(--accent-bg);
+  --rose: var(--bad); --rose-bg: var(--bad-bg);
+}
+
+/* "On this page": a thumb-scrollable strip on a phone, a side rail on a desk */
+.toc { position: sticky; top: var(--top-h); z-index: 30; background: var(--bg); border-bottom: 1px solid var(--line); }
+.toc ul { list-style: none; margin: 0; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.toc ul::-webkit-scrollbar { display: none; }
+.toc li { flex: none; }
+.toc .toc-sub { display: none; }
+.toc a { display: flex; align-items: center; height: 36px; padding: 0 13px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: var(--text-2); font-size: 13.5px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.toc a.active { background: var(--text); border-color: var(--text); color: var(--bg); }
+
+.guide { max-width: 1180px; margin: 0 auto; padding: 16px 16px 40px; }
+.guide-main { min-width: 0; }
+.guide-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.guide-main p { margin: 0 0 12px; color: var(--text-2); }
+.guide-main h4 { font-size: 15px; margin: 0 0 4px; }
+
+.hero { padding: 4px 0 8px; }
+.hero-tag { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
+.hero h2 { font-size: clamp(24px, 6vw, 32px); line-height: 1.15; letter-spacing: -.02em; margin: 0 0 8px; }
+.hero p { font-size: 16px; max-width: 64ch; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.hero-meta-item { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 4px 10px; border-radius: 8px; background: var(--surface-2); color: var(--text-2); font-size: 13px; }
+.hero-meta-item strong { font-family: var(--mono); color: var(--text); font-weight: 600; overflow-wrap: anywhere; }
+
+.section { margin-top: 34px; scroll-margin-top: calc(var(--top-h) + 60px); }
+.section [id], .endpoint-card { scroll-margin-top: calc(var(--top-h) + 60px); }
+.section-header { margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.section-title { font-size: 21px; font-weight: 700; letter-spacing: -.015em; line-height: 1.2; }
+.section-sub { color: var(--text-3); font-size: 14px; margin-top: 2px; }
+
+.card-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); margin-bottom: 14px; }
+.info-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; }
+.info-card p { margin: 0; font-size: 14px; }
+
+.endpoint-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); margin-bottom: 14px; overflow: hidden; }
+.endpoint-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.method-badge { font: 700 11.5px var(--mono); padding: 3px 7px; border-radius: 5px; background: var(--accent-bg); color: var(--accent-ink); }
+.method-badge.method-get { background: var(--ok-bg); color: var(--ok); }
+.endpoint-url { font: 600 14px var(--mono); overflow-wrap: anywhere; }
+.endpoint-desc { color: var(--text-3); font-size: 13.5px; }
+.endpoint-body { padding: 14px; }
+.endpoint-body > :last-child { margin-bottom: 0; }
+
+.code-block { border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); margin: 0 0 14px; overflow: hidden; }
+.code-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 4px 4px 12px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.code-lang { font-size: 12.5px; font-weight: 650; color: var(--text-2); min-width: 0; }
+.copy-btn { display: inline-flex; align-items: center; gap: 5px; flex: none; min-height: 40px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--surface); color: var(--accent-ink); font-size: 13px; font-weight: 650; }
+.copy-btn.copied { background: var(--ok); border-color: var(--ok); color: var(--surface); }
+.code-block pre { margin: 0; padding: 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; font: 13px/1.6 var(--mono); color: var(--text); tab-size: 2; }
+.code-block pre code { font: inherit; }
+.curl-grid { display: grid; gap: 14px; }
+
+.inline-code { font-family: var(--mono); font-size: .9em; background: var(--surface-2); border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; color: var(--text); overflow-wrap: anywhere; }
+
+.callout { border-left: 3px solid var(--accent); background: var(--accent-bg); border-radius: 0 var(--r-sm) var(--r-sm) 0; padding: 11px 14px; margin: 0 0 14px; font-size: 14px; color: var(--text); }
+.callout-warn { border-color: var(--warn); background: var(--warn-bg); }
+.callout-tip { border-color: var(--ok); background: var(--ok-bg); }
+.callout-text { color: var(--text); }
+
+.param-table, .ptable { width: 100%; border-collapse: collapse; font-size: 14px; }
+.param-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); margin: 0 0 14px; }
+.param-table th, .param-table td, .ptable th, .ptable td { text-align: left; padding: 9px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+.param-table th, .ptable th { background: var(--surface-2); color: var(--text-3); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; border-top: 0; white-space: nowrap; }
+.p-name, .model-id { font-family: var(--mono); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.p-type { font-family: var(--mono); font-size: 12.5px; color: var(--text-3); }
+.p-req, .p-opt, .pol-cell, .badge { display: inline-block; font-size: 11.5px; font-weight: 700; border-radius: 5px; padding: 2px 7px; white-space: nowrap; }
+.p-req { background: var(--bad-bg); color: var(--bad); }
+.p-opt { background: var(--mute-bg); color: var(--mute); }
+.p-desc { color: var(--text-2); min-width: 200px; }
+.pol-cell.open { background: var(--ok-bg); color: var(--ok); }
+.pol-cell.limited { background: var(--warn-bg); color: var(--warn); }
+.pol-cell.blocked { background: var(--bad-bg); color: var(--bad); }
+.badge { background: var(--surface-2); color: var(--text-2); }
+.pricing-table-wrap { border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); margin: 0 0 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.pricing-table-head { padding: 10px 12px; font-weight: 650; font-size: 14px; border-bottom: 1px solid var(--line); }
+.price-val { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.price-links { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.id-copy { border: 0; background: transparent; padding: 6px 0; min-height: 32px; font: inherit; color: var(--accent-ink); text-decoration: underline dotted; text-underline-offset: 3px; }
+.id-copy.done { color: var(--ok); }
+
+@media (min-width: 1000px) {
+  .toc { position: fixed; top: calc(var(--top-h) + 20px); left: max(20px, calc(50vw - 590px)); width: 200px; bottom: 20px; overflow-y: auto; background: transparent; border: 0; }
+  .toc ul { display: block; padding: 0; }
+  .toc .toc-sub { display: block; }
+  .toc .toc-sub a { padding-left: 22px; font-weight: 500; font-size: 13px; height: 28px; }
+  .toc a { border: 0; border-radius: 7px; background: transparent; height: 32px; padding: 0 10px; }
+  .toc a:hover { background: var(--surface-2); }
+  .toc a.active { background: var(--accent-bg); color: var(--accent-ink); }
+  .guide { padding: 24px 20px 48px 240px; }
+}

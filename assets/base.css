@@ -1,0 +1,115 @@
+/* base.css — loaded by every page: colour and type tokens, plus the shared
+ * chrome (top bar, phone tab bar, toast). Every class here is v-prefixed so it
+ * cannot collide with a page's own styles.
+ */
+:root {
+  --bg: #F4F7F7;
+  --surface: #FFFFFF;
+  --surface-2: #EEF3F3;
+  --surface-3: #E4ECEB;
+  --line: #DAE4E3;
+  --line-strong: #BFCDCB;
+  --text: #121B1A;
+  --text-2: #465553;
+  --text-3: #667673;
+  --accent: #0E7490;
+  --accent-ink: #0A5B72;
+  --accent-bg: #E2F1F4;
+  --on-accent: #FFFFFF;
+  --spark: #D9590B;
+  --spark-bg: #FDEEE2;
+  --ok: #0C7046;   --ok-bg: #DFF2E8;
+  --warn: #9A4A05; --warn-bg: #FAEFD9;
+  --bad: #B8302A;  --bad-bg: #FBE8E6;
+  --mute: #5C6B69; --mute-bg: #E9EFEE;
+  --shadow: 0 1px 2px rgba(10, 40, 44, .06), 0 8px 24px -12px rgba(10, 40, 44, .18);
+  --shadow-up: 0 -8px 40px -8px rgba(10, 40, 44, .28);
+  --r: 12px;
+  --r-sm: 8px;
+  --top-h: 52px;
+  --tab-h: 58px;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1110; --surface: #121B1A; --surface-2: #192423; --surface-3: #212F2D;
+    --line: #25322F; --line-strong: #364845;
+    --text: #E9F0EF; --text-2: #AAB9B6; --text-3: #82938F;
+    --accent: #5CC0D3; --accent-ink: #8FD6E4; --accent-bg: #0F3138; --on-accent: #06181C;
+    --spark: #FF9650; --spark-bg: #38200F;
+    --ok: #55C992; --ok-bg: #11301F; --warn: #E8AA55; --warn-bg: #33250E; --bad: #F27E76; --bad-bg: #3A1816;
+    --mute: #93A3A0; --mute-bg: #1C2826;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .6);
+    --shadow-up: 0 -8px 40px -8px rgba(0, 0, 0, .7);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1110; --surface: #121B1A; --surface-2: #192423; --surface-3: #212F2D;
+  --line: #25322F; --line-strong: #364845;
+  --text: #E9F0EF; --text-2: #AAB9B6; --text-3: #82938F;
+  --accent: #5CC0D3; --accent-ink: #8FD6E4; --accent-bg: #0F3138; --on-accent: #06181C;
+  --spark: #FF9650; --spark-bg: #38200F;
+  --ok: #55C992; --ok-bg: #11301F; --warn: #E8AA55; --warn-bg: #33250E; --bad: #F27E76; --bad-bg: #3A1816;
+  --mute: #93A3A0; --mute-bg: #1C2826;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .6);
+  --shadow-up: 0 -8px 40px -8px rgba(0, 0, 0, .7);
+  color-scheme: dark;
+}
+
+.v-ico { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.v-ico.sm { width: 16px; height: 16px; }
+body.v-app, body.v-lite { padding-bottom: calc(var(--tab-h) + var(--safe-b)); }
+/* ---- shell: top bar and phone tab bar ------------------------------------ */
+.v-top {
+  position: sticky; top: 0; z-index: 40; height: var(--top-h);
+  display: flex; align-items: center; gap: 10px; padding: 0 12px 0 14px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  -webkit-backdrop-filter: saturate(1.4) blur(12px); backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.v-brand { display: flex; align-items: center; gap: 9px; min-width: 0; min-height: 44px; color: var(--text) !important; text-decoration: none; font-weight: 650; font-size: 15px; letter-spacing: -.01em; }
+.v-brand svg { width: 28px; height: 28px; flex: none; border-radius: 7px; }
+.v-brand span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.v-brand small { font-weight: 500; color: var(--text-3); font-size: 13px; }
+.v-nav { display: none; margin-left: 14px; gap: 2px; }
+.v-nav a { display: flex; align-items: center; gap: 7px; height: 36px; padding: 0 12px; border-radius: 9px; color: var(--text-2); text-decoration: none; font-weight: 550; font-size: 14px; }
+.v-nav a:hover { background: var(--surface-2); color: var(--text); }
+.v-nav a[aria-current="page"] { background: var(--accent-bg); color: var(--accent-ink); }
+.v-space { flex: 1; }
+.v-tbtn { display: inline-grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 11px; background: transparent; color: var(--text-2); }
+.v-tbtn:hover { background: var(--surface-2); color: var(--text); }
+
+.v-tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  height: calc(var(--tab-h) + var(--safe-b)); padding-bottom: var(--safe-b);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  -webkit-backdrop-filter: saturate(1.4) blur(12px); backdrop-filter: saturate(1.4) blur(12px);
+  border-top: 1px solid var(--line);
+}
+.v-tabbar a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-3); text-decoration: none; font-size: 11px; font-weight: 600; letter-spacing: .01em; }
+.v-tabbar a[aria-current="page"] { color: var(--accent-ink); }
+.v-tabbar a[aria-current="page"] .v-ico { stroke-width: 2.2; }
+.v-tabbar .v-ico { width: 22px; height: 22px; }
+
+@media (min-width: 860px) {
+  body.v-app, body.v-lite { padding-bottom: 0; }
+  .v-tabbar { display: none; }
+  .v-nav { display: flex; }
+  .v-top { padding: 0 20px; }
+}
+
+/* ---- toast --------------------------------------------------------------- */
+.v-toast {
+  position: fixed; left: 50%; bottom: calc(var(--tab-h) + var(--safe-b) + 14px); z-index: 90; transform: translate(-50%, 16px);
+  max-width: min(92vw, 520px); padding: 11px 16px; border-radius: 12px; background: var(--text); color: var(--bg);
+  font-size: 14px; font-weight: 600; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity .16s, transform .16s;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.v-toast.show { opacity: 1; transform: translate(-50%, 0); }
+@media (min-width: 860px) { .v-toast { bottom: 24px; } }
+

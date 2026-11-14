@@ -1,7 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/fusion", "destination": "/chat.html" },
-    { "source": "/chat", "destination": "/chat.html" },
-    { "source": "/models", "destination": "/index.html" }
-  ]
-}

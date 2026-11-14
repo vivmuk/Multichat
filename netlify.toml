@@ -1,26 +1,22 @@
-# Netlify configuration
+# Netlify configuration (static fallback).
+#
+# The site is meant to run behind its own server (node server.js; see README),
+# which puts the model list in the first response and serves the agent
+# endpoints. Published as plain files it still works: the catalogue reads the
+# public Venice model list from the browser instead. /llms.txt, /models.md,
+# /models.json, /docs/* and /mcp exist only with the server.
 
 [build]
-  command = "node build.js"
   publish = "."
-
-# Multi-page static site — no SPA catch-all redirect.
-# Each .html file is a real route:
-#   index.html     → model catalog (home)
-#   chat.html      → multi-model chat + Fusion
-#   benchmark.html → benchmark lab
-#   api-guide.html → Venice API guide
-# VENICE_API_KEY is injected at build time via build.js (set in Netlify dashboard).
 
 [[redirects]]
   from = "/fusion"
   to = "/chat.html"
   status = 200
 
-# The catalog used to live at /dashboard.html; keep old links working.
 [[redirects]]
   from = "/dashboard"
-  to = "/index.html"
+  to = "/"
   status = 301
 
 [[redirects]]

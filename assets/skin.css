@@ -1,0 +1,93 @@
+/* skin.css — puts the chat and the benchmark lab on the shared design system.
+ *
+ * Both pages were written against their own token names. Rather than restate
+ * their rules, this file points those names at the shared tokens in base.css,
+ * so colour, type, radius and dark mode all come from one place. Load it after
+ * the page's own <style>.
+ */
+:root {
+  /* type */
+  --font-head: var(--sans);
+  --font-body: var(--sans);
+  --font-mono: var(--mono);
+
+  /* chat: neutral ramp, light to dark */
+  --n-0: var(--surface);  --n-25: var(--surface); --n-50: var(--bg);    --n-100: var(--surface-2);
+  --n-200: var(--line);   --n-300: var(--line-strong); --n-400: var(--text-3); --n-500: var(--text-3);
+  --n-600: var(--text-2); --n-700: var(--text-2); --n-800: var(--text);  --n-900: var(--text);
+  /* chat: primary ramp */
+  --p-50: var(--accent-bg); --p-100: var(--accent-bg); --p-200: var(--line-strong);
+  --p-400: var(--accent);   --p-500: var(--accent);    --p-600: var(--accent-ink); --p-700: var(--accent-ink);
+  --primary: var(--accent); --primary-2: var(--accent-ink); --primary-light: var(--surface-2);
+  --accent-light: var(--accent);
+  /* semantic */
+  --info: var(--accent-ink); --info-bg: var(--accent-bg);
+  --success: var(--ok); --warning: var(--warn); --danger: var(--bad);
+  --red: var(--bad);     --red-bg: var(--bad-bg);     --red-light: var(--bad-bg);
+  --green: var(--ok);    --green-bg: var(--ok-bg);    --green-light: var(--ok-bg);
+  --amber: var(--warn);  --amber-bg: var(--warn-bg);  --amber-light: var(--warn-bg);
+  --orange: var(--accent); --orange-light: var(--accent-bg); --orange-bg: var(--spark-bg);
+  --blue: var(--accent-ink); --blue-light: var(--accent-bg);
+  --violet: var(--accent-ink); --violet-bg: var(--accent-bg);
+  --purple: var(--text); --purple-light: var(--surface-2); --purple-bg: var(--accent-bg);
+  --magenta: var(--text); --magenta-light: var(--surface-2);
+  --pink: var(--spark); --pink-bg: var(--spark-bg);
+  /* surfaces, text, lines */
+  --background: var(--bg); --background-color: var(--bg);
+  --surface-color: var(--surface); --surface-strong: var(--surface);
+  --text-color: var(--text); --text-primary: var(--text); --text-strong: var(--text);
+  --text-secondary: var(--text-2); --text-mid: var(--text-2);
+  --text-tertiary: var(--text-3); --text-muted: var(--text-3); --text-dim: var(--text-3);
+  --border: var(--line); --border-color: var(--line); --border-strong: var(--line-strong);
+  /* shape and depth */
+  --radius-xs: 8px; --radius-sm: 10px; --radius-md: 12px; --radius-lg: 14px; --radius-xl: 18px;
+  --border-radius: 12px; --radius: 12px;
+  --shadow-xs: none; --shadow-sm: none; --shadow-md: var(--shadow); --shadow-lg: var(--shadow); --shadow-soft: var(--shadow); --shadow-glow: var(--shadow);
+  --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+  --appbar-h: 52px;
+  /* charts keep their validated palette; only the furniture follows the theme */
+  --chart-grid: var(--line); --chart-ink-muted: var(--text-3);
+}
+
+/* The icon font ships with the site (see the @font-face in each page's head). */
+.material-icons {
+  font-family: 'Material Icons'; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1;
+  letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr;
+  -webkit-font-feature-settings: 'liga'; font-feature-settings: 'liga'; -webkit-font-smoothing: antialiased;
+}
+
+html, body { background: var(--bg); color: var(--text); }
+body { font-family: var(--sans); -webkit-tap-highlight-color: transparent; }
+h1, h2, h3, h4 { font-family: var(--sans); letter-spacing: -.01em; }
+code, pre, kbd, samp { font-family: var(--mono); }
+/* iOS zooms any field under 16px; nothing here is allowed to trigger that. */
+@media (max-width: 860px) { input, select, textarea { font-size: 16px !important; } }
+
+/* ---- benchmark: page title under the shared top bar ------------------------- */
+.bench-head { max-width: 1280px; margin: 0 auto; padding: 18px 16px 6px; }
+.bench-head h1 { font-size: clamp(22px, 5vw, 28px); line-height: 1.15; letter-spacing: -.02em; }
+.bench-head p { color: var(--text-2); font-size: 14.5px; margin-top: 2px; }
+
+/* ---- chat: room for the phone tab bar, and an app bar that fits ---------------- */
+@media (max-width: 768px) {
+  body.v-lite .app-container { height: calc(100dvh - var(--tab-h) - var(--safe-b)); }
+  body.v-lite .header { gap: 8px; }
+  body.v-lite .header > div:last-child { max-width: none; overflow: visible; }
+  body.v-lite .more-btn-label { display: none; }
+  body.v-lite #sessionTracker { min-height: 40px; }
+  body.v-lite .mobile-model-tab { min-height: 40px; }
+  body.v-lite .model-mobile-select { min-width: 0; }
+  body.v-lite .model-mobile-select select { min-width: 0; width: 100%; max-width: 100%; }
+}
+
+/* toasts sit above the phone tab bar, not under it */
+@media (max-width: 859px) {
+  body.v-app .toast, body.v-lite .toast { bottom: calc(var(--tab-h) + var(--safe-b) + 14px) !important; }
+  body.v-lite #toast-container { bottom: calc(var(--tab-h) + var(--safe-b) + 12px) !important; right: 12px !important; left: 12px; }
+}
+
+/* thumb-sized controls on the benchmark page */
+@media (max-width: 859px) {
+  .suite-tab { min-height: 44px; }
+  .preset-chip, .mini-btn { min-height: 40px; }
+}
