@@ -21,7 +21,7 @@
   }
   function syncThemeColor() {
     var m = doc.querySelector('meta[name="theme-color"]');
-    if (m) m.setAttribute('content', isDark() ? '#121B1A' : '#FFFFFF');
+    if (m) m.setAttribute('content', isDark() ? '#15141B' : '#FFFFFF');
   }
   function toggleTheme() {
     var next = isDark() ? 'light' : 'dark';
@@ -68,7 +68,7 @@
     { href: 'api-guide.html', file: 'api-guide.html', label: 'API guide', short: 'API', icon: 'api' },
     { href: 'agents.html', file: 'agents.html', label: 'For agents', short: 'Agents', icon: 'agent' },
   ];
-  var LOGO = '<svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0F1B2D"/><path d="M8.5 9.5h13a3.5 3.5 0 0 1 3.5 3.5v5.5a3.5 3.5 0 0 1-3.5 3.5h-7l-4 3v-3h-2A3.5 3.5 0 0 1 5 18.500V13a3.5 3.5 0 0 1 3.500-3.500Z" fill="#1C7C96"/><path d="m23 5 1.300 3.200L27.500 9.500l-3.200 1.300L23 14l-1.300-3.200L18.500 9.500l3.200-1.300L23 5Z" fill="#F97316"/></svg>';
+  var LOGO = '<svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="116" fill="#121117"/><path d="M148 150 256 372" stroke="#CBFB45" stroke-width="70" stroke-linecap="round" fill="none"/><path d="M364 150 256 372" stroke="#F4F2EC" stroke-width="70" stroke-linecap="round" fill="none"/><circle cx="256" cy="150" r="36" fill="#FF6A45"/></svg>';
 
   function currentFile() {
     var f = location.pathname.replace(/\/+$/, '').split('/').pop() || 'index.html';

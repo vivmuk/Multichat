@@ -109,9 +109,18 @@
     } catch (e) { /* sandboxed frame */ }
     apply();
   }
+  // A sheet is opened by an ordinary fragment navigation (#m/<id>, #filters),
+  // the same thing a plain in-page link does. Every browser, and every in-app
+  // browser, records that as a history entry, so Back closes the sheet.
+  var sheetsOpened = 0;
+  function openSheet(hash) {
+    if (location.hash === hash) { apply(); return; }
+    sheetsOpened++;
+    location.hash = hash;          // fires hashchange → apply()
+  }
   function closeSheet() {
-    if (history.state && history.state.mc) history.back();   // we opened it: step back
-    else go(S, '', false);                                   // arrived by deep link: just clear it
+    if (sheetsOpened > 0) history.back();                        // we opened it: step back (popstate keeps count)
+    else go(S, '', false);                                       // arrived by deep link: just clear it
   }
 
   // ------------------------------------------------------------------ filtering
@@ -169,7 +178,7 @@
   function subline(r) {
     var bits = [];
     if (r.provider) bits.push(r.provider);
-    bits.push(r.type === 'video' && r.mode ? r.mode : C.typeLabel(r.type));
+    if (r.type === 'video' && r.mode) bits.push(r.mode);   // the type itself is the coloured tag below
     if (r.ctx) bits.push(C.fmtTokens(r.ctx) + (r.type === 'embedding' ? ' in' : ' ctx'));
     if (r.voices && r.voices.length) bits.push(r.voices.length + ' voices');
     bits.push(shortDate(r.created));
@@ -183,13 +192,22 @@
     }).join('');
   }
   var POL_TAG = { open: 'ok', limited: 'warn', blocked: 'bad', unrated: 'mute' };
+  // One hue per model type and per capability, so a card can be told apart
+  // before a word of it is read. The colours themselves live in catalog.css.
+  var TYPE_HUE = { text: 245, image: 212, video: 22, tts: 150, music: 335, asr: 44, inpaint: 275, upscale: 190, embedding: 172, decision: 300 };
+  var CAP_HUE = { vision: 212, reasoning: 275, tools: 22, web: 190, code: 150, schema: 245, audio: 335, video: 44, xsearch: 200, tee: 172, e2ee: 160, logprobs: 300 };
+  function hueTag(hue, label, extra) {
+    return hue === undefined ? '<span class="tag' + (extra || '') + '">' + esc(label) + '</span>'
+      : '<span class="tag hue' + (extra || '') + '" style="--h:' + hue + '">' + esc(label) + '</span>';
+  }
+  function typeTag(r) { return hueTag(TYPE_HUE[r.type], C.typeLabel(r.type), ' type'); }
   function chipsFor(r) {
-    var out = '';
+    var out = typeTag(r);
     if (r.type === 'text') {
-      out = r.caps.slice(0, 6).map(function (k) { return '<span class="tag">' + C.CAP_BY_KEY[k].label + '</span>'; }).join('');
+      out += r.caps.slice(0, 6).map(function (k) { return hueTag(CAP_HUE[k], C.CAP_BY_KEY[k].label); }).join('');
       if (r.caps.length > 6) out += '<span class="tag mute">+' + (r.caps.length - 6) + '</span>';
     } else if (r.policy) {
-      out = (C.POLICY_AXES[r.policy.kind] || []).map(function (a) {
+      out += (C.POLICY_AXES[r.policy.kind] || []).map(function (a) {
         var v = r.policy[a.key];
         return '<span class="tag ' + POL_TAG[v.state] + (v.inferred ? ' dashed' : '') + '">' + C.axisText(a.key, v.state, a.short) + '</span>';
       }).join('');
@@ -199,7 +217,7 @@
     return out;
   }
   function cardHtml(r) {
-    var href = esc(urlFor(S, '#m/' + encodeURIComponent(r.id)));
+    var href = '#m/' + esc(encodeURIComponent(r.id));
     return '<a class="m-head" href="' + href + '" data-open="' + esc(r.id) + '">' + mark(r, 22) +
         '<span class="m-name">' + esc(r.name) + '</span><span class="m-tags">' + tags(r) + '</span>' +
         '<span class="m-sub">' + esc(subline(r)) + '</span>' + icon('chevron', 'sm m-go') + '</a>' +
@@ -227,6 +245,7 @@
     rows.forEach(function (r) { if (types.indexOf(r.type) === -1) types.push(r.type); });
     $('types').innerHTML = types.map(function (t) {
       return '<button class="chip" type="button" role="tab" data-type="' + esc(t) + '" aria-selected="' + (S.type === t) + '">' +
+        (TYPE_HUE[t] !== undefined ? '<i class="dot" style="--h:' + TYPE_HUE[t] + '"></i>' : '') +
         (t === 'all' ? 'All' : esc(C.typeLabel(t))) + ' <b>' + (counts[t] || 0) + '</b></button>';
     }).join('');
     var on = $('types').querySelector('[aria-selected="true"]');
@@ -278,7 +297,7 @@
 
     if (has(function (r) { return r.caps.length; })) {
       html += '<section class="sec"><h3>Can do</h3><div class="opts">' + C.CAPS.map(function (c) {
-        return optChip('data-cap="' + c.key + '"', c.label, countIf('cap:' + c.key, function (r) { return r.caps.indexOf(c.key) !== -1; }), S.caps[c.key]);
+        return optChip('data-cap="' + c.key + '" style="--h:' + CAP_HUE[c.key] + '"', c.label, countIf('cap:' + c.key, function (r) { return r.caps.indexOf(c.key) !== -1; }), S.caps[c.key]);
       }).join('') + '</div></section>';
     }
     if (has(function (r) { return r.type === 'video'; })) {
@@ -336,7 +355,7 @@
     $('dTitle').textContent = r.name;
     $('dSub').textContent = [r.provider, C.typeLabel(r.type), r.mode].filter(Boolean).join(' · ');
     var h = '';
-    var t = tags(r) + (r.uncensored ? '<span class="tag accent">Uncensored</span>' : '') + (r.recommended ? '<span class="tag">Venice pick</span>' : '') +
+    var t = typeTag(r) + tags(r) + (r.uncensored ? '<span class="tag accent">Uncensored</span>' : '') + (r.recommended ? '<span class="tag">Venice pick</span>' : '') +
       '<span class="tag">' + (r.privacy === 'private' ? 'Private, Venice-hosted' : r.privacy === 'anonymized' ? 'Anonymized, proxied' : esc(r.privacy)) + '</span>';
     h += '<div class="d-tags">' + t + '</div>';
     h += '<button class="copy big" type="button" data-copy="' + esc(r.id) + '" aria-label="Copy model ID"><code>' + esc(r.id) + '</code><span class="copy-cta">' + icon('copy', 'sm') + 'Copy ID</span></button>';
@@ -370,7 +389,7 @@
 
     if (r.caps.length) {
       h += '<section class="sec"><h3>Capabilities</h3><ul class="caplist">' + r.caps.map(function (k) {
-        return '<li>' + icon('check', 'sm') + '<span><b>' + C.CAP_BY_KEY[k].label + '</b> ' + C.CAP_BY_KEY[k].long + '</span></li>';
+        return '<li>' + hueTag(CAP_HUE[k], C.CAP_BY_KEY[k].label) + '<span>' + C.CAP_BY_KEY[k].long + '</span></li>';
       }).join('') + '</ul></section>';
     }
     if (r.policy) {
@@ -456,7 +475,7 @@
     var open = t.closest('[data-open]');
     if (open && !e.metaKey && !e.ctrlKey && !e.shiftKey && e.button === 0) {
       e.preventDefault();
-      go(S, '#m/' + encodeURIComponent(open.getAttribute('data-open')), true);
+      openSheet('#m/' + encodeURIComponent(open.getAttribute('data-open')));
       return;
     }
     var type = t.closest('[data-type]');
@@ -471,7 +490,7 @@
     var act = t.closest('[data-act]');
     if (!act) return;
     switch (act.getAttribute('data-act')) {
-      case 'filters': go(S, '#filters', true); break;
+      case 'filters': openSheet('#filters'); break;
       case 'close': closeSheet(); break;
       case 'clear': mutate(function (s) { var keep = { type: s.type, sort: s.sort }; Object.assign(s, blank(), keep); }); $('q').value = ''; break;
       case 'qclear': $('q').value = ''; mutate(function (s) { s.q = ''; }); $('q').focus(); break;
@@ -509,6 +528,7 @@
     else if (e.key === '/' && !lastSheet && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { e.preventDefault(); $('q').focus(); }
   });
   window.addEventListener('popstate', function () {
+    if (lastSheet && !location.hash && sheetsOpened > 0) sheetsOpened--;
     // Leaving the filter sheet with Back keeps what was chosen in it.
     if (lastSheet === 'filters' && location.hash !== '#filters') {
       try { history.replaceState(history.state, '', urlFor(S, location.hash)); } catch (e) { /* sandboxed */ }
