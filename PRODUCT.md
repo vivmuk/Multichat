@@ -37,28 +37,37 @@ Two things together that a neighbouring catalogue would have to copy as a set:
 
 ## Operating Context
 
-- The catalogue is fetched live from the Venice API at load; the key is entered by the user and kept
-  in the browser's own storage.
-- Browser storage can be blocked (a real failure mode seen in practice): the app must still explain
-  itself when nothing can be remembered.
+- A small Node server (`server.js`, no dependencies) keeps Venice's public model list in memory,
+  refreshes it every five minutes, and writes it into the catalogue's HTML. The catalogue needs no
+  API key and makes no request of its own on first load.
+- The chat and the benchmark lab call Venice straight from the browser with the visitor's own key,
+  kept in the browser's storage. The server never sees a key.
+- Browser storage can be blocked (a real failure mode seen in practice): every page must still work
+  when nothing can be remembered.
 - Ratings are a hand-curated table maintained by the author, not a guarantee published by the model
   provider.
-- Four surfaces ship together: the model catalogue (index), the chat, a benchmark page and an API
-  guide.
-- Deployed on Railway from the repository's `main` branch; no build step, no framework.
+- Five surfaces ship together: the model catalogue (index), the chat, the benchmark lab, the API
+  guide, and a page of machine-readable endpoints for agents.
+- Deployed on Railway from the repository's `main` branch with `node server.js`; no build step, no
+  framework. Served as plain files it degrades to reading Venice from the browser.
 
 ## Capabilities and Constraints
 
-- 366 catalogue rows (134 video, 41 image, plus text, voice/TTS and music), each with capabilities
-  and any policy ratings it carries.
+- Every catalogue row (text, image, video, voice, music, speech-to-text, image edit, upscale,
+  embedding, decision) shows its model ID with a one-tap copy and its price. Counts are whatever
+  Venice returns today; nothing is hard-coded.
+- Prices are printed exactly as Venice reports them. Video rates are absent from `/models`, so they
+  are read from Venice's pricing page and labelled as such; a model without a listed rate says so.
 - Per-axis content-policy filters, tab aware: Image exposes likeness / filter / NSFW, Video exposes
-  likeness / native voice / NSFW, All models exposes likeness / NSFW. Options are
-  `Allowed (open or limited)`, `Open only`, `Limited only`, `Blocked`, `Unrated`, and for the
-  voice and image-filter axes simply Yes / No.
-- On video, no model is rated fully open for NSFW: 46 are rated limited. That asymmetry is real and
-  must not be flattened into a simpler claim.
-- Single-file pages with inline CSS and JS, loaded as plain files; no framework, no bundler, no
-  package install.
+  likeness / native audio / NSFW, All models exposes likeness / NSFW. Every option shows how many
+  models it leaves.
+- On video, no model is rated fully open for NSFW; many are rated limited. That asymmetry is real
+  and must not be flattened into a simpler claim.
+- Back never leaves the site by surprise: a sheet, a tab, a suite or an overlay is one history
+  entry, and Back undoes that one step.
+- The same catalogue is available to agents as Markdown, JSON and MCP tools, with Venice's
+  documentation and OpenAPI spec mirrored alongside.
+- One design system: tokens and chrome in `assets/base.css`, shared by every page, light and dark.
 - The API key is never a product feature to be designed around: it is a user's own secret, entered
   by them, and it must never be echoed into a page, an error message or a log.
 
@@ -72,8 +81,9 @@ Two things together that a neighbouring catalogue would have to copy as a set:
 ## Evidence on Hand
 
 - The live catalogue and its curated policy ratings; the benchmark page; the API guide.
-- Absent, and not to be invented: prices or cost claims, user counts, uptime claims, benchmarks the
-  app has not run, or any promise about what a model will produce.
+- Prices, as reported by the Venice API and its pricing page.
+- Absent, and not to be invented: estimated latency or speed figures, user counts, uptime claims,
+  benchmarks the app has not run, or any promise about what a model will produce.
 
 ## Product Principles
 
@@ -82,8 +92,3 @@ Two things together that a neighbouring catalogue would have to copy as a set:
 3. Picking a model and using it belong in the same visit.
 4. The phone is a real surface, not a squeezed desktop.
 5. No invented numbers, ever.
-
-## Known defects to fix in this pass
-
-- At phone width the header title overlaps the first icon button.
-- The search field's placeholder is cut off on a narrow screen.

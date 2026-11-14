@@ -8,10 +8,8 @@
   <link rel="icon" href="favicon.ico" sizes="32x32">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
-    rel="stylesheet">
+  <link rel="preload" href="assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+  <style>@font-face{font-family:'Material Icons';font-style:normal;font-weight:400;font-display:block;src:url(assets/fonts/material-icons.woff2) format('woff2')}</style>
   <script src="config.js"></script>
   <style>
     :root {
@@ -82,9 +80,9 @@
       position: sticky; top: 0; z-index: 100;
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    .nav-brand { display: flex; align-items: center; gap: 12px; color: white; }
+    .nav-brand { display: flex; align-items: center; gap: 12px; color: var(--on-accent); }
     .nav-brand .logo {
-      width: 38px; height: 38px; background: #fff; border-radius: var(--radius-md);
+      width: 38px; height: 38px; background: var(--surface); border-radius: var(--radius-md);
       display: flex; align-items: center; justify-content: center; overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.18);
     }
@@ -101,7 +99,7 @@
       font-family: var(--font-body);
     }
     .nav-btn .material-icons { font-size: 18px; }
-    .nav-btn.primary { background: var(--accent); color: white; }
+    .nav-btn.primary { background: var(--accent); color: var(--on-accent); }
     .nav-btn.primary:hover { background: var(--accent-light); }
     .nav-btn.secondary { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
     .nav-btn.secondary:hover { background: rgba(255,255,255,0.14); }
@@ -121,7 +119,7 @@
     }
     .suite-tab .material-icons { font-size: 17px; }
     .suite-tab:hover { border-color: var(--accent); color: var(--accent); }
-    .suite-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .suite-tab.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
     .suite-tab .st-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: none; }
     .suite-tab.has-results .st-dot { display: inline-block; }
 
@@ -171,7 +169,7 @@
       cursor: pointer; transition: all .15s; font-family: var(--font-body);
     }
     .preset-chip:hover { border-color: var(--accent); color: var(--accent); }
-    .preset-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .preset-chip.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
     .challenge-textarea {
       width: 100%; min-height: 130px; resize: vertical;
@@ -215,7 +213,7 @@
     .model-chip.selected { border-color: var(--accent); background: var(--accent-bg); color: var(--text-primary); }
     .model-chip .mc-check { font-size: 15px; color: var(--accent); display: none; }
     .model-chip.selected .mc-check { display: inline; }
-    .badge-new { font-size: 9.5px; font-weight: 800; letter-spacing: .5px; padding: 2px 6px; border-radius: 999px; background: linear-gradient(135deg, #f97316, #ec4899); color: #fff; }
+    .badge-new { font-size: 9.5px; font-weight: 800; letter-spacing: .5px; padding: 2px 6px; border-radius: 999px; background: linear-gradient(135deg, #f97316, #ec4899); color: var(--on-accent); }
     .mc-price { font-size: 10.5px; color: var(--text-muted); font-family: var(--font-mono); }
 
     .judge-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
@@ -232,7 +230,7 @@
     .run-btn {
       display: inline-flex; align-items: center; gap: 8px;
       background: linear-gradient(135deg, var(--accent), var(--purple));
-      color: #fff; border: none; cursor: pointer;
+      color: var(--on-accent); border: none; cursor: pointer;
       padding: 11px 26px; border-radius: var(--radius-md);
       font-size: 14px; font-weight: 700; font-family: var(--font-head);
       letter-spacing: .2px; box-shadow: var(--shadow-md); transition: transform .12s, filter .15s;
@@ -261,7 +259,7 @@
     .rc-letter {
       width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
-      background: var(--primary); color: #fff; font-weight: 700; font-size: 14px; font-family: var(--font-head);
+      background: var(--primary); color: var(--on-accent); font-weight: 700; font-size: 14px; font-family: var(--font-head);
     }
     .rc-name { font-weight: 700; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .rc-sub { font-size: 11px; color: var(--text-muted); }
@@ -288,7 +286,7 @@
     .rc-pane { display: none; }
     .rc-pane.active { display: block; }
     .rc-text { font-size: 13px; line-height: 1.7; color: var(--text-primary); max-height: 440px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
-    .rc-code { background: #0f172a; color: #cbd5e1; border-radius: var(--radius-sm); padding: 14px; max-height: 440px; overflow: auto; white-space: pre; line-height: 1.55; font-family: var(--font-mono); font-size: 12px; }
+    .rc-code { background: var(--text); color: var(--line-strong); border-radius: var(--radius-sm); padding: 14px; max-height: 440px; overflow: auto; white-space: pre; line-height: 1.55; font-family: var(--font-mono); font-size: 12px; }
     .rc-reasoning {
       font-size: 12.5px; line-height: 1.7; color: var(--text-secondary);
       background: var(--violet-bg); border-left: 3px solid var(--violet);
@@ -297,14 +295,14 @@
     }
     .rc-empty { color: var(--text-muted); font-size: 12.5px; padding: 8px 0; }
 
-    .rc-iframe-wrap { position: relative; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: #fff; }
-    .rc-iframe-wrap iframe { width: 100%; height: 380px; border: none; display: block; background: #fff; }
+    .rc-iframe-wrap { position: relative; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface); }
+    .rc-iframe-wrap iframe { width: 100%; height: 380px; border: none; display: block; background: var(--surface); }
     .rc-iframe-tools { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; z-index: 5; }
-    .rc-iframe-tools .mini-btn { background: rgba(15,23,42,.75); color: #fff; border-color: transparent; backdrop-filter: blur(4px); }
-    .rc-iframe-tools .mini-btn:hover { color: #fff; background: rgba(15,23,42,.95); }
+    .rc-iframe-tools .mini-btn { background: rgba(15,23,42,.75); color: var(--on-accent); border-color: transparent; backdrop-filter: blur(4px); }
+    .rc-iframe-tools .mini-btn:hover { color: var(--on-accent); background: rgba(15,23,42,.95); }
 
     .rc-img { width: 100%; border-radius: var(--radius-sm); cursor: zoom-in; display: block; border: 1px solid var(--border); }
-    .rc-video { width: 100%; border-radius: var(--radius-sm); display: block; background: #000; max-height: 440px; }
+    .rc-video { width: 100%; border-radius: var(--radius-sm); display: block; background: var(--text); max-height: 440px; }
     .rc-poll-log { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 8px; max-height: 90px; overflow-y: auto; }
 
     /* judge scorecard */
@@ -390,7 +388,7 @@
 
     .toast {
       position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: var(--primary); color: #fff; font-size: 13px; font-weight: 600;
+      background: var(--primary); color: var(--on-accent); font-size: 13px; font-weight: 600;
       padding: 11px 22px; border-radius: 999px; box-shadow: var(--shadow-md);
       opacity: 0; pointer-events: none; transition: all .25s; z-index: 400; max-width: 90vw; text-align: center;
     }
@@ -400,29 +398,16 @@
     .loading-overlay .material-icons { font-size: 46px; color: var(--accent); }
     .loading-overlay p { color: var(--text-secondary); font-size: 14px; }
   </style>
-  <link rel="stylesheet" href="assets/card-catalogue.css">
+  <link rel="stylesheet" href="assets/base.css" data-inline>
+  <link rel="stylesheet" href="assets/skin.css" data-inline>
 </head>
 
 <body>
-  <nav class="top-nav">
-    <div class="nav-brand">
-      <div class="logo">
-        <img src="logo.png" alt="logo" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\'material-icons\'>speed</span>';">
-      </div>
-      <div>
-        <h1>Benchmark Lab</h1>
-        <span>New vs. established Venice models — head to head</span>
-      </div>
-    </div>
-    <div class="nav-actions">
-      <button class="nav-btn secondary" onclick="toggleDarkMode()" id="darkModeBtn" title="Toggle dark mode">
-        <span class="material-icons">dark_mode</span>
-      </button>
-      <a href="index.html" class="nav-btn secondary" title="Model catalog"><span class="material-icons">view_list</span><span>Models</span></a>
-      <a href="api-guide.html" class="nav-btn secondary" title="Venice API guide"><span class="material-icons">menu_book</span><span>API Guide</span></a>
-      <a href="chat.html" class="nav-btn primary"><span class="material-icons">chat</span><span>Chat</span></a>
-    </div>
-  </nav>
+  <script src="assets/app.js" data-inline></script>
+  <header class="bench-head">
+    <h1>Benchmark Lab</h1>
+    <p>New vs. established Venice models, head to head</p>
+  </header>
 
   <div class="suite-bar" id="suiteBar"></div>
 
@@ -546,7 +531,7 @@ Be concrete and quantitative wherever possible.` },
         ]
       },
       {
-        id: 'medaffairs', kind: 'text', icon: 'clinical_notes', category: 'text',
+        id: 'medaffairs', kind: 'text', icon: 'medical_services', category: 'text',
         name: 'Medical Affairs',
         tagline: 'Real medical-affairs deliverables — evidence synthesis, payer value stories, MSL objection handling — scored by an AI judge on accuracy, balance, and compliance discipline.',
         rubric: ['Scientific accuracy', 'Evidence & data use', 'Balance & fair-balance', 'Compliance awareness', 'Audience fit & clarity'],
@@ -708,7 +693,9 @@ As a field medical/MSL professional, write a scientifically rigorous, compliant 
            <span class="material-icons">${LEADERBOARD.icon}</span>${LEADERBOARD.name}</button>`;
     }
 
-    function switchSuite(id) {
+    // Each suite is its own history entry, so Back returns to the previous suite.
+    function switchSuite(id, fromHistory) {
+      if (!fromHistory && id !== activeSuite) { try { history.pushState({ suite: id }, '', '#' + id); } catch (e) {} }
       activeSuite = id;
       document.querySelectorAll('.suite-tab').forEach(t => t.classList.toggle('active', t.dataset.suite === id));
       document.querySelectorAll('.suite-panel').forEach(p => p.classList.toggle('active', p.dataset.suite === id));
@@ -722,6 +709,10 @@ As a field medical/MSL professional, write a scientifically rigorous, compliant 
         `<div class="suite-panel" data-suite="leaderboard"><div id="leaderboardHost"></div></div>`;
       SUITES.forEach(s => { state[s.id].selected = pickDefaults(s); state[s.id].judge = s.visionJudge ? pickVisionJudge() : pickJudge(); renderPicker(s); renderJudgeSelect(s); syncRunCost(s); });
       document.querySelector(`.suite-panel[data-suite="${activeSuite}"]`)?.classList.add('active');
+      const suiteFromUrl = () => { const id = location.hash.slice(1); return document.querySelector(`.suite-tab[data-suite="${CSS.escape(id)}"]`) ? id : SUITES[0].id; };
+      if (location.hash) switchSuite(suiteFromUrl(), true);
+      window.addEventListener('popstate', () => { const id = suiteFromUrl(); if (id !== activeSuite) switchSuite(id, true); });
+      if (window.VApp) VApp.watchLayer(document.getElementById('lightbox'), 'open', 'lightbox');
     }
 
     function buildSuitePanel(s) {
@@ -1465,9 +1456,6 @@ Return ONLY valid JSON, no markdown fences.`;
     // BOOT
     // ══════════════════════════════════════════════════════════════════
     (async function init() {
-      const theme = localStorage.getItem('venice_theme') || 'light';
-      document.documentElement.setAttribute('data-theme', theme);
-      if (theme === 'dark') document.getElementById('darkModeBtn').querySelector('.material-icons').textContent = 'light_mode';
       loadSeen();
       buildSuiteBar();
       const ok = await fetchCatalog();
